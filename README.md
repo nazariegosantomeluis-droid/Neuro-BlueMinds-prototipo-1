@@ -45,6 +45,17 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
+**Modo experto.** Se activa en el inicio, antes de empezar la sesión. Permite elegir cualquier actividad, banda y modalidad.
+- Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
+- El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
+- Sus registros llevan un `sesion_id` que empieza con `EXP-`.
+
+**Galería de ítems** (`#galeria`). Muestra todos los ítems por actividad y banda: el código, la consigna, las opciones con la correcta marcada y el estado de revisión. También incluye la ficha técnica de la actividad.
+- Por defecto muestra solo la muestra para expertos; una casilla muestra todos.
+- Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
+
+**Créditos y licencias** (`#creditos`). Contiene la atribución de ARASAAC y la licencia de cada parte del prototipo.
+
 ## Pruebas
 
 Requiere Node.js 20 o posterior. No hay dependencias que instalar.

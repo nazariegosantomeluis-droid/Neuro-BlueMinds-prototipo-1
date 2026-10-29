@@ -46,6 +46,9 @@ function figura(forma, fill) {
 
 export const figuraSVG = (forma, color) => figura(forma, COLORES[color]);
 
+// Nombre con concordancia: «conejo azul», «flor amarilla».
+export const nombreFigura = (forma, color) => `${forma} ${forma === 'flor' && color === 'amarillo' ? 'amarilla' : color}`;
+
 // Símbolo de la regla: una mancha de colores (por color) o la silueta gris de la tarjeta (por forma).
 // La mancha es mitad azul y mitad amarilla, para no favorecer a ninguna caja.
 export function simboloSVG(regla, forma) {

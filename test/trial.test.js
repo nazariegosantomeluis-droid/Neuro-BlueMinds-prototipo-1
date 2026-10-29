@@ -206,10 +206,12 @@ function runBlock({ modalidad = 'V', audio, plan = [] } = {}) {
     onOptions: (o) => {
       const action = plan[shown++] ?? 'acierto';
       if (action === 'pausa') env.at(300, () => block.pause());
+      else if (action === 'salto') env.at(300, () => block.skip());
       else env.at(500, () => block.pointer({ t: env.now(), pos: o.findIndex((x) => x.correcta) + 1 }));
     },
   });
   let pauses = 0;
+  const started = [];
   block = startBlock({
     ficha,
     modalidad,
@@ -220,9 +222,18 @@ function runBlock({ modalidad = 'V', audio, plan = [] } = {}) {
     log,
     rand: rng(1),
     onPause: async () => (pauses++, 'continuar'),
+    onTrial: (t) => started.push(t.codigo),
   });
-  return { done: env.run(block.done), log, pauses: () => pauses };
+  return { done: env.run(block.done), log, pauses: () => pauses, started };
 }
+
+test('modo experto: «Siguiente» cierra el ensayo como interrumpido y pasa al siguiente sin pausa', async () => {
+  const b = runBlock({ plan: ['salto', 'acierto', 'salto'] });
+  const rows = await b.done;
+  assert.equal(b.pauses(), 0);
+  assert.deepEqual(rows.map((r) => r.interrumpido), [true, false, true]);
+  assert.deepEqual(b.started, ['ACT01-B1-01', 'ACT01-B1-02', 'ACT01-B1-03'], 'avisa el código de cada ensayo');
+});
 
 test('el bloque guarda un registro completo por ensayo y no repite el ensayo pausado', async () => {
   const b = runBlock({ plan: ['acierto', 'pausa', 'acierto'] });

@@ -202,9 +202,10 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
  *   ejemplo el nuevo símbolo cuando cambia la regla. No produce registro.
  * base: campos de la sesión (sesion_id, bloque, codigo_nino, dispositivo, banda, version_app).
  * onPause(): lo llama después de un ensayo pausado; devuelve 'continuar' o 'terminar'.
+ * onTrial(trial, i): avisa qué ensayo empieza (el modo experto muestra su código).
  * En AV, si el dispositivo no tiene audio, el bloque no empieza (done falla con NO_AUDIO_MSG).
  */
-export function startBlock({ ficha, modalidad, trials, base, env, view, log, rand, onPause = async () => 'continuar', onState }) {
+export function startBlock({ ficha, modalidad, trials, base, env, view, log, rand, onPause = async () => 'continuar', onState, onTrial = () => {} }) {
   let current = null;
   let reason = null;
   const banda = ficha.bandas.find((b) => b.id === base.banda);
@@ -230,6 +231,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
       const opciones = ficha.barajarOpciones === false ? t.opciones : shuffle(t.opciones, rand);
       const posCorrecta = opciones.findIndex((o) => o.correcta) + 1;
       const disposicion = banda?.disposicion ?? `1x${opciones.length}`;
+      onTrial(t, i);
       current = createTrial({ ficha, modalidad, consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState });
       const measured = await current.run();
       rows.push(

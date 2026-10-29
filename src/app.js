@@ -9,6 +9,7 @@ import { createAudio } from './engine/audio.js';
 import { summarize } from './engine/quality.js';
 import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
+import { esc, navHTML, renderGaleria, renderCreditos } from './paginas.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -29,6 +30,8 @@ const state = {
   fichas: {}, // id → ficha válida
   problemas: {}, // id → problemas de la ficha (o del banco de ítems)
   items: [],
+  conceptos: [],
+  running: false, // hay un bloque en curso: la navegación no cambia de pantalla
   images: new Map(), // imágenes ya decodificadas
   session: null, // { id, codigo, bloque, usados: { [actividad]: Set } }
   last: null, // último bloque: { rows, ficha, banda, modalidad }
@@ -52,9 +55,6 @@ const prefs = {
   },
 };
 
-const esc = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-
 // El cm de CSS no mide un centímetro real en tabletas. Se estima suponiendo una tableta
 // de 10" (pantalla táctil) o un monitor de 96 ppp (computadora); la página de
 // Calibración guarda el valor medido en el dispositivo.
@@ -69,8 +69,10 @@ const randomHex = () =>
   [...crypto.getRandomValues(new Uint8Array(4))].map((b) => b.toString(16).padStart(2, '0')).join('');
 // numero: sesiones iniciadas en este dispositivo; con él alternan las parejas de cajas de ACT-07.
 // orden: por actividad, el orden de las dimensiones (por ejemplo, color y después forma).
-const newSession = (codigo) => ({
-  id: `S-${randomHex()}`,
+// Las sesiones del modo experto empiezan con EXP- para separarlas de las sesiones reales.
+const newSession = (codigo, experto) => ({
+  id: `${experto ? 'EXP' : 'S'}-${randomHex()}`,
+  experto,
   codigo,
   bloque: 0,
   numero: Number(prefs.get('nbm.sesiones', '0')),
@@ -94,10 +96,22 @@ async function init() {
   );
   try {
     state.items = (await (await fetch('items/items.json')).json()).items;
+    state.conceptos = (await (await fetch('items/conceptos.json')).json()).conceptos;
   } catch {
-    state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json).'];
+    state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json o items/conceptos.json).'];
   }
-  renderInicio();
+  addEventListener('hashchange', route);
+  route();
+}
+
+// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3) y #creditos.
+function route() {
+  if (state.running) return; // durante un bloque solo se sale con la pausa
+  const [ruta, query = ''] = location.hash.slice(1).split('?');
+  if (ruta === 'galeria' && !state.problemas.items) renderGaleria(app, state, new URLSearchParams(query));
+  else if (ruta === 'creditos') renderCreditos(app, state);
+  else renderInicio();
+  scrollTo(0, 0);
 }
 
 // ---------- Inicio ----------
@@ -109,6 +123,7 @@ function renderInicio(msg = '') {
   const problemas = [...(state.problemas[actividad] ?? []), ...(state.problemas.items ?? [])];
   app.innerHTML = `
     <div class="adulto">
+      ${navHTML('inicio')}
       <h1>Neuro-BlueMinds <span>· Prototipo E13</span></h1>
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <form class="panel" id="inicio" novalidate>
@@ -129,7 +144,7 @@ function renderInicio(msg = '') {
 
   const form = app.querySelector('#inicio');
   form.actividad.onchange = () => {
-    state.form = { actividad: form.actividad.value, modalidad: f.modalidad, codigo: f.codigo };
+    state.form = { actividad: form.actividad.value, modalidad: f.modalidad, codigo: f.codigo, experto: f.experto };
     renderInicio();
   };
   if (form.banda) {
@@ -170,11 +185,14 @@ function camposHTML(ficha, f) {
     </label>
     ${
       s
-        ? `<div><p class="meta">Sesión en curso <strong>${esc(s.id)}</strong> · código ${esc(s.codigo)} · bloques: ${s.bloque}</p>
+        ? `<div><p class="meta">${s.experto ? 'Sesión de modo experto' : 'Sesión en curso'} <strong>${esc(s.id)}</strong> · código ${esc(s.codigo)} · bloques: ${s.bloque}</p>
            <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
         : `<label>Código del niño (opcional)
              <input name="codigo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(f.codigo ?? 'DEMO')}">
              <span class="ayuda">Usa un código, nunca el nombre ni otro dato que identifique al niño.</span>
+           </label>
+           <label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto
+             <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. Sus registros llevan un sesion_id que empieza con EXP-.</span>
            </label>`
     }
     <label>Volumen
@@ -263,7 +281,7 @@ async function start(form) {
   const pantalla = PANTALLAS[ficha.pantalla];
   const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));
   // La sesión empieza con su primer bloque; hasta entonces no existe.
-  const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO');
+  const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO', f.experto === '1');
   const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
@@ -291,6 +309,7 @@ async function start(form) {
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
+  history.replaceState(null, '', '#inicio'); // al terminar el bloque se vuelve al inicio
   if (!state.session) {
     state.session = s;
     prefs.set('nbm.sesiones', String(s.numero + 1));
@@ -300,13 +319,16 @@ async function start(form) {
 }
 
 async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }) {
+  // En modo experto: el código del ítem en una esquina y un botón para pasar al siguiente ítem.
   app.innerHTML = `
     <div class="nino">
       <div class="stage" id="stage"></div>
       <button type="button" class="esquina" id="pausa" aria-label="Pausa: tocar dos veces">${ICONO_PAUSA}</button>
+      ${s.experto ? '<p class="codigo-item" id="codigo-item"></p><button type="button" class="siguiente" id="siguiente">Siguiente</button>' : ''}
     </div>`;
   const wrap = app.firstElementChild;
   const stage = wrap.querySelector('#stage');
+  state.running = true;
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: await estimateFramePeriod(30), audio });
   const view = pantalla.createView(stage, state.images);
@@ -323,6 +345,14 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
       view.clear();
       return pausePanel(wrap);
     },
+    onTrial: (t) => {
+      const label = wrap.querySelector('#codigo-item');
+      if (label) label.textContent = t.codigo;
+    },
+  });
+  wrap.querySelector('#siguiente')?.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    block.skip(); // el ensayo en curso queda como interrumpido y empieza el siguiente
   });
   // Cada toque en la pantalla del niño llega al motor con su tiempo y posición.
   stage.addEventListener('pointerdown', (e) => {
@@ -338,6 +368,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
   } catch (e) {
     return renderInicio(e.message);
   } finally {
+    state.running = false;
     wake?.release().catch(() => {});
   }
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
