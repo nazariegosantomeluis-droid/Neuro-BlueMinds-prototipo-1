@@ -9,7 +9,7 @@ import { createAudio } from './engine/audio.js';
 import { summarize } from './engine/quality.js';
 import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
-import { esc, navHTML, renderGaleria, renderCreditos } from './paginas.js';
+import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -58,12 +58,13 @@ const prefs = {
 // El cm de CSS no mide un centímetro real en tabletas. Se estima suponiendo una tableta
 // de 10" (pantalla táctil) o un monitor de 96 ppp (computadora); la página de
 // Calibración guarda el valor medido en el dispositivo.
-function applyCm() {
-  const saved = Number(prefs.get('nbm.cm', ''));
-  const tablet = matchMedia('(pointer: coarse)').matches;
-  const estimated = tablet ? Math.hypot(screen.width, screen.height) / (10 * 2.54) : 96 / 2.54;
-  document.documentElement.style.setProperty('--cm', `${saved > 0 ? saved : estimated}px`);
-}
+const cm = {
+  estimated: () =>
+    matchMedia('(pointer: coarse)').matches ? Math.hypot(screen.width, screen.height) / (10 * 2.54) : 96 / 2.54,
+  saved: () => Number(prefs.get('nbm.cm', '')) || null,
+  set: (px) => document.documentElement.style.setProperty('--cm', `${px}px`),
+};
+const applyCm = () => cm.set(cm.saved() ?? cm.estimated());
 
 const randomHex = () =>
   [...crypto.getRandomValues(new Uint8Array(4))].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -104,13 +105,24 @@ async function init() {
   route();
 }
 
-// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3) y #creditos.
+// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #creditos y #calibracion.
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
   if (ruta === 'galeria' && !state.problemas.items) renderGaleria(app, state, new URLSearchParams(query));
   else if (ruta === 'creditos') renderCreditos(app, state);
-  else renderInicio();
+  else if (ruta === 'calibracion') {
+    renderCalibracion(app, {
+      estimated: cm.estimated(),
+      saved: cm.saved(),
+      preview: cm.set,
+      save: (px) => prefs.set('nbm.cm', String(px)),
+      reset: () => {
+        prefs.set('nbm.cm', '');
+        applyCm();
+      },
+    });
+  } else renderInicio();
   scrollTo(0, 0);
 }
 

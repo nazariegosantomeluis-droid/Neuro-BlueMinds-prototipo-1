@@ -54,6 +54,8 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Por defecto muestra solo la muestra para expertos; una casilla muestra todos.
 - Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
 
+**Calibración** (`#calibracion`). Se hace una vez en cada dispositivo, antes de la primera sesión: se pone una regla física sobre la regla de 5 cm de la pantalla y se ajusta hasta que coincidan. Ver [Accesibilidad y seguridad sensorial](#accesibilidad-y-seguridad-sensorial).
+
 **Créditos y licencias** (`#creditos`). Contiene la atribución de ARASAAC y la licencia de cada parte del prototipo.
 
 ## Pruebas
@@ -64,28 +66,46 @@ Requiere Node.js 20 o posterior. No hay dependencias que instalar.
 npm test
 ```
 
-(equivale a `node --test`).
+(equivale a `node --test`). Las pruebas cubren:
+
+- la máquina de estados: los seis estados, la omisión, los toques, la pausa, el audio y el fallo técnico;
+- el registro, el selector, la validación de fichas y el resumen;
+- las reglas de las bandas y de los conceptos;
+- las secuencias de ACT-07 y `check-items`;
+- los requisitos de tamaño y movimiento de la hoja de estilos.
+
+Antes de publicar, corre también `npm run check-items`.
 
 ## Arquitectura
 
 El motor ejecuta la ficha. La secuencia del ensayo y el registro no tienen código propio por actividad; cada actividad solo aporta cómo se dibuja su pantalla.
 
 ```
-index.html               Inicio, sesión, galería, créditos y calibración
-src/engine/trial.js      Máquina de estados del ensayo y ejecución del bloque
-src/engine/clock.js      Medición del tiempo: performance.now, cuadros, foco
-src/engine/logger.js     Registro por ensayo; almacenamiento local; CSV y JSON
-src/engine/selector.js   Selección de ítems por banda, con semilla
-src/engine/quality.js    Reglas de calidad (tr_bruto_ms, anticipatoria, peso_calidad)
-src/engine/ficha.js      Carga y validación de fichas
-src/activities/          Presentación visual de cada tipo de pantalla
-fichas/                  Ficha técnica de cada actividad (JSON)
-items/                   Conceptos, banco de ítems generado y licencias de cada archivo
-tools/                   Generadores y verificadores (banco de ítems, registro de ejemplo)
-assets/                  Imágenes, pictogramas y audios
-docs/                    Registro de ejemplo
-test/                    Pruebas (node --test)
+index.html                    Página única
+src/app.js                    Inicio, sesión, fin de bloque y resumen; rutas
+src/paginas.js                Galería, calibración y créditos
+src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
+src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
+src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
+src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
+src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
+src/engine/selector.js        Selección de ítems por banda, con semilla
+src/engine/quality.js         Reglas de calidad y resumen descriptivo
+src/engine/ficha.js           Carga y validación de fichas
+src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
+src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
+fichas/                       Ficha técnica de cada actividad (JSON)
+items/                        Conceptos, banco de ítems generado y licencias de cada archivo
+tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
+tools/check-items.mjs         Verifica archivos y licencias del banco
+tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
+tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
+assets/                       Imágenes, pictogramas y audios
+docs/                         Registro de ejemplo
+test/                         Pruebas (node --test)
 ```
+
+Cada tipo de pantalla (`src/activities/`) aporta dos funciones: `toTrials` convierte los ítems de un bloque en ensayos, y `createView` dibuja la consigna, las opciones y la retroalimentación. Todo lo demás (tiempos, toques, audio, registro) lo hace el motor.
 
 ### Estructura del ensayo
 
@@ -254,6 +274,51 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 1. Cambia el identificador en `conceptos.json`.
 2. Borra el `.png` y su fila en `licencias.csv`.
 3. Vuelve a correr `npm run pictos`.
+
+## Accesibilidad y seguridad sensorial
+
+- **Tamaño de las opciones (RNF-04).** Cada opción tocable mide al menos 2 cm de lado (hasta 4 cm, según la pantalla) y hay al menos 1 cm entre opciones; las cajas de ACT-07 están separadas por 3 cm. Los tamaños se expresan con la variable `--cm`:
+  - En una tableta, el `cm` de CSS no mide un centímetro real; en un iPad de 10" mide unos 0.7 cm.
+  - Por eso `--cm` se estima suponiendo una tableta de 10" (pantalla táctil) o un monitor de 96 ppp (computadora), y se ajusta en la página de Calibración.
+  - En pruebas con pantallas de iPad de 10", tableta Android de 10" e iPad mini, las opciones midieron de 2.97 a 4 cm.
+- **Sin destellos (RNF-05).**
+  - No hay animaciones en bucle ni parpadeos.
+  - Las únicas transiciones (el marco de retroalimentación y el botón de pausa) duran de 200 a 300 ms y se desactivan con `prefers-reduced-motion`.
+  - Las opciones aparecen sin transición, para que el cuadro registrado como aparición sea el real.
+- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. Las excepciones son los marcadores provisionales, que muestran el nombre del concepto hasta que lleguen las fotografías, y el código del ítem en modo experto.
+- **Retroalimentación.** Sin sonidos de error, sin la palabra «Incorrecto» y sin recompensas que dependan del desempeño: siempre se señala la opción correcta con el mismo marco.
+- **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
+- **Volumen.** Se ajusta en el inicio y en la pausa.
+
+## Publicación en GitHub Pages
+
+El prototipo es un sitio estático; no necesita compilación.
+
+1. Sube la rama `main` al repositorio de GitHub.
+2. En GitHub, abre **Settings → Pages**.
+3. En **Build and deployment**, elige **Source: Deploy from a branch**, la rama `main` y la carpeta `/ (root)`. Guarda.
+4. Después de uno o dos minutos, el sitio queda en `https://<usuario>.github.io/<repositorio>/`. Para este repositorio: `https://nazariegosantomeluis-droid.github.io/Neuro-BlueMinds-prototipo-1/`.
+5. Comparte con el panel el enlace directo a la galería: `…/Neuro-BlueMinds-prototipo-1/#galeria`.
+
+Notas:
+
+- Todas las rutas son relativas, así que el sitio funciona dentro de la subcarpeta del repositorio.
+- El registro se guarda en el navegador de cada dispositivo. Descárgalo antes de borrar los datos del navegador.
+- Después de publicar cambios, el navegador puede mostrar la versión anterior por unos minutos. Recarga la página sin caché para ver la nueva.
+
+## Pendientes
+
+- **Fotografías:** reemplazar los 180 marcadores por fotografías reales con licencia libre.
+- **Audio:** grabar los audios de las consignas (63 claves, ver `npm run check-items`).
+- **Revisión clínica:**
+  - las fichas (`revisionClinica`);
+  - los distractores de B4;
+  - el color típico de ACT-01 B1;
+  - los conceptos `short` y `camión`.
+- **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
+- **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
+- **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
+- **Uso sin conexión:** no está implementado (era opcional en este hito).
 
 ## Autoría y licencia
 

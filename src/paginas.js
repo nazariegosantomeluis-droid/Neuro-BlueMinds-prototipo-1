@@ -6,7 +6,7 @@ export const esc = (s) =>
 
 export const navHTML = (actual) => `
   <nav class="nav">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['creditos', 'Créditos y licencias']]
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;
@@ -141,6 +141,71 @@ function secuenciaHTML(it, pareja) {
       </ol>
       ${motivosHTML(it)}
     </article>`;
+}
+
+// ---------- Calibración ----------
+
+// Regla de 5 cm dibujada con --cm. El adulto la compara con una regla física y ajusta
+// los px por centímetro; el valor se guarda solo en este dispositivo.
+export function renderCalibracion(app, { estimated, saved, preview, save, reset }) {
+  let px = saved ?? estimated;
+  app.innerHTML = `
+    <div class="adulto">
+      ${navHTML('calibracion')}
+      <h1>Calibración</h1>
+      ${AVISO}
+      <div class="panel">
+        <p>En las tabletas, un centímetro de la pantalla no mide un centímetro real. Pon una regla física sobre la regla de abajo y ajusta hasta que las marcas de 0 y 5 cm coincidan. El ajuste se guarda solo en este dispositivo y se usa para el tamaño de las opciones.</p>
+        <div class="regla" role="img" aria-label="Regla de 5 centímetros">
+          ${[0, 1, 2, 3, 4, 5].map((i) => `<span style="left: calc(var(--cm) * ${i})">${i}</span>`).join('')}
+        </div>
+        <label>Ajuste fino <input type="range" min="20" max="120" step="0.1" value="${px}" id="cm-ajuste"></label>
+        <div class="acciones">
+          <button type="button" data-paso="-0.1">− 0.1</button>
+          <button type="button" data-paso="0.1">+ 0.1</button>
+        </div>
+        <p class="meta" id="cm-valor"></p>
+        <div class="acciones">
+          <button type="button" class="primario" id="cm-guardar">Guardar</button>
+          <button type="button" id="cm-estimado">Volver al valor estimado</button>
+        </div>
+        <p class="meta" id="cm-estado" role="status"></p>
+      </div>
+      <div class="panel">
+        <h2>Tamaño mínimo de las opciones</h2>
+        <p>Cada opción mide al menos 2 cm de lado y hay al menos 0.5 cm entre opciones. Con la pantalla calibrada, estos dos cuadros miden 2 cm y están separados por 0.5 cm.</p>
+        <div class="muestra-minima"><span></span><span></span></div>
+      </div>
+    </div>`;
+
+  const ajuste = app.querySelector('#cm-ajuste');
+  const estado = app.querySelector('#cm-estado');
+  const show = () => {
+    app.querySelector('#cm-valor').textContent =
+      `${px.toFixed(1)} px por centímetro · valor estimado para este dispositivo: ${estimated.toFixed(1)}` + (saved ? ' · hay un valor guardado' : '');
+  };
+  const set = (v) => {
+    px = Math.min(120, Math.max(20, Math.round(v * 10) / 10));
+    ajuste.value = px;
+    preview(px);
+    estado.textContent = '';
+    show();
+  };
+  ajuste.oninput = () => set(Number(ajuste.value));
+  for (const b of app.querySelectorAll('[data-paso]')) b.onclick = () => set(px + Number(b.dataset.paso));
+  app.querySelector('#cm-guardar').onclick = () => {
+    save(px);
+    saved = px;
+    show();
+    estado.textContent = 'Calibración guardada en este dispositivo.';
+  };
+  app.querySelector('#cm-estimado').onclick = () => {
+    reset();
+    saved = null;
+    set(estimated);
+    estado.textContent = 'Se usa el valor estimado.';
+  };
+  show();
 }
 
 // ---------- Créditos ----------

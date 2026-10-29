@@ -263,6 +263,40 @@ blockquote {
   margin: 0.5rem 0 0;
 }
 
+/* ---------- Calibración ---------- */
+
+/* Regla de 5 cm: marcas cada milímetro y cada centímetro. El ancho suma 2 px para dibujar la marca de 5 cm. */
+.regla {
+  position: relative;
+  width: calc(var(--cm) * 5 + 2px);
+  height: calc(var(--cm) * 1.4);
+  margin: 0.5rem 0 0 0.75rem;
+  background:
+    repeating-linear-gradient(to right, var(--texto) 0 1px, transparent 1px calc(var(--cm) / 10)) bottom / 100% 25% no-repeat,
+    repeating-linear-gradient(to right, var(--texto) 0 2px, transparent 2px var(--cm)) bottom / 100% 60% no-repeat,
+    var(--fondo);
+}
+
+.regla span {
+  position: absolute;
+  top: 0.1rem;
+  transform: translateX(-50%);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.muestra-minima {
+  display: flex;
+  gap: calc(var(--cm) * 0.5);
+}
+
+.muestra-minima span {
+  width: calc(var(--cm) * 2);
+  height: calc(var(--cm) * 2);
+  background: var(--opcion-fondo);
+  outline: 1px solid var(--borde);
+}
+
 /* ---------- Galería ---------- */
 
 .adulto.ancho {
@@ -465,7 +499,8 @@ blockquote {
   overflow: hidden;
 }
 
-/* Cada opción mide entre 2 y 4 cm de lado y hay 1 cm entre opciones (RNF-04: mínimo 2 cm y 0.5 cm). */
+/* Cada opción mide entre 2 y 4 cm de lado y hay al menos 1 cm entre opciones (RNF-04: mínimo 2 cm
+   y 0.5 cm). Cabe en el ancho de la pantalla y en la mitad inferior, con 1 cm de margen vertical. */
 .opciones {
   grid-row: 2;
   display: grid;
@@ -473,7 +508,7 @@ blockquote {
     calc(var(--cm) * 2),
     min(
       calc((100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas)),
-      calc((50vh - var(--separacion) * (var(--filas) + 1)) / var(--filas))
+      calc((50vh - var(--cm) * (var(--filas) + 1)) / var(--filas))
     ),
     calc(var(--cm) * 4)
   );
