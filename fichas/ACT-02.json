@@ -1,0 +1,75 @@
+{
+  "id": "ACT-02",
+  "version": "0.1.0",
+  "nombre": "Pictograma e imagen",
+  "objetivo": "Registrar si el niño relaciona el pictograma de un concepto cotidiano con la fotografía de un ejemplar real de ese concepto.",
+  "paradigma": "Igualación a la muestra simbólica (pictograma y fotografía), con muestra simultánea: el pictograma sigue visible mientras aparecen las fotografías.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "seleccion",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "descripcion": "2 opciones. El distractor es de otra categoría.",
+      "distractoresMismaCategoria": 0,
+      "parecidoVisual": false
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "descripcion": "3 opciones. Los distractores son de otras categorías.",
+      "distractoresMismaCategoria": 0,
+      "parecidoVisual": false
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "descripcion": "4 opciones. Un distractor es de la misma categoría.",
+      "distractoresMismaCategoria": 1,
+      "parecidoVisual": false
+    },
+    {
+      "id": "B4",
+      "opciones": 4,
+      "descripcion": "4 opciones. Dos distractores son de la misma categoría y de aspecto parecido; el generador los propone y un clínico los confirma.",
+      "distractoresMismaCategoria": 2,
+      "parecidoVisual": true
+    }
+  ],
+  "modalidades": ["V", "AV"],
+  "ensayosPorBloque": 30,
+  "itemsPorBanda": 60,
+  "repetirItems": false,
+  "muestraExpertosPorBanda": 10,
+  "ejemplaresPractica": [1, 2],
+  "ejemplarGeneralizacion": 3,
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": {
+    "singular": "¿Dónde está {concepto}?",
+    "plural": "¿Dónde están {concepto}?"
+  },
+  "resumen": "Tocó la fotografía que corresponde al pictograma en {aciertos} de {ensayos} ensayos.",
+  "lecturasPermitidas": [
+    "En cuántos ensayos tocó la fotografía que corresponde al pictograma.",
+    "Qué conceptos tuvieron otra elección o ninguna respuesta, como lista descriptiva para la observación clínica.",
+    "Mediana del tiempo de respuesta, medido desde que aparecen las fotografías.",
+    "Diferencias descriptivas entre las modalidades V y AV, sin interpretarlas como preferencia ni estilo."
+  ],
+  "lecturasNoPermitidas": [
+    "Estimaciones de vocabulario o de nivel de lenguaje, como «su vocabulario es…».",
+    "Concluir que el niño «no conoce» un concepto a partir de un solo ensayo.",
+    "Afirmaciones sobre su estilo de aprendizaje, como «aprende mejor de forma visual».",
+    "Cualquier diagnóstico, nivel de desarrollo, edad mental o puntaje del niño.",
+    "Comparaciones con otros niños o con normas por edad."
+  ],
+  "contraindicaciones": [
+    "Si el niño muestra malestar, llanto o intenta retirarse, pausar y no insistir.",
+    "Epilepsia fotosensible o sensibilidad conocida a pantallas: consultar con su equipo de salud antes de usar la actividad.",
+    "Si el niño no puede tocar con precisión un área de 2 cm, los tiempos de respuesta no son interpretables.",
+    "Visión no corregida que impida distinguir las imágenes."
+  ],
+  "revisionClinica": { "revisor": "", "fecha": "" }
+}
