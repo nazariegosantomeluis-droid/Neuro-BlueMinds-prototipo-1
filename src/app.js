@@ -10,7 +10,7 @@ import { summarize } from './engine/quality.js';
 import { createSeleccionView } from './activities/seleccion.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha.
-const ACTIVIDADES = ['ACT-01'];
+const ACTIVIDADES = ['ACT-01', 'ACT-02'];
 const PANTALLAS = { seleccion: createSeleccionView };
 const PICTO_FIN = 'assets/picto/terminar.png';
 const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
@@ -251,10 +251,14 @@ async function start(form) {
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
   const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === f.banda);
-  let trials;
+  let picked;
   try {
-    const picked = pickItems(bandItems, n, rng(seedOf(`${s.id}:${s.bloque + 1}`)), { repeat, exclude: repeat ? new Set() : usados });
-    trials = picked.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones, clave: itemKey(it) }));
+    picked = pickItems(bandItems, n, rng(seedOf(`${s.id}:${s.bloque + 1}`)), { repeat, exclude: repeat ? new Set() : usados });
+  } catch (e) {
+    return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
+  }
+  const trials = picked.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones, clave: itemKey(it) }));
+  try {
     await preloadImages([PICTO_FIN, ...trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src)])]);
   } catch (e) {
     return renderInicio(e.message);

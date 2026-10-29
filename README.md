@@ -204,7 +204,7 @@ Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se
 - [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos y de las reglas de bandas de las fichas. El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos o las fichas y se regenera.
 - Códigos: `ACT01-B2-05` significa actividad, banda y número.
   - ACT-01 tiene 10 ítems por banda.
-  - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Una sesión de ACT-02 usa 30 conceptos distintos, sin repetir.
+  - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Un bloque de ACT-02 usa 30 conceptos distintos, elegidos al azar. En una misma sesión ningún concepto se repite, aunque cambie la banda: con 60 conceptos caben dos bloques de 30.
 - `muestraExpertos`: en ACT-02, 10 ítems por banda, cerca de 2 por categoría y con las dos mitades representadas. Es la muestra que revisa el panel.
 - `revisionPendiente` y `motivosRevision` marcan lo que un clínico debe confirmar:
   - los distractores «de aspecto parecido» de B4;
