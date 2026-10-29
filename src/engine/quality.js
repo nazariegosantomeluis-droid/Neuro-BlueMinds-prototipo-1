@@ -10,7 +10,8 @@ export function derive(r) {
   const foco = r.perdida_foco ? 0 : 1;
   const aTiempo = r.cuadros_total > 0 ? (r.cuadros_total - r.cuadros_perdidos) / r.cuadros_total : 1;
   const plausibilidad = anticipatoria ? 0 : 1;
-  return { tr_bruto_ms: tr, anticipatoria, peso_calidad: foco * aTiempo * plausibilidad };
+  const tecnico = r.fallo_tecnico ? 0 : 1; // el audio de la consigna AV no arrancó o falló
+  return { tr_bruto_ms: tr, anticipatoria, peso_calidad: foco * aTiempo * plausibilidad * tecnico };
 }
 
 export function median(xs) {

@@ -2,8 +2,9 @@
   "id": "ACT-07",
   "version": "0.1.0",
   "nombre": "Cambia la regla",
-  "objetivo": "Registrar si el niño toca la caja que corresponde a la regla indicada (color o forma), cuando la regla se mantiene y cuando cambia.",
-  "paradigma": "Clasificación de tarjetas con cambio de dimensión, inspirada en el Dimensional Change Card Sort (Zelazo, 2006), con la regla indicada por un símbolo en cada ensayo.",
+  "objetivo": "Describir el desempeño al clasificar por un criterio y al cambiar de criterio, y el costo de ese cambio.",
+  "paradigma": "Clasificación por dimensiones con cambio de regla, del tipo de la tarea de cambio dimensional de tarjetas (Zelazo, 2006).",
+  "fases": "1, 2, 3 y cierre; 30 ensayos.",
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "cambia-regla",
   "barajarOpciones": false,
@@ -11,12 +12,14 @@
     {
       "id": "B1",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "Una sola regla durante todo el bloque (color o forma, sorteada al iniciar).",
       "cambio": "ninguno"
     },
     {
       "id": "B2",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "15 ensayos con una regla y 15 con la otra. El cambio se anuncia con una pantalla breve que muestra el nuevo símbolo.",
       "cambio": "mitad",
       "anunciarCambio": true
@@ -24,6 +27,7 @@
     {
       "id": "B3",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "Reglas mezcladas, indicadas en cada ensayo. La regla cambia en cerca del 30 % de los ensayos.",
       "cambio": "mezclado",
       "proporcionCambio": 0.3
@@ -31,6 +35,7 @@
     {
       "id": "B4",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "Reglas mezcladas, indicadas en cada ensayo. La regla cambia en cerca del 50 % de los ensayos.",
       "cambio": "mezclado",
       "proporcionCambio": 0.5
@@ -57,24 +62,18 @@
     "color": "Por color",
     "forma": "Por forma"
   },
-  "resumen": "Tocó la caja que corresponde a la regla indicada en {aciertos} de {ensayos} ensayos.",
+  "resumen": "Tocó la caja de la regla indicada en {aciertos} de {ensayos} ensayos",
   "lecturasPermitidas": [
-    "En cuántos ensayos tocó la caja que corresponde a la regla indicada.",
-    "En B2, cuántos aciertos hubo antes y después del cambio de regla, por separado.",
-    "En B3 y B4, cuántos aciertos hubo en ensayos con cambio de regla y en ensayos sin cambio, por separado.",
-    "Número de ensayos sin respuesta y mediana del tiempo de respuesta."
+    "Cometió más errores en los ensayos en que cambió la regla que en los que se repitió",
+    "Tardó en promedio 300 ms más al cambiar de regla"
   ],
   "lecturasNoPermitidas": [
-    "Calificar al niño como «rígido», «inflexible» o con «déficit ejecutivo» a partir de esta actividad.",
-    "Cualquier diagnóstico, nivel de desarrollo, edad mental o puntaje del niño.",
-    "Afirmaciones sobre su estilo de aprendizaje, como «aprende mejor de forma visual».",
-    "Comparaciones con otros niños o con normas por edad."
+    "Tiene rigidez cognitiva",
+    "Su función ejecutiva está alterada"
   ],
   "contraindicaciones": [
-    "Si el niño muestra malestar, llanto o intenta retirarse, pausar y no insistir.",
-    "Epilepsia fotosensible o sensibilidad conocida a pantallas: consultar con su equipo de salud antes de usar la actividad.",
-    "Dificultad conocida para distinguir el azul del amarillo: la regla por color no es interpretable.",
-    "Si el niño no puede tocar con precisión un área de 2 cm, los tiempos de respuesta no son interpretables."
+    "Discapacidad visual no corregida.",
+    "Si el niño no supera la banda B1, se mantiene en ella y no se calcula ICS."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }

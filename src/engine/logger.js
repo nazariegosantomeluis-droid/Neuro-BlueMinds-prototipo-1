@@ -8,13 +8,13 @@ export const VERSION_APP = '0.1.0';
 export const COLUMNS = [
   'sesion_id', 'bloque', 'ensayo', 'codigo_nino', 'dispositivo', 'version_app',
   'actividad', 'version_ficha', 'item', 'banda', 'modalidad',
-  'n_opciones', 'pos_correcta', 'pos_distractores',
+  'n_opciones', 'disposicion', 'pos_correcta', 'pos_distractores',
   't_consigna_inicio', 't_consigna_fin',
   't_audio_inicio', 't_audio_fin', 'audio_fuente', 'audio_latencia_ms', 'audio_fin_por_tope',
   't_opciones_insercion', 't_opciones', 't_toque', 't_retro_inicio', 't_retro_fin',
   'opcion_elegida', 'acierto', 'omision',
   'toques_fuera', 'toques_repetidos', 'perdida_foco', 'cuadros_perdidos', 'cuadros_total',
-  'interrumpido', 'tr_bruto_ms', 'anticipatoria', 'peso_calidad',
+  'interrumpido', 'fallo_tecnico', 'tr_bruto_ms', 'anticipatoria', 'peso_calidad',
 ];
 
 const KEY = 'neuro-blueminds.registro';

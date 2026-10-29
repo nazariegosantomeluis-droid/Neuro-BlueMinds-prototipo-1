@@ -2,14 +2,16 @@
   "id": "ACT-02",
   "version": "0.1.0",
   "nombre": "Pictograma e imagen",
-  "objetivo": "Registrar si el niño relaciona el pictograma de un concepto cotidiano con la fotografía de un ejemplar real de ese concepto.",
-  "paradigma": "Igualación a la muestra simbólica (pictograma y fotografía), con muestra simultánea: el pictograma sigue visible mientras aparecen las fotografías.",
+  "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
+  "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
+  "fases": "1, 2, 3 y cierre; 30 ensayos (en la fase 2, 15 en V y 15 en AV).",
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "seleccion",
   "bandas": [
     {
       "id": "B1",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "2 opciones. El distractor es de otra categoría.",
       "distractoresMismaCategoria": 0,
       "parecidoVisual": false
@@ -17,6 +19,7 @@
     {
       "id": "B2",
       "opciones": 3,
+      "disposicion": "1x3",
       "descripcion": "3 opciones. Los distractores son de otras categorías.",
       "distractoresMismaCategoria": 0,
       "parecidoVisual": false
@@ -24,6 +27,7 @@
     {
       "id": "B3",
       "opciones": 4,
+      "disposicion": "1x4",
       "descripcion": "4 opciones. Un distractor es de la misma categoría.",
       "distractoresMismaCategoria": 1,
       "parecidoVisual": false
@@ -31,6 +35,7 @@
     {
       "id": "B4",
       "opciones": 4,
+      "disposicion": "1x4",
       "descripcion": "4 opciones. Dos distractores son de la misma categoría y de aspecto parecido; el generador los propone y un clínico los confirma.",
       "distractoresMismaCategoria": 2,
       "parecidoVisual": true
@@ -51,25 +56,20 @@
     "singular": "¿Dónde está {concepto}?",
     "plural": "¿Dónde están {concepto}?"
   },
-  "resumen": "Tocó la fotografía que corresponde al pictograma en {aciertos} de {ensayos} ensayos.",
+  "resumen": "Hoy identificó {aciertos} de {ensayos} conceptos",
   "lecturasPermitidas": [
-    "En cuántos ensayos tocó la fotografía que corresponde al pictograma.",
-    "Qué conceptos tuvieron otra elección o ninguna respuesta, como lista descriptiva para la observación clínica.",
-    "Mediana del tiempo de respuesta, medido desde que aparecen las fotografías.",
-    "Diferencias descriptivas entre las modalidades V y AV, sin interpretarlas como preferencia ni estilo."
+    "Hoy identificó 23 de 30 conceptos; en su línea base, entre 18 y 22",
+    "Alcanzó el criterio de dominio en 4 conceptos nuevos",
+    "No hubo diferencia entre la consigna con y sin voz"
   ],
   "lecturasNoPermitidas": [
-    "Estimaciones de vocabulario o de nivel de lenguaje, como «su vocabulario es…».",
-    "Concluir que el niño «no conoce» un concepto a partir de un solo ensayo.",
-    "Afirmaciones sobre su estilo de aprendizaje, como «aprende mejor de forma visual».",
-    "Cualquier diagnóstico, nivel de desarrollo, edad mental o puntaje del niño.",
-    "Comparaciones con otros niños o con normas por edad."
+    "Su vocabulario receptivo es de 40 palabras",
+    "Comprende el lenguaje",
+    "Aprende mejor de forma visual"
   ],
   "contraindicaciones": [
-    "Si el niño muestra malestar, llanto o intenta retirarse, pausar y no insistir.",
-    "Epilepsia fotosensible o sensibilidad conocida a pantallas: consultar con su equipo de salud antes de usar la actividad.",
-    "Si el niño no puede tocar con precisión un área de 2 cm, los tiempos de respuesta no son interpretables.",
-    "Visión no corregida que impida distinguir las imágenes."
+    "Discapacidad visual o auditiva no corregida.",
+    "Con hipersensibilidad auditiva, la modalidad AV se usa a volumen bajo; si el niño no la tolera, se usa solo V y el niño no entra en el análisis de H4."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }

@@ -2,14 +2,16 @@
   "id": "ACT-01",
   "version": "0.1.0",
   "nombre": "Igual a la muestra",
-  "objetivo": "Familiarizar al niño con la dinámica de los ensayos (mirar la muestra y tocar una opción) y registrar si toca la imagen idéntica a la muestra.",
-  "paradigma": "Igualación a la muestra por identidad, con muestra simultánea: la muestra sigue visible mientras aparecen las opciones.",
+  "objetivo": "Familiarizar al niño con la estructura del ensayo (consigna, opciones, toque, retroalimentación) con la mínima demanda de lenguaje.",
+  "paradigma": "Emparejamiento con la muestra por identidad.",
+  "fases": "familiarización; 10 ensayos.",
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "seleccion",
   "bandas": [
     {
       "id": "B1",
       "opciones": 2,
+      "disposicion": "1x2",
       "descripcion": "2 opciones. El distractor es de otra categoría y de otro color.",
       "distractoresMismaCategoria": 0,
       "distractorOtroColor": true
@@ -17,6 +19,7 @@
     {
       "id": "B2",
       "opciones": 3,
+      "disposicion": "1x3",
       "descripcion": "3 opciones. Los distractores son de otras categorías.",
       "distractoresMismaCategoria": 0,
       "distractorOtroColor": false
@@ -24,6 +27,7 @@
     {
       "id": "B3",
       "opciones": 4,
+      "disposicion": "1x4",
       "descripcion": "4 opciones. Un distractor es de la misma categoría que la muestra.",
       "distractoresMismaCategoria": 1,
       "distractorOtroColor": false
@@ -39,24 +43,15 @@
   "consignaVMs": 1500,
   "retroalimentacionMs": 1000,
   "consignaAV": "¿Cuál es igual?",
-  "resumen": "Emparejó imágenes iguales en {aciertos} de {ensayos} ensayos.",
+  "resumen": "Emparejó imágenes iguales en {aciertos} de {ensayos} ensayos",
   "lecturasPermitidas": [
-    "En cuántos ensayos tocó la imagen idéntica a la muestra.",
-    "En cuántos ensayos no tocó ninguna opción antes de 10 segundos.",
-    "Mediana del tiempo de respuesta, medido desde que aparecen las opciones.",
-    "Si el niño pudo usar la pantalla táctil para responder en esta sesión."
+    "Emparejó imágenes iguales en 9 de 10 ensayos"
   ],
   "lecturasNoPermitidas": [
-    "Cualquier diagnóstico, nivel de desarrollo, edad mental o puntaje del niño.",
-    "Afirmaciones sobre su estilo de aprendizaje, como «aprende mejor de forma visual».",
-    "Comparaciones con otros niños o con normas por edad.",
-    "Atribuir un error o una omisión a falta de capacidad; puede deberse a la atención, el interés, el cansancio, el dispositivo u otras causas."
+    "Su percepción visual es normal"
   ],
   "contraindicaciones": [
-    "Si el niño muestra malestar, llanto o intenta retirarse, pausar y no insistir.",
-    "Epilepsia fotosensible o sensibilidad conocida a pantallas: consultar con su equipo de salud antes de usar la actividad.",
-    "Si el niño no puede tocar con precisión un área de 2 cm, los tiempos de respuesta no son interpretables.",
-    "Visión no corregida que impida distinguir las imágenes."
+    "Discapacidad visual no corregida."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }

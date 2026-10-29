@@ -1,3 +1,5 @@
 * text=auto eol=lf
+# Igual, byte por byte, a lo que descarga la aplicación (BOM y fin de línea CRLF).
+docs/ejemplo-registro.csv -text
 *.png binary
 *.mp3 binary

@@ -35,6 +35,13 @@ export function validateFicha(f) {
         if (!isText(b?.id)) errors.push(`La banda ${name} no tiene «id».`);
         if (!Number.isInteger(b?.opciones) || b.opciones < 2) errors.push(`La banda ${name} debe tener «opciones» (2 o más).`);
         if (!isText(b?.descripcion)) errors.push(`La banda ${name} no tiene «descripcion».`);
+        // Opcional: filas x columnas, por ejemplo "1x4" o "2x2".
+        if (b?.disposicion !== undefined) {
+          const m = /^(\d+)x(\d+)$/.exec(b.disposicion);
+          if (!m || m[1] * m[2] !== b.opciones) {
+            errors.push(`La banda ${name}: «disposicion» debe ser filas x columnas con ${b.opciones} posiciones (por ejemplo "1x${b.opciones}").`);
+          }
+        }
       });
     }
   }

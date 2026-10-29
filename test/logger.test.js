@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createLog, toCSV, toJSON, COLUMNS } from '../src/engine/logger.js';
 import { derive } from '../src/engine/quality.js';
 
@@ -11,13 +12,19 @@ const memoryStorage = () => {
 test('el registro tiene todas las columnas en el orden acordado', () => {
   assert.deepEqual(COLUMNS, [
     'sesion_id', 'bloque', 'ensayo', 'codigo_nino', 'dispositivo', 'version_app', 'actividad',
-    'version_ficha', 'item', 'banda', 'modalidad', 'n_opciones', 'pos_correcta', 'pos_distractores',
+    'version_ficha', 'item', 'banda', 'modalidad', 'n_opciones', 'disposicion', 'pos_correcta', 'pos_distractores',
     't_consigna_inicio', 't_consigna_fin', 't_audio_inicio', 't_audio_fin', 'audio_fuente',
     'audio_latencia_ms', 'audio_fin_por_tope',
     't_opciones_insercion', 't_opciones', 't_toque', 't_retro_inicio', 't_retro_fin',
     'opcion_elegida', 'acierto', 'omision', 'toques_fuera', 'toques_repetidos', 'perdida_foco',
-    'cuadros_perdidos', 'cuadros_total', 'interrumpido', 'tr_bruto_ms', 'anticipatoria', 'peso_calidad',
+    'cuadros_perdidos', 'cuadros_total', 'interrumpido', 'fallo_tecnico', 'tr_bruto_ms', 'anticipatoria',
+    'peso_calidad',
   ]);
+});
+
+test('el registro de ejemplo de docs/ tiene las columnas actuales', () => {
+  const csv = readFileSync(new URL('../docs/ejemplo-registro.csv', import.meta.url), 'utf8');
+  assert.equal(csv.replace('﻿', '').split('\r\n')[0], COLUMNS.join(','));
 });
 
 test('el registro nunca guarda nombre, fecha de nacimiento ni otros datos que identifiquen', () => {
@@ -72,6 +79,7 @@ test('peso_calidad = foco × cuadros a tiempo × plausibilidad', () => {
   assert.equal(derive({ ...base, t_toque: 1149 }).peso_calidad, 0);
   assert.equal(derive({ ...base, t_toque: 1800, cuadros_perdidos: 25 }).peso_calidad, 0.75);
   assert.equal(derive({ ...base, t_toque: 1800, perdida_foco: true }).peso_calidad, 0);
+  assert.equal(derive({ ...base, t_toque: 1800, fallo_tecnico: true }).peso_calidad, 0);
   const omision = derive({ ...base, t_toque: null });
   assert.equal(omision.tr_bruto_ms, null);
   assert.equal(omision.anticipatoria, false);
