@@ -29,9 +29,12 @@ export function checkItems(root = DEFAULT_ROOT) {
   const used = new Set();
 
   for (const it of items) {
-    for (const src of [it.consigna?.src, ...it.opciones.map((o) => o.src)]) if (src) used.add(src);
-    if (it.consigna?.audio) {
-      const audio = `assets/audio/${it.consigna.audio}.mp3`;
+    // ACT-07 no usa archivos de imagen: sus figuras se dibujan; cada ensayo tiene su consigna de voz.
+    const consignas = it.ensayos ? it.ensayos.map((e) => e.consigna) : [it.consigna];
+    for (const src of [it.consigna?.src, ...(it.opciones ?? []).map((o) => o.src)]) if (src) used.add(src);
+    for (const c of consignas) {
+      if (!c?.audio) continue;
+      const audio = `assets/audio/${c.audio}.mp3`;
       if (exists(audio)) used.add(audio);
       else missingAudio.add(audio);
     }

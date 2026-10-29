@@ -21,7 +21,8 @@ const FAIL = Symbol('fallo');
  * Crea un ensayo.
  * env: reloj y temporizadores (browserEnv en clock.js; en las pruebas, simEnv).
  *   env.audio.play(clave, texto) → Promise<{ tInicio, fuente, latenciaMs, fin: Promise<t>, stop() } | null>
- * view: clear(), showPrompt(consigna), showOptions(opciones, disposicion), showFeedback(posCorrecta).
+ * view: clear(), showPrompt(consigna), showOptions(opciones, disposicion), showFeedback(posCorrecta)
+ *   y, si la actividad anuncia cambios, showAnnouncement(anuncio).
  * La vista llama a pointer({ t, x, y, pos }) en cada pointerdown: pos es la posición
  * de la opción tocada (por filas, desde 1), o null si el toque cayó fuera de las opciones.
  */
@@ -196,7 +197,9 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
 
 /**
  * Ejecuta un bloque de ensayos y guarda un registro por ensayo.
- * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }] }]
+ * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }], anuncio? }]
+ *   anuncio: antes de ese ensayo se muestra una pantalla breve (ficha.anuncioMs), por
+ *   ejemplo el nuevo símbolo cuando cambia la regla. No produce registro.
  * base: campos de la sesión (sesion_id, bloque, codigo_nino, dispositivo, banda, version_app).
  * onPause(): lo llama después de un ensayo pausado; devuelve 'continuar' o 'terminar'.
  * En AV, si el dispositivo no tiene audio, el bloque no empieza (done falla con NO_AUDIO_MSG).
@@ -206,16 +209,27 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
   let reason = null;
   const banda = ficha.bandas.find((b) => b.id === base.banda);
 
+  // Atiende una pausa pedida durante el ensayo o entre ensayos. true si hay que terminar el bloque.
+  async function paused() {
+    const pedida = reason === 'pausa';
+    reason = null;
+    return pedida && (await onPause()) === 'terminar';
+  }
+
   const done = (async () => {
     const keys = trials.map((t) => t.consigna?.audio).filter(Boolean);
     if (modalidad === 'AV' && !(await env.audio?.available?.(keys))) throw new Error(NO_AUDIO_MSG);
     const rows = [];
     for (let i = 0; i < trials.length; i++) {
       const t = trials[i];
+      if (t.anuncio) {
+        view.showAnnouncement(t.anuncio);
+        await env.sleep(ficha.anuncioMs);
+      }
+      if (await paused()) break;
       const opciones = ficha.barajarOpciones === false ? t.opciones : shuffle(t.opciones, rand);
       const posCorrecta = opciones.findIndex((o) => o.correcta) + 1;
       const disposicion = banda?.disposicion ?? `1x${opciones.length}`;
-      reason = null;
       current = createTrial({ ficha, modalidad, consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState });
       const measured = await current.run();
       rows.push(
@@ -234,7 +248,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
         }),
       );
       // El ensayo pausado no se repite: al continuar sigue el siguiente.
-      if (reason === 'pausa' && (await onPause()) === 'terminar') break;
+      if (await paused()) break;
     }
     current = null;
     return rows;

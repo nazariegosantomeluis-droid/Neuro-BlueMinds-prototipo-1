@@ -7,6 +7,8 @@ const inputs = loadInputs();
 const { conceptos, categorias, fichas } = inputs;
 const { items } = JSON.parse(readFileSync(new URL('../items/items.json', import.meta.url), 'utf8'));
 const byId = new Map(conceptos.map((c) => [c.id, c]));
+// ACT-01 y ACT-02: ítems con opciones de imagen (ACT-07 tiene secuencias; ver act07.test.js).
+const conOpciones = items.filter((i) => i.opciones);
 const of = (actividad, banda) => items.filter((i) => i.actividad === actividad && (!banda || i.banda === banda));
 const concepts = (it) => it.opciones.map((o) => byId.get(o.concepto));
 
@@ -74,7 +76,7 @@ test('las bandas respetan las reglas de categoría y de color', () => {
 
 test('ningún par excluido por las notas aparece en la misma pantalla', () => {
   const notas = [['pollito', 'gallina'], ['vaso', 'taza'], ['leche', 'agua']];
-  for (const it of items) {
+  for (const it of conOpciones) {
     const cs = concepts(it);
     for (const a of cs) for (const b of cs) assert.ok(!a.excluir.includes(b.id), `${it.codigo}: ${a.id} con ${b.id}`);
     const ids = cs.map((c) => c.id);
@@ -120,7 +122,7 @@ test('muestra para expertos: 10 por banda, 1 o 2 por categoría y ambas mitades 
 
 test('B4 y los conceptos pendientes quedan marcados para revisión clínica', () => {
   assert.ok(of('ACT-02', 'B4').every((i) => i.revisionPendiente));
-  for (const it of items) {
+  for (const it of conOpciones) {
     const pending = concepts(it).some((c) => c.pendiente);
     if (pending) assert.ok(it.revisionPendiente && it.motivosRevision.length, it.codigo);
     assert.equal(it.revisionPendiente, it.motivosRevision.length > 0, it.codigo);

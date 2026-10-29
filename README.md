@@ -205,6 +205,17 @@ Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se
 - Códigos: `ACT01-B2-05` significa actividad, banda y número.
   - ACT-01 tiene 10 ítems por banda.
   - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Un bloque de ACT-02 usa 30 conceptos distintos, elegidos al azar. En una misma sesión ningún concepto se repite, aunque cambie la banda: con 60 conceptos caben dos bloques de 30.
+  - ACT-07 tiene 10 secuencias de 10 ensayos por banda, generadas con la semilla fija de la ficha (`semilla`). Cada ensayo tiene código propio (`ACT07-B2-04-07`: secuencia 04, ensayo 7) y guarda:
+    - la regla (`color` o `forma`);
+    - la tarjeta: `forma` y `color` dicen con qué caja comparte cada atributo (1 es la izquierda y 2 la derecha);
+    - la caja correcta.
+
+    En cada secuencia la caja correcta no se repite más de 3 veces seguidas y es la correcta en 4 a 6 de los 10 ensayos.
+- Composición de los bloques de ACT-07 (campo `composicion` de cada banda):
+  - B1 usa tres secuencias de una sola regla; la regla se sortea una vez por sesión.
+  - B2 usa una secuencia de la primera regla, una que cambia a la mitad y una de la segunda regla. Así cambia en el ensayo 16, que va precedido por una pantalla breve con el nuevo símbolo.
+  - B3 y B4 usan tres secuencias mezcladas: la regla cambia en cerca del 30 % y del 50 % de los ensayos.
+- Las dos parejas de cajas de ACT-07 alternan entre sesiones del mismo dispositivo. Las cajas no cambian de lugar dentro del bloque, y `pos_distractores` registra cuál era la caja (por ejemplo, `barco-amarillo`).
 - `muestraExpertos`: en ACT-02, 10 ítems por banda, cerca de 2 por categoría y con las dos mitades representadas. Es la muestra que revisa el panel.
 - `revisionPendiente` y `motivosRevision` marcan lo que un clínico debe confirmar:
   - los distractores «de aspecto parecido» de B4;

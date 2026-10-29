@@ -128,6 +128,87 @@ export function buildItems({ conceptos, categorias, fichas, image = imagePath })
       });
     });
   }
+  items.push(...buildRuleSequences(fichas['ACT-07']));
+  return items;
+}
+
+// Caja que corresponde a la tarjeta según la regla. La tarjeta tiene la forma de una caja
+// y el color de la otra: { forma: 1, color: 2 } o { forma: 2, color: 1 }.
+export const cajaCorrecta = (tarjeta, regla) => (regla === 'forma' ? tarjeta.forma : tarjeta.color);
+
+// Racha más larga de valores iguales seguidos.
+export function maxRun(xs) {
+  let best = 0;
+  let run = 0;
+  xs.forEach((x, i) => {
+    run = i && x === xs[i - 1] ? run + 1 : 1;
+    best = Math.max(best, run);
+  });
+  return best;
+}
+
+// ACT-07: secuencias de ensayos predefinidas por banda, con semilla fija.
+// Las cajas no cambian de lugar; la pareja de figuras se elige por sesión en la aplicación.
+export function buildRuleSequences(ficha, semilla = ficha.semilla) {
+  const rand = rng(seedOf(`ACT-07:${semilla}`));
+  const [a, b] = ficha.dimensiones;
+  const n = ficha.ensayosPorSecuencia;
+  const items = [];
+
+  // Reglas de cada tipo de secuencia: una sola regla, cambio a la mitad o mezcladas.
+  function reglas(tipo, proporcion) {
+    if (tipo === 'mezcla') {
+      // Cambios entre ensayos consecutivos: redondeo al azar de proporción × (n − 1), así cada
+      // secuencia queda a menos de 1/(n − 1) de la proporción buscada.
+      const k = Math.floor(proporcion * (n - 1) + rand());
+      const switches = new Set(shuffle([...Array(n - 1).keys()].map((i) => i + 1), rand).slice(0, k));
+      const out = [rand() < 0.5 ? a : b];
+      for (let i = 1; i < n; i++) out.push(switches.has(i) ? (out[i - 1] === a ? b : a) : out[i - 1]);
+      return out;
+    }
+    const [first, second = first] = tipo.split('>');
+    return Array.from({ length: n }, (_, i) => (i < n / 2 ? first : second));
+  }
+
+  // Tarjetas al azar, cuidando que la caja correcta no se repita más de 3 veces seguidas
+  // y que cada caja sea la correcta en 4 a 6 de los 10 ensayos.
+  function tarjetas(rs) {
+    for (;;) {
+      const ts = rs.map(() => (rand() < 0.5 ? { forma: 1, color: 2 } : { forma: 2, color: 1 }));
+      const cajas = rs.map((r, i) => cajaCorrecta(ts[i], r));
+      const izquierda = cajas.filter((c) => c === 1).length;
+      if (maxRun(cajas) <= 3 && Math.abs(izquierda - n / 2) <= 1) return ts;
+    }
+  }
+
+  const TIPOS = {
+    ninguno: () => Array.from({ length: 10 }, (_, i) => (i % 2 ? b : a)),
+    mitad: () => [a, b, a, b, a, b, `${a}>${b}`, `${b}>${a}`, `${a}>${b}`, `${b}>${a}`],
+    mezclado: () => Array(10).fill('mezcla'),
+  };
+  for (const banda of ficha.bandas) {
+    TIPOS[banda.cambio]().slice(0, ficha.itemsPorBanda).forEach((tipo, i) => {
+      const codigo = `ACT07-${banda.id}-${pad(i + 1)}`;
+      const rs = reglas(tipo, banda.proporcionCambio);
+      const ts = tarjetas(rs);
+      items.push({
+        codigo,
+        actividad: ficha.id,
+        banda: banda.id,
+        tipo,
+        ensayos: rs.map((regla, k) => ({
+          codigo: `${codigo}-${pad(k + 1)}`,
+          regla,
+          tarjeta: ts[k],
+          caja: cajaCorrecta(ts[k], regla),
+          consigna: { texto: ficha.consignaAV[regla], audio: slug(ficha.consignaAV[regla]) },
+        })),
+        muestraExpertos: true,
+        revisionPendiente: false,
+        motivosRevision: [],
+      });
+    });
+  }
   return items;
 }
 
@@ -144,7 +225,7 @@ export function placeholderSVG(nombre, n) {
 
 export function loadInputs() {
   const { conceptos, categorias } = readJSON('items/conceptos.json');
-  const fichas = Object.fromEntries(['ACT-01', 'ACT-02'].map((id) => [id, readJSON(`fichas/${id}.json`)]));
+  const fichas = Object.fromEntries(['ACT-01', 'ACT-02', 'ACT-07'].map((id) => [id, readJSON(`fichas/${id}.json`)]));
   return { conceptos, categorias, fichas };
 }
 

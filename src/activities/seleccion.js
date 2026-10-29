@@ -1,7 +1,13 @@
 // Pantalla de selección (ACT-01 y ACT-02): la consigna arriba y las opciones abajo,
 // en la disposición de la banda. Solo dibuja; el motor decide cuándo y registra.
+import { itemKey } from '../engine/selector.js';
+
+// Cada ítem es un ensayo. «clave» sirve para no repetir conceptos en la sesión.
+export const toTrials = (items) =>
+  items.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones, clave: itemKey(it) }));
+
 // images: imágenes ya decodificadas, para que aparezcan en el mismo cuadro en que se insertan.
-export function createSeleccionView(stage, images) {
+export function createView(stage, images) {
   const picture = (src) => {
     const img = images.get(src)?.cloneNode() ?? Object.assign(new Image(), { src });
     img.alt = '';

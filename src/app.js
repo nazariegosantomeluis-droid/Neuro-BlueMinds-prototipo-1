@@ -2,16 +2,18 @@
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
 import { loadFicha } from './engine/ficha.js';
 import { createLog, toCSV, toJSON, download, VERSION_APP } from './engine/logger.js';
-import { pickItems, rng, seedOf, itemKey } from './engine/selector.js';
+import { pickItems, pickComposed, rng, seedOf, shuffle } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, estimateFramePeriod, eventTime } from './engine/clock.js';
 import { createAudio } from './engine/audio.js';
 import { summarize } from './engine/quality.js';
-import { createSeleccionView } from './activities/seleccion.js';
+import * as seleccion from './activities/seleccion.js';
+import * as cambiaRegla from './activities/cambia-regla.js';
 
-// Actividades del inicio y tipo de pantalla que dibuja cada ficha.
-const ACTIVIDADES = ['ACT-01', 'ACT-02'];
-const PANTALLAS = { seleccion: createSeleccionView };
+// Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
+// toTrials (de ítems a ensayos) y createView (cómo se dibuja).
+const ACTIVIDADES = ['ACT-01', 'ACT-02', 'ACT-07'];
+const PANTALLAS = { seleccion, 'cambia-regla': cambiaRegla };
 const PICTO_FIN = 'assets/picto/terminar.png';
 const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 
@@ -65,7 +67,16 @@ function applyCm() {
 
 const randomHex = () =>
   [...crypto.getRandomValues(new Uint8Array(4))].map((b) => b.toString(16).padStart(2, '0')).join('');
-const newSession = (codigo) => ({ id: `S-${randomHex()}`, codigo, bloque: 0, usados: {} });
+// numero: sesiones iniciadas en este dispositivo; con él alternan las parejas de cajas de ACT-07.
+// orden: por actividad, el orden de las dimensiones (por ejemplo, color y después forma).
+const newSession = (codigo) => ({
+  id: `S-${randomHex()}`,
+  codigo,
+  bloque: 0,
+  numero: Number(prefs.get('nbm.sesiones', '0')),
+  usados: {},
+  orden: {},
+});
 const dispositivo = () => `${navigator.userAgent} | ${screen.width}x${screen.height} @${devicePixelRatio}x`;
 const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 
@@ -155,7 +166,7 @@ function camposHTML(ficha, f) {
       <span class="ayuda" id="banda-ayuda">${esc(banda.descripcion)}</span>
     </label>
     <label>Número de ensayos
-      <input type="number" name="ensayos" min="1" max="200" inputmode="numeric" value="${esc(f.ensayos ?? ficha.ensayosPorBloque)}">
+      <input type="number" name="ensayos" min="1" max="${maxEnsayos(ficha, banda)}" inputmode="numeric" value="${esc(f.ensayos ?? ficha.ensayosPorBloque)}">
     </label>
     ${
       s
@@ -170,6 +181,9 @@ function camposHTML(ficha, f) {
       <input type="range" min="0" max="100" value="${volumen()}" data-volumen>
     </label>`;
 }
+
+// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias.
+const maxEnsayos = (ficha, banda) => (banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : 200);
 
 function bindVolumen(root) {
   for (const r of root.querySelectorAll('[data-volumen]')) {
@@ -245,33 +259,47 @@ async function preloadImages(srcs) {
 async function start(form) {
   const f = (state.form = Object.fromEntries(new FormData(form)));
   const ficha = state.fichas[f.actividad];
-  const n = Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque);
+  const banda = ficha.bandas.find((b) => b.id === f.banda);
+  const pantalla = PANTALLAS[ficha.pantalla];
+  const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));
   // La sesión empieza con su primer bloque; hasta entonces no existe.
   const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO');
+  const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
-  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === f.banda);
+  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id);
   let picked;
   try {
-    picked = pickItems(bandItems, n, rng(seedOf(`${s.id}:${s.bloque + 1}`)), { repeat, exclude: repeat ? new Set() : usados });
+    if (banda.composicion) {
+      // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
+      s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
+      picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
+    } else {
+      picked = pickItems(bandItems, n, rand, { repeat, exclude: repeat ? new Set() : usados });
+    }
   } catch (e) {
     return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
   }
-  const trials = picked.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones, clave: itemKey(it) }));
+  const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
+  const trials = pantalla.toTrials(picked, { ficha, banda, pareja }).slice(0, n);
   try {
-    await preloadImages([PICTO_FIN, ...trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src)])]);
+    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src)]).filter(Boolean);
+    await preloadImages([PICTO_FIN, ...srcs]);
   } catch (e) {
     return renderInicio(e.message);
   }
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
-  state.session = s;
+  if (!state.session) {
+    state.session = s;
+    prefs.set('nbm.sesiones', String(s.numero + 1));
+  }
   s.bloque++;
-  await runBlock({ ficha, banda: f.banda, modalidad: f.modalidad, trials, s, usados });
+  await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla });
 }
 
-async function runBlock({ ficha, banda, modalidad, trials, s, usados }) {
+async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }) {
   app.innerHTML = `
     <div class="nino">
       <div class="stage" id="stage"></div>
@@ -281,7 +309,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados }) {
   const stage = wrap.querySelector('#stage');
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: await estimateFramePeriod(30), audio });
-  const view = PANTALLAS[ficha.pantalla](stage, state.images);
+  const view = pantalla.createView(stage, state.images);
   const block = startBlock({
     ficha,
     modalidad,
@@ -312,8 +340,11 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados }) {
   } finally {
     wake?.release().catch(() => {});
   }
-  for (const r of rows) usados.add(trials.find((t) => t.codigo === r.item).clave);
-  state.last = { rows, ficha, banda, modalidad };
+  const byCode = new Map(trials.map((t) => [t.codigo, t]));
+  for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
+  // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
+  const cambio = (r) => Boolean(byCode.get(r.item).cambio);
+  state.last = { rows, ficha, banda, modalidad, cambio };
   renderFin();
 }
 
@@ -378,7 +409,7 @@ function renderFin() {
 }
 
 function renderResumen() {
-  const { rows, ficha, banda, modalidad } = state.last;
+  const { rows, ficha, banda, modalidad, cambio } = state.last;
   const s = state.session;
   app.innerHTML = `
     <div class="adulto">
@@ -386,7 +417,7 @@ function renderResumen() {
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
         <p class="meta">${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}</p>
-        <ul class="resumen">${summarize(rows, ficha).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+        <ul class="resumen">${summarize(rows, ficha, { cambio }).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
         <div class="acciones">
           <button type="button" class="primario" id="otro">Otro bloque</button>

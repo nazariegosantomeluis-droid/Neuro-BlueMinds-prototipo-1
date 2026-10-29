@@ -11106,6 +11106,5646 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
       ]
+    },
+    {
+      "codigo": "ACT07-B1-01",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-01-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-01-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-02",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-02-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-02-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-03",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-03-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-03-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-04",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-04-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-04-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-05",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-05-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-05-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-06",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-06-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-06-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-07",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-07-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-07-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-08",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-08-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-08-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-09",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-09-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-09-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B1-10",
+      "actividad": "ACT-07",
+      "banda": "B1",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B1-10-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B1-10-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-01",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-01-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-01-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-02",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-02-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-02-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-03",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-03-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-03-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-04",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-04-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-04-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-05",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-05-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-05-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-06",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-06-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-06-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-07",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "color>forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-07-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-07-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-08",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "forma>color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-08-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-08-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-09",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "color>forma",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-09-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-09-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B2-10",
+      "actividad": "ACT-07",
+      "banda": "B2",
+      "tipo": "forma>color",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B2-10-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B2-10-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-01",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-01-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-01-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-02",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-02-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-02-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-03",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-03-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-03-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-04",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-04-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-04-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-05",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-05-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-05-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-06",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-06-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-06-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-07",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-07-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-07-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-08",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-08-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-08-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-09",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-09-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-09-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B3-10",
+      "actividad": "ACT-07",
+      "banda": "B3",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B3-10-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B3-10-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-01",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-01-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-01-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-02",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-02-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-02-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-03",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-03-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-03-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-04",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-04-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-04-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-05",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-05-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-05-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-06",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-06-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-06-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-07",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-07-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-02",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-07",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-07-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-08",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-08-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-08",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-09",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-08-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-09",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-09-01",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-03",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-04",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-05",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-06",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-09-10",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
+    },
+    {
+      "codigo": "ACT07-B4-10",
+      "actividad": "ACT-07",
+      "banda": "B4",
+      "tipo": "mezcla",
+      "ensayos": [
+        {
+          "codigo": "ACT07-B4-10-01",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-02",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-03",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-04",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-05",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-06",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-07",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-08",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 2,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-09",
+          "regla": "forma",
+          "tarjeta": {
+            "forma": 1,
+            "color": 2
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por forma",
+            "audio": "por-forma"
+          }
+        },
+        {
+          "codigo": "ACT07-B4-10-10",
+          "regla": "color",
+          "tarjeta": {
+            "forma": 2,
+            "color": 1
+          },
+          "caja": 1,
+          "consigna": {
+            "texto": "Por color",
+            "audio": "por-color"
+          }
+        }
+      ],
+      "muestraExpertos": true,
+      "revisionPendiente": false,
+      "motivosRevision": []
     }
   ]
 }

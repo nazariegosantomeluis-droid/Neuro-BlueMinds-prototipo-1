@@ -35,6 +35,22 @@ export function shuffle(arr, rand) {
 // para la regla de no repetir en la sesión.
 export const itemKey = (it) => it.concepto ?? it.codigo;
 
+// Arma un bloque según la composición de la banda (ficha): una casilla por ítem.
+// "{a}" y "{b}" se reemplazan por las dimensiones en el orden de la sesión, por ejemplo
+// ["{a}", "{a}>{b}", "{b}"] → color, color>forma, forma. Cada casilla toma, al azar y
+// sin repetir, un ítem cuyo «tipo» coincide.
+export function pickComposed(items, composicion, [a, b], rand) {
+  const used = new Set();
+  return composicion.map((slot) => {
+    const tipo = slot.replaceAll('{a}', a).replaceAll('{b}', b);
+    const pool = items.filter((it) => it.tipo === tipo && !used.has(it.codigo));
+    if (!pool.length) throw new Error(`No hay secuencias de tipo «${tipo}» sin usar en la banda.`);
+    const it = pool[Math.floor(rand() * pool.length)];
+    used.add(it.codigo);
+    return it;
+  });
+}
+
 // Elige n ítems de la banda sin reemplazo. Si n supera los disponibles y la ficha
 // permite repetir, hace otra pasada barajada, cuidando que el mismo ítem no quede
 // en dos ensayos seguidos. Si no permite repetir, falla en lugar de repetir.

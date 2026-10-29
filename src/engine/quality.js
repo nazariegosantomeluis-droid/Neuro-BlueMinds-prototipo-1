@@ -17,8 +17,9 @@ export function derive(r) {
 const fill = (template, vars) => template.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 
 // Resumen descriptivo del bloque para el adulto: conteos y mediana, sin interpretación.
-// No incluye los ensayos interrumpidos.
-export function summarize(rows, ficha) {
+// No incluye los ensayos interrumpidos. cambio(row): si en ese ensayo cambió la regla
+// respecto al anterior (ACT-07); con él se describen por separado ambos tipos de ensayo.
+export function summarize(rows, ficha, { cambio } = {}) {
   const validos = rows.filter((r) => !r.interrumpido);
   const n = validos.length;
   const aciertos = validos.filter((r) => r.acierto).length;
@@ -38,6 +39,21 @@ export function summarize(rows, ficha) {
     ['fallo_tecnico', 'Ensayos con fallo técnico de audio'],
     ['perdida_foco', 'Ensayos con pérdida de foco'],
   ];
+  if (cambio && validos.some(cambio)) {
+    const seconds = (rs) => {
+      const m = median(rs.filter((r) => r.acierto && !r.anticipatoria).map((r) => r.tr_bruto_ms));
+      return m === null ? 'sin aciertos' : `${(m / 1000).toFixed(2)} s`;
+    };
+    const describe = (label, rs) => {
+      const errores = rs.filter((r) => r.opcion_elegida !== null && !r.acierto).length;
+      return `Ensayos en que ${label}: ${rs.length}; errores: ${errores}; mediana del tiempo en aciertos: ${seconds(rs)}.`;
+    };
+    // El primer ensayo del bloque no tiene anterior: no cuenta como cambio ni como repetición.
+    const [, ...resto] = rows;
+    const conAnterior = resto.filter((r) => !r.interrumpido);
+    lines.push(describe('cambió la regla', conAnterior.filter(cambio)));
+    lines.push(describe('se repitió la regla', conAnterior.filter((r) => !cambio(r))));
+  }
   for (const [k, label] of extra) {
     const c = rows.filter((r) => r[k]).length;
     if (c) lines.push(`${label}: ${c}.`);

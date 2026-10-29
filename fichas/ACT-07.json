@@ -8,13 +8,15 @@
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "cambia-regla",
   "barajarOpciones": false,
+  "dimensiones": ["color", "forma"],
   "bandas": [
     {
       "id": "B1",
       "opciones": 2,
       "disposicion": "1x2",
       "descripcion": "Una sola regla durante todo el bloque (color o forma, sorteada al iniciar).",
-      "cambio": "ninguno"
+      "cambio": "ninguno",
+      "composicion": ["{a}", "{a}", "{a}"]
     },
     {
       "id": "B2",
@@ -22,7 +24,8 @@
       "disposicion": "1x2",
       "descripcion": "15 ensayos con una regla y 15 con la otra. El cambio se anuncia con una pantalla breve que muestra el nuevo símbolo.",
       "cambio": "mitad",
-      "anunciarCambio": true
+      "anunciarCambio": true,
+      "composicion": ["{a}", "{a}>{b}", "{b}"]
     },
     {
       "id": "B3",
@@ -30,7 +33,8 @@
       "disposicion": "1x2",
       "descripcion": "Reglas mezcladas, indicadas en cada ensayo. La regla cambia en cerca del 30 % de los ensayos.",
       "cambio": "mezclado",
-      "proporcionCambio": 0.3
+      "proporcionCambio": 0.3,
+      "composicion": ["mezcla", "mezcla", "mezcla"]
     },
     {
       "id": "B4",
@@ -38,7 +42,8 @@
       "disposicion": "1x2",
       "descripcion": "Reglas mezcladas, indicadas en cada ensayo. La regla cambia en cerca del 50 % de los ensayos.",
       "cambio": "mezclado",
-      "proporcionCambio": 0.5
+      "proporcionCambio": 0.5,
+      "composicion": ["mezcla", "mezcla", "mezcla"]
     }
   ],
   "modalidades": ["V", "AV"],
@@ -51,8 +56,26 @@
   "figuras": ["conejo", "barco", "flor", "carro"],
   "colores": ["azul", "amarillo"],
   "parejas": [
-    [{ "forma": "conejo", "color": "azul" }, { "forma": "barco", "color": "amarillo" }],
-    [{ "forma": "flor", "color": "amarillo" }, { "forma": "carro", "color": "azul" }]
+    [
+      {
+        "forma": "conejo",
+        "color": "azul"
+      },
+      {
+        "forma": "barco",
+        "color": "amarillo"
+      }
+    ],
+    [
+      {
+        "forma": "flor",
+        "color": "amarillo"
+      },
+      {
+        "forma": "carro",
+        "color": "azul"
+      }
+    ]
   ],
   "limiteRespuestaMs": 10000,
   "intervaloMs": 1000,
@@ -63,17 +86,11 @@
     "forma": "Por forma"
   },
   "resumen": "Tocó la caja de la regla indicada en {aciertos} de {ensayos} ensayos",
-  "lecturasPermitidas": [
-    "Cometió más errores en los ensayos en que cambió la regla que en los que se repitió",
-    "Tardó en promedio 300 ms más al cambiar de regla"
-  ],
-  "lecturasNoPermitidas": [
-    "Tiene rigidez cognitiva",
-    "Su función ejecutiva está alterada"
-  ],
-  "contraindicaciones": [
-    "Discapacidad visual no corregida.",
-    "Si el niño no supera la banda B1, se mantiene en ella y no se calcula ICS."
-  ],
-  "revisionClinica": { "revisor": "", "fecha": "" }
+  "lecturasPermitidas": ["Cometió más errores en los ensayos en que cambió la regla que en los que se repitió", "Tardó en promedio 300 ms más al cambiar de regla"],
+  "lecturasNoPermitidas": ["Tiene rigidez cognitiva", "Su función ejecutiva está alterada"],
+  "contraindicaciones": ["Discapacidad visual no corregida.", "Si el niño no supera la banda B1, se mantiene en ella y no se calcula ICS."],
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
 }
