@@ -83,6 +83,43 @@ Campos opcionales que usa el motor: `pantalla` (tipo de pantalla), `resumen` (fr
 
 Los textos clínicos de las fichas (objetivo, lecturas y contraindicaciones) son borradores para la revisión del panel de expertos.
 
+## Registro
+
+Cada ensayo produce una fila con las columnas siguientes, en este orden. El registro vive en memoria y en el almacenamiento local del navegador, y se descarga con los botones «Descargar registro (CSV)» y «(JSON)». Cualquier campo que no esté en esta lista se descarta antes de guardar.
+
+Todos los tiempos `t_*` están en milisegundos con decimales, en el reloj monótono del navegador (`performance.now()`; el cero es la carga de la página). Sirven para restarse entre sí dentro de la misma sesión.
+
+| Columna | Contenido |
+|---|---|
+| `sesion_id` | Identificador aleatorio de la sesión. Empieza con `EXP-` en modo experto. |
+| `bloque`, `ensayo` | Número de bloque en la sesión y de ensayo en el bloque. |
+| `codigo_nino` | Código libre opcional, por defecto `DEMO`. Nunca el nombre. |
+| `dispositivo` | userAgent y tamaño de pantalla. |
+| `version_app`, `actividad`, `version_ficha` | Versiones y actividad. |
+| `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
+| `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
+| `n_opciones`, `pos_correcta` | Número de opciones y posición de la correcta (desde 1, de izquierda a derecha). |
+| `pos_distractores` | Lista JSON de `{id, pos}`: qué distractor quedó en qué posición. |
+| `t_consigna_inicio`, `t_consigna_fin` | Cuadro en que aparece la consigna y fin de ese estado. |
+| `t_audio_inicio`, `t_audio_fin` | Inicio programado del audio y su evento de fin. |
+| `audio_fuente` | `archivo`, `sintesis` (voz del navegador, de inicio impreciso) o `ninguna`. |
+| `audio_latencia_ms` | Latencia de salida de audio del dispositivo, si el navegador la informa. |
+| `audio_fin_por_tope` | `true` si el evento de fin del audio no llegó en 5 s. En ese caso `t_audio_fin` queda vacío. |
+| `t_opciones_insercion`, `t_opciones` | Inserción de las opciones y cuadro en que aparecen en pantalla. |
+| `t_toque` | `event.timeStamp` del primer `pointerdown` sobre una opción. |
+| `t_retro_inicio`, `t_retro_fin` | Retroalimentación. |
+| `opcion_elegida`, `acierto`, `omision` | Posición tocada; si fue la correcta; si no hubo respuesta en 10 s. |
+| `toques_fuera` | Lista JSON de `{t, x, y}` de los toques fuera de las opciones. |
+| `toques_repetidos` | Toques ignorados por llegar a menos de 100 ms del anterior. |
+| `perdida_foco` | `true` si la página se ocultó o perdió el foco durante el ensayo. |
+| `cuadros_perdidos`, `cuadros_total` | Intervalos entre cuadros mayores a 1.5 veces el periodo normal, y total de intervalos medidos. |
+| `interrumpido` | `true` si el terapeuta pausó durante el ensayo. Ese ensayo no se repite. |
+| `tr_bruto_ms` | `t_toque − t_opciones`. |
+| `anticipatoria` | `true` si `tr_bruto_ms` < 150 ms. |
+| `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria). |
+
+Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se guarda tal como se midió.
+
 ## Autoría y licencia
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
