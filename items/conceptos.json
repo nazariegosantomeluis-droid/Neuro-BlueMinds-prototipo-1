@@ -1,0 +1,92 @@
+{
+  "version": "0.1.0",
+  "descripcion": "Los 60 conceptos de ACT-02. «color» es el color típico del objeto, provisional hasta tener las fotografías. «excluir» lista los conceptos que nunca aparecen juntos en una misma pantalla. «arasaac» es el identificador del pictograma.",
+  "categorias": [
+    {
+      "id": "animales",
+      "nombre": "Animales"
+    },
+    {
+      "id": "alimentos",
+      "nombre": "Alimentos"
+    },
+    {
+      "id": "casa",
+      "nombre": "Objetos de casa"
+    },
+    {
+      "id": "ropa",
+      "nombre": "Ropa"
+    },
+    {
+      "id": "vehiculos",
+      "nombre": "Vehículos"
+    },
+    {
+      "id": "cuerpo",
+      "nombre": "Partes del cuerpo"
+    }
+  ],
+  "conceptos": [
+    {"id": "perro", "articulo": "el", "nombre": "perro", "categoria": "animales", "mitad": "A", "color": "café", "arasaac": 2517, "notas": "", "excluir": []},
+    {"id": "gato", "articulo": "el", "nombre": "gato", "categoria": "animales", "mitad": "B", "color": "gris", "arasaac": 7114, "notas": "", "excluir": []},
+    {"id": "pajaro", "articulo": "el", "nombre": "pájaro", "categoria": "animales", "mitad": "B", "color": "café", "arasaac": 2490, "notas": "", "excluir": []},
+    {"id": "caballo", "articulo": "el", "nombre": "caballo", "categoria": "animales", "mitad": "A", "color": "café", "arasaac": 2294, "notas": "", "excluir": []},
+    {"id": "pollito", "articulo": "el", "nombre": "pollito", "categoria": "animales", "mitad": "B", "color": "amarillo", "arasaac": 2533, "notas": "No combinar con imágenes de gallina.", "excluir": []},
+    {"id": "pato", "articulo": "el", "nombre": "pato", "categoria": "animales", "mitad": "A", "color": "blanco", "arasaac": 2563, "notas": "", "excluir": []},
+    {"id": "vaca", "articulo": "la", "nombre": "vaca", "categoria": "animales", "mitad": "A", "color": "blanco", "arasaac": 2609, "notas": "", "excluir": []},
+    {"id": "arana", "articulo": "la", "nombre": "araña", "categoria": "animales", "mitad": "B", "color": "negro", "arasaac": 38275, "notas": "", "excluir": []},
+    {"id": "mariposa", "articulo": "la", "nombre": "mariposa", "categoria": "animales", "mitad": "A", "color": "naranja", "arasaac": 2465, "notas": "", "excluir": []},
+    {"id": "conejo", "articulo": "el", "nombre": "conejo", "categoria": "animales", "mitad": "B", "color": "blanco", "arasaac": 2351, "notas": "", "excluir": []},
+    {"id": "leche", "articulo": "la", "nombre": "leche", "categoria": "alimentos", "mitad": "A", "color": "blanco", "arasaac": 2445, "notas": "Imagen: vaso o envase de leche. No usar agua como distractor.", "excluir": ["vaso"]},
+    {"id": "galleta", "articulo": "la", "nombre": "galleta", "categoria": "alimentos", "mitad": "B", "color": "café", "arasaac": 3331, "notas": "", "excluir": []},
+    {"id": "pan", "articulo": "el", "nombre": "pan", "categoria": "alimentos", "mitad": "B", "color": "café", "arasaac": 2494, "notas": "Pan dulce o bolillo, reconocibles en México.", "excluir": []},
+    {"id": "platano", "articulo": "el", "nombre": "plátano", "categoria": "alimentos", "mitad": "A", "color": "amarillo", "arasaac": 2530, "notas": "", "excluir": []},
+    {"id": "paleta", "articulo": "la", "nombre": "paleta", "categoria": "alimentos", "mitad": "A", "color": "rojo", "arasaac": 2832, "notas": "Elegir una sola forma, de dulce o de hielo, en las tres imágenes. Forma propuesta: paleta de dulce, como el pictograma.", "excluir": []},
+    {"id": "tortilla", "articulo": "la", "nombre": "tortilla", "categoria": "alimentos", "mitad": "B", "color": "beige", "arasaac": 25606, "notas": "", "excluir": []},
+    {"id": "manzana", "articulo": "la", "nombre": "manzana", "categoria": "alimentos", "mitad": "B", "color": "rojo", "arasaac": 2462, "notas": "", "excluir": []},
+    {"id": "huevo", "articulo": "el", "nombre": "huevo", "categoria": "alimentos", "mitad": "A", "color": "blanco", "arasaac": 2427, "notas": "", "excluir": []},
+    {"id": "naranja", "articulo": "la", "nombre": "naranja", "categoria": "alimentos", "mitad": "A", "color": "naranja", "arasaac": 2483, "notas": "", "excluir": []},
+    {"id": "pastel", "articulo": "el", "nombre": "pastel", "categoria": "alimentos", "mitad": "B", "color": "rosa", "arasaac": 2579, "notas": "", "excluir": []},
+    {"id": "cuchara", "articulo": "la", "nombre": "cuchara", "categoria": "casa", "mitad": "A", "color": "gris", "arasaac": 2362, "notas": "", "excluir": []},
+    {"id": "vaso", "articulo": "el", "nombre": "vaso", "categoria": "casa", "mitad": "B", "color": "transparente", "arasaac": 2610, "notas": "No usar taza como distractor.", "excluir": ["leche"]},
+    {"id": "peine", "articulo": "el", "nombre": "peine", "categoria": "casa", "mitad": "A", "color": "negro", "arasaac": 2852, "notas": "", "excluir": []},
+    {"id": "plato", "articulo": "el", "nombre": "plato", "categoria": "casa", "mitad": "A", "color": "blanco", "arasaac": 2532, "notas": "", "excluir": []},
+    {"id": "llaves", "articulo": "las", "nombre": "llaves", "categoria": "casa", "mitad": "B", "color": "gris", "arasaac": 2451, "notas": "", "excluir": []},
+    {"id": "telefono", "articulo": "el", "nombre": "teléfono", "categoria": "casa", "mitad": "B", "color": "negro", "arasaac": 25269, "notas": "Teléfono celular.", "excluir": []},
+    {"id": "jabon", "articulo": "el", "nombre": "jabón", "categoria": "casa", "mitad": "B", "color": "rosa", "arasaac": 2964, "notas": "", "excluir": []},
+    {"id": "escoba", "articulo": "la", "nombre": "escoba", "categoria": "casa", "mitad": "A", "color": "amarillo", "arasaac": 2745, "notas": "", "excluir": []},
+    {"id": "almohada", "articulo": "la", "nombre": "almohada", "categoria": "casa", "mitad": "A", "color": "blanco", "arasaac": 2250, "notas": "", "excluir": []},
+    {"id": "cepillo-de-dientes", "articulo": "el", "nombre": "cepillo de dientes", "categoria": "casa", "mitad": "B", "color": "azul", "arasaac": 2694, "notas": "", "excluir": []},
+    {"id": "zapato", "articulo": "el", "nombre": "zapato", "categoria": "ropa", "mitad": "A", "color": "negro", "arasaac": 32923, "notas": "", "excluir": ["pie"]},
+    {"id": "calcetin", "articulo": "el", "nombre": "calcetín", "categoria": "ropa", "mitad": "B", "color": "blanco", "arasaac": 8339, "notas": "", "excluir": ["pie"]},
+    {"id": "pantalon", "articulo": "el", "nombre": "pantalón", "categoria": "ropa", "mitad": "B", "color": "azul", "arasaac": 2565, "notas": "", "excluir": []},
+    {"id": "sueter", "articulo": "el", "nombre": "suéter", "categoria": "ropa", "mitad": "B", "color": "rojo", "arasaac": 2436, "notas": "", "excluir": []},
+    {"id": "sombrero", "articulo": "el", "nombre": "sombrero", "categoria": "ropa", "mitad": "A", "color": "beige", "arasaac": 2572, "notas": "", "excluir": []},
+    {"id": "lentes", "articulo": "los", "nombre": "lentes", "categoria": "ropa", "mitad": "A", "color": "negro", "arasaac": 3329, "notas": "", "excluir": ["ojo"]},
+    {"id": "playera", "articulo": "la", "nombre": "playera", "categoria": "ropa", "mitad": "B", "color": "blanco", "arasaac": 2309, "notas": "", "excluir": []},
+    {"id": "vestido", "articulo": "el", "nombre": "vestido", "categoria": "ropa", "mitad": "A", "color": "rosa", "arasaac": 2613, "notas": "", "excluir": []},
+    {"id": "short", "articulo": "el", "nombre": "short", "categoria": "ropa", "mitad": "A", "color": "azul", "arasaac": 13638, "notas": "Confirmar con los expertos.", "excluir": [], "pendiente": "Confirmar con los expertos."},
+    {"id": "falda", "articulo": "la", "nombre": "falda", "categoria": "ropa", "mitad": "B", "color": "morado", "arasaac": 2391, "notas": "", "excluir": []},
+    {"id": "carro", "articulo": "el", "nombre": "carro", "categoria": "vehiculos", "mitad": "A", "color": "rojo", "arasaac": 2339, "notas": "", "excluir": []},
+    {"id": "avion", "articulo": "el", "nombre": "avión", "categoria": "vehiculos", "mitad": "B", "color": "blanco", "arasaac": 2264, "notas": "", "excluir": []},
+    {"id": "carreola", "articulo": "la", "nombre": "carreola", "categoria": "vehiculos", "mitad": "B", "color": "azul", "arasaac": 6281, "notas": "", "excluir": []},
+    {"id": "bicicleta", "articulo": "la", "nombre": "bicicleta", "categoria": "vehiculos", "mitad": "B", "color": "rojo", "arasaac": 2277, "notas": "", "excluir": []},
+    {"id": "tren", "articulo": "el", "nombre": "tren", "categoria": "vehiculos", "mitad": "A", "color": "azul", "arasaac": 7282, "notas": "", "excluir": []},
+    {"id": "moto", "articulo": "la", "nombre": "moto", "categoria": "vehiculos", "mitad": "B", "color": "negro", "arasaac": 2480, "notas": "", "excluir": []},
+    {"id": "barco", "articulo": "el", "nombre": "barco", "categoria": "vehiculos", "mitad": "A", "color": "blanco", "arasaac": 2273, "notas": "", "excluir": []},
+    {"id": "camion", "articulo": "el", "nombre": "camión", "categoria": "vehiculos", "mitad": "B", "color": "verde", "arasaac": 2263, "notas": "En Guadalajara «camión» es el autobús urbano; lo definen los expertos. Pictograma provisional: autobús.", "excluir": [], "pendiente": "Definir si es el autobús urbano o el camión de carga."},
+    {"id": "camion-de-bomberos", "articulo": "el", "nombre": "camión de bomberos", "categoria": "vehiculos", "mitad": "A", "color": "rojo", "arasaac": 4925, "notas": "", "excluir": []},
+    {"id": "helicoptero", "articulo": "el", "nombre": "helicóptero", "categoria": "vehiculos", "mitad": "A", "color": "amarillo", "arasaac": 7126, "notas": "", "excluir": []},
+    {"id": "boca", "articulo": "la", "nombre": "boca", "categoria": "cuerpo", "mitad": "A", "color": "rosa", "arasaac": 2663, "notas": "", "excluir": ["cabeza", "dientes"]},
+    {"id": "mano", "articulo": "la", "nombre": "mano", "categoria": "cuerpo", "mitad": "A", "color": "beige", "arasaac": 2928, "notas": "", "excluir": []},
+    {"id": "cabeza", "articulo": "la", "nombre": "cabeza", "categoria": "cuerpo", "mitad": "B", "color": "beige", "arasaac": 2673, "notas": "La imagen resalta la cabeza completa, no solo la cara.", "excluir": ["ojo", "nariz", "boca", "oreja", "pelo", "dientes"]},
+    {"id": "ojo", "articulo": "el", "nombre": "ojo", "categoria": "cuerpo", "mitad": "B", "color": "café", "arasaac": 6573, "notas": "", "excluir": ["cabeza", "lentes"]},
+    {"id": "pie", "articulo": "el", "nombre": "pie", "categoria": "cuerpo", "mitad": "B", "color": "beige", "arasaac": 2841, "notas": "", "excluir": ["zapato", "calcetin"]},
+    {"id": "pelo", "articulo": "el", "nombre": "pelo", "categoria": "cuerpo", "mitad": "B", "color": "negro", "arasaac": 2851, "notas": "", "excluir": ["cabeza"]},
+    {"id": "dientes", "articulo": "los", "nombre": "dientes", "categoria": "cuerpo", "mitad": "A", "color": "blanco", "arasaac": 2737, "notas": "", "excluir": ["cabeza", "boca"]},
+    {"id": "nariz", "articulo": "la", "nombre": "nariz", "categoria": "cuerpo", "mitad": "A", "color": "beige", "arasaac": 2887, "notas": "", "excluir": ["cabeza"]},
+    {"id": "panza", "articulo": "la", "nombre": "panza", "categoria": "cuerpo", "mitad": "A", "color": "beige", "arasaac": 2786, "notas": "", "excluir": []},
+    {"id": "oreja", "articulo": "la", "nombre": "oreja", "categoria": "cuerpo", "mitad": "B", "color": "beige", "arasaac": 2871, "notas": "", "excluir": ["cabeza"]}
+  ]
+}

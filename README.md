@@ -182,6 +182,53 @@ Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se
 | `cuadros_total` | Permite recalcular `peso_calidad` desde el CSV. |
 | `fallo_tecnico` | Marca los ensayos AV en que el audio no arrancó o falló. |
 
+## Banco de ítems
+
+- [`items/conceptos.json`](items/conceptos.json) tiene los 60 conceptos de ACT-02, cada uno con:
+  - artículo y categoría;
+  - mitad (`A` o `B`, para la fase 2);
+  - color típico (provisional, hasta tener las fotografías);
+  - notas, pictograma de ARASAAC y conceptos que nunca aparecen juntos en una pantalla (`excluir`).
+- [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos y de las reglas de bandas de las fichas. El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos o las fichas y se regenera.
+- Códigos: `ACT01-B2-05` significa actividad, banda y número.
+  - ACT-01 tiene 10 ítems por banda.
+  - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Una sesión de ACT-02 usa 30 conceptos distintos, sin repetir.
+- `muestraExpertos`: en ACT-02, 10 ítems por banda, cerca de 2 por categoría y con las dos mitades representadas. Es la muestra que revisa el panel.
+- `revisionPendiente` y `motivosRevision` marcan lo que un clínico debe confirmar:
+  - los distractores «de aspecto parecido» de B4;
+  - el color en ACT-01 B1;
+  - los conceptos pendientes (`short`, `camión`).
+- Ejemplares: el 1 y el 2 se usan en la práctica; el 3 se reserva para sondas de generalización y no aparece en los ensayos normales.
+
+`npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso y los audios que faltan.
+
+## Imágenes, pictogramas y audio
+
+**Fotografías.** Por ahora cada ejemplar es un marcador provisional en `assets/img/<concepto>/<n>.svg` (fondo gris con el nombre del concepto y «EJEMPLAR n PENDIENTE»). Para reemplazar uno por una fotografía real con licencia libre:
+
+1. Guarda la fotografía como `assets/img/<concepto>/<n>.jpg` (también sirven `.png` o `.webp`). El identificador del concepto está en `conceptos.json`; por ejemplo, `cepillo-de-dientes`.
+2. Borra el marcador `.svg` y su fila en `items/licencias.csv`.
+3. Agrega la fila de la fotografía en `items/licencias.csv`: origen, autor, licencia y dirección de origen.
+4. Corre `npm run build-items` (el banco pasa a usar la fotografía) y `npm run check-items`.
+
+No se usan fotografías inventadas ni generadas. Respeta las notas de cada concepto; por ejemplo, el pollito sin gallina y la misma forma de paleta en sus tres ejemplares.
+
+**Audio.** Cada consigna tiene una clave, y su archivo va en `assets/audio/<clave>.mp3`; por ejemplo, `cual-es-igual.mp3` o `donde-esta-el-perro.mp3`. `npm run check-items` lista las claves que faltan. Cada archivo necesita su fila en `licencias.csv`. Mientras falte, la aplicación usa la voz del navegador en español de México y lo registra como `audio_fuente` = `sintesis`.
+
+**Pictogramas.** Se descargan una sola vez de ARASAAC con `npm run pictos`, a `assets/picto/<concepto>.png`. El identificador de cada uno está en `conceptos.json` (`arasaac`) y en `licencias.csv`. Para cambiar uno:
+
+1. Cambia el identificador en `conceptos.json`.
+2. Borra el `.png` y su fila en `licencias.csv`.
+3. Vuelve a correr `npm run pictos`.
+
 ## Autoría y licencia
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
+
+### Pictogramas de ARASAAC
+
+Los pictogramas de `assets/picto/` no están bajo los derechos anteriores. Se distribuyen bajo la licencia Creative Commons BY-NC-SA, que autoriza su uso sin fines de lucro citando la fuente y el autor, y obliga a compartir las obras derivadas con la misma licencia. Atribución, según las condiciones de uso de ARASAAC:
+
+> Los símbolos pictográficos utilizados son propiedad del Gobierno de Aragón y han sido creados por Sergio Palao para ARASAAC (http://www.arasaac.org), que los distribuye bajo Licencia Creative Commons BY-NC-SA.
+
+> Autor pictogramas: Sergio Palao. Origen: ARASAAC (http://www.arasaac.org). Licencia: CC (BY-NC-SA). Propiedad: Gobierno de Aragón (España)

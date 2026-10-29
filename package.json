@@ -6,6 +6,9 @@
   "author": "Luis Nazariego Santome",
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build-items": "node tools/build-items.mjs",
+    "check-items": "node tools/check-items.mjs",
+    "pictos": "node tools/descargar-pictos.mjs"
   }
 }
