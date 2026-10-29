@@ -33,6 +33,18 @@ python3 -m http.server 8000
 
 En Windows, el comando suele ser `python -m http.server 8000`. Después abre <http://localhost:8000>. Para probar en una tableta conectada a la misma red, abre `http://<IP-de-la-computadora>:8000`.
 
+## Uso
+
+1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial y el número de ensayos. También se puede escribir un código opcional del niño (nunca el nombre) y ajustar el volumen. Después se toca «Empezar».
+2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
+   - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
+   - El ensayo en curso queda registrado como interrumpido y no se repite.
+   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque.
+3. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
+4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
+
+En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
+
 ## Pruebas
 
 Requiere Node.js 20 o posterior. No hay dependencias que instalar.

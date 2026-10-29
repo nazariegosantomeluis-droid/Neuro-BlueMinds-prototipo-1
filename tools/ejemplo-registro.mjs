@@ -14,24 +14,11 @@ const FRAME = 1000 / 60;
 const SCREEN = { w: 1180, h: 820 };
 const rand = rng(13);
 
-// Muestra, distractor de la misma categoría y dos de otras categorías (ilustrativos).
-const ITEMS = [
-  ['perro', 'gato', 'platano', 'zapato'],
-  ['leche', 'galleta', 'carro', 'mano'],
-  ['cuchara', 'plato', 'caballo', 'tren'],
-  ['zapato', 'calcetin', 'naranja', 'ojo'],
-  ['carro', 'avion', 'vaca', 'escoba'],
-  ['mano', 'nariz', 'pastel', 'barco'],
-  ['manzana', 'huevo', 'sombrero', 'moto'],
-  ['peine', 'jabon', 'conejo', 'falda'],
-  ['sombrero', 'vestido', 'pan', 'bicicleta'],
-  ['tren', 'helicoptero', 'almohada', 'pato'],
-];
-const trials = ITEMS.map((ids, i) => ({
-  codigo: `ACT01-B3-${String(i + 1).padStart(2, '0')}`,
-  consigna: { audio: 'cual-es-igual', texto: ficha.consignaAV },
-  opciones: ids.map((id, k) => ({ id: `${id}-1`, correcta: k === 0 })),
-}));
+// Los 10 ítems de ACT-01 B3 del banco, en orden.
+const { items } = JSON.parse(readFileSync(new URL('../items/items.json', import.meta.url), 'utf8'));
+const trials = items
+  .filter((it) => it.actividad === 'ACT-01' && it.banda === 'B3')
+  .map(({ codigo, consigna, opciones }) => ({ codigo, consigna, opciones }));
 
 // Qué hace el niño en cada ensayo (tiempos desde la aparición de las opciones).
 const PLAN = [

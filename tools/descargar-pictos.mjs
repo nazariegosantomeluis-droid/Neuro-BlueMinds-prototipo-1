@@ -10,7 +10,11 @@ import { fileURLToPath } from 'node:url';
 import { addMissing } from './licencias.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const { conceptos } = JSON.parse(readFileSync(join(ROOT, 'items/conceptos.json'), 'utf8'));
+// Pictogramas de los conceptos y de la pantalla de fin de bloque (igual para todos los niños).
+const PICTOS = [
+  ...JSON.parse(readFileSync(join(ROOT, 'items/conceptos.json'), 'utf8')).conceptos,
+  { id: 'terminar', arasaac: 5358, pantalla: true },
+];
 const url = (id) => `https://static.arasaac.org/pictograms/${id}/${id}_500.png`;
 
 // Observaciones de la revisión visual de cada pictograma.
@@ -19,12 +23,13 @@ const REVISION = {
   camion: ['pendiente', 'Provisional: autobús urbano. Si los expertos definen camión de carga, usar ARASAAC 2306.'],
   paleta: ['verificado', 'Paleta de dulce. Las tres fotografías deben ser de la misma forma.'],
   telefono: ['verificado', 'Teléfono celular.'],
+  terminar: ['verificado', 'Pantalla de fin de bloque («terminar / fin»).'],
 };
 
 mkdirSync(join(ROOT, 'assets/picto'), { recursive: true });
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
 let downloaded = 0;
-for (const c of conceptos) {
+for (const c of PICTOS) {
   const file = join(ROOT, `assets/picto/${c.id}.png`);
   if (existsSync(file)) continue;
   const res = await fetch(url(c.arasaac));
@@ -36,12 +41,12 @@ for (const c of conceptos) {
 
 const added = addMissing(
   join(ROOT, 'items/licencias.csv'),
-  conceptos.map((c) => {
+  PICTOS.map((c) => {
     const [estado, notas] = REVISION[c.id] ?? ['verificado', ''];
     return {
       archivo: `assets/picto/${c.id}.png`,
       tipo: 'pictograma',
-      concepto: c.id,
+      concepto: c.pantalla ? '' : c.id,
       ejemplar: '',
       origen: 'ARASAAC (http://www.arasaac.org)',
       autor: 'Sergio Palao',

@@ -207,7 +207,8 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
   const banda = ficha.bandas.find((b) => b.id === base.banda);
 
   const done = (async () => {
-    if (modalidad === 'AV' && !(await env.audio?.available?.())) throw new Error(NO_AUDIO_MSG);
+    const keys = trials.map((t) => t.consigna?.audio).filter(Boolean);
+    if (modalidad === 'AV' && !(await env.audio?.available?.(keys))) throw new Error(NO_AUDIO_MSG);
     const rows = [];
     for (let i = 0; i < trials.length; i++) {
       const t = trials[i];

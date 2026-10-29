@@ -14,6 +14,37 @@ export function derive(r) {
   return { tr_bruto_ms: tr, anticipatoria, peso_calidad: foco * aTiempo * plausibilidad * tecnico };
 }
 
+const fill = (template, vars) => template.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+
+// Resumen descriptivo del bloque para el adulto: conteos y mediana, sin interpretación.
+// No incluye los ensayos interrumpidos.
+export function summarize(rows, ficha) {
+  const validos = rows.filter((r) => !r.interrumpido);
+  const n = validos.length;
+  const aciertos = validos.filter((r) => r.acierto).length;
+  const omisiones = validos.filter((r) => r.omision).length;
+  const trs = validos.filter((r) => r.tr_bruto_ms !== null && !r.anticipatoria).map((r) => r.tr_bruto_ms);
+  const med = median(trs);
+  const lines = [
+    `${fill(ficha.resumen, { aciertos, ensayos: n })}.`,
+    `Sin respuesta: ${omisiones} de ${n} ensayos.`,
+    med === null
+      ? 'Mediana del tiempo de respuesta: no hubo respuestas para calcularla.'
+      : `Mediana del tiempo de respuesta: ${(med / 1000).toFixed(2)} s, en ${trs.length} ensayos con respuesta (sin contar las anticipatorias).`,
+  ];
+  const extra = [
+    ['interrumpido', 'Ensayos interrumpidos por pausa'],
+    ['anticipatoria', 'Respuestas anticipatorias (menos de 150 ms)'],
+    ['fallo_tecnico', 'Ensayos con fallo técnico de audio'],
+    ['perdida_foco', 'Ensayos con pérdida de foco'],
+  ];
+  for (const [k, label] of extra) {
+    const c = rows.filter((r) => r[k]).length;
+    if (c) lines.push(`${label}: ${c}.`);
+  }
+  return lines;
+}
+
 export function median(xs) {
   if (!xs.length) return null;
   const s = [...xs].sort((a, b) => a - b);

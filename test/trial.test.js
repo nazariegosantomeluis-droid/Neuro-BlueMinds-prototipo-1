@@ -244,9 +244,12 @@ test('el bloque guarda un registro completo por ensayo y no repite el ensayo pau
 });
 
 test('AV: sin audio en el dispositivo, el bloque no empieza y avisa al adulto', async () => {
-  const b = runBlock({ modalidad: 'AV', audio: fakeAudio(async () => null, false) });
+  let asked;
+  const audio = { available: async (keys) => ((asked = keys), false), play: async () => null };
+  const b = runBlock({ modalidad: 'AV', audio });
   await assert.rejects(b.done, { message: NO_AUDIO_MSG });
   assert.equal(b.log.rows().length, 0);
+  assert.deepEqual(asked, ['cual-es-igual', 'cual-es-igual', 'cual-es-igual'], 'comprueba las claves del bloque');
 });
 
 test('AV: si el audio falla a mitad del bloque, marca ese ensayo y el bloque continúa', async () => {

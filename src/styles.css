@@ -1,0 +1,343 @@
+/* Neuro-BlueMinds · Prototipo E13 */
+
+:root {
+  /* Un centímetro físico en px. app.js lo estima al cargar y la página de Calibración lo ajusta. */
+  --cm: 37.8px;
+  --fondo: #f6f6f3;
+  --tarjeta: #ffffff;
+  --texto: #1d2226;
+  --suave: #59626b;
+  --borde: #d5d8db;
+  --acento: #1f5fa8;
+  --acento-texto: #ffffff;
+  --aviso: #fff3d1;
+  --aviso-borde: #d9a93a;
+  --problema: #8b2a1f;
+  /* Pantalla del niño: fondo neutro, sin elementos que distraigan. */
+  --fondo-nino: #ecebe6;
+  --opcion-fondo: #ffffff;
+  --marco: #3d7fd6;
+  --control: #8a8f94;
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #17191c;
+    --tarjeta: #22252a;
+    --texto: #e9eaec;
+    --suave: #a4abb2;
+    --borde: #3a3f45;
+    --acento: #7fb0ec;
+    --acento-texto: #10161d;
+    --aviso: #3a2f12;
+    --aviso-borde: #b88a26;
+    --problema: #f0a597;
+    --fondo-nino: #1e2023;
+    /* Los pictogramas tienen trazo negro: su fondo es claro también en tema oscuro. */
+    --opcion-fondo: #e4e4e1;
+    --marco: #7fb0ec;
+    --control: #6c7278;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.45;
+}
+
+/* ---------- Pantallas del adulto ---------- */
+
+.adulto {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.adulto h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.adulto h1 span {
+  color: var(--suave);
+  font-weight: 500;
+}
+
+.adulto h2 {
+  font-size: 1.15rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.aviso {
+  background: var(--aviso);
+  border-left: 4px solid var(--aviso-borde);
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+}
+
+.panel {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+label,
+legend {
+  font-weight: 600;
+}
+
+label > select,
+label > input:not([type='radio']):not([type='range']) {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+}
+
+select,
+input,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+select,
+input:not([type='radio']):not([type='range']) {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  background: var(--fondo);
+}
+
+input[type='range'] {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+fieldset legend {
+  margin-bottom: 0.3rem;
+}
+
+fieldset label {
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+}
+
+.ayuda {
+  color: var(--suave);
+  font-size: 0.92rem;
+  margin: 0.3rem 0 0;
+  font-weight: 400;
+}
+
+.mensaje:empty {
+  display: none;
+}
+
+.mensaje,
+.problemas {
+  color: var(--problema);
+  font-weight: 600;
+  margin: 0;
+}
+
+.problemas ul {
+  margin: 0.4rem 0 0;
+  font-weight: 400;
+}
+
+button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  background: var(--tarjeta);
+  cursor: pointer;
+}
+
+button.primario {
+  background: var(--acento);
+  color: var(--acento-texto);
+  border-color: var(--acento);
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.resumen li {
+  margin: 0.35rem 0;
+}
+
+.meta {
+  color: var(--suave);
+  margin: 0;
+}
+
+/* ---------- Pantalla del niño ---------- */
+
+.nino {
+  position: fixed;
+  inset: 0;
+  background: var(--fondo-nino);
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  --separacion: calc(var(--cm) * 1);
+}
+
+.stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.consigna {
+  grid-row: 1;
+  width: min(calc(var(--cm) * 4.5), 42vh);
+  height: min(calc(var(--cm) * 4.5), 42vh);
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.3);
+  overflow: hidden;
+}
+
+/* Cada opción mide entre 2 y 4 cm de lado y hay 1 cm entre opciones (RNF-04: mínimo 2 cm y 0.5 cm). */
+.opciones {
+  grid-row: 2;
+  display: grid;
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min(
+      calc((100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas)),
+      calc((50vh - var(--separacion) * (var(--filas) + 1)) / var(--filas))
+    ),
+    calc(var(--cm) * 4)
+  );
+  grid-template-columns: repeat(var(--columnas), var(--opcion));
+  grid-auto-rows: var(--opcion);
+  gap: var(--separacion);
+}
+
+/* Las opciones aparecen sin transición, para que el cuadro registrado sea el de su aparición. */
+.opcion {
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.3);
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow 250ms ease-out;
+}
+
+/* Retroalimentación: un marco suave alrededor de la opción correcta, sin destellos. */
+.opcion.marco {
+  box-shadow: 0 0 0 calc(var(--cm) * 0.2) var(--marco);
+}
+
+/* Control discreto del terapeuta en una esquina: se confirma con dos toques. */
+.esquina {
+  position: absolute;
+  top: calc(var(--cm) * 0.3 + env(safe-area-inset-top, 0px));
+  right: calc(var(--cm) * 0.3 + env(safe-area-inset-right, 0px));
+  width: calc(var(--cm) * 1.2);
+  height: calc(var(--cm) * 1.2);
+  min-height: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--control);
+  opacity: 0.4;
+  transition: opacity 200ms ease-out;
+}
+
+.esquina svg {
+  width: 55%;
+  height: 55%;
+}
+
+.esquina.armado {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--control);
+}
+
+.capa {
+  position: absolute;
+  inset: 0;
+  background: var(--fondo);
+  overflow: auto;
+  touch-action: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.fin {
+  display: grid;
+  place-items: center;
+}
+
+.fin .terminar {
+  width: min(calc(var(--cm) * 6), 50vh);
+  height: min(calc(var(--cm) * 6), 50vh);
+  object-fit: contain;
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.3);
+}
+
+.cargando {
+  padding: 2rem;
+  text-align: center;
+  color: var(--suave);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
