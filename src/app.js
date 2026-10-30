@@ -12,6 +12,7 @@ import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
 import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderRevision } from './revision.js';
+import { agregarEnlaceF3 } from './enlaces.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -128,8 +129,10 @@ async function init() {
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
-  if (ruta === 'galeria' && !state.problemas.items) renderGaleria(app, state, new URLSearchParams(query));
-  else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
+  if (ruta === 'galeria' && !state.problemas.items) {
+    renderGaleria(app, state, new URLSearchParams(query));
+    agregarEnlaceF3(app);
+  } else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {

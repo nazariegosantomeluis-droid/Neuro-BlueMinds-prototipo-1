@@ -54,6 +54,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 **Galería de ítems** (`#galeria`). Muestra todos los ítems por actividad y banda: el código, la consigna, las opciones con la correcta marcada y el estado de revisión. También incluye la ficha técnica de la actividad.
 - Por defecto muestra solo la muestra para expertos; una casilla muestra todos.
 - Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
+- Si [`config/enlaces.json`](config/enlaces.json) tiene el campo `formularioF3`, la galería muestra el botón «Calificar en el formulario F3», que abre ese enlace en otra pestaña. Sin el archivo (o sin el campo), no se muestra nada.
 
 **Revisión clínica** (`#revision`). Dos clínicos califican los ítems de muestra antes del panel de expertos. Ver [Revisión clínica](#revisión-clínica).
 
@@ -143,6 +144,7 @@ src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision.css              Estilos de la revisión clínica
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
+src/enlaces.js                Botón del formulario F3 en la galería
 src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
@@ -154,6 +156,7 @@ src/engine/ficha.js           Carga y validación de fichas
 src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 fichas/                       Ficha técnica de cada actividad (JSON)
+config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
 tools/check-items.mjs         Verifica archivos y licencias del banco
