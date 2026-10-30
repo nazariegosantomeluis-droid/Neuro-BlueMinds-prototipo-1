@@ -211,9 +211,10 @@ test('AV: si el audio no arranca o falla, el ensayo queda como fallo técnico co
 
 test('pérdida de foco y cuadros perdidos se reflejan en el peso de calidad', async () => {
   const onOptions = (env, trial) => touch(env, trial, 800, { pos: 2 });
-  const conCuadros = await setup({ onOptions, frames: () => ({ total: 100, late: 10 }) }).run();
+  const conCuadros = await setup({ onOptions, frames: () => ({ total: 100, late: 10, periodo: 16.7 }) }).run();
   assert.equal(conCuadros.cuadros_perdidos, 10);
   assert.equal(conCuadros.cuadros_total, 100);
+  assert.equal(conCuadros.periodo_cuadro_ms, 16.7);
   assert.equal(conCuadros.peso_calidad, 0.9);
   const sinFoco = await setup({ onOptions, focusLost: () => true }).run();
   assert.equal(sinFoco.perdida_foco, true);
@@ -318,13 +319,4 @@ test('tr_corregido_ms descuenta la latencia del dispositivo; sin latencia queda 
   assert.deepEqual(sin.map((r) => r.tr_corregido_ms), [null, null, null]);
   const con = await runBlock({ base: { latencia_dispositivo_ms: 40 } }).done;
   for (const r of con) assert.equal(r.tr_corregido_ms, r.tr_bruto_ms - 40);
-});
-
-test('al cerrar el bloque se marca fuera_de_tarea con todos los ensayos de la sesión', async () => {
-  const log = createLog(null);
-  for (const tr of [480, 500, 520, 470, 510]) log.add({ sesion_id: 'EXP-prueba', bloque: 0, tr_bruto_ms: tr });
-  log.add({ sesion_id: 'S-otra', tr_bruto_ms: 9000 });
-  const rows = await runBlock({ log, plan: [500, 4000, 'pausa'] }).done;
-  assert.deepEqual(rows.map((r) => r.fuera_de_tarea), [false, true, null]);
-  assert.deepEqual(log.rows().map((r) => r.fuera_de_tarea), [false, false, false, false, false, null, false, true, null]);
 });

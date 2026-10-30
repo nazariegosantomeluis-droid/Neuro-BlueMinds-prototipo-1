@@ -8,6 +8,7 @@ import { simEnv } from './sim-env.mjs';
 import { startBlock } from '../src/engine/trial.js';
 import { createLog, toCSV, VERSION_APP } from '../src/engine/logger.js';
 import { rng } from '../src/engine/selector.js';
+import { marcarFueraDeTarea } from '../src/engine/quality.js';
 
 const ficha = JSON.parse(readFileSync(new URL('../fichas/ACT-01.json', import.meta.url), 'utf8'));
 const FRAME = 1000 / 60;
@@ -41,7 +42,7 @@ let n = -1; // ensayo en curso, lo avanza showPrompt
 const env = simEnv({
   start: 15234.6,
   paint,
-  frames: (ms) => ({ total: Math.round(ms / FRAME), late: rand() < 0.3 ? 1 : 0 }),
+  frames: (ms) => ({ total: Math.round(ms / FRAME), late: rand() < 0.3 ? 1 : 0, periodo: FRAME }),
   audio: {
     available: async () => true,
     play: async () => {
@@ -104,6 +105,8 @@ block = startBlock({
 });
 
 const rows = await env.run(block.done);
+// La sesión del ejemplo está cerrada. Con menos de 10 ensayos válidos, fuera_de_tarea queda vacío.
+marcarFueraDeTarea(rows, false);
 mkdirSync(new URL('../docs/', import.meta.url), { recursive: true });
 writeFileSync(new URL('../docs/ejemplo-registro.csv', import.meta.url), toCSV(rows));
 console.log(`docs/ejemplo-registro.csv: ${rows.length} ensayos (${sesion})`);

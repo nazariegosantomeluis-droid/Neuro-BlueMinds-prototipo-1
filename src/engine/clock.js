@@ -20,21 +20,22 @@ export function nextPaint(raf = globalThis.requestAnimationFrame) {
   return new Promise((resolve) => raf(() => raf(resolve)));
 }
 
-// Periodo normal de cuadro del dispositivo (60 Hz ≈ 16.7 ms; 120 Hz ≈ 8.3 ms),
-// como la mediana de n intervalos.
-export function estimateFramePeriod(n = 30, raf = globalThis.requestAnimationFrame) {
+// Periodo normal de cuadro del dispositivo (60 Hz ≈ 16.7 ms; 120 Hz ≈ 8.3 ms; con el
+// ahorro de energía, 30 Hz ≈ 33.3 ms): mediana de los intervalos durante ms milisegundos.
+export function measureFramePeriod(ms = 1000, raf = globalThis.requestAnimationFrame) {
   return new Promise((resolve) => {
     const ts = [];
     const tick = (t) => {
       ts.push(t);
-      if (ts.length <= n) raf(tick);
+      if (ts.length < 2 || t - ts[0] < ms) raf(tick);
       else resolve(median(ts.slice(1).map((x, i) => x - ts[i])));
     };
     raf(tick);
   });
 }
 
-// Durante un ensayo, cuenta los intervalos entre cuadros mayores a 1.5 veces el periodo normal.
+// Durante un ensayo, cuenta los intervalos entre cuadros mayores a 1.5 veces el periodo normal
+// y da la mediana de los intervalos (periodo_cuadro_ms).
 export function frameMonitor(
   period,
   raf = globalThis.requestAnimationFrame,
@@ -44,10 +45,12 @@ export function frameMonitor(
   let last = null;
   let total = 0;
   let late = 0;
+  let intervals = [];
   const tick = (ts) => {
     if (last !== null) {
       total++;
       if (ts - last > 1.5 * period) late++;
+      intervals.push(ts - last);
     }
     last = ts;
     id = raf(tick);
@@ -56,12 +59,13 @@ export function frameMonitor(
     start() {
       last = null;
       total = late = 0;
+      intervals = [];
       id = raf(tick);
     },
     stop() {
       if (id !== null) caf(id);
       id = null;
-      return { total, late };
+      return { total, late, periodo: median(intervals) };
     },
   };
 }

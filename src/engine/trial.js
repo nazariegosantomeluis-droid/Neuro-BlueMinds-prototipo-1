@@ -1,6 +1,6 @@
 // Máquina de estados del ensayo. Es la misma para todas las actividades:
 // la actividad solo aporta la vista (cómo se dibujan la consigna y las opciones).
-import { derive, fueraDeTarea, VERSION_PARAMETROS } from './quality.js';
+import { derive, VERSION_PARAMETROS } from './quality.js';
 import { shuffle } from './selector.js';
 
 export const STATES = ['intervalo', 'consigna', 'opciones', 'respuesta', 'retroalimentacion', 'cierre'];
@@ -55,6 +55,7 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
     perdida_foco: false,
     cuadros_perdidos: 0,
     cuadros_total: 0,
+    periodo_cuadro_ms: null,
     interrumpido: false,
     fallo_tecnico: false,
     decodificacion_ok: null, // vacío si la pantalla no tiene imágenes que decodificar
@@ -169,6 +170,7 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
       const f = env.frames.stop();
       r.cuadros_perdidos = f.late;
       r.cuadros_total = f.total;
+      r.periodo_cuadro_ms = f.periodo ?? null;
       r.perdida_foco = env.focus.stop();
     }
     return { ...r, ...derive(r) };
@@ -276,12 +278,6 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
       if (await paused()) break;
     }
     current = null;
-    // Al cerrar el bloque se marca fuera_de_tarea con la mediana de toda la sesión; las filas
-    // de los bloques anteriores se recalculan con ella.
-    log.edit((all) => {
-      const sesion = all.filter((r) => r.sesion_id === (base.sesion_id ?? null));
-      fueraDeTarea(sesion).forEach((v, k) => (sesion[k].fuera_de_tarea = v));
-    });
     return rows;
   })();
 

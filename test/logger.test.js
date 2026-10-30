@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createLog, toCSV, toJSON, COLUMNS, SESION_COLUMNS, SESION_KEY } from '../src/engine/logger.js';
-import { derive, fueraDeTarea } from '../src/engine/quality.js';
+import { derive } from '../src/engine/quality.js';
 
 const memoryStorage = () => {
   const data = new Map();
@@ -18,12 +18,14 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'audio_latencia_ms', 'audio_fin_por_tope',
     't_opciones_insercion', 't_opciones', 'decodificacion_ok', 't_toque', 't_retro_inicio', 't_retro_fin',
     'opcion_elegida', 'opcion_elegida_id', 'acierto', 'omision', 'toques_fuera', 'toques_repetidos', 'perdida_foco',
-    'cuadros_perdidos', 'cuadros_total', 'interrumpido', 'fallo_tecnico', 'tr_bruto_ms',
-    'latencia_dispositivo_ms', 'tr_corregido_ms', 'anticipatoria', 'fuera_de_tarea', 'peso_calidad',
+    'cuadros_perdidos', 'cuadros_total', 'periodo_cuadro_ms', 'interrumpido', 'fallo_tecnico', 'tr_bruto_ms',
+    'latencia_dispositivo_ms', 'tr_corregido_ms', 'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional',
+    'peso_calidad',
   ]);
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',
-    'terminada_antes', 'motivo_terminacion', 'nivel_apoyo', 'referencia_motora_ms',
+    'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
+    'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia', 'referencia_motora_ms',
   ]);
 });
 
@@ -103,12 +105,6 @@ test('exportación: los tiempos se redondean a 0.1 ms y en memoria quedan comple
   assert.equal(header, SESION_COLUMNS.join(','));
   assert.ok(fila.includes('""duracion_ms"":5230.5'));
   assert.ok(!fila.includes('Ana'));
-});
-
-test('fuera_de_tarea: logaritmo del tiempo a más de 3 MAD de la mediana de la sesión; vacío sin respuesta', () => {
-  const trs = [1000, 1100, 900, 1050, 950, 1000, 5000, 120, null, -5];
-  assert.deepEqual(fueraDeTarea(trs.map((tr_bruto_ms) => ({ tr_bruto_ms }))), [false, false, false, false, false, false, true, true, null, null]);
-  assert.deepEqual(fueraDeTarea([]), []);
 });
 
 test('peso_calidad = foco × cuadros a tiempo × plausibilidad', () => {

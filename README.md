@@ -37,9 +37,10 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial y el número de ensayos. También se puede escribir un código opcional del niño (nunca el nombre) y ajustar el volumen. Después se toca «Empezar».
 2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
+   - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
    - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
-   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se puede anotar un motivo breve (sin nombres).
+   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se elige el motivo de una lista y se puede agregar una nota breve (sin nombres ni datos personales).
 3. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
 4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
 
@@ -195,7 +196,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `codigo_nino` | Código libre opcional, por defecto `DEMO`. Nunca el nombre. |
 | `dispositivo` | userAgent y tamaño de pantalla. |
 | `version_app`, `actividad`, `version_ficha` | Versiones y actividad. |
-| `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s) y fuera de tarea (3 MAD). |
+| `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) y la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos). |
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
 | `modo_fase` | Por ahora siempre `prototipo`. |
@@ -219,16 +220,27 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `toques_repetidos` | Toques sobre una opción ignorados por llegar a menos de 100 ms de la respuesta, incluido el segundo dedo en un toque multitáctil. |
 | `perdida_foco` | `true` si la página se ocultó o perdió el foco durante el ensayo. |
 | `cuadros_perdidos`, `cuadros_total` | Intervalos entre cuadros mayores a 1.5 veces el periodo normal, y total de intervalos medidos. |
+| `periodo_cuadro_ms` | Mediana de los intervalos entre cuadros (`requestAnimationFrame`) durante el ensayo: unos 16.7 ms a 60 Hz y 33.3 ms a 30 Hz. |
 | `interrumpido` | `true` si el terapeuta pausó durante el ensayo. Ese ensayo no se repite. |
 | `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. |
 | `tr_bruto_ms` | `t_toque − t_opciones`. |
 | `latencia_dispositivo_ms` | Latencia táctil y de pantalla de la tableta. Vacía hasta medir cada tableta. |
 | `tr_corregido_ms` | `tr_bruto_ms − latencia_dispositivo_ms`. Vacío si no hay latencia. |
 | `anticipatoria` | `true` si `tr_bruto_ms` < 150 ms. |
-| `fuera_de_tarea` | `true` si el logaritmo de `tr_bruto_ms` está a más de 3 MAD (desviación absoluta mediana, sin escalar) de la mediana de la sesión. Se calcula al cerrar cada bloque con todos los ensayos con respuesta de la sesión, así que también se actualizan los bloques anteriores. Vacío sin respuesta. |
+| `fuera_de_tarea` | `true` si ln(RT) está a más de 3 MAD de la mediana, según el Modelo matemático (3.2 y 3.3). Detalles abajo. |
+| `fuera_de_tarea_provisional` | `false` si `fuera_de_tarea` se calculó al cerrar la sesión; `true` si la sesión seguía abierta al exportar. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
+
+**Fuera de tarea.**
+
+- RT es `tr_corregido_ms`; si está vacío, `tr_bruto_ms`.
+- MAD = 1.4826 × mediana de |ln(RT) − mediana(ln RT)|. Un ensayo queda fuera de tarea si |ln(RT) − mediana| > 3 × MAD.
+- La mediana y la MAD se calculan por actividad dentro de la sesión (todos los bloques de esa actividad), sin mezclar actividades.
+- Solo entran, y solo se marcan, los ensayos con respuesta, no anticipatorios, sin interrupción ni fallo técnico. Los demás quedan vacíos.
+- Si la actividad tiene menos de 10 ensayos válidos en la sesión, la columna queda vacía.
+- Se calcula una sola vez, al tocar «Terminar sesión», y ese valor ya no cambia. Si se exporta una sesión que sigue abierta (o que nunca se terminó, por ejemplo porque se cerró la página), el valor se calcula solo para el archivo y se marca como provisional.
 
 **Columnas agregadas a la especificación original** (aprobadas en la revisión del motor):
 
@@ -248,12 +260,16 @@ Una fila por sesión, en este orden:
 | Columna | Contenido |
 |---|---|
 | `sesion_id`, `codigo_nino`, `dispositivo` | Como en el registro por ensayo. |
-| `inicio`, `fin` | Fecha y hora (UTC, ISO 8601) del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
+| `inicio`, `fin` | Fecha y hora en ISO 8601, en UTC y con «Z» (por ejemplo, `2026-10-30T02:30:04.785Z`), del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
 | `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
 | `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. |
 | `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
-| `motivo_terminacion` | Texto breve que el adulto escribe al terminar el bloque (opcional). |
+| `motivo_terminacion` | Motivo elegido al terminar el bloque: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
+| `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
 | `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque: `ninguno`, `verbal`, `gestual` o `físico`. |
+| `frecuencia_hz` | Frecuencia de la pantalla: 1000 / mediana de `periodo_cuadro_ms` de la sesión, redondeada. |
+| `proporcion_periodo_lento` | Proporción de ensayos con `periodo_cuadro_ms` mayor de 20 ms. |
+| `advertencia_frecuencia` | `true` si el adulto continuó después del aviso de frecuencia baja. |
 | `referencia_motora_ms` | Vacía por ahora. |
 
 ## Banco de ítems
@@ -350,7 +366,7 @@ Notas:
 - **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
 - **Latencia de cada tableta y referencia motora:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) y `referencia_motora_ms` quedan vacías hasta medirlas.
-- **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). Para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
+- **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
 - **Uso sin conexión:** no está implementado (era opcional en este hito).
 
 ## Autoría y licencia

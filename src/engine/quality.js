@@ -1,16 +1,22 @@
 // Reglas de calidad del ensayo. Son los únicos campos del registro que se
 // calculan a partir de otros; todo lo demás se guarda tal como se midió.
 
-// Versión de los umbrales del motor: ANTICIPATORIA_MS y FUERA_MAD (aquí), y REPEAT_MS,
-// AUDIO_CAP_MS y DECODE_CAP_MS (trial.js). Cambia cuando cambia alguno de ellos.
-export const VERSION_PARAMETROS = '0.1.0';
+// Versión de los umbrales del motor: los de este archivo y REPEAT_MS, AUDIO_CAP_MS y
+// DECODE_CAP_MS (trial.js). Cambia cuando cambia alguno de ellos o la regla de fuera de tarea.
+export const VERSION_PARAMETROS = '0.2.0';
 
 // Un tiempo de respuesta menor a este valor se considera anticipatorio.
 export const ANTICIPATORIA_MS = 150;
 
-// Fuera de tarea: el logaritmo del tiempo de respuesta queda a más de FUERA_MAD veces la MAD
-// (desviación absoluta mediana, sin escalar) de la mediana de la sesión.
+// Fuera de tarea (Modelo matemático, 3.2 y 3.3): ln(RT) a más de FUERA_MAD veces la MAD escalada
+// (MAD_ESCALA × mediana de |ln RT − mediana|) de la mediana de su actividad en la sesión.
+// Con menos de FUERA_MIN ensayos válidos de la actividad, queda vacío.
 export const FUERA_MAD = 3;
+export const MAD_ESCALA = 1.4826;
+export const FUERA_MIN = 10;
+
+// Un periodo de cuadro mayor a este valor (menos de 50 Hz) se avisa al adulto.
+export const PERIODO_MAX_MS = 20;
 
 export function derive(r) {
   const tr = r.t_toque != null && r.t_opciones != null ? r.t_toque - r.t_opciones : null;
@@ -22,13 +28,50 @@ export function derive(r) {
   return { tr_bruto_ms: tr, anticipatoria, peso_calidad: foco * aTiempo * plausibilidad * tecnico };
 }
 
-// rows: los ensayos de una sesión. Devuelve, por fila, true/false, o null si no hubo respuesta.
+// RT del ensayo: tr_corregido_ms si hay latencia del dispositivo; si no, tr_bruto_ms.
+const rt = (r) => r.tr_corregido_ms ?? r.tr_bruto_ms;
+// Solo entran ensayos con respuesta, no anticipatorios, sin interrupción ni fallo técnico.
+const valido = (r) => rt(r) > 0 && !r.anticipatoria && !r.interrumpido && !r.fallo_tecnico;
+
+// rows: los ensayos de una sesión, de cualquier actividad. Devuelve, por fila, true/false,
+// o null si el ensayo no es válido o su actividad tiene menos de FUERA_MIN ensayos válidos.
 export function fueraDeTarea(rows) {
-  const ln = (r) => (r.tr_bruto_ms > 0 ? Math.log(r.tr_bruto_ms) : null);
-  const xs = rows.map(ln).filter((x) => x !== null);
-  const med = median(xs);
-  const mad = median(xs.map((x) => Math.abs(x - med)));
-  return rows.map((r) => (ln(r) === null ? null : Math.abs(ln(r) - med) > FUERA_MAD * mad));
+  const out = rows.map(() => null);
+  for (const actividad of new Set(rows.map((r) => r.actividad))) {
+    const idx = rows.flatMap((r, k) => (r.actividad === actividad && valido(r) ? [k] : []));
+    if (idx.length < FUERA_MIN) continue;
+    const xs = idx.map((k) => Math.log(rt(rows[k])));
+    const med = median(xs);
+    const mad = MAD_ESCALA * median(xs.map((x) => Math.abs(x - med)));
+    idx.forEach((k, j) => (out[k] = Math.abs(xs[j] - med) > FUERA_MAD * mad));
+  }
+  return out;
+}
+
+// Marca fuera_de_tarea en los ensayos de una sesión: definitivo al cerrar la sesión
+// (provisional = false) o provisional al exportar una sesión abierta. Un valor cerrado no cambia.
+export function marcarFueraDeTarea(rows, provisional) {
+  fueraDeTarea(rows).forEach((v, k) => {
+    if (rows[k].fuera_de_tarea_provisional !== false) Object.assign(rows[k], { fuera_de_tarea: v, fuera_de_tarea_provisional: provisional });
+  });
+}
+
+// Copia del registro para exportar: las sesiones abiertas llevan fuera_de_tarea provisional.
+export function paraExportar(rows) {
+  const copia = rows.map((r) => ({ ...r }));
+  for (const id of new Set(copia.map((r) => r.sesion_id))) marcarFueraDeTarea(copia.filter((r) => r.sesion_id === id), true);
+  return copia;
+}
+
+// Para sesiones.csv: frecuencia de la pantalla (mediana de periodo_cuadro_ms) y proporción
+// de ensayos con periodo mayor a PERIODO_MAX_MS.
+export function frecuenciaSesion(rows) {
+  const ps = rows.map((r) => r.periodo_cuadro_ms).filter((p) => p > 0);
+  const med = median(ps);
+  return {
+    frecuencia_hz: med === null ? null : Math.round(1000 / med),
+    proporcion_periodo_lento: ps.length ? ps.filter((p) => p > PERIODO_MAX_MS).length / ps.length : null,
+  };
 }
 
 const fill = (template, vars) => template.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');

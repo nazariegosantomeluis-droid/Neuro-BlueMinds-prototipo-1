@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { nextPaint, frameMonitor, eventTime, estimateFramePeriod } from '../src/engine/clock.js';
+import { nextPaint, frameMonitor, eventTime, measureFramePeriod } from '../src/engine/clock.js';
 
 // requestAnimationFrame simulado: cada llamada recibe el siguiente timestamp de la lista.
 function fakeRaf(timestamps) {
@@ -21,17 +21,20 @@ test('la aparición es el timestamp del segundo cuadro después de insertar', as
   assert.equal(f.calls(), 2);
 });
 
-test('cuenta como perdido cada intervalo mayor a 1.5 veces el periodo', async () => {
+test('cuenta como perdido cada intervalo mayor a 1.5 veces el periodo; el periodo del ensayo es la mediana', async () => {
   const f = fakeRaf([0, 16.7, 33.4, 70, 86.7, 140]);
   const m = frameMonitor(16.7, f.raf, f.caf);
   m.start();
   await new Promise((r) => setImmediate(r));
-  assert.deepEqual(m.stop(), { total: 5, late: 2 });
+  const { total, late, periodo } = m.stop();
+  assert.deepEqual({ total, late }, { total: 5, late: 2 });
+  assert.equal(Math.round(periodo * 10) / 10, 16.7);
 });
 
-test('el periodo normal es la mediana de los intervalos', async () => {
-  const f = fakeRaf([0, 8.3, 16.6, 50, 58.3, 66.6]);
-  assert.equal(Math.round(await estimateFramePeriod(5, f.raf) * 10) / 10, 8.3);
+test('el periodo del dispositivo es la mediana de los intervalos durante el tiempo pedido', async () => {
+  const f = fakeRaf([0, 8.3, 16.6, 50, 58.3, 66.6, 75]);
+  assert.equal(Math.round((await measureFramePeriod(60, f.raf)) * 10) / 10, 8.3);
+  assert.equal(f.calls(), 6, 'deja de medir al pasar el tiempo pedido');
 });
 
 test('usa event.timeStamp, salvo que venga en tiempo de época', () => {

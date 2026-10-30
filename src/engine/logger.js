@@ -14,15 +14,16 @@ export const COLUMNS = [
   't_audio_inicio', 't_audio_fin', 'audio_fuente', 'audio_latencia_ms', 'audio_fin_por_tope',
   't_opciones_insercion', 't_opciones', 'decodificacion_ok', 't_toque', 't_retro_inicio', 't_retro_fin',
   'opcion_elegida', 'opcion_elegida_id', 'acierto', 'omision',
-  'toques_fuera', 'toques_repetidos', 'perdida_foco', 'cuadros_perdidos', 'cuadros_total',
+  'toques_fuera', 'toques_repetidos', 'perdida_foco', 'cuadros_perdidos', 'cuadros_total', 'periodo_cuadro_ms',
   'interrumpido', 'fallo_tecnico', 'tr_bruto_ms', 'latencia_dispositivo_ms', 'tr_corregido_ms',
-  'anticipatoria', 'fuera_de_tarea', 'peso_calidad',
+  'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional', 'peso_calidad',
 ];
 
 // Una fila por sesión (sesiones.csv).
 export const SESION_COLUMNS = [
   'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',
-  'terminada_antes', 'motivo_terminacion', 'nivel_apoyo', 'referencia_motora_ms',
+  'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
+  'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia', 'referencia_motora_ms',
 ];
 
 const KEY = 'neuro-blueminds.registro';

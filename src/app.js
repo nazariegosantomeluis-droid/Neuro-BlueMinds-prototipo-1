@@ -4,9 +4,10 @@ import { loadFicha } from './engine/ficha.js';
 import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
 import { pickItems, pickComposed, rng, seedOf, shuffle } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
-import { browserEnv, estimateFramePeriod, eventTime } from './engine/clock.js';
+import { browserEnv, eventTime } from './engine/clock.js';
 import { createAudio } from './engine/audio.js';
-import { summarize } from './engine/quality.js';
+import { summarize, marcarFueraDeTarea, paraExportar, frecuenciaSesion } from './engine/quality.js';
+import { comprobarFrecuencia } from './frecuencia.js';
 import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
 import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
@@ -18,6 +19,14 @@ const PANTALLAS = { seleccion, 'cambia-regla': cambiaRegla };
 const PICTO_FIN = 'assets/picto/terminar.png';
 const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
+const MOTIVOS_TERMINACION = [
+  'Desregulación o malestar del niño',
+  'Cansancio o falta de interés',
+  'Petición del niño o de la familia',
+  'Fallo técnico',
+  'Decisión clínica',
+  'Otro',
+];
 
 const ICONO_PAUSA =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
@@ -174,12 +183,13 @@ function renderInicio(msg = '') {
     };
   }
   form.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
-    state.session = null;
+    cerrarSesion();
     renderInicio();
   });
   form.onsubmit = (e) => {
     e.preventDefault();
     audio.unlock(); // dentro del gesto del adulto
+    form.querySelector('[type=submit]').disabled = true; // un solo bloque aunque se toque dos veces
     start(form);
   };
   bindVolumen(app);
@@ -259,8 +269,8 @@ function bindRegistro(root, rerender) {
     b.onclick = () => {
       const tipo = b.dataset.descargar;
       const fecha = new Date().toISOString().slice(0, 10); // solo para el nombre del archivo
-      if (tipo === 'json') download(`registro-neuro-blueminds-${fecha}.json`, toJSON(log.rows()), 'application/json');
-      else if (tipo === 'csv') download(`registro-neuro-blueminds-${fecha}.csv`, toCSV(log.rows()), 'text/csv;charset=utf-8');
+      if (tipo === 'json') download(`registro-neuro-blueminds-${fecha}.json`, toJSON(paraExportar(log.rows())), 'application/json');
+      else if (tipo === 'csv') download(`registro-neuro-blueminds-${fecha}.csv`, toCSV(paraExportar(log.rows())), 'text/csv;charset=utf-8');
       else download(`sesiones-neuro-blueminds-${fecha}.csv`, toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
     };
   }
@@ -277,6 +287,13 @@ function bindRegistro(root, rerender) {
 }
 
 // ---------- Sesión ----------
+
+// Al cerrar la sesión, fuera_de_tarea se calcula una sola vez y queda definitivo.
+function cerrarSesion() {
+  const id = state.session.id;
+  log.edit((all) => marcarFueraDeTarea(all.filter((r) => r.sesion_id === id), false));
+  state.session = null;
+}
 
 async function preloadImages(srcs) {
   await Promise.all(
@@ -330,18 +347,24 @@ async function start(form) {
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
+  const { periodo, advertencia } = await comprobarFrecuencia(app);
   history.replaceState(null, '', '#inicio'); // al terminar el bloque se vuelve al inicio
   if (!state.session) {
     state.session = s;
     prefs.set('nbm.sesiones', String(s.numero + 1));
-    // Fecha y hora solo para identificar la sesión; las duraciones se miden con performance.now().
-    sesiones.add({ sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(), ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [] });
+    // Fecha y hora (ISO 8601 en UTC, con «Z») solo para identificar la sesión; las duraciones
+    // se miden con performance.now().
+    sesiones.add({
+      sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
+      ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: false,
+    });
   }
+  if (advertencia) editSesion(s.id, (r) => (r.advertencia_frecuencia = true));
   s.bloque++;
-  await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla });
+  await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
 }
 
-async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }) {
+async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, periodo }) {
   // En modo experto: el código del ítem en una esquina y un botón para pasar al siguiente ítem.
   app.innerHTML = `
     <div class="nino">
@@ -353,7 +376,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
   const stage = wrap.querySelector('#stage');
   state.running = true;
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
-  const env = browserEnv({ framePeriod: await estimateFramePeriod(30), audio });
+  const env = browserEnv({ framePeriod: periodo, audio });
   const view = pantalla.createView(stage, state.images);
   let ensayo = 0;
   const block = startBlock({
@@ -369,10 +392,10 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo } = await pausePanel(wrap);
+      const { accion, motivo, nota } = await pausePanel(wrap);
       editSesion(s.id, (r) => {
         r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0 });
-        if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null });
+        if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
       return accion;
     },
@@ -403,7 +426,8 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
     state.running = false;
     wake?.release().catch(() => {});
   }
-  editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: r.ensayos + rows.length }));
+  const deLaSesion = log.rows().filter((r) => r.sesion_id === s.id);
+  editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
@@ -443,9 +467,15 @@ function pausePanel(wrap) {
         <div class="panel">
           <p class="meta">El ensayo en curso quedó registrado como interrumpido y no se repetirá.</p>
           <label>Volumen <input type="range" min="0" max="100" value="${volumen()}" data-volumen></label>
-          <label>Motivo, si terminas el bloque (opcional)
-            <input name="motivo" maxlength="80" autocomplete="off">
-            <span class="ayuda">Sin nombres ni datos que identifiquen al niño.</span>
+          <label>Motivo, si terminas el bloque
+            <select name="motivo">
+              <option value="">—</option>
+              ${MOTIVOS_TERMINACION.map((m) => `<option>${esc(m)}</option>`).join('')}
+            </select>
+          </label>
+          <label>Nota (opcional)
+            <input name="nota" maxlength="80" autocomplete="off">
+            <span class="ayuda">Sin nombres ni datos personales.</span>
           </label>
           <div class="acciones">
             <button type="button" class="primario" data-r="continuar">Continuar</button>
@@ -457,7 +487,8 @@ function pausePanel(wrap) {
     for (const b of capa.querySelectorAll('[data-r]')) {
       b.onclick = () => {
         capa.remove();
-        resolve({ accion: b.dataset.r, motivo: capa.querySelector('[name=motivo]').value.trim() });
+        const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
+        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota') });
       };
     }
     wrap.append(capa);
@@ -507,7 +538,7 @@ function renderResumen() {
   }
   app.querySelector('#otro').onclick = () => renderInicio();
   app.querySelector('#cerrar').onclick = () => {
-    state.session = null;
+    cerrarSesion();
     renderInicio();
   };
   bindRegistro(app, renderResumen);
