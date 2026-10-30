@@ -15,6 +15,15 @@ test('RNF-05: nada destella; solo transiciones suaves de 200 a 300 ms', () => {
   for (const ms of durations) assert.ok(ms >= 200 && ms <= 300, `transición de ${ms} ms`);
 });
 
+test('las opciones aparecen completas en un cuadro: sin opacidad ni animación de entrada', () => {
+  const rules = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, sel]) => /\.opcion|\.stage img/.test(sel));
+  assert.ok(rules.length >= 3);
+  for (const [, sel, body] of rules) {
+    assert.doesNotMatch(body, /opacity|animation|visibility/, sel.trim());
+    for (const m of body.matchAll(/transition\s*:\s*([^;]+)/g)) assert.match(m[1], /^box-shadow\b/, `${sel.trim()}: solo el marco`);
+  }
+});
+
 test('las transiciones se desactivan con prefers-reduced-motion', () => {
   const block = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
   assert.match(block, /transition:\s*none\s*!important/);

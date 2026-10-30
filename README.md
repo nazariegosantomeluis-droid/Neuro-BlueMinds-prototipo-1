@@ -39,9 +39,9 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
-   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque.
+   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se puede anotar un motivo breve (sin nombres).
 3. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
-4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
+4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
@@ -166,7 +166,12 @@ Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones)
 
 ### Registro
 
-Cada ensayo produce una fila con las columnas siguientes, en este orden. El registro vive en memoria y en el almacenamiento local del navegador, y se descarga con los botones «Descargar registro (CSV)» y «(JSON)». Cualquier campo que no esté en esta lista se descarta antes de guardar.
+Hay dos archivos de exportación:
+
+- **Registro por ensayo:** una fila por ensayo. Se descarga con «Descargar registro (CSV)» y «(JSON)».
+- **Sesiones:** una fila por sesión. Se descarga con «Descargar sesiones (CSV)» (ver [Sesiones](#sesiones)).
+
+Ambos viven en memoria y en el almacenamiento local del navegador. Cualquier campo que no esté en sus listas de columnas se descarta antes de guardar. Si una columna no tiene valor, queda vacía.
 
 [`docs/ejemplo-registro.csv`](docs/ejemplo-registro.csv) es una sesión simulada de 10 ensayos de ACT-01, para revisar el formato sin correr la aplicación. A propósito incluye:
 
@@ -179,7 +184,9 @@ Se regenera con `node tools/ejemplo-registro.mjs`.
 
 **Posiciones.** Las opciones se numeran por filas, de izquierda a derecha y de arriba abajo, empezando en 1. En `1x4` las posiciones son 1, 2, 3 y 4 de izquierda a derecha; en `2x2`, 1 y 2 son la fila de arriba, y 3 y 4 la de abajo. `pos_correcta`, `pos_distractores` y `opcion_elegida` usan esta numeración.
 
-Todos los tiempos `t_*` están en milisegundos con decimales, en el reloj monótono del navegador (`performance.now()`; el cero es la carga de la página). Sirven para restarse entre sí dentro de la misma sesión.
+Todos los tiempos `t_*` están en milisegundos, en el reloj monótono del navegador (`performance.now()`; el cero es la carga de la página). Sirven para restarse entre sí dentro de la misma sesión.
+
+Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` y `*_ms`, y los tiempos dentro de `toques_fuera` y `pausas`. En memoria y en el almacenamiento del dispositivo se guarda el valor completo.
 
 | Columna | Contenido |
 |---|---|
@@ -188,21 +195,26 @@ Todos los tiempos `t_*` están en milisegundos con decimales, en el reloj monót
 | `codigo_nino` | Código libre opcional, por defecto `DEMO`. Nunca el nombre. |
 | `dispositivo` | userAgent y tamaño de pantalla. |
 | `version_app`, `actividad`, `version_ficha` | Versiones y actividad. |
+| `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s) y fuera de tarea (3 MAD). |
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
+| `modo_fase` | Por ahora siempre `prototipo`. |
+| `tema_imagenes` | Por ahora siempre `general`. |
 | `n_opciones` | Número de opciones. |
 | `disposicion` | Filas x columnas de las opciones: `1x2`, `1x3`, `1x4` o `2x2`. |
 | `pos_correcta` | Posición de la opción correcta. |
 | `pos_distractores` | Lista JSON de `{id, pos}`: qué distractor quedó en qué posición. |
 | `t_consigna_inicio`, `t_consigna_fin` | Cuadro en que aparece la consigna y fin de ese estado. |
-| `t_audio_inicio`, `t_audio_fin` | Inicio programado del audio y su evento de fin. |
+| `t_audio_inicio`, `t_audio_fin` | Inicio programado del audio y su evento de fin. Las columnas de audio (de `t_audio_inicio` a `audio_fin_por_tope`) quedan vacías en modalidad V. |
 | `audio_fuente` | `archivo`, `sintesis` (voz del navegador, de inicio impreciso) o `ninguna`. |
 | `audio_latencia_ms` | Latencia de salida de audio del dispositivo, si el navegador la informa. |
-| `audio_fin_por_tope` | `true` si el evento de fin del audio no llegó en 5 s. En ese caso `t_audio_fin` queda vacío. |
+| `audio_fin_por_tope` | `true` si el evento de fin del audio no llegó en 5 s. En ese caso `t_audio_fin` queda vacío. Vacío en V y si el audio no arrancó. |
 | `t_opciones_insercion`, `t_opciones` | Inserción de las opciones y cuadro en que aparecen en pantalla. |
+| `decodificacion_ok` | `true` si las imágenes de las opciones se decodificaron durante la consigna; `false` si fallaron o no terminaron en 1 s después de la consigna (las opciones aparecen de todos modos). Vacío en ACT-07, que no usa imágenes. |
 | `t_toque` | `event.timeStamp` del primer `pointerdown` sobre una opción. |
 | `t_retro_inicio`, `t_retro_fin` | Retroalimentación. |
 | `opcion_elegida`, `acierto`, `omision` | Posición tocada; si fue la correcta; si no hubo respuesta en 10 s. |
+| `opcion_elegida_id` | Identificador de la opción tocada, por ejemplo `gato-1` o, en ACT-07, `barco-amarillo`. |
 | `toques_fuera` | Lista JSON de `{t, x, y}` de los toques fuera de las opciones. |
 | `toques_repetidos` | Toques sobre una opción ignorados por llegar a menos de 100 ms de la respuesta, incluido el segundo dedo en un toque multitáctil. |
 | `perdida_foco` | `true` si la página se ocultó o perdió el foco durante el ensayo. |
@@ -210,10 +222,13 @@ Todos los tiempos `t_*` están en milisegundos con decimales, en el reloj monót
 | `interrumpido` | `true` si el terapeuta pausó durante el ensayo. Ese ensayo no se repite. |
 | `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. |
 | `tr_bruto_ms` | `t_toque − t_opciones`. |
+| `latencia_dispositivo_ms` | Latencia táctil y de pantalla de la tableta. Vacía hasta medir cada tableta. |
+| `tr_corregido_ms` | `tr_bruto_ms − latencia_dispositivo_ms`. Vacío si no hay latencia. |
 | `anticipatoria` | `true` si `tr_bruto_ms` < 150 ms. |
+| `fuera_de_tarea` | `true` si el logaritmo de `tr_bruto_ms` está a más de 3 MAD (desviación absoluta mediana, sin escalar) de la mediana de la sesión. Se calcula al cerrar cada bloque con todos los ensayos con respuesta de la sesión, así que también se actualizan los bloques anteriores. Vacío sin respuesta. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
 
-Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se guarda tal como se midió.
+Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 
 **Columnas agregadas a la especificación original** (aprobadas en la revisión del motor):
 
@@ -224,6 +239,22 @@ Solo las tres últimas columnas se calculan a partir de otras; todo lo demás se
 | `audio_fin_por_tope` | Distingue un audio sin evento de fin; en ese caso `t_audio_fin` queda vacío y no se rellena con la hora del tope. |
 | `cuadros_total` | Permite recalcular `peso_calidad` desde el CSV. |
 | `fallo_tecnico` | Marca los ensayos AV en que el audio no arrancó o falló. |
+| `decodificacion_ok` | Muestra si las imágenes de las opciones estaban decodificadas antes de insertarlas. |
+
+### Sesiones
+
+Una fila por sesión, en este orden:
+
+| Columna | Contenido |
+|---|---|
+| `sesion_id`, `codigo_nino`, `dispositivo` | Como en el registro por ensayo. |
+| `inicio`, `fin` | Fecha y hora (UTC, ISO 8601) del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
+| `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
+| `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. |
+| `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
+| `motivo_terminacion` | Texto breve que el adulto escribe al terminar el bloque (opcional). |
+| `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque: `ninguno`, `verbal`, `gestual` o `físico`. |
+| `referencia_motora_ms` | Vacía por ahora. |
 
 ## Banco de ítems
 
@@ -284,7 +315,7 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 - **Sin destellos (RNF-05).**
   - No hay animaciones en bucle ni parpadeos.
   - Las únicas transiciones (el marco de retroalimentación y el botón de pausa) duran de 200 a 300 ms y se desactivan con `prefers-reduced-motion`.
-  - Las opciones aparecen sin transición, para que el cuadro registrado como aparición sea el real.
+  - Las opciones aparecen sin transición y con opacidad completa, para que el cuadro registrado como aparición sea el real. Sus imágenes se decodifican durante la consigna y se insertan ya decodificadas (`decodificacion_ok`).
 - **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. Las excepciones son los marcadores provisionales, que muestran el nombre del concepto hasta que lleguen las fotografías, y el código del ítem en modo experto.
 - **Retroalimentación.** Sin sonidos de error, sin la palabra «Incorrecto» y sin recompensas que dependan del desempeño: siempre se señala la opción correcta con el mismo marco.
 - **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
@@ -318,6 +349,8 @@ Notas:
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
 - **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
+- **Latencia de cada tableta y referencia motora:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) y `referencia_motora_ms` quedan vacías hasta medirlas.
+- **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). Para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
 - **Uso sin conexión:** no está implementado (era opcional en este hito).
 
 ## Autoría y licencia

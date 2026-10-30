@@ -67,6 +67,7 @@ const view = {
   showPrompt() {
     n++;
   },
+  prepareOptions: async () => {}, // las imágenes se decodifican sin problema
   showOptions(opciones) {
     const p = PLAN[n];
     const correcta = opciones.findIndex((o) => o.correcta) + 1;
@@ -92,6 +93,8 @@ block = startBlock({
     dispositivo: `Simulación en Node.js, sin navegador | ${SCREEN.w}x${SCREEN.h}`,
     banda: 'B3',
     version_app: VERSION_APP,
+    modo_fase: 'prototipo',
+    tema_imagenes: 'general',
   },
   env,
   view,

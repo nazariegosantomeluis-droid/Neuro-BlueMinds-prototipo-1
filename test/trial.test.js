@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createTrial, startBlock, STATES, AUDIO_CAP_MS, NO_AUDIO_MSG } from '../src/engine/trial.js';
+import { createTrial, startBlock, STATES, AUDIO_CAP_MS, DECODE_CAP_MS, NO_AUDIO_MSG } from '../src/engine/trial.js';
 import { createLog, COLUMNS } from '../src/engine/logger.js';
 import { rng } from '../src/engine/selector.js';
 import { simEnv } from '../tools/sim-env.mjs';
@@ -58,6 +58,29 @@ test('pasa por los seis estados en orden y mide el tiempo desde la aparición de
   assert.equal(r.omision, false);
   assert.equal(r.peso_calidad, 1);
   assert.equal(view.calls.find((c) => c[0] === 'options')[2], '1x2');
+  assert.equal(r.opcion_elegida_id, 'gato-1');
+  for (const c of ['t_audio_inicio', 't_audio_fin', 'audio_fuente', 'audio_latencia_ms', 'audio_fin_por_tope']) {
+    assert.equal(r[c], null, `${c} vacío en V`);
+  }
+  assert.equal(r.decodificacion_ok, null, 'vacío si la pantalla no decodifica imágenes');
+});
+
+test('las imágenes de las opciones se decodifican durante la consigna; si fallan o tardan, se registra', async () => {
+  const conDecodificacion = (prepare) => {
+    const s = setup();
+    s.view.prepareOptions = () => prepare(s.env);
+    return s.run();
+  };
+  const ok = await conDecodificacion(async () => {});
+  assert.equal(ok.decodificacion_ok, true);
+  assert.equal(ok.t_consigna_fin - ok.t_consigna_inicio, ficha.consignaVMs, 'no alarga la consigna');
+  const lenta = await conDecodificacion((env) => new Promise((res) => env.at(1800, res)));
+  assert.equal(lenta.decodificacion_ok, true);
+  assert.equal(lenta.t_consigna_fin - lenta.t_consigna_inicio, 1800, 'las opciones esperan a la decodificación');
+  assert.equal((await conDecodificacion(async () => { throw new Error('EncodingError'); })).decodificacion_ok, false);
+  const nunca = await conDecodificacion(() => new Promise(() => {}));
+  assert.equal(nunca.decodificacion_ok, false);
+  assert.equal(nunca.t_consigna_fin - nunca.t_consigna_inicio, ficha.consignaVMs + DECODE_CAP_MS, 'con tope');
 });
 
 test('registra omisión al llegar al límite y señala la opción correcta', async () => {
@@ -67,6 +90,7 @@ test('registra omisión al llegar al límite y señala la opción correcta', asy
   assert.equal(r.omision, true);
   assert.equal(r.acierto, false);
   assert.equal(r.opcion_elegida, null);
+  assert.equal(r.opcion_elegida_id, null);
   assert.equal(r.t_toque, null);
   assert.equal(r.tr_bruto_ms, null);
   assert.equal(r.t_retro_inicio - r.t_opciones, ficha.limiteRespuestaMs + PAINT_MS);
@@ -99,6 +123,7 @@ test('un segundo toque sobre una opción a menos de 100 ms de la respuesta es re
   });
   const r = await run();
   assert.equal(r.opcion_elegida, 1, 'cuenta el primer toque');
+  assert.equal(r.opcion_elegida_id, 'perro-1');
   assert.equal(r.acierto, false);
   assert.equal(r.toques_repetidos, 1);
   assert.equal(r.toques_fuera.length, 0);
@@ -195,10 +220,10 @@ test('pérdida de foco y cuadros perdidos se reflejan en el peso de calidad', as
   assert.equal(sinFoco.peso_calidad, 0);
 });
 
-// Bloque de ACT-01 B1 con tres ensayos; plan[i] decide qué pasa en el ensayo i.
-function runBlock({ modalidad = 'V', audio, plan = [] } = {}) {
+// Bloque de ACT-01 B1 con tres ensayos; plan[i] decide qué pasa en el ensayo i:
+// 'acierto', 'error', 'pausa', 'salto' o un número (acierto a esos ms de la inserción).
+function runBlock({ modalidad = 'V', audio, plan = [], log = createLog(null), base = {} } = {}) {
   const env = simEnv({ audio });
-  const log = createLog(null);
   const trials = ['ACT01-B1-01', 'ACT01-B1-02', 'ACT01-B1-03'].map((codigo) => ({ codigo, consigna, opciones }));
   let shown = 0;
   let block;
@@ -207,7 +232,11 @@ function runBlock({ modalidad = 'V', audio, plan = [] } = {}) {
       const action = plan[shown++] ?? 'acierto';
       if (action === 'pausa') env.at(300, () => block.pause());
       else if (action === 'salto') env.at(300, () => block.skip());
-      else env.at(500, () => block.pointer({ t: env.now(), pos: o.findIndex((x) => x.correcta) + 1 }));
+      else {
+        const correcta = o.findIndex((x) => x.correcta) + 1;
+        const pos = action === 'error' ? (correcta % o.length) + 1 : correcta;
+        env.at(typeof action === 'number' ? action : 500, () => block.pointer({ t: env.now(), pos }));
+      }
     },
   });
   let pauses = 0;
@@ -216,7 +245,7 @@ function runBlock({ modalidad = 'V', audio, plan = [] } = {}) {
     ficha,
     modalidad,
     trials,
-    base: { sesion_id: 'EXP-prueba', bloque: 1, codigo_nino: 'DEMO', dispositivo: 'prueba', banda: 'B1', version_app: '0.1.0' },
+    base: { sesion_id: 'EXP-prueba', bloque: 1, codigo_nino: 'DEMO', dispositivo: 'prueba', banda: 'B1', version_app: '0.1.0', ...base },
     env,
     view,
     log,
@@ -276,4 +305,26 @@ test('AV: si el audio falla a mitad del bloque, marca ese ensayo y el bloque con
   assert.deepEqual(rows.map((r) => r.audio_fuente), ['sintesis', 'ninguna', 'sintesis']);
   assert.deepEqual(rows.map((r) => r.fallo_tecnico), [false, true, false]);
   assert.deepEqual(rows.map((r) => r.peso_calidad), [1, 0, 1]);
+});
+
+test('opcion_elegida_id: el id de la opción tocada, aunque las opciones se barajen', async () => {
+  const rows = await runBlock({ plan: ['acierto', 'error', 'error'] }).done;
+  assert.deepEqual(rows.map((r) => r.opcion_elegida_id), ['gato-1', 'perro-1', 'perro-1']);
+  for (const r of rows.slice(1)) assert.equal(r.pos_distractores.find((d) => d.pos === r.opcion_elegida).id, r.opcion_elegida_id);
+});
+
+test('tr_corregido_ms descuenta la latencia del dispositivo; sin latencia queda vacío', async () => {
+  const sin = await runBlock().done;
+  assert.deepEqual(sin.map((r) => r.tr_corregido_ms), [null, null, null]);
+  const con = await runBlock({ base: { latencia_dispositivo_ms: 40 } }).done;
+  for (const r of con) assert.equal(r.tr_corregido_ms, r.tr_bruto_ms - 40);
+});
+
+test('al cerrar el bloque se marca fuera_de_tarea con todos los ensayos de la sesión', async () => {
+  const log = createLog(null);
+  for (const tr of [480, 500, 520, 470, 510]) log.add({ sesion_id: 'EXP-prueba', bloque: 0, tr_bruto_ms: tr });
+  log.add({ sesion_id: 'S-otra', tr_bruto_ms: 9000 });
+  const rows = await runBlock({ log, plan: [500, 4000, 'pausa'] }).done;
+  assert.deepEqual(rows.map((r) => r.fuera_de_tarea), [false, true, null]);
+  assert.deepEqual(log.rows().map((r) => r.fuera_de_tarea), [false, false, false, false, false, null, false, true, null]);
 });

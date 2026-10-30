@@ -6,20 +6,38 @@ import { itemKey } from '../engine/selector.js';
 export const toTrials = (items) =>
   items.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones, clave: itemKey(it) }));
 
-// images: imágenes ya decodificadas, para que aparezcan en el mismo cuadro en que se insertan.
+// images: imágenes ya cargadas al empezar el bloque.
 export function createView(stage, images) {
   const picture = (src) => {
     const img = images.get(src)?.cloneNode() ?? Object.assign(new Image(), { src });
     img.alt = '';
     img.draggable = false;
+    img.decoding = 'sync'; // nunca se pinta un cuadro sin la imagen
     return img;
   };
+  // Las posiciones se numeran por filas, de izquierda a derecha y de arriba abajo.
+  const build = (opciones, disposicion) => {
+    const [filas, columnas] = disposicion.split('x').map(Number);
+    const el = document.createElement('div');
+    el.className = 'opciones';
+    el.style.setProperty('--filas', filas);
+    el.style.setProperty('--columnas', columnas);
+    opciones.forEach((o, k) => {
+      const cell = document.createElement('div');
+      cell.className = 'opcion';
+      cell.dataset.pos = k + 1;
+      cell.append(picture(o.src));
+      el.append(cell);
+    });
+    return el;
+  };
   let grid = null;
+  let next = null; // opciones armadas y decodificadas durante la consigna
 
   return {
     clear() {
       stage.replaceChildren();
-      grid = null;
+      grid = next = null;
     },
     showPrompt(consigna) {
       const box = document.createElement('div');
@@ -27,20 +45,14 @@ export function createView(stage, images) {
       box.append(picture(consigna.src));
       stage.append(box);
     },
-    // Las posiciones se numeran por filas, de izquierda a derecha y de arriba abajo.
+    // Se decodifican los mismos elementos que después se insertan.
+    prepareOptions(opciones, disposicion) {
+      next = build(opciones, disposicion);
+      return Promise.all([...next.querySelectorAll('img')].map((img) => img.decode()));
+    },
     showOptions(opciones, disposicion) {
-      const [filas, columnas] = disposicion.split('x').map(Number);
-      grid = document.createElement('div');
-      grid.className = 'opciones';
-      grid.style.setProperty('--filas', filas);
-      grid.style.setProperty('--columnas', columnas);
-      opciones.forEach((o, k) => {
-        const cell = document.createElement('div');
-        cell.className = 'opcion';
-        cell.dataset.pos = k + 1;
-        cell.append(picture(o.src));
-        grid.append(cell);
-      });
+      grid = next ?? build(opciones, disposicion);
+      next = null;
       stage.append(grid);
     },
     showFeedback(posCorrecta) {

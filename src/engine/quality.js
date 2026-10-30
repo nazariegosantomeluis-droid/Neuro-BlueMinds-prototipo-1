@@ -1,8 +1,16 @@
 // Reglas de calidad del ensayo. Son los únicos campos del registro que se
 // calculan a partir de otros; todo lo demás se guarda tal como se midió.
 
+// Versión de los umbrales del motor: ANTICIPATORIA_MS y FUERA_MAD (aquí), y REPEAT_MS,
+// AUDIO_CAP_MS y DECODE_CAP_MS (trial.js). Cambia cuando cambia alguno de ellos.
+export const VERSION_PARAMETROS = '0.1.0';
+
 // Un tiempo de respuesta menor a este valor se considera anticipatorio.
 export const ANTICIPATORIA_MS = 150;
+
+// Fuera de tarea: el logaritmo del tiempo de respuesta queda a más de FUERA_MAD veces la MAD
+// (desviación absoluta mediana, sin escalar) de la mediana de la sesión.
+export const FUERA_MAD = 3;
 
 export function derive(r) {
   const tr = r.t_toque != null && r.t_opciones != null ? r.t_toque - r.t_opciones : null;
@@ -12,6 +20,15 @@ export function derive(r) {
   const plausibilidad = anticipatoria ? 0 : 1;
   const tecnico = r.fallo_tecnico ? 0 : 1; // el audio de la consigna AV no arrancó o falló
   return { tr_bruto_ms: tr, anticipatoria, peso_calidad: foco * aTiempo * plausibilidad * tecnico };
+}
+
+// rows: los ensayos de una sesión. Devuelve, por fila, true/false, o null si no hubo respuesta.
+export function fueraDeTarea(rows) {
+  const ln = (r) => (r.tr_bruto_ms > 0 ? Math.log(r.tr_bruto_ms) : null);
+  const xs = rows.map(ln).filter((x) => x !== null);
+  const med = median(xs);
+  const mad = median(xs.map((x) => Math.abs(x - med)));
+  return rows.map((r) => (ln(r) === null ? null : Math.abs(ln(r) - med) > FUERA_MAD * mad));
 }
 
 const fill = (template, vars) => template.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');

@@ -1,7 +1,7 @@
 // Aplicación: pantallas del adulto, sesión del niño y descarga del registro.
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
 import { loadFicha } from './engine/ficha.js';
-import { createLog, toCSV, toJSON, download, VERSION_APP } from './engine/logger.js';
+import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
 import { pickItems, pickComposed, rng, seedOf, shuffle } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, estimateFramePeriod, eventTime } from './engine/clock.js';
@@ -17,6 +17,7 @@ const ACTIVIDADES = ['ACT-01', 'ACT-02', 'ACT-07'];
 const PANTALLAS = { seleccion, 'cambia-regla': cambiaRegla };
 const PICTO_FIN = 'assets/picto/terminar.png';
 const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
+const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
 
 const ICONO_PAUSA =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
@@ -25,6 +26,14 @@ const ICONO_ADULTO =
 
 const app = document.getElementById('app');
 const log = createLog();
+// Una fila por sesión: inicio, fin, pausas, terminación anticipada y nivel de apoyo por bloque.
+const sesiones = createLog(undefined, { key: SESION_KEY, columns: SESION_COLUMNS });
+// Si el adulto borró el registro durante la sesión, la fila ya no existe y no se cambia nada.
+const editSesion = (id, fn) =>
+  sesiones.edit((rows) => {
+    const r = rows.find((x) => x.sesion_id === id);
+    if (r) fn(r);
+  });
 const audio = createAudio();
 const state = {
   fichas: {}, // id → ficha válida
@@ -238,6 +247,7 @@ function registroHTML() {
         <div class="acciones">
           <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
           <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
+          <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
           <button type="button" data-borrar ${off}>Borrar registro</button>
         </div>
       </div>
@@ -247,13 +257,11 @@ function registroHTML() {
 function bindRegistro(root, rerender) {
   for (const b of root.querySelectorAll('[data-descargar]')) {
     b.onclick = () => {
-      const csv = b.dataset.descargar === 'csv';
+      const tipo = b.dataset.descargar;
       const fecha = new Date().toISOString().slice(0, 10); // solo para el nombre del archivo
-      download(
-        `registro-neuro-blueminds-${fecha}.${csv ? 'csv' : 'json'}`,
-        csv ? toCSV(log.rows()) : toJSON(log.rows()),
-        csv ? 'text/csv;charset=utf-8' : 'application/json',
-      );
+      if (tipo === 'json') download(`registro-neuro-blueminds-${fecha}.json`, toJSON(log.rows()), 'application/json');
+      else if (tipo === 'csv') download(`registro-neuro-blueminds-${fecha}.csv`, toCSV(log.rows()), 'text/csv;charset=utf-8');
+      else download(`sesiones-neuro-blueminds-${fecha}.csv`, toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
     };
   }
   const borrar = root.querySelector('[data-borrar]');
@@ -261,6 +269,7 @@ function bindRegistro(root, rerender) {
     borrar.onclick = () => {
       if (confirm('¿Borrar todo el registro guardado en este dispositivo? Descárgalo antes si lo necesitas.')) {
         log.clear();
+        sesiones.clear();
         rerender();
       }
     };
@@ -325,6 +334,8 @@ async function start(form) {
   if (!state.session) {
     state.session = s;
     prefs.set('nbm.sesiones', String(s.numero + 1));
+    // Fecha y hora solo para identificar la sesión; las duraciones se miden con performance.now().
+    sesiones.add({ sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(), ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [] });
   }
   s.bloque++;
   await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla });
@@ -344,6 +355,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: await estimateFramePeriod(30), audio });
   const view = pantalla.createView(stage, state.images);
+  let ensayo = 0;
   const block = startBlock({
     ficha,
     modalidad,
@@ -351,13 +363,21 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
     env,
     view,
     log,
-    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP },
+    // latencia_dispositivo_ms queda vacía hasta medir cada tableta.
+    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP, modo_fase: 'prototipo', tema_imagenes: 'general' },
     rand: rng(seedOf(`${s.id}:${s.bloque}:posiciones`)),
-    onPause: () => {
+    onPause: async () => {
       view.clear();
-      return pausePanel(wrap);
+      const t0 = performance.now();
+      const { accion, motivo } = await pausePanel(wrap);
+      editSesion(s.id, (r) => {
+        r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0 });
+        if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null });
+      });
+      return accion;
     },
-    onTrial: (t) => {
+    onTrial: (t, i) => {
+      ensayo = i + 1;
       const label = wrap.querySelector('#codigo-item');
       if (label) label.textContent = t.codigo;
     },
@@ -383,6 +403,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla }
     state.running = false;
     wake?.release().catch(() => {});
   }
+  editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: r.ensayos + rows.length }));
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
@@ -422,6 +443,10 @@ function pausePanel(wrap) {
         <div class="panel">
           <p class="meta">El ensayo en curso quedó registrado como interrumpido y no se repetirá.</p>
           <label>Volumen <input type="range" min="0" max="100" value="${volumen()}" data-volumen></label>
+          <label>Motivo, si terminas el bloque (opcional)
+            <input name="motivo" maxlength="80" autocomplete="off">
+            <span class="ayuda">Sin nombres ni datos que identifiquen al niño.</span>
+          </label>
           <div class="acciones">
             <button type="button" class="primario" data-r="continuar">Continuar</button>
             <button type="button" data-r="terminar">Terminar bloque</button>
@@ -432,7 +457,7 @@ function pausePanel(wrap) {
     for (const b of capa.querySelectorAll('[data-r]')) {
       b.onclick = () => {
         capa.remove();
-        resolve(b.dataset.r);
+        resolve({ accion: b.dataset.r, motivo: capa.querySelector('[name=motivo]').value.trim() });
       };
     }
     wrap.append(capa);
@@ -454,6 +479,7 @@ function renderFin() {
 function renderResumen() {
   const { rows, ficha, banda, modalidad, cambio } = state.last;
   const s = state.session;
+  const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   app.innerHTML = `
     <div class="adulto">
       <h1>Resumen del bloque</h1>
@@ -462,6 +488,10 @@ function renderResumen() {
         <p class="meta">${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}</p>
         <ul class="resumen">${summarize(rows, ficha, { cambio }).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
+        <fieldset>
+          <legend>Nivel de apoyo en este bloque</legend>
+          ${NIVELES_APOYO.map((n) => `<label><input type="radio" name="apoyo" value="${n}" ${nivel === n ? 'checked' : ''}> ${n}</label>`).join('')}
+        </fieldset>
         <div class="acciones">
           <button type="button" class="primario" id="otro">Otro bloque</button>
           <button type="button" id="cerrar">Terminar sesión</button>
@@ -469,6 +499,12 @@ function renderResumen() {
       </div>
       ${registroHTML()}
     </div>`;
+  for (const r of app.querySelectorAll('[name=apoyo]')) {
+    r.onchange = () =>
+      editSesion(s.id, (fila) => {
+        fila.nivel_apoyo = [...fila.nivel_apoyo.filter((n) => n.bloque !== s.bloque), { bloque: s.bloque, nivel: r.value }];
+      });
+  }
   app.querySelector('#otro').onclick = () => renderInicio();
   app.querySelector('#cerrar').onclick = () => {
     state.session = null;
