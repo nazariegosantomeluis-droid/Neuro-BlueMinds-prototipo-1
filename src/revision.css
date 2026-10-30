@@ -1,0 +1,126 @@
+/* Revisión clínica de ítems (#revision). Solo usa las variables de styles.css. */
+
+.rev-revisor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.rev-avance {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.rev-avance progress {
+  width: 100%;
+  height: 0.75rem;
+  accent-color: var(--acento);
+}
+
+.rev-item header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+}
+
+.rev-consigna {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rev-consigna p {
+  margin: 0;
+}
+
+.rev img,
+.rev-fig {
+  width: 7rem;
+  height: 7rem;
+  object-fit: contain;
+  background: var(--opcion-fondo);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+.rev-opciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 0.75rem;
+}
+
+.rev-opciones li {
+  display: grid;
+  justify-items: start;
+  gap: 0.3rem;
+  padding: 0.4rem;
+  border: 3px solid transparent;
+  border-radius: 10px;
+}
+
+.rev-opciones li.rev-correcta {
+  border-color: var(--marco);
+}
+
+.rev-figuras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.rev-figuras figure {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+}
+
+.rev-par {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rev-fig {
+  display: block;
+  padding: 0.4rem;
+}
+
+.rev-fig svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.rev-decision {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.rev-decision img {
+  width: 5rem;
+  height: 5rem;
+}
+
+.rev textarea {
+  font: inherit;
+  color: var(--texto);
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.rev fieldset:disabled {
+  color: var(--suave);
+}

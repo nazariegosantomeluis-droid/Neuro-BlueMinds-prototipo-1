@@ -55,9 +55,61 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Por defecto muestra solo la muestra para expertos; una casilla muestra todos.
 - Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
 
+**Revisión clínica** (`#revision`). Dos clínicos califican los ítems de muestra antes del panel de expertos. Ver [Revisión clínica](#revisión-clínica).
+
 **Calibración** (`#calibracion`). Se hace una vez en cada dispositivo, antes de la primera sesión: se pone una regla física sobre la regla de 5 cm de la pantalla y se ajusta hasta que coincidan. Ver [Accesibilidad y seguridad sensorial](#accesibilidad-y-seguridad-sensorial).
 
 **Créditos y licencias** (`#creditos`). Contiene la atribución de ARASAAC y la licencia de cada parte del prototipo.
+
+## Revisión clínica
+
+Antes del panel de expertos, dos clínicos revisan los ítems de muestra (Catálogo, sección 5.4) en `#revision`, enlazada desde el menú del inicio y de la galería.
+
+1. **Revisor.** Se escriben las iniciales y se elige la profesión: terapia de lenguaje, terapia ocupacional, psicología, terapia conductual u otra.
+   - Las iniciales se guardan en mayúsculas y sin acentos.
+   - El avance se guarda en el navegador por revisor: con las mismas iniciales se continúa donde se quedó, y dos revisores pueden usar el mismo dispositivo («Cambiar de revisor»).
+   - Nada se envía a ningún servidor.
+2. **Ítems.** Se recorren uno por uno los 70 ítems con `muestraExpertos` de ACT-01 (30) y ACT-02 (40).
+   - Cada ítem se muestra como en la galería: código, concepto, consigna y opciones, con la correcta marcada.
+   - **Estado** (obligatorio): Aprobado, Corregir o Retirar.
+   - **Tipo de problema**, si es Corregir o Retirar (se pueden elegir varios): Ambiguo, otra opción también podría ser correcta; Imagen poco reconocible; Demasiado difícil para su banda; Demasiado fácil para su banda; No adecuado para niños de México; Molesto o aversivo; Otro.
+   - **Comentario**, opcional.
+   - «Anterior» y «Siguiente», una barra de avance (por ejemplo, «23 de 71 · 40 de 71 calificados») y la casilla «Ver solo los pendientes», que salta las tarjetas ya calificadas.
+3. **Figuras de ACT-07.** Una tarjeta con las cuatro figuras en azul y en amarillo y los símbolos de regla (la mancha de color y la silueta gris de cada figura), con la misma calificación: ¿son reconocibles y se distinguen sin dudar?
+4. **Decisiones.** Al final:
+   - «el camión»: autobús urbano, camión de carga o quitar el concepto;
+   - «el short»: se queda o cambiar por otra prenda (y cuál);
+   - el pictograma de «tortilla»: sirve o no sirve;
+   - un comentario general, opcional.
+5. **Descarga.** «Descargar revisión (CSV)» guarda `revision-clinica-<iniciales>-<fecha>.csv`. Solo descarga cuando las 71 tarjetas tienen estado y las tres decisiones están elegidas; si falta algo, dice qué.
+
+Columnas del CSV:
+
+| Columna | Contenido |
+|---|---|
+| `revisor_iniciales`, `revisor_profesion` | El revisor. |
+| `fecha_utc` | Momento de la descarga, en ISO 8601 UTC con «Z». |
+| `version_app` | Versión de la aplicación. |
+| `item`, `actividad`, `banda`, `concepto` | El ítem. |
+| `estado` | `Aprobado`, `Corregir` o `Retirar`. |
+| `problemas` | Tipos de problema separados por «;». Vacío si el estado es Aprobado. |
+| `comentario` | Comentario del revisor. |
+
+Después de los 70 ítems vienen, en este orden, las filas `DECISION-camion`, `DECISION-short` (el comentario es la prenda propuesta), `DECISION-tortilla`, `FIGURAS-ACT07` y `COMENTARIO-GENERAL`. En las decisiones, `estado` es la opción elegida.
+
+**Unir las revisiones.** Con dos o más archivos:
+
+```
+node tools/unir-revisiones.mjs revision-clinica-AB-2026-11-03.csv revision-clinica-CD-2026-11-04.csv
+```
+
+Escribe `revision-consolidada.csv` en la carpeta actual, con una fila por ítem: el estado, los problemas y el comentario de cada revisor (columnas con sus iniciales) y la decisión. También muestra en la terminal cuántos ítems quedan en cada caso.
+
+- **Ítems y figuras de ACT-07:**
+  - `Aprobado` si todos aprueban;
+  - `Corregir` si alguno pide corregir y nadie pide retirar;
+  - `Revisar en reunión` si alguno pide retirar o si a algún revisor le falta el ítem.
+- **Decisiones** (camión, short, tortilla): la opción elegida si todos coinciden; si no, `Revisar en reunión`.
 
 ## Pruebas
 
@@ -73,7 +125,9 @@ npm test
 - el registro, el selector, la validación de fichas y el resumen;
 - las reglas de las bandas y de los conceptos;
 - las secuencias de ACT-07 y `check-items`;
-- los requisitos de tamaño y movimiento de la hoja de estilos.
+- los requisitos de tamaño y movimiento de la hoja de estilos;
+- fuera de tarea y la frecuencia de la pantalla;
+- la exportación de la revisión clínica y la regla para unir revisiones.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -85,6 +139,10 @@ El motor ejecuta la ficha. La secuencia del ensayo y el registro no tienen códi
 index.html                    Página única
 src/app.js                    Inicio, sesión, fin de bloque y resumen; rutas
 src/paginas.js                Galería, calibración y créditos
+src/revision.js               Revisión clínica de ítems (pantalla)
+src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
+src/revision.css              Estilos de la revisión clínica
+src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
@@ -101,6 +159,7 @@ tools/build-items.mjs         Genera items/items.json y los marcadores provision
 tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
+tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
 assets/                       Imágenes, pictogramas y audios
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)

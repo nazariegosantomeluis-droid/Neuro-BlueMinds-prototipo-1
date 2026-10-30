@@ -11,6 +11,7 @@ import { comprobarFrecuencia } from './frecuencia.js';
 import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
 import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
+import { renderRevision } from './revision.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -123,11 +124,12 @@ async function init() {
   route();
 }
 
-// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #creditos y #calibracion.
+// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #revision, #creditos y #calibracion.
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
   if (ruta === 'galeria' && !state.problemas.items) renderGaleria(app, state, new URLSearchParams(query));
+  else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
