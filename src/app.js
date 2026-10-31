@@ -13,6 +13,7 @@ import * as cambiaRegla from './activities/cambia-regla.js';
 import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
+import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -21,14 +22,6 @@ const PANTALLAS = { seleccion, 'cambia-regla': cambiaRegla };
 const PICTO_FIN = 'assets/picto/terminar.png';
 const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
-const MOTIVOS_TERMINACION = [
-  'Desregulación o malestar del niño',
-  'Cansancio o falta de interés',
-  'Petición del niño o de la familia',
-  'Fallo técnico',
-  'Decisión clínica',
-  'Otro',
-];
 
 const ICONO_PAUSA =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
@@ -472,7 +465,7 @@ function pausePanel(wrap) {
         <div class="panel">
           <p class="meta">El ensayo en curso quedó registrado como interrumpido y no se repetirá.</p>
           <label>Volumen <input type="range" min="0" max="100" value="${volumen()}" data-volumen></label>
-          <label>Motivo, si terminas el bloque
+          <label>Motivo (obligatorio si terminas el bloque)
             <select name="motivo">
               <option value="">—</option>
               ${MOTIVOS_TERMINACION.map((m) => `<option>${esc(m)}</option>`).join('')}
@@ -482,6 +475,7 @@ function pausePanel(wrap) {
             <input name="nota" maxlength="80" autocomplete="off">
             <span class="ayuda">Sin nombres ni datos personales.</span>
           </label>
+          <p class="mensaje" role="alert"></p>
           <div class="acciones">
             <button type="button" class="primario" data-r="continuar">Continuar</button>
             <button type="button" data-r="terminar">Terminar bloque</button>
@@ -491,8 +485,13 @@ function pausePanel(wrap) {
     bindVolumen(capa);
     for (const b of capa.querySelectorAll('[data-r]')) {
       b.onclick = () => {
-        capa.remove();
         const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
+        if (faltaMotivo(b.dataset.r, valor('motivo'))) {
+          capa.querySelector('.mensaje').textContent = MOTIVO_OBLIGATORIO_MSG;
+          capa.querySelector('[name=motivo]').focus();
+          return;
+        }
+        capa.remove();
         resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota') });
       };
     }

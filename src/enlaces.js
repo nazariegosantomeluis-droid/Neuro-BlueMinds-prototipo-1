@@ -3,6 +3,7 @@ let enlaces = null;
 const cargar = () => (enlaces ??= fetch('config/enlaces.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
 
 // En la galería: «Calificar en el formulario F3» abre el formulario de expertos en otra pestaña.
+// El botón va en el contenedor <div id="enlace-f3"> de la galería; sin él, no se muestra nada.
 export async function agregarEnlaceF3(app) {
   const { formularioF3 } = (await cargar()) ?? {};
   // Solo direcciones https, y solo si la galería sigue en pantalla.
@@ -15,5 +16,5 @@ export async function agregarEnlaceF3(app) {
   });
   boton.style.marginBottom = '0.75rem'; // sin tocar styles.css
   boton.onclick = () => open(formularioF3, '_blank', 'noopener');
-  app.querySelector('h1')?.after(boton);
+  app.querySelector('#enlace-f3')?.append(boton);
 }

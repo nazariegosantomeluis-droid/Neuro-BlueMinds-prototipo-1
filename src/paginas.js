@@ -32,6 +32,7 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
     <div class="adulto ancho">
       ${navHTML('galeria')}
       <h1>Galería de ítems</h1>
+      <div id="enlace-f3"></div>
       ${AVISO}
       <form class="panel filtros" id="filtros">
         <label>Actividad
