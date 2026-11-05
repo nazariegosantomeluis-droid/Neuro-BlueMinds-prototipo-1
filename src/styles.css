@@ -3,8 +3,10 @@
    tipografía, según el Manual de marca); la pantalla del niño queda neutra, sin marca. */
 
 /* Tipografías de la marca, guardadas en el repositorio (no se cargan de terceros).
-   Noto Sans para el texto y Noto Serif para los títulos, como en la aplicación digital
-   del Manual de marca. Solo se usan en las pantallas del adulto (.adulto). */
+   El Manual de marca usa More Sugar en el logotipo y Roca Two en sus títulos; ninguna de las
+   dos es de distribución libre. El nombre se muestra con el logotipo oficial (assets/marca)
+   y el texto usa Noto Serif para los títulos y Noto Sans para el texto, como la aplicación
+   digital del manual. Solo se usan en las pantallas del adulto (.adulto). */
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
@@ -54,14 +56,34 @@
   --acento-fuerte: #0f4561;
   --acento-texto: #ffffff;
   --acento-suave: #e2eef5;
+  --acento-presionado: #cfe2ee;
   /* Solo decoración (franja del encabezado, íconos): no se usa para texto ni botones. */
   --marca-2: #84b3ce; /* azul claro 2169 C */
   --aviso: #fcefd2;
   --aviso-borde: #e0a526;
   --problema: #8b2a1f;
+  --problema-suave: #f8e6e2;
   --fuente-texto: 'Noto Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --fuente-titulos: 'Noto Serif', Georgia, 'Times New Roman', serif;
+
+  /* Medidas de las pantallas del adulto (reglas de UI UX Pro Max): espaciado en pasos de 4 y
+     8 px, letra de 14, 16, 20 y 26 a 32 px, objetivos de toque de 44 px y renglones de unos
+     75 caracteres como máximo. */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --letra-chica: 0.875rem;
+  --letra-subtitulo: 1.125rem;
+  --letra-titulo-2: 1.25rem;
+  --letra-titulo-1: clamp(1.625rem, 1.35rem + 1vw, 2rem);
+  --toque: 2.75rem;
+  --medida: 60ch; /* unos 75 caracteres de texto corrido */
   --radio: 14px;
+  --radio-control: 10px;
 
   /* Pantalla del niño: fondo neutro, sin elementos que distraigan y sin colores de la marca. */
   --fondo-nino: #ecebe6;
@@ -89,10 +111,12 @@
     --acento-fuerte: #a9cde3;
     --acento-texto: #0b1820;
     --acento-suave: #1b3746;
+    --acento-presionado: #24485c;
     --marca-2: #5c93b5;
     --aviso: #3a3016;
     --aviso-borde: #c9962a;
     --problema: #f0a597;
+    --problema-suave: #3a211d;
     --fondo-nino: #1e2023;
     /* Los pictogramas tienen trazo negro: su fondo es claro también en tema oscuro. */
     --opcion-fondo: #e4e4e1;
@@ -116,103 +140,159 @@ body {
 
 /* ---------- Pantallas del adulto ---------- */
 
+/* Los márgenes laterales respetan las zonas seguras de la pantalla (viewport-fit=cover). */
 .adulto {
   max-width: 46rem;
   margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
+  padding: var(--esp-5) max(var(--esp-4), env(safe-area-inset-right, 0px)) var(--esp-7) max(var(--esp-4), env(safe-area-inset-left, 0px));
   font-family: var(--fuente-texto);
   line-height: 1.55;
+  touch-action: manipulation;
+}
+
+.adulto [hidden] {
+  display: none !important;
+}
+
+/* Renglones de unos 75 caracteres como máximo; sin especificidad, para que cualquier regla los ajuste. */
+:where(.adulto) :where(p:not(.aviso), ul, ol, dl, blockquote, .ayuda) {
+  max-width: var(--medida);
 }
 
 .adulto h1 {
   font-family: var(--fuente-titulos);
-  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.85rem);
+  font-size: var(--letra-titulo-1);
   line-height: 1.2;
   color: var(--titulo);
-  margin: 0.25rem 0 1rem;
+  margin: 0 0 var(--esp-5);
   text-wrap: balance;
 }
 
-.adulto h1 span {
-  color: var(--suave);
-  font-weight: 400;
-}
-
 .adulto h2 {
-  font-size: 1.15rem;
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-titulo-2);
   line-height: 1.3;
   color: var(--titulo);
-  margin: 2rem 0 0.75rem;
+  margin: var(--esp-6) 0 var(--esp-3);
+  text-wrap: balance;
 }
 
-/* Encabezado con el isotipo y el nombre de la aplicación. */
+/* Saltar al contenido: invisible hasta que llega el foco del teclado. */
+.adulto .saltar {
+  position: absolute;
+  top: var(--esp-2);
+  left: var(--esp-4);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0 var(--esp-4);
+  border-radius: var(--radio-control);
+  background: var(--acento);
+  color: var(--acento-texto);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.adulto .saltar:focus {
+  transform: none;
+}
+
+/* Encabezado: isotipo y logotipo oficiales (positivo en claro, invertido en oscuro), sin
+   efectos ni cambios de color, con su área de protección. */
 .marca {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 0.9rem;
-  border-bottom: 3px solid var(--marca-2);
-  margin-bottom: 0.75rem;
+  gap: var(--esp-2) var(--esp-4);
+  padding-bottom: var(--esp-4);
+  border-bottom: 2px solid var(--marca-2);
+  margin-bottom: var(--esp-4);
 }
 
-.marca-logo {
+.marca-firma {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.marca-logo,
+.marca-logotipo {
   flex: none;
   display: block;
   line-height: 0;
 }
 
 /* Más específico que las imágenes de la galería y de la revisión clínica. */
-.adulto .marca-logo img {
-  width: 40px;
-  height: 40px;
+.adulto .marca img {
   display: block;
+  padding: 0;
   background: none;
   border: 0;
   border-radius: 0;
 }
 
-.marca-nombre {
-  margin: 0;
-  font-family: var(--fuente-titulos);
-  font-weight: 700;
-  font-size: 1.35rem;
-  line-height: 1.2;
-  color: var(--titulo);
+.adulto .marca-logo img {
+  width: 40px;
+  height: 40px;
 }
 
-.adulto h1.marca-nombre {
-  margin: 0;
-  font-size: clamp(1.45rem, 1.25rem + 0.8vw, 1.8rem);
+.adulto .marca-logotipo img {
+  width: auto;
+  height: 28px;
 }
 
-.marca-nombre span {
+.marca-etiqueta {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  line-height: 1.4;
   color: var(--suave);
-  font-weight: 400;
-  font-family: var(--fuente-texto);
-  font-size: 0.8em;
+  padding: 0.125rem 0.625rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 999px;
 }
 
-.marca-linea {
-  margin: 0.1rem 0 0;
+.adulto .marca-linea {
+  flex-basis: 100%;
+  margin: 0;
   color: var(--suave);
-  font-size: 0.95rem;
+}
+
+/* Título de cada pantalla con una línea que dice para qué sirve. */
+.titulo-pagina {
+  margin: 0 0 var(--esp-5);
+}
+
+.titulo-pagina h1 {
+  margin: 0;
+}
+
+/* El título recibe el foco al cambiar de pantalla, pero no es un control: sin contorno. */
+.adulto h1:focus {
+  outline: none;
+}
+
+.adulto .subtitulo {
+  margin: var(--esp-2) 0 0;
+  color: var(--suave);
+  font-size: var(--letra-subtitulo);
 }
 
 .aviso {
   background: var(--aviso);
   border-left: 4px solid var(--aviso-borde);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--radio-control);
   font-weight: 600;
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--esp-5);
 }
 
 .aviso + h2 {
-  margin-top: 1.5rem;
+  margin-top: var(--esp-5);
 }
 
 .panel + .panel {
-  margin-top: 1rem;
+  margin-top: var(--esp-4);
 }
 
 .panel > p {
@@ -223,9 +303,35 @@ body {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
-  padding: 1.25rem;
+  padding: var(--esp-4);
   display: grid;
-  gap: 1.1rem;
+  gap: var(--esp-4);
+}
+
+form.panel {
+  gap: var(--esp-5);
+}
+
+@media (min-width: 600px) {
+  .panel {
+    padding: var(--esp-5);
+  }
+}
+
+/* Grupos del formulario de inicio: qué se aplica y con quién. */
+.grupo {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.grupo + .grupo {
+  padding-top: var(--esp-5);
+  border-top: 1px solid var(--borde);
+}
+
+.adulto .grupo-titulo {
+  margin: 0;
+  font-size: var(--letra-subtitulo);
 }
 
 label,
@@ -237,7 +343,7 @@ label > select,
 label > input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   display: block;
   width: 100%;
-  margin-top: 0.35rem;
+  margin-top: var(--esp-2);
 }
 
 select,
@@ -256,6 +362,19 @@ input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   background: var(--tarjeta);
 }
 
+/* Campos cortos: el ancho anuncia cuánto se escribe. */
+.adulto input[name='ensayos'] {
+  max-width: 10rem;
+}
+
+.adulto input[name='codigo'] {
+  max-width: 20rem;
+}
+
+.adulto input[aria-invalid='true']:not([type='checkbox'], [type='radio']) {
+  border: 2px solid var(--problema);
+}
+
 .adulto input[type='radio'],
 .adulto input[type='checkbox'],
 .adulto input[type='range'],
@@ -265,14 +384,29 @@ input:not([type='radio']):not([type='range']):not([type='checkbox']) {
 
 .adulto input[type='radio'],
 .adulto input[type='checkbox'] {
-  width: 1.15rem;
-  height: 1.15rem;
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
   margin: 0;
 }
 
 input[type='range'] {
   width: 100%;
   margin-top: 0.5rem;
+}
+
+/* El área de toque del deslizador mide 44 px de alto aunque la barra sea delgada. */
+.adulto input[type='range'] {
+  display: block;
+  height: var(--toque);
+  margin: var(--esp-1) 0 0;
+  cursor: pointer;
+}
+
+.adulto output {
+  font-weight: 400;
+  color: var(--suave);
+  font-variant-numeric: tabular-nums;
 }
 
 .adulto :focus-visible {
@@ -301,15 +435,34 @@ fieldset label {
   min-height: 2.75rem;
 }
 
+/* Casillas y botones de opción: toda la etiqueta se toca. */
+.adulto fieldset label,
+.adulto .casilla,
+.adulto label:has(> input[type='radio'], > input[type='checkbox']) {
+  cursor: pointer;
+}
+
 .ayuda {
   color: var(--suave);
-  font-size: 0.92rem;
-  margin: 0.3rem 0 0;
+  font-size: var(--letra-chica);
+  margin: var(--esp-1) 0 0;
   font-weight: 400;
 }
 
 label > .ayuda {
   display: block;
+}
+
+.error-campo {
+  display: block;
+  margin-top: var(--esp-1);
+  color: var(--problema);
+  font-size: var(--letra-chica);
+  font-weight: 600;
+}
+
+.error-campo:empty {
+  display: none;
 }
 
 .mensaje:empty {
@@ -337,10 +490,11 @@ button {
   cursor: pointer;
 }
 
-/* Botones del adulto: el principal relleno con el azul de la marca; los secundarios, con borde. */
+/* Botones del adulto: el principal relleno con el azul de la marca; los secundarios, con borde.
+   Al tocarlos cambian de fondo, sin mover nada de lugar. */
 .adulto button {
   padding: 0.5rem 1.1rem;
-  border-radius: 10px;
+  border-radius: var(--radio-control);
   border: 1.5px solid var(--acento);
   color: var(--acento);
   font-weight: 600;
@@ -351,6 +505,10 @@ button {
   background: var(--acento-suave);
 }
 
+.adulto button:active:not(:disabled) {
+  background: var(--acento-presionado);
+}
+
 button.primario,
 .adulto button.primario {
   background: var(--acento);
@@ -359,9 +517,29 @@ button.primario,
   font-weight: 700;
 }
 
-.adulto button.primario:hover:not(:disabled) {
+.adulto button.primario {
+  min-width: 9rem;
+}
+
+.adulto button.primario:hover:not(:disabled),
+.adulto button.primario:active:not(:disabled) {
   background: var(--acento-fuerte);
   border-color: var(--acento-fuerte);
+}
+
+/* Acción que borra datos: aparte de las demás y con el color de los problemas. */
+.adulto button.peligro {
+  color: var(--problema);
+  border-color: var(--problema);
+}
+
+.adulto button.peligro:hover:not(:disabled),
+.adulto button.peligro:active:not(:disabled) {
+  background: var(--problema-suave);
+}
+
+.adulto button[aria-busy='true'] {
+  cursor: progress;
 }
 
 button:disabled {
@@ -372,7 +550,35 @@ button:disabled {
 .acciones {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.acciones-aparte {
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--borde);
+}
+
+/* Indicación junto al botón principal (por ejemplo, cómo pausar). */
+.acciones + .ayuda {
+  margin-top: calc(-1 * var(--esp-3));
+}
+
+.sesion-actual {
+  display: grid;
+  gap: var(--esp-3);
+  justify-items: start;
+}
+
+/* En pantallas angostas, los botones ocupan el ancho para tocarlos con el pulgar. */
+@media (max-width: 480px) {
+  .adulto .acciones > button {
+    flex: 1 1 auto;
+  }
+}
+
+/* Mensaje de estado del registro: sin espacio mientras está vacío. */
+.panel > .estado:empty {
+  margin-top: calc(-1 * var(--esp-4));
 }
 
 .resumen {
@@ -392,20 +598,28 @@ button:disabled {
 .nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.4rem;
-  margin: 0 0 1.25rem;
+  gap: var(--esp-2);
+  margin: 0 0 var(--esp-5);
 }
 
 .nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0 var(--esp-3);
+  border-radius: 999px;
   color: var(--acento);
   font-weight: 600;
   text-decoration: none;
-  padding: 0.5rem 0.8rem;
-  border-radius: 999px;
+  transition: background-color 200ms ease-out;
 }
 
 .nav a:hover {
   background: var(--acento-suave);
+}
+
+.nav a:active {
+  background: var(--acento-presionado);
 }
 
 .nav a[aria-current='page'] {
@@ -420,15 +634,67 @@ button:disabled {
   color: var(--acento);
 }
 
+/* Casilla con su texto; la ayuda va debajo, alineada con el texto. */
 .casilla {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 0.2rem 0.6rem;
+  min-height: var(--toque);
 }
 
 .casilla .ayuda {
-  flex-basis: 100%;
+  grid-column: 2;
+}
+
+/* Pastillas: botones de opción con su texto visible (filtros, modalidad y nivel de apoyo). */
+.chips {
+  gap: var(--esp-2);
+}
+
+.chips legend {
+  width: 100%;
+  margin-bottom: var(--esp-2);
+}
+
+.chip {
+  position: relative;
+  min-height: 0;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--borde-campo);
+  border-radius: 999px;
+  background: var(--tarjeta);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.chip span:hover {
+  background: var(--acento-suave);
+}
+
+.chip input:checked + span {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--acento-texto);
+}
+
+.chip input:focus-visible + span {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
 }
 
 blockquote {
@@ -448,10 +714,36 @@ blockquote {
   margin: 0.5rem 0 0;
 }
 
-.adulto details > summary {
+/* Secciones que se abren: 44 px de alto y una flecha que gira al abrir. */
+.adulto summary {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--toque);
   cursor: pointer;
   font-weight: 600;
   color: var(--acento);
+  list-style: none;
+}
+
+.adulto summary::-webkit-details-marker {
+  display: none;
+}
+
+.adulto summary::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin: 0 0.15rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 200ms ease-out;
+}
+
+.adulto details[open] > summary::before {
+  transform: rotate(45deg);
 }
 
 /* Créditos: logotipo de la marca */
@@ -464,6 +756,11 @@ blockquote {
   height: 3rem;
   width: auto;
   display: block;
+}
+
+.lema {
+  font-weight: 600;
+  color: var(--titulo);
 }
 
 /* ---------- Calibración ---------- */
@@ -502,6 +799,19 @@ blockquote {
 
 /* ---------- Galería ---------- */
 
+/* La ficha técnica se abre dentro de su tarjeta; cerrada, solo ocupa el renglón del título. */
+details.panel {
+  display: block;
+}
+
+details.panel > summary + * {
+  margin-top: var(--esp-3);
+}
+
+.ficha + .meta {
+  margin-top: var(--esp-4);
+}
+
 .adulto.ancho {
   max-width: 76rem;
 }
@@ -511,73 +821,27 @@ blockquote {
   align-items: end;
 }
 
-/* Filtros visibles: cada opción es una pastilla que se toca directamente. */
-.filtros .chips {
+.filtros .chips,
+.filtros .ayuda-banda,
+.filtros .casilla {
   grid-column: 1 / -1;
-  gap: 0.5rem;
-}
-
-.chips legend {
-  width: 100%;
-  margin-bottom: 0.4rem;
-}
-
-.chip {
-  position: relative;
-  min-height: 0;
-}
-
-.chip input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-.chip span {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0.45rem 1rem;
-  border: 1.5px solid var(--borde-campo);
-  border-radius: 999px;
-  background: var(--tarjeta);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.chip input:checked + span {
-  background: var(--acento);
-  border-color: var(--acento);
-  color: var(--acento-texto);
-}
-
-.chip input:focus-visible + span {
-  outline: 3px solid var(--acento);
-  outline-offset: 2px;
 }
 
 .filtros .ayuda-banda {
-  grid-column: 1 / -1;
-  margin: 0;
-}
-
-.filtros .casilla {
-  grid-column: 1 / -1;
-  flex-wrap: nowrap;
+  margin: calc(-1 * var(--esp-3)) 0 0;
 }
 
 .ficha dl {
-  margin: 0.75rem 0 0;
+  margin: var(--esp-1) 0 0;
 }
 
 .ficha dt {
   font-weight: 700;
-  margin-top: 0.6rem;
+  margin-top: var(--esp-3);
 }
 
 .ficha dd {
-  margin: 0.2rem 0 0;
+  margin: var(--esp-1) 0 0;
 }
 
 .ficha ul {
@@ -589,28 +853,36 @@ blockquote {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.2rem 0.75rem;
+  gap: var(--esp-1) var(--esp-3);
 }
 
 .banda-titulo .meta {
-  font-size: 0.95rem;
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
   font-weight: 400;
+}
+
+.vacio {
+  color: var(--suave);
+  padding: var(--esp-4);
+  border: 1px dashed var(--borde-campo);
+  border-radius: var(--radio);
 }
 
 .galeria {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--esp-4);
+  margin-top: var(--esp-4);
 }
 
 .item {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
-  padding: 0.9rem 1rem 1rem;
+  padding: var(--esp-4);
   display: grid;
-  gap: 0.7rem;
+  gap: var(--esp-3);
   align-content: start;
 }
 
@@ -618,14 +890,14 @@ blockquote {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  padding-bottom: 0.6rem;
+  gap: var(--esp-2);
+  padding-bottom: var(--esp-3);
   border-bottom: 1px solid var(--borde);
 }
 
 /* Código del ítem: grande, con cifras de ancho fijo, para anotarlo sin error. */
 .codigo {
-  font-size: 1.05rem;
+  font-size: 1.125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
@@ -633,9 +905,12 @@ blockquote {
   margin-right: auto;
 }
 
+/* Etiquetas de estado: una sola línea, con texto (no solo color). */
 .etiqueta {
-  font-size: 0.8rem;
-  padding: 0.1rem 0.55rem;
+  font-size: var(--letra-chica);
+  line-height: 1.4;
+  white-space: nowrap;
+  padding: 0.125rem 0.625rem;
   border-radius: 999px;
   border: 1px solid var(--borde-campo);
   color: var(--suave);
@@ -645,6 +920,7 @@ blockquote {
   border-color: var(--aviso-borde);
   background: var(--aviso);
   color: var(--texto);
+  font-weight: 600;
 }
 
 .item img {
@@ -657,7 +933,7 @@ blockquote {
 
 .item-consigna {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--esp-3);
   align-items: center;
 }
 
@@ -671,19 +947,31 @@ blockquote {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--esp-2);
 }
 
+/* Cada opción: imagen, nombre y ejemplar en renglones separados; la correcta lleva el mismo
+   marco que ve el niño y una etiqueta con texto. */
 .item-opciones li {
   display: grid;
   justify-items: center;
-  gap: 0.2rem;
-  font-size: 0.85rem;
+  align-content: start;
+  gap: 0.125rem;
+  font-size: var(--letra-chica);
+  line-height: 1.35;
   text-align: center;
-  max-width: 6rem;
-  padding: 0.25rem;
+  width: 6.5rem;
+  padding: var(--esp-1) var(--esp-1) var(--esp-2);
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radio-control);
+}
+
+.item-opciones li img {
+  margin-bottom: var(--esp-1);
+}
+
+.item-ejemplar {
+  color: var(--suave);
 }
 
 .item-opciones li.correcta,
@@ -691,10 +979,19 @@ blockquote {
   border-color: var(--marco);
 }
 
+.correcta-etiqueta {
+  margin-top: var(--esp-1);
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--marco);
+  color: var(--tarjeta);
+  font-weight: 700;
+}
+
 .motivos {
   margin: 0;
   padding-left: 1.2rem;
-  font-size: 0.88rem;
+  font-size: var(--letra-chica);
   color: var(--suave);
 }
 
@@ -703,20 +1000,20 @@ blockquote {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.3rem;
+  gap: var(--esp-1);
 }
 
 .secuencia li {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
+  gap: var(--esp-2);
+  font-size: var(--letra-chica);
 }
 
 .secuencia .cod {
   font-variant-numeric: tabular-nums;
   color: var(--suave);
-  width: 3rem;
+  width: 3.25rem;
 }
 
 .mini {

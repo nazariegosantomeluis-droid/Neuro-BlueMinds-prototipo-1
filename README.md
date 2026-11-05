@@ -428,7 +428,7 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 
 La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la marca solo va en una:
 
-- **Pantallas del adulto** (inicio, galería, revisión clínica, calibración, créditos, pausa y resumen): llevan los colores, el isotipo y las tipografías de AutiPal.
+- **Pantallas del adulto** (inicio, galería, revisión clínica, calibración, créditos, pausa y resumen): llevan los colores, el isotipo, el logotipo y las tipografías de AutiPal.
 - **Pantalla del niño** (la sesión y la pantalla de «terminamos» del fin de bloque): queda neutra, como pide el protocolo. Fondo liso, sin logotipo, sin colores de la marca, sin texto y sin decoración. Lo único que cambió ahí es el color del marco de retroalimentación.
 
 **Colores.** Todo el estilo vive en variables al inicio de [`src/styles.css`](src/styles.css), con valores para tema claro y oscuro.
@@ -444,6 +444,8 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 | `--suave` | Texto secundario | `#4B5D68` | `#A6B7C1` |
 | `--borde` | Bordes de tarjetas | `#E5DBCA` | `#263943` |
 | `--borde-campo` | Contorno de campos y casillas (3 a 1 o más) | `#8A7E6C` | `#6A8392` |
+| `--acento-presionado` | Fondo de un botón secundario mientras se toca | `#CFE2EE` | `#24485C` |
+| `--problema` | Mensajes de error de los formularios y el botón «Borrar registro» | `#8B2A1F` | `#F0A597` |
 | `--marca-2` | Solo decoración: franja del encabezado (Pantone 2169 C) | `#84B3CE` | `#5C93B5` |
 | `--marco` | Marco de retroalimentación en la pantalla del niño | `#1F2937` | `#F3F4F6` |
 
@@ -453,9 +455,35 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 - `--fondo-nino`, `--opcion-fondo` y `--control` no llevan colores de la marca.
 - El marco de retroalimentación es gris muy oscuro (blanco en tema oscuro) y no azul, para que no se confunda con el azul que el niño clasifica en «Cambia la regla».
 
-**Tipografías.** Noto Sans para el texto y Noto Serif para los títulos, como en la aplicación digital del manual. Están en [`assets/fonts/`](assets/fonts/), con licencia SIL Open Font License 1.1, y no se cargan de ningún servidor externo. Las tipografías del logotipo (More Sugar y Roca Two) no se incluyen porque no son de distribución libre. Para usarlas, agrega los archivos `.woff2` con su licencia y su fila en `licencias.csv`, y cambia `--fuente-titulos`.
+**Tipografías.** El manual define More Sugar (manuscrita decorativa, la del logotipo) y Roca Two (serif, la de sus títulos). Ninguna es de distribución libre: More Sugar solo es gratuita para uso personal y Roca Two es comercial. Por eso:
 
-**Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. Los SVG se vectorizaron de las imágenes del manual; si el equipo de diseño tiene los archivos originales, reemplázalos con el mismo nombre. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
+- el nombre «AutiPal» se muestra con el logotipo oficial, que ya está dibujado con More Sugar;
+- los títulos usan Noto Serif y el texto Noto Sans, las tipografías de la aplicación digital del manual. Están en [`assets/fonts/`](assets/fonts/), con licencia SIL Open Font License 1.1, y no se cargan de ningún servidor externo.
+
+Si Neuro-BlueMinds compra la licencia de Roca Two para web con archivos propios (no Adobe Fonts, que se carga de un servidor externo), agrega los `.woff2` en `assets/fonts/` con su fila en `licencias.csv`, declara su `@font-face` y cambia `--fuente-titulos`.
+
+**Medidas.** También están en variables, para que todas las pantallas del adulto sigan el mismo ritmo:
+
+- espaciado en pasos de 4 y 8 px (`--esp-1` a `--esp-7`);
+- letra de 14 px para ayudas y etiquetas, 16 px para el texto, 20 px para los subtítulos y de 26 a 32 px para el título de cada pantalla;
+- todo lo que se toca mide al menos 44 × 44 px (`--toque`), con 8 px entre objetivos vecinos;
+- los párrafos llegan a unos 75 caracteres por renglón (`--medida`).
+
+**Interfaz del adulto.** Las pantallas se revisaron con las reglas de accesibilidad y uso de UI UX Pro Max:
+
+- Cada pantalla tiene un título con una línea que dice para qué sirve. Al cambiar de pantalla, el foco pasa al título, y el enlace «Saltar al contenido» (visible con el teclado) lleva directo a él.
+- En el inicio, el formulario tiene dos grupos: **Bloque** (actividad, modalidad, volumen, banda y ensayos) y **Sesión** (código del niño y modo experto).
+  - La modalidad se elige con pastillas.
+  - El volumen solo aparece en la modalidad AV.
+  - El número de ensayos dice su rango permitido; si el valor no es válido, el aviso aparece junto al campo y el bloque no empieza.
+  - Debajo de «Empezar» está la indicación para pausar (dos toques en la esquina).
+  - Mientras se preparan las imágenes, el botón dice «Preparando…».
+- En el registro, cada descarga confirma el nombre del archivo, y «Borrar registro» va aparte, con su confirmación.
+- En la galería, cada opción muestra su nombre y ejemplar en renglones separados. La correcta lleva el marco de la pantalla del niño y la etiqueta «Correcta». La etiqueta «Muestra» solo aparece cuando se ven todos los ítems.
+- En el resumen, el nivel de apoyo se elige con pastillas.
+- Las secciones que se abren (ficha técnica, identificadores de ARASAAC) tienen una flecha que gira, sin animaciones de entrada.
+
+**Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. El encabezado de las pantallas del adulto lleva el isotipo (40 px) junto al logotipo y la etiqueta «Prototipo E13». Los SVG se vectorizaron de las imágenes del manual; si el equipo de diseño tiene los archivos originales, reemplázalos con el mismo nombre. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
 
 ## Publicación en GitHub Pages
 

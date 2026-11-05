@@ -4,30 +4,40 @@ import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.j
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-// Isotipo de AutiPal: versión positiva en tema claro e invertida (blanca) en tema oscuro,
-// las dos versiones autorizadas por el Manual de marca. Solo en las pantallas del adulto.
-const ISOTIPO = `
-  <picture class="marca-logo">
-    <source srcset="assets/marca/isotipo-invertido.svg" media="(prefers-color-scheme: dark)">
-    <img src="assets/marca/isotipo.svg" alt="" width="40" height="40">
-  </picture>`;
+// Isotipo y logotipo de AutiPal: versión positiva en tema claro e invertida (blanca) en tema
+// oscuro, las versiones autorizadas por el Manual de marca. El nombre se muestra con el
+// logotipo oficial (letra More Sugar), no con texto. Solo en las pantallas del adulto.
+const FIRMA = `
+  <span class="marca-firma">
+    <picture class="marca-logo">
+      <source srcset="assets/marca/isotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+      <img src="assets/marca/isotipo.svg" alt="" width="40" height="40">
+    </picture>
+    <picture class="marca-logotipo">
+      <source srcset="assets/marca/logotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+      <img src="assets/marca/logotipo.svg" alt="AutiPal" width="101" height="28">
+    </picture>
+  </span>`;
 
-// Encabezado del adulto: isotipo y nombre. En el inicio el nombre es el título de la página
-// y lleva la línea que describe la herramienta.
+// Encabezado del adulto: isotipo, logotipo y la etiqueta del prototipo. En el inicio lleva
+// además la línea que describe la herramienta.
 export const marcaHTML = (inicio = false) => `
   <header class="marca">
-    ${ISOTIPO}
-    <div>
-      ${
-        inicio
-          ? `<h1 class="marca-nombre">AutiPal <span>· Prototipo E13</span></h1>
-             <p class="marca-linea">Herramienta de apoyo y medición para el terapeuta</p>`
-          : '<p class="marca-nombre">AutiPal <span>· Prototipo E13</span></p>'
-      }
-    </div>
+    ${FIRMA}
+    <span class="marca-etiqueta">Prototipo E13</span>
+    ${inicio ? '<p class="marca-linea">Herramienta de apoyo y medición para el terapeuta</p>' : ''}
   </header>`;
 
+// Título de cada pantalla con una línea que dice para qué sirve. Recibe texto ya escapado.
+export const tituloHTML = (titulo, subtitulo = '') => `
+  <div class="titulo-pagina">
+    <h1>${titulo}</h1>
+    ${subtitulo ? `<p class="subtitulo">${subtitulo}</p>` : ''}
+  </div>`;
+
+// «Saltar al contenido» lleva el foco al título de la pantalla (app.js lo atiende sin cambiar la ruta).
 export const navHTML = (actual) => `
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
   ${marcaHTML(actual === 'inicio')}
   <nav class="nav" aria-label="Secciones">
     ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
@@ -56,13 +66,14 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
   const revisada = ficha.revisionClinica.revisor && ficha.revisionClinica.fecha;
   // Las tarjetas se agrupan por banda, en el orden de la ficha, y dentro de cada banda por código.
   const bandas = banda === 'todas' ? ficha.bandas : ficha.bandas.filter((b) => b.id === banda);
-  const tarjeta = (it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre));
+  // La etiqueta «Muestra» solo distingue algo cuando se ven todos los ítems.
+  const tarjeta = (it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja], todos) : itemHTML(it, nombre, todos));
   const cuantos = (n) => (n === 1 ? '1 ítem' : `${n} ítems`);
 
   app.innerHTML = `
     <div class="adulto ancho">
       ${navHTML('galeria')}
-      <h1>Galería de ítems</h1>
+      ${tituloHTML('Galería de ítems', 'Cada ítem con su código, la consigna, las opciones y la respuesta correcta marcada.')}
       <div id="enlace-f3"></div>
       ${AVISO}
       <form class="panel filtros" id="filtros">
@@ -96,7 +107,11 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
           return `
             <section>
               <h2 class="banda-titulo">${esc(b.id)} <span class="meta">${esc(b.descripcion)} · ${cuantos(deBanda.length)}</span></h2>
-              <div class="galeria">${deBanda.map(tarjeta).join('')}</div>
+              ${
+                deBanda.length
+                  ? `<div class="galeria">${deBanda.map(tarjeta).join('')}</div>`
+                  : `<p class="vacio">No hay ítems de la muestra en esta banda. Marca «Mostrar todos los ítems» para ver el banco completo.</p>`
+              }
             </section>`;
         })
         .join('')}
@@ -132,23 +147,23 @@ function fichaHTML(f) {
     </dl>`;
 }
 
-// Filtro de la galería en forma de pastilla: un botón de opción con su texto visible.
-const chipHTML = (name, value, label, checked) =>
+// Pastilla: un botón de opción con su texto visible (filtros de la galería, modalidad y nivel de apoyo).
+export const chipHTML = (name, value, label, checked) =>
   `<label class="chip"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? 'checked' : ''}><span>${esc(label)}</span></label>`;
 
-const estadoHTML = (it) => `
-  ${it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
+const estadoHTML = (it, todos) => `
+  ${todos && it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
   <span class="etiqueta ${it.revisionPendiente ? 'pendiente' : ''}">${it.revisionPendiente ? 'Revisión pendiente' : 'Sin pendientes'}</span>`;
 
 const motivosHTML = (it) =>
   it.motivosRevision.length ? `<ul class="motivos">${it.motivosRevision.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : '';
 
-function itemHTML(it, nombre) {
+function itemHTML(it, nombre, todos) {
   const c = nombre.get(it.concepto);
   const consigna = it.consigna.tipo === 'pictograma' ? 'Pictograma' : 'Muestra';
   return `
     <article class="item">
-      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it, todos)}</header>
       <div class="item-consigna">
         <img src="${esc(it.consigna.src)}" alt="" loading="lazy">
         <p>${consigna}: <strong>${esc(c.articulo)} ${esc(c.nombre)}</strong>${it.mitad ? ` · mitad ${it.mitad}` : ''}<br>
@@ -160,7 +175,9 @@ function itemHTML(it, nombre) {
             const oc = nombre.get(o.concepto);
             return `<li class="${o.correcta ? 'correcta' : ''}">
               <img src="${esc(o.src)}" alt="" loading="lazy">
-              <span>${esc(oc.nombre)} · ej. ${o.ejemplar}${o.correcta ? ' · <strong>correcta</strong>' : ''}</span>
+              <span>${esc(oc.nombre)}</span>
+              <span class="item-ejemplar">ejemplar ${o.ejemplar}</span>
+              ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
             </li>`;
           })
           .join('')}
@@ -169,10 +186,10 @@ function itemHTML(it, nombre) {
     </article>`;
 }
 
-function secuenciaHTML(it, pareja) {
+function secuenciaHTML(it, pareja, todos) {
   return `
     <article class="item">
-      <header><strong class="codigo">${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it, todos)}</header>
       <ol class="secuencia">
         ${it.ensayos
           .map((e) => {
@@ -202,7 +219,7 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('calibracion')}
-      <h1>Calibración</h1>
+      ${tituloHTML('Calibración', 'Ajusta el tamaño real de las opciones en esta pantalla. Hazlo una vez en cada tableta.')}
       ${AVISO}
       <div class="panel">
         <p>En las tabletas, un centímetro de la pantalla no mide un centímetro real. Pon una regla física sobre la regla de abajo y ajusta hasta que las marcas de 0 y 5 cm coincidan. El ajuste se guarda solo en este dispositivo y se usa para el tamaño de las opciones.</p>
@@ -211,8 +228,8 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
         </div>
         <label>Ajuste fino <input type="range" min="20" max="120" step="0.1" value="${px}" id="cm-ajuste"></label>
         <div class="acciones">
-          <button type="button" data-paso="-0.1">− 0.1</button>
-          <button type="button" data-paso="0.1">+ 0.1</button>
+          <button type="button" data-paso="-0.1" aria-label="Restar 0.1 px por centímetro">− 0.1</button>
+          <button type="button" data-paso="0.1" aria-label="Sumar 0.1 px por centímetro">+ 0.1</button>
         </div>
         <p class="meta" id="cm-valor"></p>
         <div class="acciones">
@@ -264,16 +281,17 @@ export function renderCreditos(app, { conceptos }) {
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('creditos')}
-      <h1>Créditos y licencias</h1>
+      ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las fotografías y la aplicación.')}
       ${AVISO}
       <section class="panel">
         <h2>Marca</h2>
         <picture class="logotipo">
           <source srcset="assets/marca/logotipo-invertido.svg" media="(prefers-color-scheme: dark)">
-          <img src="assets/marca/logotipo.svg" alt="AutiPal" width="144" height="40">
+          <img src="assets/marca/logotipo.svg" alt="AutiPal" width="174" height="48">
         </picture>
+        <p class="lema">Amabilidad para cada mente</p>
         <p>AutiPal es la aplicación de Neuro-BlueMinds. El isotipo, el logotipo y el Manual de marca de AutiPal son propiedad de Neuro-BlueMinds. Todos los derechos reservados.</p>
-        <p>Las tipografías Noto Sans y Noto Serif son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Vienen incluidas en la aplicación: no se cargan de ningún servidor externo.</p>
+        <p>El logotipo está dibujado con la letra More Sugar y el manual usa Roca Two en sus títulos; ninguna de las dos es de distribución libre, así que la aplicación no las incluye. El texto usa Noto Serif y Noto Sans, como la aplicación digital del manual. Son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Vienen incluidas en la aplicación: no se cargan de ningún servidor externo.</p>
       </section>
       <section class="panel">
         <h2>Pictogramas</h2>
