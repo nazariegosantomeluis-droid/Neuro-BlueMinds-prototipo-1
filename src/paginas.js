@@ -290,8 +290,8 @@ export function renderCreditos(app, { conceptos }) {
           <img src="assets/marca/logotipo.svg" alt="AutiPal" width="174" height="48">
         </picture>
         <p class="lema">Amabilidad para cada mente</p>
-        <p>AutiPal es la aplicación de Neuro-BlueMinds. El isotipo, el logotipo y el Manual de marca de AutiPal son propiedad de Neuro-BlueMinds. Todos los derechos reservados.</p>
-        <p>El logotipo está dibujado con la letra More Sugar y el manual usa Roca Two en sus títulos; ninguna de las dos es de distribución libre, así que la aplicación no las incluye. El texto usa Noto Serif y Noto Sans, como la aplicación digital del manual. Son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Vienen incluidas en la aplicación: no se cargan de ningún servidor externo.</p>
+        <p><span class="nombre-marca">AutiPal</span> es la aplicación de Neuro-BlueMinds. El isotipo, el logotipo y el Manual de marca de <span class="nombre-marca">AutiPal</span> son propiedad de Neuro-BlueMinds. Todos los derechos reservados.</p>
+        <p>Las tipografías del Manual de marca son Roca Two, en los títulos, y More Sugar, en el logotipo y en el nombre <span class="nombre-marca">AutiPal</span>. En este prototipo se usan solo para pruebas y no vienen en el repositorio; antes de vender la aplicación se compran sus licencias comerciales. El texto usa Noto Sans, y Noto Serif reemplaza a Roca Two cuando no está instalada. Las dos son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Ninguna tipografía se carga de un servidor externo.</p>
       </section>
       <section class="panel">
         <h2>Pictogramas</h2>

@@ -455,12 +455,18 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 - `--fondo-nino`, `--opcion-fondo` y `--control` no llevan colores de la marca.
 - El marco de retroalimentación es gris muy oscuro (blanco en tema oscuro) y no azul, para que no se confunda con el azul que el niño clasifica en «Cambia la regla».
 
-**Tipografías.** El manual define More Sugar (manuscrita decorativa, la del logotipo) y Roca Two (serif, la de sus títulos). Ninguna es de distribución libre: More Sugar solo es gratuita para uso personal y Roca Two es comercial. Por eso:
+**Tipografías.** El manual define Roca Two (serif) y More Sugar (manuscrita decorativa). La aplicación las usa así:
 
-- el nombre «AutiPal» se muestra con el logotipo oficial, que ya está dibujado con More Sugar;
-- los títulos usan Noto Serif y el texto Noto Sans, las tipografías de la aplicación digital del manual. Están en [`assets/fonts/`](assets/fonts/), con licencia SIL Open Font License 1.1, y no se cargan de ningún servidor externo.
+| Dónde | Tipografía | Si no está instalada |
+|---|---|---|
+| Títulos y lema (`--fuente-titulos`) | Roca Two Bold | Noto Serif |
+| El nombre «AutiPal» dentro de un texto (`.nombre-marca`) | More Sugar, como en el manual | Noto Sans |
+| Encabezado | Logotipo oficial, dibujado con More Sugar | — |
+| Texto, campos y botones (`--fuente-texto`) | Noto Sans, como la aplicación digital del manual | — |
 
-Si Neuro-BlueMinds compra la licencia de Roca Two para web con archivos propios (no Adobe Fonts, que se carga de un servidor externo), agrega los `.woff2` en `assets/fonts/` con su fila en `licencias.csv`, declara su `@font-face` y cambia `--fuente-titulos`.
+- Roca Two y More Sugar no son de distribución libre, así que **no están en el repositorio**: subirlas a un repositorio público equivale a distribuirlas. La hoja de estilos las busca con `local()`, es decir, en la computadora donde se abre la aplicación. Para verlas, instálalas (en Windows: doble clic en el archivo y «Instalar»). El archivo único del prototipo las lleva dentro.
+- En el prototipo se usan solo para pruebas. Antes de vender la aplicación hay que comprar sus licencias comerciales para web y aplicación. Con la licencia, sus `.woff2` pueden ir en `assets/fonts/`, con su fila en `items/licencias.csv` y un `url()` en su `@font-face`. Adobe Fonts no sirve para esto, porque carga las tipografías desde sus servidores.
+- Noto Sans y Noto Serif están en [`assets/fonts/`](assets/fonts/), con licencia SIL Open Font License 1.1. Ninguna tipografía se carga de un servidor externo.
 
 **Medidas.** También están en variables, para que todas las pantallas del adulto sigan el mismo ritmo:
 
@@ -521,7 +527,7 @@ Notas:
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
 
-AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)).
+AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)). Roca Two (Elena Genova, My Creative Land) y More Sugar (Slidehack) no se incluyen en el repositorio; ver «Tipografías» en [Marca e interfaz](#marca-e-interfaz).
 
 ### Pictogramas de ARASAAC
 

@@ -2,11 +2,13 @@
    Dos tipos de pantalla: las del adulto llevan la marca AutiPal (colores, logotipo y
    tipografía, según el Manual de marca); la pantalla del niño queda neutra, sin marca. */
 
-/* Tipografías de la marca, guardadas en el repositorio (no se cargan de terceros).
-   El Manual de marca usa More Sugar en el logotipo y Roca Two en sus títulos; ninguna de las
-   dos es de distribución libre. El nombre se muestra con el logotipo oficial (assets/marca)
-   y el texto usa Noto Serif para los títulos y Noto Sans para el texto, como la aplicación
-   digital del manual. Solo se usan en las pantallas del adulto (.adulto). */
+/* Tipografías. Ninguna se carga de un servidor externo. Solo se usan en las pantallas del
+   adulto (.adulto).
+   - Roca Two (títulos) y More Sugar (el nombre «AutiPal» dentro del texto) son las del Manual
+     de marca. No están en el repositorio porque no son de distribución libre: se usan si están
+     instaladas en la computadora, y el archivo único del prototipo las lleva dentro.
+   - Noto Sans (texto) y Noto Serif (títulos cuando falta Roca Two) están en assets/fonts/, con
+     licencia SIL OFL 1.1. */
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
@@ -39,6 +41,25 @@
   src: url('../assets/fonts/noto-serif-latin-700-normal.woff2') format('woff2');
 }
 
+/* Roca Two y More Sugar: solo local(), la copia instalada en la computadora. Si no está
+   instalada, el navegador pasa a la siguiente tipografía de la lista, sin pedir archivos.
+   De Roca Two se usa solo la Bold, en títulos y lema. */
+@font-face {
+  font-family: 'Roca Two';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Roca Two Bold'), local('RocaTwo-Bold');
+}
+
+@font-face {
+  font-family: 'More Sugar';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('More Sugar'), local('More Sugar Regular'), local('MoreSugar-Regular'), local('MoreSugarRegular');
+}
+
 :root {
   /* Un centímetro físico en px. app.js lo estima al cargar y la página de Calibración lo ajusta. */
   --cm: 37.8px;
@@ -64,7 +85,9 @@
   --problema: #8b2a1f;
   --problema-suave: #f8e6e2;
   --fuente-texto: 'Noto Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --fuente-titulos: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --fuente-titulos: 'Roca Two', 'Noto Serif', Georgia, 'Times New Roman', serif;
+  /* More Sugar solo para el nombre «AutiPal» dentro de un texto, como en el manual. */
+  --fuente-nombre: 'More Sugar', var(--fuente-texto);
 
   /* Medidas de las pantallas del adulto (reglas de UI UX Pro Max): espaciado en pasos de 4 y
      8 px, letra de 14, 16, 20 y 26 a 32 px, objetivos de toque de 44 px y renglones de unos
@@ -758,9 +781,19 @@ blockquote {
   display: block;
 }
 
+/* El lema va en la letra de los títulos, como en la portada del manual. */
 .lema {
-  font-weight: 600;
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-subtitulo);
+  font-weight: 700;
   color: var(--titulo);
+}
+
+/* El nombre «AutiPal» dentro de un texto va en More Sugar, como en el manual. Conserva el
+   color del texto: en azul y sin More Sugar parecería un enlace. */
+.nombre-marca {
+  font-family: var(--fuente-nombre);
+  font-weight: 400;
 }
 
 /* ---------- Calibración ---------- */
