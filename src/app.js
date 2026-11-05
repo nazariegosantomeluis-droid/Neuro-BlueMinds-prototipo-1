@@ -10,7 +10,7 @@ import { summarize, marcarFueraDeTarea, paraExportar, frecuenciaSesion } from '.
 import { comprobarFrecuencia } from './frecuencia.js';
 import * as seleccion from './activities/seleccion.js';
 import * as cambiaRegla from './activities/cambia-regla.js';
-import { esc, navHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
+import { esc, navHTML, marcaHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
@@ -154,8 +154,8 @@ function renderInicio(msg = '') {
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('inicio')}
-      <h1>Neuro-BlueMinds <span>· Prototipo E13</span></h1>
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
+      <h2>Preparar el bloque</h2>
       <form class="panel" id="inicio" novalidate>
         <label>Actividad
           <select name="actividad">
@@ -519,6 +519,7 @@ function renderResumen() {
   const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   app.innerHTML = `
     <div class="adulto">
+      ${marcaHTML()}
       <h1>Resumen del bloque</h1>
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">

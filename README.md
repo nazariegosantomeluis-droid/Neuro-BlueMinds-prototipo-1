@@ -1,6 +1,6 @@
-# Neuro-BlueMinds · Prototipo E13
+# AutiPal · Prototipo E13
 
-Herramienta de apoyo y medición para terapeutas que trabajan con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
+AutiPal es la aplicación de Neuro-BlueMinds. Herramienta de apoyo y medición para terapeutas que trabajan con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
 
 > **Prototipo para revisión de expertos. No es una herramienta diagnóstica.**
 > No es una intervención ni un instrumento de diagnóstico. No calcula puntajes, niveles ni perfiles del niño.
@@ -188,7 +188,7 @@ tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
-assets/                       Imágenes, pictogramas y audios
+assets/                       Imágenes, pictogramas, audios, tipografías (fonts/) y marca (marca/)
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)
 ```
@@ -424,6 +424,39 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 - **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
 - **Volumen.** Se ajusta en el inicio y en la pausa.
 
+## Marca e interfaz
+
+La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la marca solo va en una:
+
+- **Pantallas del adulto** (inicio, galería, revisión clínica, calibración, créditos, pausa y resumen): llevan los colores, el isotipo y las tipografías de AutiPal.
+- **Pantalla del niño** (la sesión y la pantalla de «terminamos» del fin de bloque): queda neutra, como pide el protocolo. Fondo liso, sin logotipo, sin colores de la marca, sin texto y sin decoración. Lo único que cambió ahí es el color del marco de retroalimentación.
+
+**Colores.** Todo el estilo vive en variables al inicio de [`src/styles.css`](src/styles.css), con valores para tema claro y oscuro.
+
+| Variable | Uso | Claro | Oscuro |
+|---|---|---|---|
+| `--acento` | Botones principales, enlaces, pestaña activa (Pantone 7700 C) | `#16587B` | `#8DBBD6` |
+| `--acento-texto` | Texto sobre el botón principal | `#FFFFFF` | `#0B1820` |
+| `--fondo` | Fondo de las pantallas del adulto (crema de la marca) | `#FBF5EA` | `#0E1B23` |
+| `--tarjeta` | Tarjetas y paneles | `#FFFFFF` | `#15262F` |
+| `--texto` | Texto principal | `#172A35` | `#E7EEF2` |
+| `--titulo` | Títulos | `#16587B` | `#BFDCEC` |
+| `--suave` | Texto secundario | `#4B5D68` | `#A6B7C1` |
+| `--borde` | Bordes de tarjetas | `#E5DBCA` | `#263943` |
+| `--borde-campo` | Contorno de campos y casillas (3 a 1 o más) | `#8A7E6C` | `#6A8392` |
+| `--marca-2` | Solo decoración: franja del encabezado (Pantone 2169 C) | `#84B3CE` | `#5C93B5` |
+| `--marco` | Marco de retroalimentación en la pantalla del niño | `#1F2937` | `#F3F4F6` |
+
+- Todo texto tiene un contraste de al menos 4.5 a 1 con su fondo, en los dos temas.
+- El azul claro de `--marca-2` nunca va como color de texto ni de botón: no alcanza el contraste.
+- Ninguna pantalla usa verde ni rojo para aciertos o errores.
+- `--fondo-nino`, `--opcion-fondo` y `--control` no llevan colores de la marca.
+- El marco de retroalimentación es gris muy oscuro (blanco en tema oscuro) y no azul, para que no se confunda con el azul que el niño clasifica en «Cambia la regla».
+
+**Tipografías.** Noto Sans para el texto y Noto Serif para los títulos, como en la aplicación digital del manual. Están en [`assets/fonts/`](assets/fonts/), con licencia SIL Open Font License 1.1, y no se cargan de ningún servidor externo. Las tipografías del logotipo (More Sugar y Roca Two) no se incluyen porque no son de distribución libre. Para usarlas, agrega los archivos `.woff2` con su licencia y su fila en `licencias.csv`, y cambia `--fuente-titulos`.
+
+**Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. Los SVG se vectorizaron de las imágenes del manual; si el equipo de diseño tiene los archivos originales, reemplázalos con el mismo nombre. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
+
 ## Publicación en GitHub Pages
 
 El prototipo es un sitio estático; no necesita compilación.
@@ -459,6 +492,8 @@ Notas:
 ## Autoría y licencia
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
+
+AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)).
 
 ### Pictogramas de ARASAAC
 

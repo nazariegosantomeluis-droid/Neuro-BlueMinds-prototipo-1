@@ -4,8 +4,32 @@ import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.j
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
+// Isotipo de AutiPal: versión positiva en tema claro e invertida (blanca) en tema oscuro,
+// las dos versiones autorizadas por el Manual de marca. Solo en las pantallas del adulto.
+const ISOTIPO = `
+  <picture class="marca-logo">
+    <source srcset="assets/marca/isotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+    <img src="assets/marca/isotipo.svg" alt="" width="40" height="40">
+  </picture>`;
+
+// Encabezado del adulto: isotipo y nombre. En el inicio el nombre es el título de la página
+// y lleva la línea que describe la herramienta.
+export const marcaHTML = (inicio = false) => `
+  <header class="marca">
+    ${ISOTIPO}
+    <div>
+      ${
+        inicio
+          ? `<h1 class="marca-nombre">AutiPal <span>· Prototipo E13</span></h1>
+             <p class="marca-linea">Herramienta de apoyo y medición para el terapeuta</p>`
+          : '<p class="marca-nombre">AutiPal <span>· Prototipo E13</span></p>'
+      }
+    </div>
+  </header>`;
+
 export const navHTML = (actual) => `
-  <nav class="nav">
+  ${marcaHTML(actual === 'inicio')}
+  <nav class="nav" aria-label="Secciones">
     ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
@@ -15,9 +39,12 @@ const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una 
 
 // ---------- Galería ----------
 
+// La galería se vuelve a dibujar con cada filtro; el foco regresa al filtro que se cambió.
+let focoFiltro = null;
+
 // Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1
 export function renderGaleria(app, { items, fichas, conceptos }, params) {
-  const ids = Object.keys(fichas);
+  const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02, ACT-07, sin depender del orden de carga
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];
   const ficha = fichas[actividad];
   const banda = ficha.bandas.some((b) => b.id === params.get('banda')) ? params.get('banda') : 'todas';
@@ -27,6 +54,10 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
   const deActividad = items.filter((i) => i.actividad === actividad && (banda === 'todas' || i.banda === banda));
   const visibles = deActividad.filter((i) => todos || i.muestraExpertos);
   const revisada = ficha.revisionClinica.revisor && ficha.revisionClinica.fecha;
+  // Las tarjetas se agrupan por banda, en el orden de la ficha, y dentro de cada banda por código.
+  const bandas = banda === 'todas' ? ficha.bandas : ficha.bandas.filter((b) => b.id === banda);
+  const tarjeta = (it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre));
+  const cuantos = (n) => (n === 1 ? '1 ítem' : `${n} ítems`);
 
   app.innerHTML = `
     <div class="adulto ancho">
@@ -35,15 +66,16 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
       <div id="enlace-f3"></div>
       ${AVISO}
       <form class="panel filtros" id="filtros">
-        <label>Actividad
-          <select name="actividad">${ids.map((id) => `<option value="${id}" ${id === actividad ? 'selected' : ''}>${id} · ${esc(fichas[id].nombre)}</option>`).join('')}</select>
-        </label>
-        <label>Banda
-          <select name="banda">
-            <option value="todas">Todas</option>
-            ${ficha.bandas.map((b) => `<option value="${b.id}" ${b.id === banda ? 'selected' : ''}>${b.id} · ${esc(b.descripcion)}</option>`).join('')}
-          </select>
-        </label>
+        <fieldset class="chips">
+          <legend>Actividad</legend>
+          ${ids.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
+        </fieldset>
+        <fieldset class="chips">
+          <legend>Banda</legend>
+          ${chipHTML('banda', 'todas', 'Todas', banda === 'todas')}
+          ${ficha.bandas.map((b) => chipHTML('banda', b.id, b.id, b.id === banda)).join('')}
+        </fieldset>
+        <p class="ayuda ayuda-banda">${banda === 'todas' ? 'Todas las bandas de la actividad, en orden.' : esc(bandas[0].descripcion)}</p>
         ${
           ficha.parejas
             ? `<label>Pareja de cajas
@@ -58,18 +90,31 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
         ${fichaHTML(ficha)}
       </details>
       <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}.</p>
-      <div class="galeria">
-        ${visibles.map((it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre))).join('')}
-      </div>
+      ${bandas
+        .map((b) => {
+          const deBanda = visibles.filter((i) => i.banda === b.id);
+          return `
+            <section>
+              <h2 class="banda-titulo">${esc(b.id)} <span class="meta">${esc(b.descripcion)} · ${cuantos(deBanda.length)}</span></h2>
+              <div class="galeria">${deBanda.map(tarjeta).join('')}</div>
+            </section>`;
+        })
+        .join('')}
     </div>`;
 
   const form = app.querySelector('#filtros');
-  form.onchange = () => {
+  form.onchange = (e) => {
+    focoFiltro = e.target.name;
     const p = new URLSearchParams();
     for (const [k, v] of new FormData(form)) p.set(k, v);
     if (form.actividad.value !== actividad) p.delete('banda');
     location.hash = `#galeria?${p}`;
   };
+  if (focoFiltro) {
+    const nombreFiltro = focoFiltro;
+    focoFiltro = null;
+    (form.querySelector(`[name="${nombreFiltro}"]:checked`) ?? form.querySelector(`[name="${nombreFiltro}"]`))?.focus();
+  }
 }
 
 function fichaHTML(f) {
@@ -87,6 +132,10 @@ function fichaHTML(f) {
     </dl>`;
 }
 
+// Filtro de la galería en forma de pastilla: un botón de opción con su texto visible.
+const chipHTML = (name, value, label, checked) =>
+  `<label class="chip"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? 'checked' : ''}><span>${esc(label)}</span></label>`;
+
 const estadoHTML = (it) => `
   ${it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
   <span class="etiqueta ${it.revisionPendiente ? 'pendiente' : ''}">${it.revisionPendiente ? 'Revisión pendiente' : 'Sin pendientes'}</span>`;
@@ -99,7 +148,7 @@ function itemHTML(it, nombre) {
   const consigna = it.consigna.tipo === 'pictograma' ? 'Pictograma' : 'Muestra';
   return `
     <article class="item">
-      <header><strong>${esc(it.codigo)}</strong> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it)}</header>
       <div class="item-consigna">
         <img src="${esc(it.consigna.src)}" alt="" loading="lazy">
         <p>${consigna}: <strong>${esc(c.articulo)} ${esc(c.nombre)}</strong>${it.mitad ? ` · mitad ${it.mitad}` : ''}<br>
@@ -123,7 +172,7 @@ function itemHTML(it, nombre) {
 function secuenciaHTML(it, pareja) {
   return `
     <article class="item">
-      <header><strong>${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it)}</header>
       <ol class="secuencia">
         ${it.ensayos
           .map((e) => {
@@ -217,6 +266,15 @@ export function renderCreditos(app, { conceptos }) {
       ${navHTML('creditos')}
       <h1>Créditos y licencias</h1>
       ${AVISO}
+      <section class="panel">
+        <h2>Marca</h2>
+        <picture class="logotipo">
+          <source srcset="assets/marca/logotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+          <img src="assets/marca/logotipo.svg" alt="AutiPal" width="144" height="40">
+        </picture>
+        <p>AutiPal es la aplicación de Neuro-BlueMinds. El isotipo, el logotipo y el Manual de marca de AutiPal son propiedad de Neuro-BlueMinds. Todos los derechos reservados.</p>
+        <p>Las tipografías Noto Sans y Noto Serif son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Vienen incluidas en la aplicación: no se cargan de ningún servidor externo.</p>
+      </section>
       <section class="panel">
         <h2>Pictogramas</h2>
         <p>Los pictogramas son de ARASAAC y se distribuyen bajo la licencia Creative Commons BY-NC-SA, que autoriza su uso sin fines de lucro citando la fuente y el autor, y obliga a compartir las obras derivadas con la misma licencia.</p>

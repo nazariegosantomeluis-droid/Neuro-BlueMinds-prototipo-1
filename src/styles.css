@@ -1,44 +1,105 @@
-/* Neuro-BlueMinds · Prototipo E13 */
+/* AutiPal · Prototipo E13 (Neuro-BlueMinds)
+   Dos tipos de pantalla: las del adulto llevan la marca AutiPal (colores, logotipo y
+   tipografía, según el Manual de marca); la pantalla del niño queda neutra, sin marca. */
+
+/* Tipografías de la marca, guardadas en el repositorio (no se cargan de terceros).
+   Noto Sans para el texto y Noto Serif para los títulos, como en la aplicación digital
+   del Manual de marca. Solo se usan en las pantallas del adulto (.adulto). */
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-600-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-700-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-latin-700-normal.woff2') format('woff2');
+}
 
 :root {
   /* Un centímetro físico en px. app.js lo estima al cargar y la página de Calibración lo ajusta. */
   --cm: 37.8px;
-  --fondo: #f6f6f3;
+
+  /* Pantallas del adulto: paleta AutiPal (Pantone 7700 C, 2169 C y 9224 C del manual).
+     Todo texto tiene un contraste de al menos 4.5 a 1 con su fondo. */
+  --fondo: #fbf5ea; /* crema de la marca, más claro */
   --tarjeta: #ffffff;
-  --texto: #1d2226;
-  --suave: #59626b;
-  --borde: #d5d8db;
-  --acento: #1f5fa8;
+  --texto: #172a35;
+  --titulo: #16587b; /* azul 7700 C */
+  --suave: #4b5d68;
+  --borde: #e5dbca;
+  --borde-campo: #8a7e6c; /* contorno de campos y casillas: 3 a 1 o más */
+  --acento: #16587b; /* azul 7700 C: botones principales, enlaces, pestaña activa */
+  --acento-fuerte: #0f4561;
   --acento-texto: #ffffff;
-  --aviso: #fff3d1;
-  --aviso-borde: #d9a93a;
+  --acento-suave: #e2eef5;
+  /* Solo decoración (franja del encabezado, íconos): no se usa para texto ni botones. */
+  --marca-2: #84b3ce; /* azul claro 2169 C */
+  --aviso: #fcefd2;
+  --aviso-borde: #e0a526;
   --problema: #8b2a1f;
-  /* Pantalla del niño: fondo neutro, sin elementos que distraigan. */
+  --fuente-texto: 'Noto Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-titulos: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --radio: 14px;
+
+  /* Pantalla del niño: fondo neutro, sin elementos que distraigan y sin colores de la marca. */
   --fondo-nino: #ecebe6;
   --opcion-fondo: #ffffff;
-  --marco: #3d7fd6;
+  /* Marco de retroalimentación: gris muy oscuro, para no confundirlo con el azul de «Cambia la regla». */
+  --marco: #1f2937;
   --control: #8a8f94;
+  /* Texto y borde del modo experto en la pantalla del niño: los mismos de antes, sin la marca. */
+  --suave-nino: #59626b;
+  --borde-nino: #d5d8db;
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #17191c;
-    --tarjeta: #22252a;
-    --texto: #e9eaec;
-    --suave: #a4abb2;
-    --borde: #3a3f45;
-    --acento: #7fb0ec;
-    --acento-texto: #10161d;
-    --aviso: #3a2f12;
-    --aviso-borde: #b88a26;
+    --fondo: #0e1b23;
+    --tarjeta: #15262f;
+    --texto: #e7eef2;
+    --titulo: #bfdcec;
+    --suave: #a6b7c1;
+    --borde: #263943;
+    --borde-campo: #6a8392;
+    --acento: #8dbbd6;
+    --acento-fuerte: #a9cde3;
+    --acento-texto: #0b1820;
+    --acento-suave: #1b3746;
+    --marca-2: #5c93b5;
+    --aviso: #3a3016;
+    --aviso-borde: #c9962a;
     --problema: #f0a597;
     --fondo-nino: #1e2023;
     /* Los pictogramas tienen trazo negro: su fondo es claro también en tema oscuro. */
     --opcion-fondo: #e4e4e1;
-    --marco: #7fb0ec;
+    --marco: #f3f4f6;
     --control: #6c7278;
+    --suave-nino: #a4abb2;
+    --borde-nino: #3a3f45;
   }
 }
 
@@ -59,30 +120,95 @@ body {
   max-width: 46rem;
   margin: 0 auto;
   padding: 1.25rem 1rem 3rem;
+  font-family: var(--fuente-texto);
+  line-height: 1.55;
 }
 
 .adulto h1 {
-  font-size: 1.5rem;
-  margin: 0 0 0.75rem;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.85rem);
+  line-height: 1.2;
+  color: var(--titulo);
+  margin: 0.25rem 0 1rem;
+  text-wrap: balance;
 }
 
 .adulto h1 span {
   color: var(--suave);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .adulto h2 {
   font-size: 1.15rem;
+  line-height: 1.3;
+  color: var(--titulo);
   margin: 2rem 0 0.75rem;
+}
+
+/* Encabezado con el isotipo y el nombre de la aplicación. */
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 3px solid var(--marca-2);
+  margin-bottom: 0.75rem;
+}
+
+.marca-logo {
+  flex: none;
+  display: block;
+  line-height: 0;
+}
+
+/* Más específico que las imágenes de la galería y de la revisión clínica. */
+.adulto .marca-logo img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
+.marca-nombre {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--titulo);
+}
+
+.adulto h1.marca-nombre {
+  margin: 0;
+  font-size: clamp(1.45rem, 1.25rem + 0.8vw, 1.8rem);
+}
+
+.marca-nombre span {
+  color: var(--suave);
+  font-weight: 400;
+  font-family: var(--fuente-texto);
+  font-size: 0.8em;
+}
+
+.marca-linea {
+  margin: 0.1rem 0 0;
+  color: var(--suave);
+  font-size: 0.95rem;
 }
 
 .aviso {
   background: var(--aviso);
   border-left: 4px solid var(--aviso-borde);
-  padding: 0.7rem 0.9rem;
-  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
   font-weight: 600;
   margin: 0 0 1.25rem;
+}
+
+.aviso + h2 {
+  margin-top: 1.5rem;
 }
 
 .panel + .panel {
@@ -96,10 +222,10 @@ body {
 .panel {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: var(--radio);
+  padding: 1.25rem;
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 label,
@@ -111,7 +237,7 @@ label > select,
 label > input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   display: block;
   width: 100%;
-  margin-top: 0.3rem;
+  margin-top: 0.35rem;
 }
 
 select,
@@ -124,15 +250,34 @@ button {
 select,
 input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   min-height: 2.75rem;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  background: var(--fondo);
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 8px;
+  background: var(--tarjeta);
+}
+
+.adulto input[type='radio'],
+.adulto input[type='checkbox'],
+.adulto input[type='range'],
+.adulto progress {
+  accent-color: var(--acento);
+}
+
+.adulto input[type='radio'],
+.adulto input[type='checkbox'] {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
 }
 
 input[type='range'] {
   width: 100%;
   margin-top: 0.5rem;
+}
+
+.adulto :focus-visible {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
 }
 
 fieldset {
@@ -152,7 +297,7 @@ fieldset label {
   font-weight: 400;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   min-height: 2.75rem;
 }
 
@@ -161,6 +306,10 @@ fieldset label {
   font-size: 0.92rem;
   margin: 0.3rem 0 0;
   font-weight: 400;
+}
+
+label > .ayuda {
+  display: block;
 }
 
 .mensaje:empty {
@@ -188,11 +337,31 @@ button {
   cursor: pointer;
 }
 
-button.primario {
+/* Botones del adulto: el principal relleno con el azul de la marca; los secundarios, con borde. */
+.adulto button {
+  padding: 0.5rem 1.1rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--acento);
+  color: var(--acento);
+  font-weight: 600;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.adulto button:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+
+button.primario,
+.adulto button.primario {
   background: var(--acento);
   color: var(--acento-texto);
   border-color: var(--acento);
   font-weight: 700;
+}
+
+.adulto button.primario:hover:not(:disabled) {
+  background: var(--acento-fuerte);
+  border-color: var(--acento-fuerte);
 }
 
 button:disabled {
@@ -204,6 +373,11 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+
+.resumen {
+  margin: 0;
+  padding-left: 1.2rem;
 }
 
 .resumen li {
@@ -218,28 +392,39 @@ button:disabled {
 .nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
-  margin-bottom: 1rem;
+  gap: 0.25rem 0.4rem;
+  margin: 0 0 1.25rem;
 }
 
 .nav a {
   color: var(--acento);
   font-weight: 600;
   text-decoration: none;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+}
+
+.nav a:hover {
+  background: var(--acento-suave);
 }
 
 .nav a[aria-current='page'] {
   color: var(--texto);
+  background: var(--acento-suave);
   text-decoration: underline;
-  text-underline-offset: 0.3em;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+.adulto a {
+  color: var(--acento);
 }
 
 .casilla {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.2rem 0.5rem;
+  gap: 0.2rem 0.6rem;
 }
 
 .casilla .ayuda {
@@ -249,7 +434,7 @@ button:disabled {
 blockquote {
   margin: 0;
   padding: 0.6rem 0.9rem;
-  border-left: 4px solid var(--borde);
+  border-left: 4px solid var(--marca-2);
   background: var(--fondo);
   border-radius: 4px;
 }
@@ -261,6 +446,24 @@ blockquote {
 .columnas {
   columns: 14rem;
   margin: 0.5rem 0 0;
+}
+
+.adulto details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--acento);
+}
+
+/* Créditos: logotipo de la marca */
+.logotipo {
+  display: block;
+  line-height: 0;
+}
+
+.logotipo img {
+  height: 3rem;
+  width: auto;
+  display: block;
 }
 
 /* ---------- Calibración ---------- */
@@ -308,6 +511,62 @@ blockquote {
   align-items: end;
 }
 
+/* Filtros visibles: cada opción es una pastilla que se toca directamente. */
+.filtros .chips {
+  grid-column: 1 / -1;
+  gap: 0.5rem;
+}
+
+.chips legend {
+  width: 100%;
+  margin-bottom: 0.4rem;
+}
+
+.chip {
+  position: relative;
+  min-height: 0;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--borde-campo);
+  border-radius: 999px;
+  background: var(--tarjeta);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip input:checked + span {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--acento-texto);
+}
+
+.chip input:focus-visible + span {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+.filtros .ayuda-banda {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.filtros .casilla {
+  grid-column: 1 / -1;
+  flex-wrap: nowrap;
+}
+
 .ficha dl {
   margin: 0.75rem 0 0;
 }
@@ -326,6 +585,18 @@ blockquote {
   padding-left: 1.2rem;
 }
 
+.banda-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.75rem;
+}
+
+.banda-titulo .meta {
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
 .galeria {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
@@ -336,10 +607,10 @@ blockquote {
 .item {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 0.8rem;
+  border-radius: var(--radio);
+  padding: 0.9rem 1rem 1rem;
   display: grid;
-  gap: 0.6rem;
+  gap: 0.7rem;
   align-content: start;
 }
 
@@ -348,13 +619,25 @@ blockquote {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* Código del ítem: grande, con cifras de ancho fijo, para anotarlo sin error. */
+.codigo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--titulo);
+  margin-right: auto;
 }
 
 .etiqueta {
   font-size: 0.8rem;
-  padding: 0.1rem 0.5rem;
+  padding: 0.1rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid var(--borde);
+  border: 1px solid var(--borde-campo);
   color: var(--suave);
 }
 
@@ -374,7 +657,7 @@ blockquote {
 
 .item-consigna {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.75rem;
   align-items: center;
 }
 
@@ -607,14 +890,15 @@ blockquote {
   bottom: calc(var(--cm) * 0.3 + env(safe-area-inset-bottom, 0px));
   margin: 0;
   font: 600 0.9rem ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--suave);
+  color: var(--suave-nino);
 }
 
 .siguiente {
   position: absolute;
   right: calc(var(--cm) * 0.3);
   bottom: calc(var(--cm) * 0.3 + env(safe-area-inset-bottom, 0px));
-  color: var(--suave);
+  color: var(--suave-nino);
+  border-color: var(--borde-nino);
   background: transparent;
 }
 
