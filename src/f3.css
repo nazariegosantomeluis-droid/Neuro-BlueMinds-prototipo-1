@@ -133,3 +133,42 @@
 .f3 .panel > label input {
   width: 100%;
 }
+
+/* Medidas de la interfaz del adulto, las mismas que en las demás pantallas (styles.css):
+   objetivos de toque de 44 px con 8 px entre ellos, contorno de controles de 3 a 1 o más,
+   letra de 14 px o más y renglones de unos 75 caracteres. */
+.f3-escala {
+  gap: var(--esp-2);
+}
+
+.f3-escala span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--toque);
+  border: 1.5px solid var(--borde-campo);
+  cursor: pointer;
+}
+
+.f3-escala span:hover {
+  background: var(--acento-suave);
+}
+
+.f3-escala input:checked + span:hover {
+  background: var(--acento);
+}
+
+.f3 .acciones a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+}
+
+.f3 legend .ayuda {
+  display: block;
+  max-width: var(--medida);
+}
+
+#f3-texto {
+  font-size: var(--letra-chica);
+}

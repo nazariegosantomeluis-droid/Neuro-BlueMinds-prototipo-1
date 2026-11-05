@@ -55,7 +55,7 @@ export function renderF3(app, { fichas, items }) {
           <dt>Mecánica</dt><dd>${esc(MECANICA[a])}</dd>
           <dt>Bandas</dt><dd>${f.bandas.map((b) => `${esc(b.id)}: ${esc(b.descripcion)}`).join('<br>')}</dd>
         </dl>
-        <p class="acciones"><a href="#galeria?actividad=${esc(a)}" target="_blank" rel="noopener">Ver sus ítems en la galería</a> · <a href="#inicio" target="_blank" rel="noopener">Probar la actividad</a></p>
+        <p class="acciones"><a href="#galeria?actividad=${esc(a)}" target="_blank" rel="noopener">Ver sus ítems en la galería</a> <a href="#inicio" target="_blank" rel="noopener">Probar la actividad</a></p>
         ${preguntas(a, f)
           .map(
             (q) => `
