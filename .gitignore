@@ -4,3 +4,5 @@ CLAUDE.local.md
 # Revisiones clínicas descargadas: no se suben al repositorio.
 revision-clinica-*.csv
 revision-consolidada.csv
+# Respuestas del formulario F3 y sus análisis
+f3-*.csv

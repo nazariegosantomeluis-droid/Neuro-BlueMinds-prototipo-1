@@ -6,7 +6,7 @@ export const esc = (s) =>
 
 export const navHTML = (actual) => `
   <nav class="nav">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;

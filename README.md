@@ -112,6 +112,31 @@ Escribe `revision-consolidada.csv` en la carpeta actual, con una fila por ítem:
   - `Revisar en reunión` si alguno pide retirar o si a algún revisor le falta el ítem.
 - **Decisiones** (camión, short, tortilla): la opción elegida si todos coinciden; si no, `Revisar en reunión`.
 
+## Formulario F3 de validez de contenido
+
+`#formulario` es el formato F3 con el que el panel de expertos califica las tres actividades del piloto (Catálogo, sección 2.3). Cualquier persona con el enlace puede llenarlo, sin cuenta:
+
+1. El experto recorre cada actividad (con enlaces a su galería y al inicio para probarla) y la califica de 1 (nada) a 4 (mucho) en relevancia, claridad de la mecánica, claridad de los ítems de cada banda, progresión de dificultad, adecuación cultural y seguridad sensorial. Solo la relevancia decide si la actividad se mantiene.
+2. Puede señalar ítems por su código (por ejemplo, `ACT02-B3-07`); el formulario avisa si el código no existe.
+3. Califica el conjunto, deja comentarios y responde los criterios de exclusión (si participa en el piloto o tiene un familiar en él) y el consentimiento.
+4. Las respuestas se guardan en su navegador mientras llena el formulario. Al final descarga `f3-<nombre>-<fecha>.csv` y lo envía por correo al coordinador. Si no puede descargar, «Copiar mis respuestas» deja el texto listo para pegar en el correo. Nada se envía a ningún servidor.
+
+**Análisis.** Con los archivos de todos los expertos:
+
+```bash
+node tools/unir-f3.mjs f3-*.csv
+```
+
+Escribe `f3-indices.csv` (I-CVI, κ* y decisión de cada pregunta), `f3-items.csv` (ítems señalados y cuántas veces) y `f3-comentarios.csv`, e imprime un resumen con el S-CVI/Ave. Sigue a Polit, Beck y Owen (2007):
+
+- I-CVI = expertos que califican con 3 o 4 / expertos válidos. Criterio: 0.78 o más con 6 o más expertos; 1.00 con 3 a 5; con menos de 3 no se decide.
+- κ* = (I-CVI − Pc) / (1 − Pc), con Pc = C(N, A) × 0.5^N; excelente si es mayor de 0.74, bueno de 0.60 a 0.74, regular de 0.40 a 0.59.
+- S-CVI/Ave = promedio del I-CVI de relevancia de las tres actividades; criterio 0.90.
+- No entran en los índices quien participa en el piloto, quien tiene un familiar en él o quien no dio su consentimiento. Si un experto envía dos veces, cuenta la respuesta más reciente.
+- Un ítem señalado por 2 o más expertos se cambia o se retira.
+
+El botón «Calificar en el formulario F3» de la galería abre `#formulario` según `config/enlaces.json` (`"formularioF3": "#formulario"`). También acepta una dirección `https://` externa.
+
 ## Pruebas
 
 Requiere Node.js 20 o posterior. No hay dependencias que instalar.

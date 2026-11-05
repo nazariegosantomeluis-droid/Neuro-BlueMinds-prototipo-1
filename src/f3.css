@@ -1,0 +1,135 @@
+/* Formulario F3 de validez de contenido (#formulario). Solo usa las variables de styles.css. */
+
+.f3 .panel {
+  margin-bottom: 1rem;
+}
+
+.f3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.f3-ficha {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.35rem 1rem;
+  margin: 0 0 0.75rem;
+}
+
+.f3-ficha dt {
+  font-weight: 600;
+  color: var(--suave);
+}
+
+.f3-ficha dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.f3-pregunta {
+  border: 0;
+  border-top: 1px solid var(--borde);
+  margin: 0;
+  padding: 0.75rem 0;
+}
+
+.f3-pregunta legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.f3-decide legend strong {
+  color: var(--acento);
+}
+
+.f3-escala {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.f3-escala label {
+  position: relative;
+}
+
+.f3-escala input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.f3-escala span {
+  display: inline-block;
+  min-width: 7rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--tarjeta);
+  text-align: center;
+}
+
+.f3-escala input:checked + span {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--acento-texto);
+  font-weight: 600;
+}
+
+.f3-escala input:focus-visible + span {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
+.f3-item {
+  display: grid;
+  grid-template-columns: 10rem 14rem minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.f3-item .mensaje {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.f3-item .mensaje:empty {
+  display: none;
+}
+
+.f3-correo {
+  user-select: all;
+  font-weight: 600;
+}
+
+#f3-texto {
+  width: 100%;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .f3-item,
+  .f3-ficha {
+    grid-template-columns: 1fr;
+  }
+
+  .f3-escala span {
+    min-width: 0;
+  }
+}
+
+.f3 .panel > label:not(.casilla) {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.f3 .panel > label textarea,
+.f3 .panel > label input {
+  width: 100%;
+}

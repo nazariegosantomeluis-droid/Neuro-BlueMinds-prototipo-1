@@ -2,12 +2,13 @@
 let enlaces = null;
 const cargar = () => (enlaces ??= fetch('config/enlaces.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
 
-// En la galería: «Calificar en el formulario F3» abre el formulario de expertos en otra pestaña.
+// En la galería: «Calificar en el formulario F3» abre el formulario de expertos.
+// Un enlace interno (#formulario) se abre en esta misma página; una dirección https, en otra pestaña.
 // El botón va en el contenedor <div id="enlace-f3"> de la galería; sin él, no se muestra nada.
 export async function agregarEnlaceF3(app) {
   const { formularioF3 } = (await cargar()) ?? {};
-  // Solo direcciones https, y solo si la galería sigue en pantalla.
-  if (!/^https:\/\//.test(formularioF3 ?? '') || !location.hash.startsWith('#galeria') || app.querySelector('#formulario-f3')) return;
+  // Solo un enlace interno o una dirección https, y solo si la galería sigue en pantalla.
+  if (!/^(https:\/\/|#[a-z-]+$)/.test(formularioF3 ?? '') || !location.hash.startsWith('#galeria') || app.querySelector('#formulario-f3')) return;
   const boton = Object.assign(document.createElement('button'), {
     type: 'button',
     id: 'formulario-f3',
@@ -15,6 +16,6 @@ export async function agregarEnlaceF3(app) {
     textContent: 'Calificar en el formulario F3',
   });
   boton.style.marginBottom = '0.75rem'; // sin tocar styles.css
-  boton.onclick = () => open(formularioF3, '_blank', 'noopener');
+  boton.onclick = () => (formularioF3.startsWith('#') ? (location.hash = formularioF3) : open(formularioF3, '_blank', 'noopener'));
   app.querySelector('#enlace-f3')?.append(boton);
 }
