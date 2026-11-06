@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>AutiPal · Página de producto</title>
+    <meta name="description" content="AutiPal, de Neuro-BlueMinds: actividades breves en tableta que describen el desempeño del niño para su terapeuta. Prototipo para revisión de expertos; no es una herramienta diagnóstica." />
+    <link rel="icon" href="../assets/marca/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="pagina.css" />
+    <script type="module" src="pagina.js"></script>
+  </head>
+  <!--
+    Página de producto de AutiPal. Sigue la estructura de una página de producto de Apple
+    (héroe, lo más destacado, secciones con cifras grandes, comparación, notas y pie), con la
+    marca AutiPal: sus colores, Roca Two, More Sugar y Noto Sans, y capturas del prototipo.
+    Los números que salen de las fichas llevan data-ficha: pagina.test.js comprueba que digan
+    lo mismo que fichas/. El muro de columnas se compara con src/engine/logger.js.
+  -->
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+    <header class="nav-global noche">
+      <nav class="contenedor nav-global__barra" aria-label="Neuro-BlueMinds">
+        <a class="nav-global__madre" href="#resumen">Neuro-BlueMinds</a>
+        <div class="nav-global__enlaces">
+          <a href="#resumen" aria-current="page">AutiPal</a>
+          <a href="#familia">C&amp;W</a>
+          <a href="#investigacion">Investigación</a>
+          <a href="#valores">Valores</a>
+          <a href="#equipo">Equipo</a>
+        </div>
+        <details class="menu-movil">
+          <summary aria-label="Menú de Neuro-BlueMinds">
+            <svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg>
+          </summary>
+          <div class="menu-movil__lista">
+            <a href="#resumen">AutiPal</a>
+            <a href="#familia">C&amp;W</a>
+            <a href="#investigacion">Investigación</a>
+            <a href="#valores">Valores</a>
+            <a href="#equipo">Equipo</a>
+          </div>
+        </details>
+      </nav>
+    </header>
+
+    <div class="nav-local noche">
+      <nav class="contenedor nav-local__barra" aria-label="AutiPal">
+        <a class="nav-local__nombre" href="#resumen">AutiPal</a>
+        <div class="nav-local__lado">
+          <div class="nav-local__enlaces">
+            <a href="#resumen" aria-current="page">Resumen</a>
+            <a href="#por-que">Por qué AutiPal</a>
+            <a href="#especificaciones">Especificaciones</a>
+          </div>
+          <a class="boton boton--nav" href="../">Probar</a>
+        </div>
+      </nav>
+    </div>
+
+    <p class="cinta noche">AutiPal está en fase de prototipo. Pruébalo en el navegador, sin instalar nada. <a href="../">Abrir el prototipo ›</a></p>
+
+    <main id="contenido">
+      <section id="resumen" class="seccion heroe noche" aria-labelledby="titulo-heroe">
+        <div class="contenedor">
+          <h1 id="titulo-heroe"><img class="heroe__logo" src="../assets/marca/logotipo-invertido.svg" alt="AutiPal" width="440" height="140" /></h1>
+          <p class="heroe__lema"><span>Calma para el niño.</span> <span>Datos para ti.</span></p>
+          <div class="tableta tableta--grande">
+            <span class="tableta__camara" aria-hidden="true"></span>
+            <img src="../assets/pagina-producto/nino-claro.webp" alt="Pantalla del niño en Cambia la regla: sobre un fondo liso, una tarjeta con un conejo amarillo arriba y dos cajas abajo, un conejo azul y un barco amarillo." width="2048" height="1536" />
+          </div>
+          <div class="acciones">
+            <a class="boton" href="../">Probar el prototipo</a>
+            <a class="ver-recorrido" href="#sesion" data-ver-recorrido>
+              <span class="ver-recorrido__circulo" aria-hidden="true"><svg viewBox="0 0 24 24" class="relleno"><path d="M8 5.5v13l10.5-6.5z" /></svg></span>
+              Ver el recorrido
+            </a>
+          </div>
+          <p class="heroe__version">Prototipo E13 · versión 0.1.0<sup>1</sup></p>
+          <ul class="chips" aria-label="Lo más destacado">
+            <li><a href="#destacados" data-ir-diapositiva="0">Pantalla neutra</a></li>
+            <li><a href="#destacados" data-ir-diapositiva="1">Tiempo exacto</a></li>
+            <li><a href="#destacados" data-ir-diapositiva="2">Tres actividades</a></li>
+            <li><a href="#destacados" data-ir-diapositiva="3">Registro en CSV</a></li>
+            <li><a href="#destacados" data-ir-diapositiva="4">Sin cuentas</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="destacados" class="seccion seccion--crema destacados" aria-labelledby="titulo-destacados">
+        <div class="contenedor">
+          <h2 id="titulo-destacados" class="titulo aparece">Lo más destacado.</h2>
+          <div class="carrusel" aria-roledescription="carrusel" aria-label="Lo más destacado">
+            <div class="carrusel__pista" data-pista>
+              <div class="diapositiva diapositiva--noche noche" aria-roledescription="diapositiva" aria-label="1 de 5">
+                <p class="diapositiva__texto"><strong>Una pantalla que no distrae.</strong> Fondo liso, sin logotipo, sin colores de marca y sin texto. El niño solo ve la tarea.</p>
+                <div class="diapositiva__medio">
+                  <div class="tableta"><img src="../assets/pagina-producto/nino-claro.webp" alt="Pantalla del niño: fondo gris claro liso con una tarjeta y dos cajas." width="2048" height="1536" loading="lazy" /></div>
+                </div>
+              </div>
+              <div class="diapositiva" aria-roledescription="diapositiva" aria-label="2 de 5">
+                <p class="diapositiva__texto"><strong>El tiempo, en milisegundos.</strong> Cada respuesta se mide desde que aparecen las opciones hasta el toque, con un solo reloj.</p>
+                <div class="diapositiva__medio diapositiva__medio--centro">
+                  <div class="linea">
+                    <span class="linea__llave" aria-hidden="true"></span>
+                    <p class="linea__dato">Tiempo de respuesta: 1142.6 ms</p>
+                    <div class="linea__barra" role="img" aria-label="Un ensayo: intervalo de 1 segundo, consigna de 1.5 segundos, opciones durante hasta 10 segundos y marco de 1 segundo.">
+                      <div class="linea__tramo linea__tramo--intervalo" style="flex: 1">1 s</div>
+                      <div class="linea__tramo linea__tramo--consigna" style="flex: 1.5">1.5 s</div>
+                      <div class="linea__tramo linea__tramo--opciones" style="flex: 10"><span class="linea__toque" aria-hidden="true"></span>hasta 10 s</div>
+                      <div class="linea__tramo linea__tramo--marco" style="flex: 1">1 s</div>
+                    </div>
+                    <div class="linea__nombres" aria-hidden="true">
+                      <span style="flex: 1">Intervalo</span>
+                      <span style="flex: 1.5">Consigna</span>
+                      <span style="flex: 10" class="linea__izquierda">Opciones · el toque</span>
+                      <span style="flex: 1">Marco</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="diapositiva diapositiva--azul" aria-roledescription="diapositiva" aria-label="3 de 5">
+                <p class="diapositiva__texto"><strong>Tres actividades, una ficha cada una.</strong> Igual a la muestra, Pictograma e imagen y Cambia la regla, con su objetivo y sus tiempos por escrito.</p>
+                <div class="diapositiva__medio">
+                  <div class="tableta"><img src="../assets/pagina-producto/inicio-claro.webp" alt="Pantalla Preparar el bloque, con las tres actividades en tarjetas y la modalidad." width="2048" height="1536" loading="lazy" /></div>
+                </div>
+              </div>
+              <div class="diapositiva diapositiva--noche noche" aria-roledescription="diapositiva" aria-label="4 de 5">
+                <p class="diapositiva__texto"><strong>Un registro que sale listo.</strong> Al terminar, descargas cada ensayo en CSV o JSON. Nada se envía a ningún servidor.</p>
+                <div class="diapositiva__medio">
+                  <div class="tableta"><img src="../assets/pagina-producto/inicio-registro.webp" alt="Pantalla de inicio con el registro: seis ensayos guardados en este dispositivo, nada se envía a ningún servidor, y los botones de descarga." width="2048" height="1536" loading="lazy" /></div>
+                </div>
+              </div>
+              <div class="diapositiva" aria-roledescription="diapositiva" aria-label="5 de 5">
+                <p class="diapositiva__texto"><strong>Sin cuentas ni instalación.</strong> Se abre en el navegador de la tableta o de la computadora, sin registrarse y sin analítica.</p>
+                <div class="diapositiva__medio diapositiva__medio--entre">
+                  <div class="lista-grande">
+                    <p>Sin instalar.</p>
+                    <p>Sin cuentas.</p>
+                    <p>Sin analítica.</p>
+                  </div>
+                  <span class="circulo-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" class="trazo"><rect x="3" y="4.5" width="18" height="15" rx="2" /><path d="M3 9h18" /><path d="M9 14.5l2 2 4-4" /></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="controles">
+            <div class="puntos" data-puntos>
+              <button type="button" aria-label="Ver Pantalla neutra" aria-current="true"><span></span></button>
+              <button type="button" aria-label="Ver Tiempo exacto" aria-current="false"><span></span></button>
+              <button type="button" aria-label="Ver Tres actividades" aria-current="false"><span></span></button>
+              <button type="button" aria-label="Ver Registro en CSV" aria-current="false"><span></span></button>
+              <button type="button" aria-label="Ver Sin cuentas" aria-current="false"><span></span></button>
+            </div>
+            <button type="button" class="redondo" data-reproducir aria-label="Pausar el carrusel">
+              <svg viewBox="0 0 24 24" class="relleno icono-pausa" aria-hidden="true"><rect x="6.5" y="5" width="3.6" height="14" rx="1" /><rect x="13.9" y="5" width="3.6" height="14" rx="1" /></svg>
+              <svg viewBox="0 0 24 24" class="relleno icono-reproducir" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="actividades" class="seccion seccion--merino" aria-labelledby="titulo-actividades">
+        <div class="contenedor">
+          <div class="aparece">
+            <p class="antetitulo">Tres actividades</p>
+            <h2 id="titulo-actividades" class="titulo">Cada actividad, con su propia medida.</h2>
+            <p class="intro">Son breves, se explican solas y cada una tiene su ficha. Elige una para ver cómo está armada.</p>
+          </div>
+          <div class="pastillas pastillas--arriba" role="group" aria-label="Elige una actividad" data-selector="actividad">
+            <button type="button" aria-pressed="true" data-valor="ACT-01">Igual a la muestra</button>
+            <button type="button" aria-pressed="false" data-valor="ACT-02">Pictograma e imagen</button>
+            <button type="button" aria-pressed="false" data-valor="ACT-07">Cambia la regla</button>
+          </div>
+
+          <div class="actividad" data-panel="actividad" data-valor="ACT-01">
+            <div class="actividad__cifras">
+              <div><p class="cifra" data-ficha="ACT-01.ensayosPorBloque">10</p><p>ensayos por bloque</p></div>
+              <div><p class="cifra" data-ficha="ACT-01.bandas.length">3</p><p>bandas, de B1 a B3</p></div>
+              <div><p class="cifra">2 a 4</p><p>opciones en pantalla</p></div>
+              <div><p class="cifra" data-ficha-s="ACT-01.consignaVMs">1.5 s</p><p>de consigna antes de las opciones</p></div>
+            </div>
+            <article class="ficha noche">
+              <p class="ficha__codigo"><span>ACT-01 · FICHA</span><span>versión <span data-ficha="ACT-01.version">0.1.0</span></span></p>
+              <h3>Igual a la muestra</h3>
+              <dl>
+                <div><dt>Objetivo</dt><dd data-ficha="ACT-01.objetivo">Familiarizar al niño con la estructura del ensayo (consigna, opciones, toque, retroalimentación) con la mínima demanda de lenguaje.</dd></div>
+                <div><dt>Paradigma</dt><dd data-ficha="ACT-01.paradigma">Emparejamiento con la muestra por identidad.</dd></div>
+                <div><dt>Consigna en voz</dt><dd>«<span data-ficha="ACT-01.consignaAV">¿Cuál es igual?</span>»</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="actividad" data-panel="actividad" data-valor="ACT-02">
+            <div class="actividad__cifras">
+              <div><p class="cifra" data-ficha="ACT-02.ensayosPorBloque">30</p><p>ensayos por bloque</p></div>
+              <div><p class="cifra" data-ficha="ACT-02.bandas.length">4</p><p>bandas, de B1 a B4</p></div>
+              <div><p class="cifra" data-ficha="ACT-02.itemsPorBanda">60</p><p>ítems por banda</p></div>
+              <div><p class="cifra">V y AV</p><p>imagen sola o con voz</p></div>
+            </div>
+            <article class="ficha noche">
+              <p class="ficha__codigo"><span>ACT-02 · FICHA</span><span>versión <span data-ficha="ACT-02.version">0.1.0</span></span></p>
+              <h3>Pictograma e imagen</h3>
+              <dl>
+                <div><dt>Objetivo</dt><dd data-ficha="ACT-02.objetivo">Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.</dd></div>
+                <div><dt>Paradigma</dt><dd>En V, del pictograma a un ejemplar real. En AV, la palabra hablada más el pictograma, a un ejemplar.</dd></div>
+                <div><dt>Consigna en voz</dt><dd>«¿Dónde está…?» o «¿Dónde están…?», con el nombre del concepto.</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="actividad" data-panel="actividad" data-valor="ACT-07">
+            <div class="actividad__cifras">
+              <div><p class="cifra" data-ficha="ACT-07.ensayosPorBloque">30</p><p>ensayos por bloque</p></div>
+              <div><p class="cifra" data-ficha="ACT-07.dimensiones.length">2</p><p>reglas: color y forma</p></div>
+              <div><p class="cifra" data-ficha="ACT-07.bandas.length">4</p><p>bandas, de una regla a reglas mezcladas</p></div>
+              <div><p class="cifra" data-ficha-pct="ACT-07.bandas.3.proporcionCambio">50 %</p><p>de los ensayos, más o menos, cambian de regla en B4</p></div>
+            </div>
+            <article class="ficha noche">
+              <p class="ficha__codigo"><span>ACT-07 · FICHA</span><span>versión <span data-ficha="ACT-07.version">0.1.0</span></span></p>
+              <h3>Cambia la regla</h3>
+              <dl>
+                <div><dt>Objetivo</dt><dd data-ficha="ACT-07.objetivo">Describir el desempeño al clasificar por un criterio y al cambiar de criterio, y el costo de ese cambio.</dd></div>
+                <div><dt>Paradigma</dt><dd data-ficha="ACT-07.paradigma">Clasificación por dimensiones con cambio de regla, del tipo de la tarea de cambio dimensional de tarjetas (Zelazo, 2006).</dd></div>
+                <div><dt>Consigna en voz</dt><dd>«<span data-ficha="ACT-07.consignaAV.color">Por color</span>» o «<span data-ficha="ACT-07.consignaAV.forma">Por forma</span>».</dd></div>
+              </dl>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="seccion seccion--crema" aria-labelledby="titulo-papel">
+        <div class="contenedor">
+          <div class="centrado aparece">
+            <p class="antetitulo">Si hoy registras a mano</p>
+            <h2 id="titulo-papel" class="titulo">Del papel a AutiPal.</h2>
+          </div>
+          <div class="rejilla bloque aparece">
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><circle cx="12" cy="13.5" r="7.5" /><path d="M12 9.5v4l2.6 2.6M9.5 2.8h5M12 2.8v3.2" /></svg></span>
+              <h3>El tiempo lo mide la app.</h3>
+              <p>Cada respuesta se cronometra sola, desde que aparecen las opciones hasta el toque. Sin cronómetro en la otra mano.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4 6.5l1.6 1.6L8.8 5M4 12.5l1.6 1.6 3.2-3.1M4 18.5l1.6 1.6 3.2-3.1M12 7h8M12 13h8M12 19h8" /></svg></span>
+              <h3>Cada ensayo queda anotado.</h3>
+              <p>Ítem, opción tocada, acierto, omisión y tiempos, sin que escribas nada durante la sesión.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M12 11v6M9.5 14.5L12 17l2.5-2.5" /></svg></span>
+              <h3>Los datos salen ordenados.</h3>
+              <p>Un CSV que abre cualquier hoja de cálculo, con una fila por ensayo, y otro con una fila por sesión.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="diseno" class="seccion seccion--noche noche" aria-labelledby="titulo-diseno">
+        <div class="contenedor centrado">
+          <div class="aparece">
+            <p class="antetitulo">Diseño</p>
+            <h2 id="titulo-diseno" class="titulo">Dos pantallas. Un mismo cuidado.</h2>
+            <p class="intro">La del niño no tiene nada que distraiga. La tuya tiene todo a la mano. Las dos, en tema claro y oscuro.</p>
+          </div>
+          <div class="tableta tableta--grande visor">
+            <img
+              data-visor
+              src="../assets/pagina-producto/nino-claro.webp"
+              data-nino-claro="../assets/pagina-producto/nino-claro.webp"
+              data-nino-oscuro="../assets/pagina-producto/nino-oscuro.webp"
+              data-adulto-claro="../assets/pagina-producto/inicio-claro.webp"
+              data-adulto-oscuro="../assets/pagina-producto/inicio-oscuro.webp"
+              alt="Pantalla del niño en Cambia la regla: fondo liso, una tarjeta arriba y dos cajas abajo, en tema claro."
+              width="2048"
+              height="1536"
+              loading="lazy"
+            />
+          </div>
+          <div class="visor__controles">
+            <div class="pastillas" role="group" aria-label="Pantalla" data-selector="vista">
+              <button type="button" aria-pressed="true" data-valor="nino">Pantalla del niño</button>
+              <button type="button" aria-pressed="false" data-valor="adulto">Pantalla del adulto</button>
+            </div>
+            <div class="temas" role="group" aria-label="Tema" data-selector="tema">
+              <button type="button" aria-pressed="true" data-valor="claro" aria-label="Tema claro"><span class="temas__muestra temas__muestra--claro"></span></button>
+              <button type="button" aria-pressed="false" data-valor="oscuro" aria-label="Tema oscuro"><span class="temas__muestra temas__muestra--oscuro"></span></button>
+              <span class="temas__nombre" data-tema-nombre>Tema claro</span>
+            </div>
+          </div>
+          <p class="visor__pie"><span data-visor-pie>Pantalla del niño: sin logotipo, sin colores de marca y sin texto.</span> Capturas del prototipo real.<sup>2</sup></p>
+
+          <div class="acordeon">
+            <details name="rasgos" open>
+              <summary>Pantalla neutra<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Fondo liso, sin logotipo, sin colores de marca, sin texto y sin decoración. También en la pantalla de fin.</p>
+            </details>
+            <details name="rasgos">
+              <summary>Tema claro y oscuro<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Las dos pantallas siguen el tema del dispositivo. La del niño solo cambia de claro a oscuro.</p>
+            </details>
+            <details name="rasgos">
+              <summary>Un marco que no juzga<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Después de cada respuesta, un marco gris muy oscuro señala la opción correcta durante un segundo. Nunca verde ni rojo.</p>
+            </details>
+            <details name="rasgos">
+              <summary>Pausa discreta<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Dos toques en la esquina pausan el bloque. Un solo toque no basta, así es difícil activarla sin querer.</p>
+            </details>
+            <details name="rasgos">
+              <summary>La misma pantalla de fin<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Al terminar, el niño ve la misma pantalla sin importar cuántos aciertos tuvo.</p>
+            </details>
+            <details name="rasgos">
+              <summary>Objetivos de 44 px<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>En las pantallas del adulto, cada botón y enlace mide 44 px o más, con 8 px entre ellos.</p>
+            </details>
+            <details name="rasgos">
+              <summary>Contraste de 4.5 a 1 o más<span class="mas" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 5v14M5 12h14" /></svg></span></summary>
+              <p>Se revisaron 3,708 textos en los dos temas. El más bajo dio 5.8 a 1.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section id="bandas" class="seccion seccion--crema" aria-labelledby="titulo-bandas">
+        <div class="contenedor dos-columnas">
+          <div class="aparece">
+            <p class="antetitulo">Dificultad</p>
+            <h2 id="titulo-bandas" class="titulo titulo--medio">Bandas de dificultad. Un paso a la vez.</h2>
+            <p class="intro">En Pictograma e imagen, cada banda suma opciones o distractores más parecidos. Tú eliges con cuál empezar.</p>
+            <div class="bandas" role="group" aria-label="Banda" data-selector="banda">
+              <button type="button" aria-pressed="false" data-valor="B1" data-opciones="2"><span class="bandas__id">B1</span><span class="bandas__sub">2 opciones</span></button>
+              <button type="button" aria-pressed="false" data-valor="B2" data-opciones="3"><span class="bandas__id">B2</span><span class="bandas__sub">3 opciones</span></button>
+              <button type="button" aria-pressed="true" data-valor="B3" data-opciones="4"><span class="bandas__id">B3</span><span class="bandas__sub">4 opciones</span></button>
+              <button type="button" aria-pressed="false" data-valor="B4" data-opciones="4"><span class="bandas__id">B4</span><span class="bandas__sub">4 parecidas</span></button>
+            </div>
+            <div class="bandas__descripciones">
+              <p data-panel="banda" data-valor="B1"><span data-ficha="ACT-02.bandas.0.id">B1</span> · <span data-ficha="ACT-02.bandas.0.descripcion">2 opciones. El distractor es de otra categoría.</span></p>
+              <p data-panel="banda" data-valor="B2"><span data-ficha="ACT-02.bandas.1.id">B2</span> · <span data-ficha="ACT-02.bandas.1.descripcion">3 opciones. Los distractores son de otras categorías.</span></p>
+              <p data-panel="banda" data-valor="B3"><span data-ficha="ACT-02.bandas.2.id">B3</span> · <span data-ficha="ACT-02.bandas.2.descripcion">4 opciones. Un distractor es de la misma categoría.</span></p>
+              <p data-panel="banda" data-valor="B4"><span data-ficha="ACT-02.bandas.3.id">B4</span> · <span data-ficha="ACT-02.bandas.3.descripcion">4 opciones. Dos distractores son de la misma categoría y de aspecto parecido; el generador los propone y un clínico los confirma.</span></p>
+            </div>
+          </div>
+          <div>
+            <div class="tableta">
+              <div class="esquema" data-esquema data-n="4" role="img" aria-label="Esquema de la pantalla del niño: el pictograma de un tren arriba y cuatro fotografías abajo.">
+                <span class="esquema__pausa" aria-hidden="true"><span></span><span></span></span>
+                <div class="esquema__muestra"><img src="../assets/picto/tren.png" alt="" width="500" height="500" /></div>
+                <div class="esquema__opciones">
+                  <div class="esquema__opcion"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></div>
+                  <div class="esquema__opcion"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></div>
+                  <div class="esquema__opcion"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></div>
+                  <div class="esquema__opcion"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></div>
+                </div>
+              </div>
+            </div>
+            <p class="pie-figura">Esquema de la pantalla del niño. Arriba, el pictograma;<sup>8</sup> abajo, las fotografías.<sup>2</sup></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="control" class="seccion seccion--merino" aria-labelledby="titulo-control">
+        <div class="contenedor">
+          <h2 id="titulo-control" class="titulo titulo--angosto aparece">Tú llevas la sesión. AutiPal lleva la cuenta.</h2>
+          <div class="rejilla bloque aparece" style="--min: 440px">
+            <div class="tarjeta tarjeta--captura flotante">
+              <h3>Modo experto.</h3>
+              <p>Muestra el código de cada ítem en la pantalla del niño y un botón para pasar al siguiente.</p>
+              <div class="tableta"><img src="../assets/pagina-producto/nino-experto.webp" alt="Pantalla del niño en modo experto, con el código del ítem abajo a la izquierda y el botón Siguiente abajo a la derecha." width="2048" height="1536" loading="lazy" /></div>
+            </div>
+            <div class="tarjeta tarjeta--captura flotante">
+              <h3>La galería, a la mano.</h3>
+              <p>Cada ítem con su código, su consigna, sus opciones y la respuesta correcta marcada.</p>
+              <div class="tableta"><img src="../assets/pagina-producto/galeria.webp" alt="Galería de ítems de Cambia la regla, banda B2, con cada ítem en una fila con su símbolo, sus figuras y la caja correcta marcada." width="2048" height="1536" loading="lazy" /></div>
+            </div>
+          </div>
+          <div class="rejilla rejilla--seguida aparece">
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" /></svg></span>
+              <h3>Modalidad V o AV.</h3>
+              <p>Solo imagen, o imagen con la consigna en voz. El control de volumen aparece solo en AV.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg></span>
+              <h3>Ensayos con su rango.</h3>
+              <p>El campo dice cuántos ensayos se permiten y, si el número no sirve, avisa junto a él.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M9.5 4L7.5 20M16.5 4l-2 16M4.5 9h16M3.5 15h16" /></svg></span>
+              <h3>Código, no nombre.</h3>
+              <p>Cada sesión se identifica con un código de hasta 20 caracteres.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><rect x="6.5" y="5" width="3.6" height="14" rx="1" /><rect x="13.9" y="5" width="3.6" height="14" rx="1" /></svg></span>
+              <h3>Pausa de dos toques.</h3>
+              <p>En la esquina superior derecha. El ensayo en curso queda como interrumpido y no se repite.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><circle cx="9" cy="8.5" r="3.2" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 6M17.5 14.5a5 5 0 0 1 3 4.5" /></svg></span>
+              <h3>Nivel de apoyo.</h3>
+              <p>Al final del bloque marcas si hubo apoyo: ninguno, verbal, gestual o físico.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M3 16.5L16.5 3 21 7.5 7.5 21z" /><path d="M7.2 12.3l2 2M10.2 9.3l2 2M13.2 6.3l2 2" /></svg></span>
+              <h3>Calibración.</h3>
+              <p>Una regla de 5 cm para que las opciones midan lo mismo en cualquier tableta.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sesion" class="seccion seccion--crema" aria-labelledby="titulo-sesion">
+        <div class="contenedor centrado">
+          <div class="aparece">
+            <p class="antetitulo">Una sesión, de principio a fin</p>
+            <h2 id="titulo-sesion" class="titulo">Primero juegan. Luego analizas.</h2>
+            <p class="intro">Preparas el bloque, el niño hace la actividad en una pantalla sin distracciones y, al terminar, el resumen y el registro te esperan.</p>
+          </div>
+          <div class="recorrido" data-recorrido>
+            <ol class="recorrido__pasos">
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 1 de 7</p><h3>Preparas el bloque</h3></div><p>Eliges la actividad, la modalidad, la banda y el número de ensayos.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/inicio-claro.webp" alt="Pantalla Preparar el bloque, con las tres actividades en tarjetas." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 2 de 7</p><h3>El niño hace la tarea</h3></div><p>Una tarjeta arriba y las opciones abajo, sobre un fondo liso.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/nino-claro.webp" alt="Pantalla del niño con una tarjeta arriba y dos cajas abajo." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 3 de 7</p><h3>Un marco señala la correcta</h3></div><p>Durante un segundo, en gris muy oscuro. Nunca verde ni rojo.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/nino-marco.webp" alt="Pantalla del niño con un marco oscuro alrededor de la caja correcta." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 4 de 7</p><h3>Si hace falta, pausas</h3></div><p>Dos toques en la esquina. El ensayo en curso queda como interrumpido.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/pausa.webp" alt="Pantalla Sesión en pausa, con el volumen, el motivo y una nota." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 5 de 7</p><h3>La misma pantalla de fin</h3></div><p>Igual para todos, sin importar cuántos aciertos hubo.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/fin.webp" alt="Pantalla de fin: fondo liso con una tarjeta blanca y una flecha." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 6 de 7</p><h3>Lees el resumen</h3></div><p>Lo registrado, sin puntajes ni interpretaciones, y el nivel de apoyo.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/resumen.webp" alt="Resumen del bloque con aciertos, respuestas y la mediana del tiempo de respuesta." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+              <li class="paso">
+                <div class="paso__texto"><div><p class="paso__numero">Paso 7 de 7</p><h3>Descargas el registro</h3></div><p>En CSV o JSON. Nada se envía a ningún servidor.</p></div>
+                <div class="tableta"><img src="../assets/pagina-producto/inicio-registro.webp" alt="Registro con seis ensayos guardados y los botones de descarga." width="2048" height="1536" loading="lazy" /></div>
+              </li>
+            </ol>
+            <div class="controles recorrido__controles" hidden>
+              <button type="button" class="redondo" data-paso-anterior aria-label="Paso anterior"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" /></svg></button>
+              <div class="puntos" data-puntos-recorrido></div>
+              <button type="button" class="redondo" data-paso-siguiente aria-label="Paso siguiente"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M9.5 6l6 6-6 6" /></svg></button>
+              <button type="button" class="boton boton--chico" data-reproducir-recorrido>
+                <svg viewBox="0 0 24 24" class="relleno icono-pausa" aria-hidden="true"><rect x="6.5" y="5" width="3.6" height="14" rx="1" /><rect x="13.9" y="5" width="3.6" height="14" rx="1" /></svg>
+                <svg viewBox="0 0 24 24" class="relleno icono-reproducir" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+                <span data-texto-recorrido>Reproducir</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="audio" class="seccion seccion--noche noche" aria-labelledby="titulo-audio">
+        <div class="contenedor">
+          <div class="aparece">
+            <h2 id="titulo-audio" class="titulo titulo--angosto">Spoiler: también se escucha.</h2>
+            <p class="intro">En la modalidad audiovisual, la consigna llega en voz. Y en ninguna se graba nada.</p>
+          </div>
+          <div class="fila bloque aparece">
+            <div class="tarjeta">
+              <div class="burbuja" aria-hidden="true">
+                <div class="burbuja__picto"><img src="../assets/picto/tren.png" alt="" width="500" height="500" /></div>
+                <p class="burbuja__texto">¿Dónde está el tren?</p>
+              </div>
+              <h3>La palabra hablada.</h3>
+              <p>En Pictograma e imagen, la voz nombra el concepto junto con el pictograma.<sup>8</sup></p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4.5 6.5h15a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H11l-4.5 3.5v-3.5h-2A1.5 1.5 0 0 1 3 15V8a1.5 1.5 0 0 1 1.5-1.5z" /></svg></span>
+              <h3>Consignas cortas.</h3>
+              <p>«¿Cuál es igual?», «Por color», «Por forma». Lo justo para entender la tarea.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" /></svg></span>
+              <h3>Voz en español de México.</h3>
+              <p>Usa la voz del navegador en español de México cuando existe, y el registro anota de dónde salió el audio.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg></span>
+              <h3>Volumen a la medida.</h3>
+              <p>Con hipersensibilidad auditiva, la ficha indica volumen bajo o solo la modalidad visual.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M3 3l18 18M9 9v2a3 3 0 0 0 5.1 2.1M15 10V6a3 3 0 0 0-5.7-1.3M18.9 11a7 7 0 0 1-1.1 3.8M5 11a7 7 0 0 0 11 5.7M12 18v3" /></svg></span>
+              <h3>Sin cámara ni micrófono.</h3>
+              <p>AutiPal habla, pero no escucha ni graba.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="registro" class="seccion seccion--crema" aria-labelledby="titulo-registro">
+        <div class="contenedor centrado">
+          <div class="aparece">
+            <p class="antetitulo">Registro</p>
+            <h2 id="titulo-registro" class="titulo">Un toque. Cincuenta datos.</h2>
+          </div>
+          <p class="cifra cifra--gigante aparece" data-columnas-total>50</p>
+          <p class="cifra-etiqueta">columnas por ensayo</p>
+          <p class="intro">Tiempos de consigna, de opciones y de toque; acierto, omisión, toques fuera, cuadros perdidos y un peso de calidad. Solo esas columnas: cualquier otro dato, como un nombre, se descarta.</p>
+          <ul class="muro" aria-label="Columnas del registro por ensayo" data-muro>
+            <li>sesion_id</li><li>bloque</li><li>ensayo</li><li>codigo_nino</li><li>dispositivo</li><li>version_app</li>
+            <li>actividad</li><li>version_ficha</li><li>version_parametros</li><li>item</li><li>banda</li><li>modalidad</li><li>modo_fase</li><li>tema_imagenes</li>
+            <li>n_opciones</li><li>disposicion</li><li>pos_correcta</li><li>pos_distractores</li>
+            <li>t_consigna_inicio</li><li>t_consigna_fin</li>
+            <li>t_audio_inicio</li><li>t_audio_fin</li><li>audio_fuente</li><li>audio_latencia_ms</li><li>audio_fin_por_tope</li>
+            <li>t_opciones_insercion</li><li class="muro__clave">t_opciones</li><li>decodificacion_ok</li><li class="muro__clave">t_toque</li><li>t_retro_inicio</li><li>t_retro_fin</li>
+            <li>opcion_elegida</li><li>opcion_elegida_id</li><li class="muro__clave">acierto</li><li class="muro__clave">omision</li>
+            <li>toques_fuera</li><li>toques_repetidos</li><li>perdida_foco</li><li>cuadros_perdidos</li><li>cuadros_total</li><li>periodo_cuadro_ms</li>
+            <li>interrumpido</li><li>fallo_tecnico</li><li>tr_bruto_ms</li><li class="muro__clave">latencia_dispositivo_ms</li><li class="muro__clave">tr_corregido_ms</li>
+            <li class="muro__clave">anticipatoria</li><li>fuera_de_tarea</li><li>fuera_de_tarea_provisional</li><li class="muro__clave">peso_calidad</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="seccion seccion--merino" aria-labelledby="titulo-instalar">
+        <div class="contenedor centrado">
+          <div class="aparece">
+            <h2 id="titulo-instalar" class="titulo">Nada que instalar. Nada que enviar.</h2>
+            <p class="intro">Es un sitio estático: se abre en el navegador de la tableta o de la computadora. Sin cuentas, sin analítica y sin servidor propio.</p>
+          </div>
+          <div class="rejilla bloque aparece" style="--min: 240px">
+            <div class="tarjeta"><p class="cifra cifra--grande">0</p><p>instalaciones</p></div>
+            <div class="tarjeta"><p class="cifra cifra--grande">0</p><p>cuentas o contraseñas</p></div>
+            <div class="tarjeta"><p class="cifra cifra--grande">0</p><p>datos enviados a un servidor</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="motor" class="seccion seccion--noche noche" aria-labelledby="titulo-motor">
+        <div class="contenedor">
+          <div class="centrado aparece">
+            <p class="antetitulo">Motor de medición</p>
+            <h2 id="titulo-motor" class="titulo">El motor. El que lleva la cuenta.</h2>
+            <p class="intro">Las tres actividades usan la misma máquina de estados. La actividad solo decide cómo se ve; el motor mide y registra.</p>
+          </div>
+          <ol class="flujo aparece" aria-label="Estados de un ensayo">
+            <li><span class="flujo__estado"><strong>Intervalo</strong><span>1 s</span></span></li>
+            <li><span class="flujo__estado"><strong>Consigna</strong><span>1.5 s en V</span></span></li>
+            <li><span class="flujo__estado flujo__estado--clave"><strong>Opciones</strong><span>hasta 10 s</span></span></li>
+            <li><span class="flujo__estado flujo__estado--clave"><strong>Respuesta</strong><span>el toque</span></span></li>
+            <li><span class="flujo__estado"><strong>Retroalimentación</strong><span>1 s</span></span></li>
+            <li><span class="flujo__estado"><strong>Cierre</strong><span>se registra</span></span></li>
+          </ol>
+          <div class="rejilla motor__datos aparece">
+            <div>
+              <p class="cifra cifra--clara">0.1 ms</p>
+              <h3>Un solo reloj.</h3>
+              <p>Todos los tiempos salen del mismo reloj monótono, <code>performance.now()</code>. Nunca se usa la hora del sistema para medir duraciones, y el registro guarda cada tiempo al décimo de milisegundo.<sup>3</sup></p>
+            </div>
+            <div>
+              <p class="cifra cifra--clara">150 ms</p>
+              <h3>Cada ensayo, con su calidad.</h3>
+              <p>Marca las respuestas anticipatorias, de menos de 150 ms, los toques fuera, la pérdida de foco y los cuadros perdidos, y avisa si la pantalla baja de 50 Hz. Todo se resume en un peso de calidad.</p>
+            </div>
+            <div>
+              <p class="cifra cifra--clara">94</p>
+              <h3>Probado en cada cambio.</h3>
+              <p>94 pruebas automáticas cuidan el reloj, el registro y las actividades, y una revisión automática comprueba 34 de 34 puntos de las fichas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="calibracion" class="seccion seccion--crema" aria-labelledby="titulo-calibracion">
+        <div class="contenedor dos-columnas">
+          <div class="aparece">
+            <p class="antetitulo">Calibración</p>
+            <h2 id="titulo-calibracion" class="titulo titulo--medio">Cinco centímetros. En cualquier tableta.</h2>
+            <p class="intro">En una tableta, un centímetro de la pantalla no mide un centímetro real. AutiPal dibuja una regla de 5 cm; la comparas con una regla física, la ajustas una vez y las opciones miden lo mismo en cada sesión.</p>
+          </div>
+          <div class="tarjeta aparece">
+            <div class="regla__cabeza"><p class="cifra">5 cm</p><p>Ajuste fino de ±0.1</p></div>
+            <div class="regla" role="img" aria-label="Regla de 5 centímetros con marcas cada milímetro.">
+              <span style="left: 4px">0</span><span style="left: calc(20% + 4px)">1</span><span style="left: calc(40% + 4px)">2</span><span style="left: calc(60% + 4px)">3</span><span style="left: calc(80% + 4px)">4</span><span style="right: 8px">5</span>
+            </div>
+            <div class="tableta"><img src="../assets/pagina-producto/calibracion.webp" alt="Pantalla de Calibración con la regla de 5 cm y el ajuste fino." width="2048" height="1536" loading="lazy" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="para-quien" class="seccion seccion--merino" aria-labelledby="titulo-para-quien">
+        <div class="contenedor centrado">
+          <h2 id="titulo-para-quien" class="titulo titulo--angosto aparece">¿Qué ganas con AutiPal? Depende de quién seas.</h2>
+          <div class="pastillas pastillas--arriba" role="group" aria-label="Soy" data-selector="rol">
+            <button type="button" aria-pressed="true" data-valor="terapeuta">Terapeuta</button>
+            <button type="button" aria-pressed="false" data-valor="investigacion">Investigación</button>
+            <button type="button" aria-pressed="false" data-valor="experto">Experto que revisa</button>
+          </div>
+          <ul class="rejilla ganancias" style="--min: 200px" data-panel="rol" data-valor="terapeuta">
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Un bloque, una pantalla.</p><p>Actividad, modalidad, banda y número de ensayos en el mismo lugar.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Pausa sin salir.</p><p>Dos toques en la esquina, y decides si sigues o terminas el bloque.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Un resumen que describe.</p><p>Lo registrado en el bloque, sin puntajes ni interpretaciones clínicas.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">El nivel de apoyo, anotado.</p><p>Ninguno, verbal, gestual o físico, en cada bloque.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">El registro, al terminar.</p><p>En CSV o JSON, listo para tu expediente.</p></li>
+          </ul>
+          <ul class="rejilla ganancias" style="--min: 200px" data-panel="rol" data-valor="investigacion">
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">50 columnas por ensayo.</p><p>Y 15 por sesión, siempre en el mismo orden.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Versiones en cada fila.</p><p>De la aplicación, de la ficha y de los parámetros del motor.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">El código de cada ítem.</p><p>Para saber qué vio el niño en cada ensayo.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">La latencia, aparte.</p><p>Columnas para el tiempo bruto, la latencia del dispositivo y el tiempo corregido.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Cada imagen, con su licencia.</p><p>Origen, autor y licencia en licencias.csv.</p></li>
+          </ul>
+          <ul class="rejilla ganancias" style="--min: 200px" data-panel="rol" data-valor="experto">
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">El formulario F3.</p><p>Sin cuenta, desde el mismo sitio.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Cada actividad, recreada.</p><p>Lees su descripción, la pruebas en el prototipo o en la galería y la calificas.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Revisión de ítems.</p><p>Calificas uno por uno los ítems de la muestra para expertos.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Tu avance se guarda.</p><p>En tu dispositivo, para que sigas después.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="palomita" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span><p class="tarjeta__dato">Tus respuestas, en CSV.</p><p>Las descargas y las envías al equipo.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="familia" class="seccion seccion--noche noche" aria-labelledby="titulo-familia">
+        <div class="contenedor centrado">
+          <div class="aparece">
+            <h2 id="titulo-familia" class="titulo">La familia Neuro-BlueMinds.</h2>
+            <p class="intro">AutiPal observa la conducta durante el aprendizaje. C&amp;W, el reloj que estamos construyendo, observará el cuerpo.<sup>5</sup></p>
+          </div>
+          <div class="familia aparece" aria-hidden="true">
+            <figure class="familia__tableta">
+              <div class="tableta"><img src="../assets/pagina-producto/nino-oscuro.webp" alt="" width="2048" height="1536" loading="lazy" /></div>
+              <figcaption>AutiPal · la aplicación</figcaption>
+            </figure>
+            <figure class="reloj">
+              <span class="reloj__correa reloj__correa--arriba"></span>
+              <span class="reloj__caja"><span class="reloj__pantalla">C&amp;W</span></span>
+              <span class="reloj__correa reloj__correa--abajo"></span>
+              <figcaption>C&amp;W · en desarrollo</figcaption>
+            </figure>
+          </div>
+          <div class="rejilla bloque familia__tarjetas aparece">
+            <div class="tarjeta">
+              <p class="etiqueta">La aplicación</p>
+              <h3 class="nombre-marca">AutiPal</h3>
+              <p>Actividades breves en tableta que describen el desempeño del niño para su terapeuta. Hoy, prototipo E13.</p>
+            </div>
+            <div class="tarjeta">
+              <p class="etiqueta">El hardware · en desarrollo</p>
+              <h3>C&amp;W</h3>
+              <p>Un reloj de bajo costo, con sensor de pulso y de movimiento, para observar la fisiología y el movimiento. Sus cuatro componentes principales suman cerca de $368 MXN.</p>
+            </div>
+            <div class="tarjeta">
+              <p class="etiqueta">La empresa madre</p>
+              <h3>Neuro-BlueMinds</h3>
+              <p>Investigación, modelos y validación: cada cifra con su incertidumbre, cada adaptación con límites y cada decisión en manos del profesional.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="investigacion" class="seccion seccion--crema" aria-labelledby="titulo-investigacion">
+        <div class="contenedor">
+          <div class="aparece">
+            <p class="antetitulo">Investigación</p>
+            <h2 id="titulo-investigacion" class="titulo titulo--angosto">Lo que viene. Medición con incertidumbre.</h2>
+            <p class="intro">El diseño completo de la plataforma ya está documentado. Estas piezas llegan con el piloto.<sup>4</sup></p>
+          </div>
+          <ul class="rejilla bloque aparece" style="--min: 250px">
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Cada cifra con su intervalo.</p><p>Cada indicador lleva su incertidumbre y se oculta si faltan datos.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Comparado consigo mismo.</p><p>Cada niño se compara con su propia línea base, no con otros niños.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Cambios confirmados.</p><p>Un cambio se señala solo tras dos sesiones fuera de la variación del niño.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">En sesión, nada aprende.</p><p>Durante la sesión las reglas son fijas; el modelo estadístico corre después y nunca cambia parámetros por sí solo.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Adaptación con límites.</p><p>Una envolvente determinista con 9 invariantes bloquea toda adaptación insegura.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">La latencia de cada tableta.</p><p>Se mide con un actuador y un fotodiodo, para no confundir una tableta lenta con un niño lento.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Registro encadenado.</p><p>Cada decisión del sistema se puede reproducir paso a paso.</p></li>
+            <li class="tarjeta tarjeta--compacta"><span class="insignia">En diseño</span><p class="tarjeta__dato">Lento no es lo mismo que largo.</p><p>Un modelo jerárquico estima juntas precisión y latencia, y separa al niño lento del ítem largo.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="describe" class="seccion seccion--merino" aria-labelledby="titulo-describe">
+        <div class="contenedor">
+          <div class="centrado aparece">
+            <p class="antetitulo">Lo que AutiPal dice</p>
+            <h2 id="titulo-describe" class="titulo">Describe. No etiqueta.</h2>
+            <p class="intro">Cada ficha dice qué lecturas se permiten y cuáles no. El resumen se queda en lo que se observó.<sup>6</sup></p>
+          </div>
+          <div class="rejilla bloque aparece" style="--min: 320px">
+            <div class="tarjeta lecturas">
+              <p class="etiqueta">ACT-01 · Igual a la muestra</p>
+              <div class="lecturas__si"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Sí lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-01.lecturasPermitidas.0">Emparejó imágenes iguales en 9 de 10 ensayos</span>».</p></div>
+              <div class="lecturas__no"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M6 6l12 12" /></svg>Nunca lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-01.lecturasNoPermitidas.0">Su percepción visual es normal</span>».</p></div>
+            </div>
+            <div class="tarjeta lecturas">
+              <p class="etiqueta">ACT-02 · Pictograma e imagen</p>
+              <div class="lecturas__si"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Sí lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-02.lecturasPermitidas.0">Hoy identificó 23 de 30 conceptos; en su línea base, entre 18 y 22</span>».</p></div>
+              <div class="lecturas__no"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M6 6l12 12" /></svg>Nunca lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-02.lecturasNoPermitidas.1">Comprende el lenguaje</span>».</p></div>
+            </div>
+            <div class="tarjeta lecturas">
+              <p class="etiqueta">ACT-07 · Cambia la regla</p>
+              <div class="lecturas__si"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>Sí lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-07.lecturasPermitidas.1">Tardó en promedio 300 ms más al cambiar de regla</span>».</p></div>
+              <div class="lecturas__no"><p class="lecturas__titulo"><svg viewBox="0 0 24 24" class="trazo" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M6 6l12 12" /></svg>Nunca lo dice</p><p class="lecturas__frase">«<span data-ficha="ACT-07.lecturasNoPermitidas.0">Tiene rigidez cognitiva</span>».</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="privacidad" class="seccion seccion--crema" aria-labelledby="titulo-privacidad">
+        <div class="contenedor">
+          <div class="aparece">
+            <p class="antetitulo">Privacidad</p>
+            <h2 id="titulo-privacidad" class="titulo titulo--angosto">La tranquilidad se queda en la tableta.</h2>
+          </div>
+          <div class="rejilla bloque aparece" style="--min: 200px">
+            <div class="tarjeta tarjeta--compacta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" /></svg></span>
+              <p class="tarjeta__dato">Nada viaja.</p>
+              <p>El registro vive en el dispositivo. Nada se envía a ningún servidor.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M9.5 4L7.5 20M16.5 4l-2 16M4.5 9h16M3.5 15h16" /></svg></span>
+              <p class="tarjeta__dato">Código, no nombre.</p>
+              <p>Cualquier dato fuera de las 50 columnas, como un nombre, se descarta.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></svg></span>
+              <p class="tarjeta__dato">Sin cuentas.</p>
+              <p>No hay que registrarse ni iniciar sesión para usarlo.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M3 3l18 18M9 9v2a3 3 0 0 0 5.1 2.1M15 10V6a3 3 0 0 0-5.7-1.3M18.9 11a7 7 0 0 1-1.1 3.8M5 11a7 7 0 0 0 11 5.7M12 18v3" /></svg></span>
+              <p class="tarjeta__dato">Sin cámara ni micrófono.</p>
+              <p>AutiPal no los usa en ningún momento.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" /></svg></span>
+              <p class="tarjeta__dato">Borras cuando quieras.</p>
+              <p>«Borrar registro» elimina los ensayos guardados, con confirmación.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="fichas" class="seccion seccion--merino" aria-labelledby="titulo-fichas">
+        <div class="contenedor dos-columnas">
+          <div class="aparece">
+            <p class="antetitulo">Fichas</p>
+            <h2 id="titulo-fichas" class="titulo titulo--medio">Las reglas, por escrito.</h2>
+            <p class="intro">Cada actividad tiene una ficha con versión: objetivo, paradigma, bandas, tiempos, lecturas permitidas y contraindicaciones. La app se revisa contra ellas.</p>
+            <a class="enlace-flecha enlace-grande" href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/tree/main/fichas">Ver las fichas en GitHub ›</a>
+          </div>
+          <div class="fichas-json aparece" aria-hidden="true">
+            <div class="fichas-json__hoja">
+              <p class="fichas-json__nombre">ACT-07.json</p>
+              <p>"nombre": <span>"Cambia la regla"</span></p>
+              <p>"version": <span>"0.1.0"</span></p>
+              <p>"dimensiones": <span>["color", "forma"]</span></p>
+              <p>"limiteRespuestaMs": <span>10000</span></p>
+            </div>
+            <div class="fichas-json__hoja">
+              <p class="fichas-json__nombre">ACT-02.json</p>
+              <p>"nombre": <span>"Pictograma e imagen"</span></p>
+              <p>"modalidades": <span>["V", "AV"]</span></p>
+              <p>"ensayosPorBloque": <span>30</span></p>
+              <p>"consignaVMs": <span>1500</span></p>
+            </div>
+            <div class="fichas-json__hoja">
+              <p class="fichas-json__nombre">ACT-01.json</p>
+              <p>"nombre": <span>"Igual a la muestra"</span></p>
+              <p>"paradigma": <span>"Emparejamiento con la muestra por identidad."</span></p>
+              <p>"retroalimentacionMs": <span>1000</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="por-que" class="seccion seccion--crema" aria-labelledby="titulo-por-que">
+        <div class="contenedor">
+          <h2 id="titulo-por-que" class="titulo titulo--angosto aparece">Por qué probar AutiPal ahora.</h2>
+          <div class="rejilla bloque aparece">
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><rect x="3" y="4.5" width="18" height="15" rx="2" /><path d="M3 9h18" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Se abre en el navegador.</p>
+              <p>Sin instalar nada, en una tableta o en una computadora.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M8.5 13h7M8.5 17h5" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Con la ficha en la mano.</p>
+              <p>Cada actividad trae su ficha para que revises que la app hace lo que dice.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><rect x="5" y="4.5" width="14" height="16.5" rx="2" /><path d="M9 4.5V3.5h6v1M8.5 10h7M8.5 14h7M8.5 18h4" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Tu revisión cuenta.</p>
+              <p>El formulario F3 recoge la opinión de expertos sobre cada actividad, sin cuenta.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Abierto a revisión.</p>
+              <p>El código, las fichas y el banco de ítems están en un repositorio público.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Imágenes con licencia.</p>
+              <p>Cada imagen tiene su fila en licencias.csv, y ninguna está hecha con inteligencia artificial.</p>
+            </div>
+            <div class="tarjeta tarjeta--compacta flotante">
+              <span class="icono icono--chico" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.3" /></svg></span>
+              <p class="tarjeta__dato tarjeta__dato--grande">Hecho en Guadalajara.</p>
+              <p>Por estudiantes del Tecnológico de Monterrey, en español de México.</p>
+            </div>
+          </div>
+          <div class="acciones">
+            <a class="boton" href="../">Probar el prototipo</a>
+            <a class="boton boton--contorno" href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1">Ver el código en GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="especificaciones" class="seccion seccion--merino" aria-labelledby="titulo-especificaciones">
+        <div class="contenedor">
+          <h2 id="titulo-especificaciones" class="titulo centrado aparece">Encuentra la actividad para hoy.</h2>
+          <div class="rejilla bloque aparece">
+            <article class="tarjeta modelo">
+              <div class="modelo__figura" aria-hidden="true">
+                <span class="modelo__foto"><svg viewBox="0 0 24 24" class="trazo"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></span>
+                <span class="modelo__signo">=</span>
+                <span class="modelo__foto"><svg viewBox="0 0 24 24" class="trazo"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></span>
+              </div>
+              <p class="modelo__modalidades"><span>V</span><span>AV</span></p>
+              <p class="etiqueta">ACT-01</p>
+              <h3>Igual a la muestra</h3>
+              <p>Encuentra la imagen igual a la muestra. La puerta de entrada a la estructura del ensayo.</p>
+              <dl class="modelo__datos">
+                <div><dt>Ensayos</dt><dd><span data-ficha="ACT-01.ensayosPorBloque">10</span> por bloque</dd></div>
+                <div><dt>Bandas</dt><dd>B1 a B3</dd></div>
+                <div><dt>Opciones</dt><dd>2, 3 o 4</dd></div>
+              </dl>
+              <div class="modelo__acciones">
+                <a class="boton boton--chico" href="../">Probar</a>
+                <a class="enlace-flecha" href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/blob/main/fichas/ACT-01.json">Ver la ficha ›</a>
+              </div>
+            </article>
+            <article class="tarjeta modelo">
+              <div class="modelo__figura" aria-hidden="true">
+                <span class="modelo__foto modelo__foto--picto"><img src="../assets/picto/tren.png" alt="" width="500" height="500" /></span>
+                <svg viewBox="0 0 24 24" class="trazo modelo__flecha"><path d="M4 12h15M14 7l5 5-5 5" /></svg>
+                <span class="modelo__foto"><svg viewBox="0 0 24 24" class="trazo"><rect x="3.5" y="5" width="17" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" /></svg></span>
+              </div>
+              <p class="modelo__modalidades"><span>V</span><span>AV</span></p>
+              <p class="etiqueta">ACT-02</p>
+              <h3>Pictograma e imagen</h3>
+              <p>Del pictograma a la foto real. En AV, con la palabra hablada.</p>
+              <dl class="modelo__datos">
+                <div><dt>Ensayos</dt><dd><span data-ficha="ACT-02.ensayosPorBloque">30</span> por bloque</dd></div>
+                <div><dt>Bandas</dt><dd>B1 a B4</dd></div>
+                <div><dt>Ítems</dt><dd><span data-ficha="ACT-02.itemsPorBanda">60</span> por banda</dd></div>
+              </dl>
+              <div class="modelo__acciones">
+                <a class="boton boton--chico" href="../">Probar</a>
+                <a class="enlace-flecha" href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/blob/main/fichas/ACT-02.json">Ver la ficha ›</a>
+              </div>
+            </article>
+            <article class="tarjeta modelo">
+              <div class="modelo__figura" aria-hidden="true">
+                <img class="modelo__simbolo" src="../assets/pagina-producto/simbolo-color.svg" alt="" width="34" height="34" />
+                <span class="modelo__foto modelo__foto--figura"><img src="../assets/pagina-producto/figura-conejo-azul.svg" alt="" width="100" height="100" /></span>
+                <span class="modelo__foto modelo__foto--figura"><img src="../assets/pagina-producto/figura-barco-amarillo.svg" alt="" width="100" height="100" /></span>
+              </div>
+              <p class="modelo__modalidades"><span>V</span><span>AV</span></p>
+              <p class="etiqueta">ACT-07</p>
+              <h3>Cambia la regla</h3>
+              <p>Clasifica por color o por forma, y después cambia la regla.</p>
+              <dl class="modelo__datos">
+                <div><dt>Ensayos</dt><dd><span data-ficha="ACT-07.ensayosPorBloque">30</span> por bloque</dd></div>
+                <div><dt>Bandas</dt><dd>B1 a B4</dd></div>
+                <div><dt>Reglas</dt><dd>Color y forma</dd></div>
+              </dl>
+              <div class="modelo__acciones">
+                <a class="boton boton--chico" href="../">Probar</a>
+                <a class="enlace-flecha" href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/blob/main/fichas/ACT-07.json">Ver la ficha ›</a>
+              </div>
+            </article>
+          </div>
+
+          <details class="comparar">
+            <summary>Comparar las actividades<svg viewBox="0 0 24 24" class="trazo flecha-abajo" aria-hidden="true"><path d="M6 9.5l6 6 6-6" /></svg></summary>
+            <div class="comparar__caja">
+              <table>
+                <caption>Datos de las fichas, versión 0.1.0.</caption>
+                <thead>
+                  <tr><th scope="col"><span class="visualmente-oculto">Dato</span></th><th scope="col">Igual a la muestra</th><th scope="col">Pictograma e imagen</th><th scope="col">Cambia la regla</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">Objetivo</th><td>Familiarizar al niño con la estructura del ensayo, con la mínima demanda de lenguaje.</td><td>Describir la identificación de conceptos de vocabulario temprano y su adquisición.</td><td>Describir el desempeño al clasificar por un criterio y al cambiarlo, y el costo del cambio.</td></tr>
+                  <tr><th scope="row">Paradigma</th><td>Emparejamiento con la muestra por identidad.</td><td>V: del pictograma a un ejemplar real. AV: palabra hablada más pictograma, a un ejemplar.</td><td>Cambio dimensional de tarjetas (Zelazo, 2006).</td></tr>
+                  <tr><th scope="row">Fases</th><td>Familiarización.</td><td>1, 2, 3 y cierre.</td><td>1, 2, 3 y cierre.</td></tr>
+                  <tr><th scope="row">Ensayos por bloque</th><td data-ficha="ACT-01.ensayosPorBloque">10</td><td data-ficha="ACT-02.ensayosPorBloque">30</td><td data-ficha="ACT-07.ensayosPorBloque">30</td></tr>
+                  <tr><th scope="row">Bandas</th><td>B1 a B3</td><td>B1 a B4</td><td>B1 a B4</td></tr>
+                  <tr><th scope="row">Opciones</th><td>2, 3 o 4</td><td>2, 3, 4 o 4 parecidas</td><td>2 cajas fijas</td></tr>
+                  <tr><th scope="row">Ítems por banda</th><td data-ficha="ACT-01.itemsPorBanda">10</td><td data-ficha="ACT-02.itemsPorBanda">60</td><td data-ficha="ACT-07.itemsPorBanda">10</td></tr>
+                  <tr><th scope="row">Modalidades</th><td>V y AV</td><td>V y AV</td><td>V y AV</td></tr>
+                  <tr><th scope="row">Consigna en voz</th><td>«¿Cuál es igual?»</td><td>«¿Dónde está…?»</td><td>«Por color» o «Por forma»</td></tr>
+                  <tr><th scope="row">Consigna visual</th><td data-ficha-s="ACT-01.consignaVMs">1.5 s</td><td data-ficha-s="ACT-02.consignaVMs">1.5 s</td><td data-ficha-s="ACT-07.consignaVMs">1.5 s</td></tr>
+                  <tr><th scope="row">Límite para responder</th><td data-ficha-s="ACT-01.limiteRespuestaMs">10 s</td><td data-ficha-s="ACT-02.limiteRespuestaMs">10 s</td><td data-ficha-s="ACT-07.limiteRespuestaMs">10 s</td></tr>
+                  <tr><th scope="row">Marco</th><td data-ficha-s="ACT-01.retroalimentacionMs">1 s</td><td data-ficha-s="ACT-02.retroalimentacionMs">1 s</td><td data-ficha-s="ACT-07.retroalimentacionMs">1 s</td></tr>
+                  <tr><th scope="row">Intervalo</th><td data-ficha-s="ACT-01.intervaloMs">1 s</td><td data-ficha-s="ACT-02.intervaloMs">1 s</td><td data-ficha-s="ACT-07.intervaloMs">1 s</td></tr>
+                  <tr><th scope="row">Resumen</th><td>Emparejó imágenes iguales en X de N ensayos.</td><td>Hoy identificó X de N conceptos.</td><td>Tocó la caja de la regla indicada en X de N ensayos.</td></tr>
+                  <tr><th scope="row">Contraindicaciones</th><td>Discapacidad visual no corregida.</td><td>Discapacidad visual o auditiva no corregida. Con hipersensibilidad auditiva, AV a volumen bajo o solo V.</td><td>Discapacidad visual no corregida. Si el niño no supera B1, se mantiene en ella.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section id="accesibilidad" class="seccion seccion--crema" aria-labelledby="titulo-accesibilidad">
+        <div class="contenedor centrado">
+          <h2 id="titulo-accesibilidad" class="titulo aparece">AutiPal y la accesibilidad.</h2>
+          <div class="rejilla bloque aparece izquierda" style="--min: 280px">
+            <div class="tarjeta"><p class="cifra cifra--grande">5.8 : 1</p><p>Es el contraste más bajo entre 3,708 textos revisados en tema claro y oscuro. El mínimo que se pide es 4.5 a 1.<sup>7</sup></p></div>
+            <div class="tarjeta"><p class="cifra cifra--grande">44 px</p><p>Es lo mínimo que mide cada botón y enlace de las pantallas del adulto, con 8 px entre ellos.</p></div>
+            <div class="tarjeta"><p class="cifra cifra--grande">0</p><p>Imágenes hechas o editadas con inteligencia artificial. Y nunca verde ni rojo para decir si una respuesta fue correcta.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="valores" class="seccion seccion--noche noche" aria-labelledby="titulo-valores">
+        <div class="contenedor centrado">
+          <h2 id="titulo-valores" class="titulo titulo--angosto aparece">Nuestros valores guían cada decisión.</h2>
+          <div class="rejilla bloque aparece izquierda">
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" /></svg></span>
+              <h3>No diagnostica. Acompaña.</h3>
+              <p>AutiPal no diagnostica, no fija objetivos por sí mismo y no sustituye la terapia. Las decisiones son del profesional.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z" /><path d="M9 12l2 2 4-4" /></svg></span>
+              <h3>La privacidad, desde el diseño.</h3>
+              <p>Datos en el dispositivo, códigos en lugar de nombres y, en el piloto, consentimiento de los tutores y asentimiento del niño.</p>
+            </div>
+            <div class="tarjeta">
+              <span class="icono" aria-hidden="true"><svg viewBox="0 0 24 24" class="trazo"><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5a13 13 0 0 1 0 17M12 3.5a13 13 0 0 0 0 17" /></svg></span>
+              <h3>Accesible donde más falta.</h3>
+              <p>Pensado para tabletas de costo medio y servicios con pocos recursos, para que ningún niño se quede sin acompañamiento por geografía, economía o falta de especialistas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="notas" class="pie">
+      <div class="contenedor">
+        <ol class="pie__notas">
+          <li>AutiPal es un prototipo en fase de pruebas (encargo E13, versión 0.1.0). No es un dispositivo médico: no diagnostica, no fija objetivos por sí mismo y no sustituye la valoración ni la terapia. Las decisiones son del profesional.</li>
+          <li>Las capturas son del prototipo real, tomadas el 6 de noviembre de 2026 con datos de demostración. En Igual a la muestra y Pictograma e imagen, las fotografías todavía son marcadores provisionales; las fotos reales, con licencia libre y sin inteligencia artificial, están en preparación.</li>
+          <li>El registro guarda los tiempos con resolución de 0.1 ms. La exactitud de cada medida depende de la pantalla, del navegador y del dispositivo; por eso la latencia del dispositivo tiene su propia columna, que se llena cuando se mide.</li>
+          <li>Las funciones marcadas «En diseño» son parte del diseño documentado de Neuro-BlueMinds y aún no están en el prototipo. Todavía no hay datos de participantes: la fiabilidad y la validez se medirán con 24 niños en 2027, bajo el marco V3.</li>
+          <li>C&amp;W está en desarrollo y todavía no mide. El costo es la suma aproximada de sus cuatro componentes principales, sin batería, carcasa ni motor.</li>
+          <li>Los ejemplos de lecturas vienen de las fichas de cada actividad; sus cifras son ilustrativas.</li>
+          <li>Contraste medido el 5 de noviembre de 2026 en las pantallas de la aplicación, en tema claro y oscuro.</li>
+          <li>Pictogramas: autor Sergio Palao. Origen: ARASAAC (http://www.arasaac.org). Licencia: CC (BY-NC-SA). Propiedad: Gobierno de Aragón (España).</li>
+          <li>Íconos de la aplicación: Phosphor Icons (MIT). Tipografías: Roca Two y More Sugar, del manual de marca, se usan si están instaladas; Noto Sans y Noto Serif, con licencia SIL OFL 1.1.</li>
+        </ol>
+        <nav class="pie__columnas" aria-label="Pie de página">
+          <div>
+            <p class="pie__titulo">AutiPal</p>
+            <ul>
+              <li><a href="#resumen">Resumen</a></li>
+              <li><a href="#actividades">Actividades</a></li>
+              <li><a href="#diseno">Diseño</a></li>
+              <li><a href="#especificaciones">Especificaciones</a></li>
+              <li><a href="../">Probar el prototipo</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="pie__titulo">Neuro-BlueMinds</p>
+            <ul>
+              <li><a href="#familia">La familia</a></li>
+              <li><a href="#investigacion">Investigación</a></li>
+              <li><a href="#valores">Valores</a></li>
+              <li><a href="#fichas">Fichas</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="pie__titulo">Código y datos</p>
+            <ul>
+              <li><a href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1">Repositorio en GitHub</a></li>
+              <li><a href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/tree/main/fichas">Fichas de las actividades</a></li>
+              <li><a href="https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/blob/main/items/licencias.csv">Licencias de las imágenes</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="pie__titulo">Reconocimientos</p>
+            <ul class="pie__texto">
+              <li>Tercer lugar en Brilla Zapopan</li>
+              <li>Ganador de DigiEduHack 2025</li>
+              <li>Presentado en IFE 2026</li>
+              <li>Cartel en el CNIB 2026, Oaxaca</li>
+            </ul>
+          </div>
+          <div id="equipo">
+            <p class="pie__titulo">Equipo</p>
+            <ul class="pie__texto">
+              <li>Luis Nazariego Santome</li>
+              <li>José Miguel Fausto Tapia</li>
+              <li>José Ángel Sánchez Castro</li>
+              <li>Tecnológico de Monterrey, Guadalajara</li>
+            </ul>
+          </div>
+        </nav>
+        <div class="pie__legal">
+          <p>© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Prototipo para investigación.</p>
+          <p>Hecho en Guadalajara, Jalisco, México</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

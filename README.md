@@ -153,7 +153,8 @@ npm test
 - las secuencias de ACT-07 y `check-items`;
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
-- la exportación de la revisión clínica y la regla para unir revisiones.
+- la exportación de la revisión clínica y la regla para unir revisiones;
+- la página de producto (`pagina-producto/pagina.test.js`): que sus números coincidan con las fichas y con las columnas del registro, que no cargue nada de servidores externos y que respete las reglas de movimiento.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -495,6 +496,17 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 
 **Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. El encabezado de las pantallas del adulto lleva el isotipo (40 px) junto al logotipo y la etiqueta «Prototipo E13». Los SVG se vectorizaron de las imágenes del manual; si el equipo de diseño tiene los archivos originales, reemplázalos con el mismo nombre. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
 
+## Página de producto
+
+[`pagina-producto/`](pagina-producto/) es la página que presenta AutiPal, con la estructura de una página de producto de Apple y la marca AutiPal. Se abre con el mismo servidor que el prototipo: <http://localhost:8000/pagina-producto/>.
+
+- **Qué tiene:** el héroe con la tableta, el carrusel de lo más destacado y las tres actividades con sus cifras. Siguen el diseño de las dos pantallas en tema claro y oscuro, las bandas, el recorrido de una sesión, el audio, el registro, el motor, la calibración y la familia Neuro-BlueMinds (con C&W). Al final van lo que viene en investigación, las lecturas permitidas, la privacidad, las fichas, la comparación de las actividades, la accesibilidad, los valores y las notas.
+- **Archivos:** `index.html` (todo el texto), `pagina.css` y `pagina.js`. Las capturas y figuras están en [`assets/pagina-producto/`](assets/pagina-producto/), con su fila en `items/licencias.csv`. El logotipo y el pictograma salen de `assets/marca/` y `assets/picto/`.
+- **Sin JavaScript** la página se lee completa. El script solo agrega los selectores, el carrusel, el recorrido paso a paso y las apariciones al desplazarse. Nada se mueve solo si el sistema pide reducir el movimiento.
+- **Datos que no se escriben a mano:** cada número que viene de una ficha lleva `data-ficha="ACT-02.ensayosPorBloque"` (o `data-ficha-s` para milisegundos mostrados en segundos, y `data-ficha-pct` para proporciones). `npm test` revisa que coincidan con `fichas/` y que el muro de columnas sea el de `src/engine/logger.js`. Si cambia una ficha, la prueba dice qué dato de la página actualizar.
+- **Lo que todavía no existe va marcado:** las funciones del diseño de Neuro-BlueMinds que no están en el prototipo dicen «En diseño», y C&W aparece como reloj en desarrollo. Las notas al pie lo aclaran.
+- **Capturas:** son del prototipo del 6 de noviembre de 2026, con datos de demostración. Cuando lleguen las fotografías reales, conviene repetirlas para mostrar Igual a la muestra y Pictograma e imagen.
+
 ## Publicación en GitHub Pages
 
 El prototipo es un sitio estático; no necesita compilación.
@@ -504,6 +516,7 @@ El prototipo es un sitio estático; no necesita compilación.
 3. En **Build and deployment**, elige **Source: Deploy from a branch**, la rama `main` y la carpeta `/ (root)`. Guarda.
 4. Después de uno o dos minutos, el sitio queda en `https://<usuario>.github.io/<repositorio>/`. Para este repositorio: `https://nazariegosantomeluis-droid.github.io/Neuro-BlueMinds-prototipo-1/`.
 5. Comparte con el panel el enlace directo a la galería: `…/Neuro-BlueMinds-prototipo-1/#galeria`.
+6. La página de producto queda en `…/Neuro-BlueMinds-prototipo-1/pagina-producto/`.
 
 Notas:
 
