@@ -477,8 +477,12 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 
 **Interfaz del adulto.** Las pantallas se revisaron con las reglas de accesibilidad y uso de UI UX Pro Max:
 
+- El encabezado lleva la marca y debajo las pestañas de las seis secciones, cada una con su ícono, sobre la franja azul claro. La pestaña actual se marca con una barra azul, además del color y el grosor. En el celular, las pestañas van en dos filas de tres, con el ícono sobre el nombre.
+- Los íconos son de [Phosphor Icons](https://phosphoricons.com) (estilo regular, licencia MIT). Se dibujan con máscaras de CSS (variables `--icono-*` en `src/styles.css`), así que toman el color del texto en los dos temas y los lectores de pantalla no los leen, porque siempre van junto a un texto.
 - Cada pantalla tiene un título con una línea que dice para qué sirve. Al cambiar de pantalla, el foco pasa al título, y el enlace «Saltar al contenido» (visible con el teclado) lleva directo a él.
 - En el inicio, el formulario tiene dos grupos: **Bloque** (actividad, modalidad, volumen, banda y ensayos) y **Sesión** (código del niño y modo experto).
+  - Las tres actividades se eligen en tarjetas que dicen qué hace el niño en cada una.
+  - En pantallas anchas, como una tableta horizontal, el registro va a un lado del formulario.
   - La modalidad se elige con pastillas.
   - El volumen solo aparece en la modalidad AV.
   - El número de ensayos dice su rango permitido; si el valor no es válido, el aviso aparece junto al campo y el bloque no empieza.
@@ -527,7 +531,7 @@ Notas:
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
 
-AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)). Roca Two (Elena Genova, My Creative Land) y More Sugar (Slidehack) no se incluyen en el repositorio; ver «Tipografías» en [Marca e interfaz](#marca-e-interfaz).
+AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)). Roca Two (Elena Genova, My Creative Land) y More Sugar (Slidehack) no se incluyen en el repositorio; ver «Tipografías» en [Marca e interfaz](#marca-e-interfaz). Los íconos son de Phosphor Icons (© 2023 Phosphor Icons, licencia MIT); el aviso de la licencia está junto a ellos en `src/styles.css`.
 
 ### Pictogramas de ARASAAC
 

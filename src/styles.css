@@ -107,6 +107,43 @@
   --medida: 60ch; /* unos 75 caracteres de texto corrido */
   --radio: 14px;
   --radio-control: 10px;
+  --icono-tam: 1.25rem;
+  /* Íconos de Phosphor Icons (estilo regular), https://phosphoricons.com. Su licencia:
+
+     MIT License
+
+     Copyright (c) 2023 Phosphor Icons
+
+     Permission is hereby granted, free of charge, to any person obtaining a copy
+     of this software and associated documentation files (the "Software"), to deal
+     in the Software without restriction, including without limitation the rights
+     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     copies of the Software, and to permit persons to whom the Software is
+     furnished to do so, subject to the following conditions:
+
+     The above copyright notice and this permission notice shall be included in all
+     copies or substantial portions of the Software.
+
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+     SOFTWARE. */
+  --icono-casa: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z'/%3E%3C/svg%3E");
+  --icono-galeria: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M208,32H80A16,16,0,0,0,64,48V64H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V192h16a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM80,48H208v69.38l-16.7-16.7a16,16,0,0,0-22.62,0L93.37,176H80Zm96,160H48V80H64v96a16,16,0,0,0,16,16h96Zm32-32H116l64-64,28,28v36Zm-88-64A24,24,0,1,0,96,88,24,24,0,0,0,120,112Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,120,80Z'/%3E%3C/svg%3E");
+  --icono-revision: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z'/%3E%3C/svg%3E");
+  --icono-formulario: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z'/%3E%3C/svg%3E");
+  --icono-regla: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M235.32,73.37,182.63,20.69a16,16,0,0,0-22.63,0L20.68,160a16,16,0,0,0,0,22.63l52.69,52.68a16,16,0,0,0,22.63,0L235.32,96A16,16,0,0,0,235.32,73.37ZM84.68,224,32,171.31l32-32,26.34,26.35a8,8,0,0,0,11.32-11.32L75.31,128,96,107.31l26.34,26.35a8,8,0,0,0,11.32-11.32L107.31,96,128,75.31l26.34,26.35a8,8,0,0,0,11.32-11.32L139.31,64l32-32L224,84.69Z'/%3E%3C/svg%3E");
+  --icono-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z'/%3E%3C/svg%3E");
+  --icono-aviso: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z'/%3E%3C/svg%3E");
+  --icono-empezar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z'/%3E%3C/svg%3E");
+  --icono-descargar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z'/%3E%3C/svg%3E");
+  --icono-borrar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z'/%3E%3C/svg%3E");
+  --icono-salir: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z'/%3E%3C/svg%3E");
+  --icono-otra-vez: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z'/%3E%3C/svg%3E");
+  --icono-vacio: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,16V152h-28.7A15.86,15.86,0,0,0,168,156.69L148.69,176H107.31L88,156.69A15.86,15.86,0,0,0,76.69,152H48V48Zm0,160H48V168H76.69L96,187.31A15.86,15.86,0,0,0,107.31,192h41.38A15.86,15.86,0,0,0,160,187.31L179.31,168H208v40Z'/%3E%3C/svg%3E");
 
   /* Pantalla del niño: fondo neutro, sin elementos que distraigan y sin colores de la marca. */
   --fondo-nino: #ecebe6;
@@ -165,7 +202,7 @@ body {
 
 /* Los márgenes laterales respetan las zonas seguras de la pantalla (viewport-fit=cover). */
 .adulto {
-  max-width: 46rem;
+  max-width: 48rem; /* en un iPad vertical caben las seis pestañas en una fila */
   margin: 0 auto;
   padding: var(--esp-5) max(var(--esp-4), env(safe-area-inset-right, 0px)) var(--esp-7) max(var(--esp-4), env(safe-area-inset-left, 0px));
   font-family: var(--fuente-texto);
@@ -228,9 +265,13 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--esp-2) var(--esp-4);
+  margin-bottom: var(--esp-4);
+}
+
+/* Pantallas sin pestañas (resumen): la franja va bajo la marca. */
+.marca:not(:has(+ .nav)) {
   padding-bottom: var(--esp-4);
   border-bottom: 2px solid var(--marca-2);
-  margin-bottom: var(--esp-4);
 }
 
 .marca-firma {
@@ -302,12 +343,19 @@ body {
 }
 
 .aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
   background: var(--aviso);
   border-left: 4px solid var(--aviso-borde);
   padding: var(--esp-3) var(--esp-4);
   border-radius: var(--radio-control);
   font-weight: 600;
   margin: 0 0 var(--esp-5);
+}
+
+.aviso::before {
+  margin-top: 0.1rem;
 }
 
 .aviso + h2 {
@@ -516,6 +564,10 @@ button {
 /* Botones del adulto: el principal relleno con el azul de la marca; los secundarios, con borde.
    Al tocarlos cambian de fondo, sin mover nada de lugar. */
 .adulto button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
   padding: 0.5rem 1.1rem;
   border-radius: var(--radio-control);
   border: 1.5px solid var(--acento);
@@ -565,6 +617,13 @@ button.primario,
   cursor: progress;
 }
 
+/* La acción principal del inicio: más grande, para encontrarla de un vistazo. */
+#inicio button[type='submit'] {
+  min-height: 3.25rem;
+  padding-inline: var(--esp-6);
+  font-size: 1.0625rem;
+}
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -606,11 +665,18 @@ button:disabled {
 
 .resumen {
   margin: 0;
-  padding-left: 1.2rem;
+  padding: 0;
+  list-style: none;
+  max-width: none;
 }
 
 .resumen li {
-  margin: 0.35rem 0;
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.resumen li:first-child {
+  padding-top: 0;
 }
 
 .meta {
@@ -618,27 +684,33 @@ button:disabled {
   margin: 0;
 }
 
+/* Pestañas de secciones sobre la franja azul claro de la marca. Cada una lleva su ícono; la
+   actual se marca con una barra azul, además del color y el grosor. */
 .nav {
   display: flex;
   flex-wrap: wrap;
   gap: var(--esp-2);
-  margin: 0 0 var(--esp-5);
+  margin: 0 0 var(--esp-6);
+  border-bottom: 2px solid var(--marca-2);
 }
 
 .nav a {
+  position: relative;
   display: inline-flex;
   align-items: center;
+  gap: 0.375rem;
   min-height: var(--toque);
-  padding: 0 var(--esp-3);
-  border-radius: 999px;
-  color: var(--acento);
+  padding: 0 var(--esp-2);
+  border-radius: var(--radio-control) var(--radio-control) 0 0;
+  color: var(--suave);
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 200ms ease-out;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
 .nav a:hover {
   background: var(--acento-suave);
+  color: var(--acento);
 }
 
 .nav a:active {
@@ -646,11 +718,76 @@ button:disabled {
 }
 
 .nav a[aria-current='page'] {
-  color: var(--texto);
-  background: var(--acento-suave);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.35em;
+  color: var(--titulo);
+  font-weight: 700;
+}
+
+.nav a[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: var(--esp-2);
+  right: var(--esp-2);
+  bottom: -2px;
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: var(--acento);
+}
+
+/* Íconos dibujados con máscara: toman el color del texto en los dos temas. */
+.nav a::before,
+.aviso::before,
+.vacio-registro::before,
+.adulto :is(#inicio button[type='submit'], [data-descargar], [data-borrar], #cerrar-sesion, #cerrar, #otro)::before {
+  content: '';
+  flex: none;
+  width: var(--icono-tam);
+  height: var(--icono-tam);
+  background-color: currentColor;
+  -webkit-mask: var(--icono) center / contain no-repeat;
+  mask: var(--icono) center / contain no-repeat;
+}
+
+.nav a[href='#inicio'] { --icono: var(--icono-casa); }
+.nav a[href='#galeria'] { --icono: var(--icono-galeria); }
+.nav a[href='#revision'] { --icono: var(--icono-revision); }
+.nav a[href='#formulario'] { --icono: var(--icono-formulario); }
+.nav a[href='#calibracion'] { --icono: var(--icono-regla); }
+.nav a[href='#creditos'] { --icono: var(--icono-info); }
+.aviso { --icono: var(--icono-aviso); }
+.vacio-registro { --icono: var(--icono-vacio); }
+#inicio button[type='submit'] { --icono: var(--icono-empezar); }
+[data-descargar] { --icono: var(--icono-descargar); }
+[data-borrar] { --icono: var(--icono-borrar); }
+#cerrar-sesion,
+#cerrar { --icono: var(--icono-salir); }
+#otro { --icono: var(--icono-otra-vez); }
+
+/* En el celular, las seis secciones en dos filas de tres, con el ícono sobre el nombre. */
+@media (max-width: 480px) {
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-bottom: var(--esp-2);
+  }
+
+  .nav a {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    min-height: 3.5rem;
+    padding: var(--esp-1);
+    border-radius: var(--radio-control);
+    font-size: var(--letra-chica);
+    text-align: center;
+  }
+
+  .nav a[aria-current='page'] {
+    background: var(--acento-suave);
+  }
+
+  .nav a[aria-current='page']::after {
+    display: none;
+  }
 }
 
 .adulto a {
@@ -847,6 +984,146 @@ details.panel > summary + * {
 
 .adulto.ancho {
   max-width: 76rem;
+}
+
+/* Inicio: el formulario y, en pantallas anchas, el registro a su lado. */
+.adulto.medio {
+  max-width: 64rem;
+}
+
+.inicio-columnas {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.inicio-columnas .registro > h2 {
+  margin-top: 0;
+}
+
+@media (min-width: 62rem) {
+  .inicio-columnas {
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+    align-items: start;
+  }
+
+  .inicio-columnas .registro .acciones > button {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Actividades en tarjetas: se ven las tres a la vez, con lo que hace el niño en cada una.
+   Toda la tarjeta se toca; el círculo de la esquina marca la elegida. */
+#inicio .grupo {
+  container-type: inline-size;
+}
+
+.actividades {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--esp-3);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Las tres en una fila cuando caben; si no, una debajo de otra (nunca una sola abajo). */
+@container (min-width: 34rem) {
+  .actividades {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.actividades legend {
+  padding: 0;
+  margin-bottom: var(--esp-2);
+  font-weight: 600;
+}
+
+.actividad-tarjeta {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  cursor: pointer;
+}
+
+.actividad-tarjeta input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.act-cuerpo {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--esp-1);
+  width: 100%;
+  padding: var(--esp-3) calc(var(--esp-4) + 1.5rem) var(--esp-3) var(--esp-4);
+  border: 1.5px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--tarjeta);
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.act-cuerpo::after {
+  content: '';
+  position: absolute;
+  top: var(--esp-3);
+  right: var(--esp-3);
+  width: 1.125rem;
+  height: 1.125rem;
+  box-sizing: border-box;
+  border: 2px solid var(--borde-campo);
+  border-radius: 50%;
+  background: var(--tarjeta);
+}
+
+.act-codigo {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--suave);
+}
+
+.act-nombre {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.act-linea {
+  font-size: var(--letra-chica);
+  color: var(--suave);
+}
+
+.actividad-tarjeta:hover .act-cuerpo {
+  background: var(--acento-suave);
+}
+
+.actividad-tarjeta input:checked + .act-cuerpo {
+  border-color: var(--acento);
+  box-shadow: inset 0 0 0 1px var(--acento);
+  background: var(--acento-suave);
+}
+
+.actividad-tarjeta input:checked + .act-cuerpo::after {
+  border: 6px solid var(--acento);
+}
+
+.actividad-tarjeta input:focus-visible + .act-cuerpo {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* Registro sin ensayos: el estado vacío lleva su ícono. */
+.vacio-registro {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
 }
 
 .filtros {

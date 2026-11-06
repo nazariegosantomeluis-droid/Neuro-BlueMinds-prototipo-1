@@ -164,6 +164,27 @@ function route() {
 
 // ---------- Inicio ----------
 
+// Qué hace el niño en cada actividad, en una línea, para elegirla sin abrir la ficha.
+const EN_UNA_LINEA = {
+  'ACT-01': 'Encuentra la imagen igual a la muestra.',
+  'ACT-02': 'Del pictograma a la foto real. En AV, con la palabra hablada.',
+  'ACT-07': 'Clasifica por color o por forma, y después cambia la regla.',
+};
+
+const actividadesHTML = (actual) => `
+  <fieldset class="actividades">
+    <legend>Actividad</legend>
+    ${ACTIVIDADES.map((id) => `
+      <label class="actividad-tarjeta">
+        <input type="radio" name="actividad" value="${id}" ${id === actual ? 'checked' : ''}>
+        <span class="act-cuerpo">
+          <span class="act-codigo">${id}</span>
+          <span class="act-nombre">${esc(state.fichas[id]?.nombre ?? 'Ficha con problemas')}</span>
+          <span class="act-linea">${esc(EN_UNA_LINEA[id] ?? '')}</span>
+        </span>
+      </label>`).join('')}
+  </fieldset>`;
+
 // El formulario tiene dos grupos: qué se aplica (bloque) y con quién (sesión).
 function renderInicio(msg = '') {
   const f = state.form;
@@ -172,18 +193,15 @@ function renderInicio(msg = '') {
   const problemas = [...(state.problemas[actividad] ?? []), ...(state.problemas.items ?? [])];
   const lista = Boolean(ficha && !problemas.length);
   app.innerHTML = `
-    <div class="adulto">
+    <div class="adulto medio">
       ${navHTML('inicio')}
       ${tituloHTML('Preparar el bloque', 'Elige la actividad, la modalidad y la banda. Durante el bloque, el niño solo ve las imágenes.')}
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
+      <div class="inicio-columnas">
       <form class="panel" id="inicio" novalidate>
         <div class="grupo" role="group" aria-labelledby="grupo-bloque">
           <h2 class="grupo-titulo" id="grupo-bloque">Bloque</h2>
-          <label>Actividad
-            <select name="actividad">
-              ${ACTIVIDADES.map((id) => `<option value="${id}" ${id === actividad ? 'selected' : ''}>${id} · ${esc(state.fichas[id]?.nombre ?? 'ficha con problemas')}</option>`).join('')}
-            </select>
-          </label>
+          ${actividadesHTML(actividad)}
           ${problemas.length ? `<div class="problemas" role="alert">Esta actividad no se puede usar:<ul>${problemas.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
           ${lista ? bloqueHTML(ficha, f) : ''}
         </div>
@@ -195,16 +213,19 @@ function renderInicio(msg = '') {
         ${lista ? '<p class="ayuda">Durante el bloque, para pausar o terminar, toca dos veces el botón de la esquina superior derecha.</p>' : ''}
       </form>
       ${registroHTML()}
+      </div>
     </div>`;
 
   const form = app.querySelector('#inicio');
   // Al cambiar de actividad se conservan la modalidad, el código y el modo experto ya elegidos.
-  form.actividad.onchange = () => {
-    const d = Object.fromEntries(new FormData(form));
-    state.form = { actividad: d.actividad, modalidad: d.modalidad ?? f.modalidad, codigo: d.codigo ?? f.codigo, experto: d.experto };
-    renderInicio();
-    app.querySelector('select[name=actividad]')?.focus();
-  };
+  for (const r of form.querySelectorAll('[name=actividad]')) {
+    r.onchange = () => {
+      const d = Object.fromEntries(new FormData(form));
+      state.form = { actividad: d.actividad, modalidad: d.modalidad ?? f.modalidad, codigo: d.codigo ?? f.codigo, experto: d.experto };
+      renderInicio();
+      app.querySelector('[name=actividad]:checked')?.focus();
+    };
+  }
   if (form.banda) {
     form.banda.onchange = () => {
       const banda = ficha.bandas.find((b) => b.id === form.banda.value);
@@ -322,10 +343,10 @@ function registroHTML() {
   const off = n ? '' : 'disabled';
   const cuenta = n ? `${n === 1 ? '1 ensayo guardado' : `${n} ensayos guardados`} en este dispositivo.` : 'Todavía no hay ensayos guardados en este dispositivo.';
   return `
-    <section>
+    <section class="registro">
       <h2>Registro</h2>
       <div class="panel">
-        <p class="meta">${cuenta} Nada se envía a ningún servidor.</p>
+        <p class="meta${n ? '' : ' vacio-registro'}">${cuenta} Nada se envía a ningún servidor.</p>
         ${log.stored ? '' : '<p class="mensaje">No se pudo guardar en el dispositivo. Descarga el registro antes de cerrar esta página.</p>'}
         <div class="acciones">
           <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>

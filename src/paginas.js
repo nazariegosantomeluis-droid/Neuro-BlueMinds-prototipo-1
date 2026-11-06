@@ -40,7 +40,7 @@ export const navHTML = (actual) => `
   <a class="saltar" href="#contenido">Saltar al contenido</a>
   ${marcaHTML(actual === 'inicio')}
   <nav class="nav" aria-label="Secciones">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;
@@ -314,6 +314,7 @@ export function renderCreditos(app, { conceptos }) {
         <h2>Aplicación</h2>
         <p>© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.</p>
         <p>Incluye el código, las fichas técnicas, el banco de ítems y las figuras de la actividad «Cambia la regla». No incluye los pictogramas de ARASAAC, que conservan su propia licencia.</p>
+        <p>Los íconos de las pantallas del adulto son de Phosphor Icons (© 2023 Phosphor Icons), con licencia MIT.</p>
       </section>
     </div>`;
 }
