@@ -365,7 +365,7 @@ Una fila por sesión, en este orden:
 - [`items/conceptos.json`](items/conceptos.json) tiene los 60 conceptos de ACT-02, cada uno con:
   - artículo y categoría;
   - mitad (`A` o `B`, para la fase 2);
-  - color típico (provisional, hasta tener las fotografías);
+  - color típico, que es el del dibujo del ejemplar 1;
   - notas, pictograma de ARASAAC y conceptos que nunca aparecen juntos en una pantalla (`excluir`).
 - [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos y de las reglas de bandas de las fichas. El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos o las fichas y se regenera.
 - Códigos: `ACT01-B2-05` significa actividad, banda y número.
@@ -393,14 +393,29 @@ Una fila por sesión, en este orden:
 
 ## Imágenes, pictogramas y audio
 
-**Fotografías.** Por ahora cada ejemplar es un marcador provisional en `assets/img/<concepto>/<n>.svg` (fondo gris con el nombre del concepto y «EJEMPLAR n PENDIENTE»). Para reemplazar uno por una fotografía real con licencia libre:
+**Imágenes del banco.** Los 180 ejemplares (60 conceptos, 3 de cada uno) están en `assets/img/<concepto>/<n>.jpg`. Son dibujos de colores al estilo de los dibujos de las libretas de estímulos que usa el equipo: dibujo plano, contorno negro parejo, casi sin sombra y un solo objeto. Son dibujos, no fotografías, porque así son los estímulos de las libretas: un solo objeto, claro y sin detalles que distraigan.
 
-1. Guarda la fotografía como `assets/img/<concepto>/<n>.jpg` (también sirven `.png` o `.webp`). El identificador del concepto está en `conceptos.json`; por ejemplo, `cepillo-de-dientes`.
-2. Borra el marcador `.svg` y su fila en `items/licencias.csv`.
-3. Agrega la fila de la fotografía en `items/licencias.csv`: origen, autor, licencia y dirección de origen.
-4. Corre `npm run build-items` (el banco pasa a usar la fotografía) y `npm run check-items`.
+- 134 los generó Canva con inteligencia artificial, con una indicación escrita para cada ejemplar.
+- 44 son variantes sin IA de esos dibujos: otro color o volteados en espejo. Se hicieron así porque se acabaron los créditos de IA de Canva del mes; desde el 30 de noviembre se pueden rehacer con IA.
+- 2 se dibujaron con código: el huevo estrellado y la media naranja.
 
-No se usan fotografías inventadas ni generadas. Respeta las notas de cada concepto; por ejemplo, el pollito sin gallina y la misma forma de paleta en sus tres ejemplares.
+Todos tienen las mismas reglas:
+
+- fondo blanco liso;
+- el objeto completo, al centro, ocupando cerca del 70 % del cuadro;
+- 1000 × 1000 px, sin texto, marcas ni logotipos.
+
+Son dibujos originales: no copian láminas de ninguna prueba y no muestran a personas reales. Cada uno tiene su fila en `items/licencias.csv` con su origen (IA de Canva, variante sin IA o dibujo con código), el enlace al dibujo de Canva del que sale y estado `propuesta`, porque falta la revisión clínica.
+
+- El ejemplar 1 tiene el color típico de `conceptos.json`. Los ejemplares 2 y 3 muestran el mismo concepto en otro color, tipo o ángulo.
+- Se respetan las notas de cada concepto: el pollito sin gallina, la paleta de dulce en sus tres ejemplares, la leche que no parece agua, el vaso sin asa y el camión como autobús urbano.
+- Las partes del cuerpo van sueltas, como en las libretas (la mano, el ojo, la oreja). No hay caras, salvo en «la cabeza», y los ejemplares cambian de tono de piel. La panza va sin ropa, para que no se confunda con «la playera» ni con «el short».
+
+Para cambiar una imagen:
+
+1. Guárdala como `assets/img/<concepto>/<n>.jpg` (también sirven `.png` o `.webp`). El identificador del concepto está en `conceptos.json`; por ejemplo, `cepillo-de-dientes`.
+2. Cambia su fila en `items/licencias.csv`: origen, autor, licencia y dirección de origen.
+3. Corre `npm run build-items` y `npm run check-items`.
 
 **Audio.** Cada consigna tiene una clave, y su archivo va en `assets/audio/<clave>.mp3`; por ejemplo, `cual-es-igual.mp3` o `donde-esta-el-perro.mp3`. `npm run check-items` lista las claves que faltan. Cada archivo necesita su fila en `licencias.csv`. Mientras falte, la aplicación usa la voz del navegador en español de México y lo registra como `audio_fuente` = `sintesis`.
 
@@ -420,7 +435,7 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
   - No hay animaciones en bucle ni parpadeos.
   - Las únicas transiciones (el marco de retroalimentación y el botón de pausa) duran de 200 a 300 ms y se desactivan con `prefers-reduced-motion`.
   - Las opciones aparecen sin transición y con opacidad completa, para que el cuadro registrado como aparición sea el real. Sus imágenes se decodifican durante la consigna y se insertan ya decodificadas (`decodificacion_ok`).
-- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. Las excepciones son los marcadores provisionales, que muestran el nombre del concepto hasta que lleguen las fotografías, y el código del ítem en modo experto.
+- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. La única excepción es el código del ítem en modo experto.
 - **Retroalimentación.** Sin sonidos de error, sin la palabra «Incorrecto» y sin recompensas que dependan del desempeño: siempre se señala la opción correcta con el mismo marco.
 - **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
 - **Volumen.** Se ajusta en el inicio y en la pausa.
@@ -526,7 +541,7 @@ Notas:
 
 ## Pendientes
 
-- **Fotografías:** reemplazar los 180 marcadores por fotografías reales con licencia libre.
+- **Imágenes:** que un clínico revise los 180 dibujos generados con IA (estado `propuesta` en `licencias.csv`).
 - **Audio:** grabar los audios de las consignas (63 claves, ver `npm run check-items`).
 - **Revisión clínica:**
   - las fichas (`revisionClinica`);

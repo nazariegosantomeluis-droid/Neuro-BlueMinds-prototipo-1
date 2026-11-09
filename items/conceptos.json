@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "descripcion": "Los 60 conceptos de ACT-02. «color» es el color típico del objeto, provisional hasta tener las fotografías. «excluir» lista los conceptos que nunca aparecen juntos en una misma pantalla. «arasaac» es el identificador del pictograma.",
+  "descripcion": "Los 60 conceptos de ACT-02. «color» es el color típico del objeto, el que lleva el dibujo del ejemplar 1. «excluir» lista los conceptos que nunca aparecen juntos en una misma pantalla. «arasaac» es el identificador del pictograma.",
   "categorias": [
     {
       "id": "animales",

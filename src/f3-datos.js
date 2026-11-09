@@ -13,7 +13,7 @@ export const MECANICA = {
   'ACT-01':
     'Una imagen muestra aparece arriba durante 1.5 s; después aparecen debajo las opciones, una idéntica a la muestra, que sigue visible. El niño toca la idéntica. En modalidad audiovisual se añade la voz «¿Cuál es igual?».',
   'ACT-02':
-    'Aparece el pictograma del concepto (en audiovisual, también la voz: «¿Dónde está el perro?»). Después aparecen fotografías reales; una corresponde al concepto y ninguna repite el pictograma. El niño la toca.',
+    'Aparece el pictograma del concepto (en audiovisual, también la voz: «¿Dónde está el perro?»). Después aparecen dibujos de colores (pendientes de revisión clínica); uno corresponde al concepto y ninguno repite el pictograma. El niño lo toca.',
   'ACT-07':
     'Abajo hay dos cajas, por ejemplo un conejo azul y un barco amarillo. Arriba aparece una tarjeta que coincide con una caja en color y con la otra en forma. Un símbolo indica la regla: mancha de colores (por color) o silueta (por forma); en audiovisual, la voz dice «Por color» o «Por forma». El niño toca la caja que corresponde.',
 };

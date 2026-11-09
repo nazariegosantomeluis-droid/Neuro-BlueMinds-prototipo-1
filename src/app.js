@@ -167,7 +167,7 @@ function route() {
 // Qué hace el niño en cada actividad, en una línea, para elegirla sin abrir la ficha.
 const EN_UNA_LINEA = {
   'ACT-01': 'Encuentra la imagen igual a la muestra.',
-  'ACT-02': 'Del pictograma a la foto real. En AV, con la palabra hablada.',
+  'ACT-02': 'Del pictograma a otro ejemplar del concepto. En AV, con la palabra hablada.',
   'ACT-07': 'Clasifica por color o por forma, y después cambia la regla.',
 };
 

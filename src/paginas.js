@@ -281,7 +281,7 @@ export function renderCreditos(app, { conceptos }) {
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('creditos')}
-      ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las fotografías y la aplicación.')}
+      ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las imágenes y la aplicación.')}
       ${AVISO}
       <section class="panel">
         <h2>Marca</h2>
@@ -307,8 +307,8 @@ export function renderCreditos(app, { conceptos }) {
         </details>
       </section>
       <section class="panel">
-        <h2>Fotografías y audio</h2>
-        <p>Las imágenes de los ejemplares son marcadores provisionales. Se reemplazarán por fotografías reales con licencia libre. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <h2>Imágenes y audio</h2>
+        <p>Las imágenes de los ejemplares son dibujos hechos para este prototipo: la mayoría con inteligencia artificial en Canva y otros como variantes de esos dibujos o con código. Son originales, no muestran a personas reales y están pendientes de revisión clínica. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>
