@@ -1622,6 +1622,7 @@ details[open] > summary .mas svg {
 
 .esquema__opcion {
   display: flex;
+  overflow: hidden;
   width: 14.7%;
   aspect-ratio: 1;
   align-items: center;
@@ -1631,10 +1632,11 @@ details[open] > summary .mas svg {
   color: var(--glifo);
 }
 
-.esquema__opcion svg {
-  width: 46%;
-  height: 46%;
-  stroke-width: 1.6;
+.esquema__opcion img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: contain;
 }
 
 .esquema[data-n='2'] .esquema__opcion:nth-child(n + 3),

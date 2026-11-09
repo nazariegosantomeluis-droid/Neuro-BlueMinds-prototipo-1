@@ -3,6 +3,7 @@
 // - El muro de columnas es el registro de src/engine/logger.js, en el mismo orden.
 // - No carga nada de servidores externos y todo archivo local que usa existe.
 // - Respeta las reglas de movimiento del prototipo.
+// - La pantalla del niño de la sección de bandas usa los ítems reales del banco.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -68,4 +69,16 @@ test('la página de producto respeta las reglas de movimiento', () => {
   for (const d of duraciones) assert.ok(d >= 200 && d <= 300, `transición de ${d} ms`);
   assert.doesNotMatch(css, /transition\s*:[^;]*\d(\.\d+)?s\b/, 'duraciones en ms');
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
+});
+
+test('la pantalla de las bandas usa el ítem del tren de items.json', () => {
+  const { items } = JSON.parse(leer('../items/items.json'));
+  for (const banda of ['B1', 'B2', 'B3', 'B4']) {
+    const marca = html.match(new RegExp(`data-banda-${banda.toLowerCase()}="([^"]+)"`));
+    assert.ok(marca, `falta data-banda-${banda.toLowerCase()}`);
+    const item = items.find((i) => i.actividad === 'ACT-02' && i.banda === banda && i.concepto === 'tren');
+    const esperadas = item.opciones.map((o) => `${o.concepto}/${o.ejemplar}`).sort();
+    assert.deepEqual(marca[1].split(' ').sort(), esperadas, banda);
+    for (const o of esperadas) assert.ok(existsSync(new URL(`../assets/img/${o}.jpg`, import.meta.url)), o);
+  }
 });

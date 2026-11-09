@@ -25,14 +25,18 @@ function selector(nombre, alCambiar = () => {}) {
 selector('actividad');
 selector('rol');
 
-// Bandas: el esquema de la pantalla del niño muestra tantas opciones como la banda.
+// Bandas: la pantalla del niño muestra el ítem del tren de cada banda, con sus opciones del banco.
 const esquema = document.querySelector('[data-esquema]');
 const NUMEROS = { 2: 'dos', 3: 'tres', 4: 'cuatro' };
 selector('banda', (valor, boton) => {
   if (!esquema) return;
   const n = boton.dataset.opciones;
   esquema.dataset.n = n;
-  esquema.setAttribute('aria-label', `Esquema de la pantalla del niño en ${valor}: el pictograma de un tren arriba y ${NUMEROS[n]} fotografías abajo.`);
+  const opciones = (esquema.dataset[`banda${valor}`] ?? '').split(' ').filter(Boolean);
+  esquema.querySelectorAll('.esquema__opcion img').forEach((img, i) => {
+    if (opciones[i]) img.src = `../assets/img/${opciones[i]}.jpg`;
+  });
+  esquema.setAttribute('aria-label', `Pantalla del niño en Pictograma e imagen, banda ${valor}: el pictograma de un tren arriba y ${NUMEROS[n]} imágenes abajo.`);
 });
 
 // Visor de diseño: pantalla del niño o del adulto, en tema claro u oscuro.

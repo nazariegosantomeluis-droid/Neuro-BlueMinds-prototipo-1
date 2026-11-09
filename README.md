@@ -154,7 +154,7 @@ npm test
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
 - la exportación de la revisión clínica y la regla para unir revisiones;
-- la página de producto (`pagina-producto/pagina.test.js`): que sus números coincidan con las fichas y con las columnas del registro, que no cargue nada de servidores externos y que respete las reglas de movimiento.
+- la página de producto (`pagina-producto/pagina.test.js`): que sus números coincidan con las fichas y con las columnas del registro, que no cargue nada de servidores externos, que respete las reglas de movimiento y que la pantalla de las bandas use los ítems del banco.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -520,7 +520,7 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 - **Sin JavaScript** la página se lee completa. El script solo agrega los selectores, el carrusel, el recorrido paso a paso y las apariciones al desplazarse. Nada se mueve solo si el sistema pide reducir el movimiento.
 - **Datos que no se escriben a mano:** cada número que viene de una ficha lleva `data-ficha="ACT-02.ensayosPorBloque"` (o `data-ficha-s` para milisegundos mostrados en segundos, y `data-ficha-pct` para proporciones). `npm test` revisa que coincidan con `fichas/` y que el muro de columnas sea el de `src/engine/logger.js`. Si cambia una ficha, la prueba dice qué dato de la página actualizar.
 - **Lo que todavía no existe va marcado:** las funciones del diseño de Neuro-BlueMinds que no están en el prototipo dicen «En diseño», y C&W aparece como reloj en desarrollo. Las notas al pie lo aclaran.
-- **Capturas:** son del prototipo del 6 de noviembre de 2026, con datos de demostración. Cuando lleguen las fotografías reales, conviene repetirlas para mostrar Igual a la muestra y Pictograma e imagen.
+- **Capturas e imágenes:** las capturas son del prototipo, con datos de demostración (6 de noviembre de 2026; la galería, 9 de noviembre). La sección de bandas muestra el ítem del tren de cada banda con los dibujos del banco, y `npm test` revisa que coincida con `items/items.json`. Si cambian las imágenes del banco, hay que repetir la captura de la galería.
 
 ## Publicación en GitHub Pages
 
