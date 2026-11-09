@@ -1,5 +1,6 @@
 // Páginas para el adulto y el panel de expertos: galería de ítems y créditos.
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
+import { ETIQUETAS_REVISION, revisadaClinicamente, filtrarPorEstado, notasDe, textoFiguras } from './revision-estado.js';
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -15,8 +16,8 @@ const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una 
 
 // ---------- Galería ----------
 
-// Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1
-export function renderGaleria(app, { items, fichas, conceptos }, params) {
+// Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1&estado=retirado
+export function renderGaleria(app, { items, fichas, conceptos, revision }, params) {
   const ids = Object.keys(fichas);
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];
   const ficha = fichas[actividad];
@@ -25,8 +26,10 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
   const pareja = ficha.parejas ? Number(params.get('pareja')) % ficha.parejas.length || 0 : 0;
   const nombre = new Map(conceptos.map((c) => [c.id, c]));
   const deActividad = items.filter((i) => i.actividad === actividad && (banda === 'todas' || i.banda === banda));
-  const visibles = deActividad.filter((i) => todos || i.muestraExpertos);
-  const revisada = ficha.revisionClinica.revisor && ficha.revisionClinica.fecha;
+  const conEstado = deActividad.some((i) => i.estadoRevision);
+  const estado = conEstado && params.get('estado') in ETIQUETAS_REVISION ? params.get('estado') : 'todos';
+  const visibles = filtrarPorEstado(deActividad.filter((i) => todos || i.muestraExpertos), estado);
+  const revisada = revisadaClinicamente(ficha);
 
   app.innerHTML = `
     <div class="adulto ancho">
@@ -51,15 +54,26 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
               </label>`
             : ''
         }
+        ${
+          conEstado
+            ? `<label>Revisión clínica
+                <select name="estado">
+                  <option value="todos">Todos</option>
+                  ${Object.entries(ETIQUETAS_REVISION).map(([k, v]) => `<option value="${k}" ${k === estado ? 'selected' : ''}>${v}</option>`).join('')}
+                </select>
+              </label>`
+            : ''
+        }
         <label class="casilla"><input type="checkbox" name="todos" value="1" ${todos ? 'checked' : ''}> Mostrar todos los ítems, no solo la muestra para expertos</label>
       </form>
       <details class="panel ficha">
         <summary>Ficha técnica de ${esc(ficha.id)} (versión ${esc(ficha.version)}) · ${revisada ? `revisada por ${esc(ficha.revisionClinica.revisor)}, ${esc(ficha.revisionClinica.fecha)}` : 'sin revisión clínica'}</summary>
         ${fichaHTML(ficha)}
       </details>
-      <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}.</p>
+      ${ficha.parejas ? `<p class="meta">${esc(textoFiguras(revision))}</p>` : ''}
+      <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}${estado === 'todos' ? '' : ` con estado «${ETIQUETAS_REVISION[estado].toLowerCase()}»`}.</p>
       <div class="galeria">
-        ${visibles.map((it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre))).join('')}
+        ${visibles.map((it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre, revision?.items?.[it.codigo]))).join('')}
       </div>
     </div>`;
 
@@ -87,14 +101,22 @@ function fichaHTML(f) {
     </dl>`;
 }
 
+// Etiquetas del ítem: si es de la muestra, su estado de revisión clínica y, mientras no se revise,
+// si tiene puntos que los clínicos deben confirmar.
 const estadoHTML = (it) => `
   ${it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
-  <span class="etiqueta ${it.revisionPendiente ? 'pendiente' : ''}">${it.revisionPendiente ? 'Revisión pendiente' : 'Sin pendientes'}</span>`;
+  ${it.estadoRevision ? `<span class="etiqueta ${it.estadoRevision}">${ETIQUETAS_REVISION[it.estadoRevision]}</span>` : ''}
+  ${(it.estadoRevision ?? 'sin-revisar') === 'sin-revisar' && it.revisionPendiente ? '<span class="etiqueta pendiente">Puntos por revisar</span>' : ''}`;
+
+const notasClinicasHTML = (entrada) => {
+  const notas = notasDe(entrada);
+  return notas.length ? `<p class="ayuda">Revisión clínica (${esc(entrada.fecha)}):</p><ul class="motivos">${notas.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : '';
+};
 
 const motivosHTML = (it) =>
   it.motivosRevision.length ? `<ul class="motivos">${it.motivosRevision.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : '';
 
-function itemHTML(it, nombre) {
+function itemHTML(it, nombre, clinica) {
   const c = nombre.get(it.concepto);
   const consigna = it.consigna.tipo === 'pictograma' ? 'Pictograma' : 'Muestra';
   return `
@@ -117,6 +139,7 @@ function itemHTML(it, nombre) {
           .join('')}
       </ul>
       ${motivosHTML(it)}
+      ${notasClinicasHTML(clinica)}
     </article>`;
 }
 

@@ -1,0 +1,7 @@
+{
+  "descripcion": "Resultado de la revisión clínica de ítems (Arquitectura 13.4; Catálogo 5.4). Lo escribe tools/aplicar-revision.mjs a partir de revision-consolidada.csv; build-items lo copia a cada ítem como estadoRevision.",
+  "rondas": [],
+  "items": {},
+  "figuras": {},
+  "decisiones": {}
+}

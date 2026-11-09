@@ -30,7 +30,11 @@ export const slug = (s) =>
 
 const pad = (n) => String(n).padStart(2, '0');
 
-export function buildItems({ conceptos, categorias, fichas, image = imagePath }) {
+// Estado de revisión clínica de un ítem de ACT-01 o ACT-02, según items/revision.json.
+// Los ítems que no se han revisado quedan «sin-revisar».
+export const estadoDe = (revision, codigo) => revision?.items?.[codigo]?.estado ?? 'sin-revisar';
+
+export function buildItems({ conceptos, categorias, fichas, revision, image = imagePath }) {
   const catIds = categorias.map((c) => c.id);
   const clash = (a, b) => a.id === b.id || a.excluir.includes(b.id) || b.excluir.includes(a.id);
   const pick = (arr, rand) => arr[Math.floor(rand() * arr.length)];
@@ -128,6 +132,9 @@ export function buildItems({ conceptos, categorias, fichas, image = imagePath })
       });
     });
   }
+  // La revisión clínica se aplica a los ítems con imágenes; las secuencias de ACT-07 no se
+  // revisan una por una (sus figuras se revisan en conjunto, ver items/revision.json).
+  for (const it of items) it.estadoRevision = estadoDe(revision, it.codigo);
   items.push(...buildRuleSequences(fichas['ACT-07']));
   return items;
 }
@@ -226,7 +233,20 @@ export function placeholderSVG(nombre, n) {
 export function loadInputs() {
   const { conceptos, categorias } = readJSON('items/conceptos.json');
   const fichas = Object.fromEntries(['ACT-01', 'ACT-02', 'ACT-07'].map((id) => [id, readJSON(`fichas/${id}.json`)]));
-  return { conceptos, categorias, fichas };
+  const revision = readJSON('items/revision.json');
+  return { conceptos, categorias, fichas, revision };
+}
+
+// Escribe items/items.json a partir de las entradas. Devuelve los ítems.
+export function writeItems(inputs = loadInputs()) {
+  const items = buildItems(inputs);
+  const out = {
+    version: '0.1.0',
+    descripcion: 'Banco de ítems generado por tools/build-items.mjs. No editar a mano: modificar conceptos.json, las fichas o revision.json y regenerar.',
+    items,
+  };
+  writeFileSync(join(ROOT, 'items/items.json'), JSON.stringify(out, null, 2) + '\n');
+  return items;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -257,12 +277,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
   }
   const added = addMissing(join(ROOT, 'items/licencias.csv'), rows);
-  const items = buildItems(inputs);
-  const out = {
-    version: '0.1.0',
-    descripcion: 'Banco de ítems generado por tools/build-items.mjs. No editar a mano: modificar conceptos.json o las fichas y regenerar.',
-    items,
-  };
-  writeFileSync(join(ROOT, 'items/items.json'), JSON.stringify(out, null, 2) + '\n');
+  const items = writeItems(inputs);
   console.log(`Ítems: ${items.length}. Marcadores creados: ${created}. Filas nuevas en licencias.csv: ${added}.`);
 }

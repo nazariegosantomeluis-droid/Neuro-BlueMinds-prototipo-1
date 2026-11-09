@@ -2,7 +2,7 @@
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
 import { loadFicha } from './engine/ficha.js';
 import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
-import { pickItems, pickComposed, rng, seedOf, shuffle } from './engine/selector.js';
+import { pickItems, pickComposed, rng, seedOf, shuffle, disponibleEnSesion } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, eventTime } from './engine/clock.js';
 import { createAudio } from './engine/audio.js';
@@ -15,6 +15,7 @@ import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
+import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -112,8 +113,9 @@ async function init() {
   try {
     state.items = (await (await fetch('items/items.json')).json()).items;
     state.conceptos = (await (await fetch('items/conceptos.json')).json()).conceptos;
+    state.revision = await (await fetch('items/revision.json')).json();
   } catch {
-    state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json o items/conceptos.json).'];
+    state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json, items/conceptos.json o items/revision.json).'];
   }
   addEventListener('hashchange', route);
   route();
@@ -163,6 +165,7 @@ function renderInicio(msg = '') {
           </select>
         </label>
         ${problemas.length ? `<div class="problemas" role="alert">Esta actividad no se puede usar:<ul>${problemas.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
+        ${ficha && !problemas.length && !revisadaClinicamente(ficha) ? `<p class="aviso" id="sin-revision">${esc(AVISO_SIN_REVISION)}</p>` : ''}
         ${ficha && !problemas.length ? camposHTML(ficha, f) : ''}
         <p class="mensaje" role="alert">${esc(msg)}</p>
         <div class="acciones">
@@ -323,7 +326,7 @@ async function start(form) {
   const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
-  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id);
+  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
   let picked;
   try {
     if (banda.composicion) {

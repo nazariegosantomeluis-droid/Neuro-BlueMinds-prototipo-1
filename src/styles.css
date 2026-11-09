@@ -655,3 +655,21 @@ blockquote {
     animation: none !important;
   }
 }
+
+/* Estado de la revisión clínica en la galería. */
+.etiqueta.aprobado {
+  border-color: var(--acento);
+  color: var(--texto);
+}
+
+.etiqueta.corregir {
+  border-color: var(--aviso-borde);
+  background: var(--aviso);
+  color: var(--texto);
+}
+
+.etiqueta.retirado {
+  border-color: var(--problema);
+  color: var(--problema);
+  text-decoration: line-through;
+}

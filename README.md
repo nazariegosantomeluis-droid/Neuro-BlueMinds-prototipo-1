@@ -112,6 +112,35 @@ Escribe `revision-consolidada.csv` en la carpeta actual, con una fila por ítem:
   - `Revisar en reunión` si alguno pide retirar o si a algún revisor le falta el ítem.
 - **Decisiones** (camión, short, tortilla): la opción elegida si todos coinciden; si no, `Revisar en reunión`.
 
+**Aplicar la revisión al banco.** Primero se resuelven en una reunión con los clínicos los casos `Revisar en reunión`, y la decisión acordada se escribe en la columna `decision` de `revision-consolidada.csv`: `Aprobado`, `Corregir` o `Retirar` en los ítems y las figuras, y la opción elegida en las decisiones. Después:
+
+```
+node tools/aplicar-revision.mjs revision-consolidada.csv \
+  --revisor "AB=Nombre Apellido, terapia de lenguaje" \
+  --revisor "CD=Nombre Apellido, psicología" \
+  --fecha 2026-11-15
+```
+
+- Hay un `--revisor` por cada columna de iniciales del CSV, con el nombre completo y la profesión (el CSV solo trae las iniciales). La fecha es la de la revisión; si se omite, se usa la de hoy.
+- Con `--prueba` muestra el resumen sin escribir nada.
+- No aplica nada mientras quede un caso sin decisión final, falte el nombre de un revisor o el CSV mencione un ítem que no existe.
+
+Qué hace:
+
+- Escribe [`items/revision.json`](items/revision.json): el estado de cada ítem revisado (`aprobado`, `corregir` o `retirado`), con sus problemas, los comentarios de cada revisor y la fecha; el de las figuras de ACT-07; las tres decisiones, y las rondas de revisión. Una segunda ronda sustituye solo los ítems que revisa.
+- Anota en la ficha de cada actividad revisada el revisor y la fecha (`revisionClinica`), sin cambiar nada más.
+- Regenera `items/items.json`: cada ítem de ACT-01 y ACT-02 lleva `estadoRevision`.
+- Muestra un resumen: cuántos ítems quedan en cada estado, los retirados y por corregir con sus motivos, y las decisiones.
+
+Efecto en la aplicación:
+
+- **Retirado:** el ítem no se usa en ninguna sesión, aunque siga en el banco y en la galería. Solo se retira ese ítem. Si el motivo apunta al concepto o a su imagen («Imagen poco reconocible», «No adecuado para niños de México», «Molesto o aversivo»), el resumen lo señala para decidir si se retira el concepto completo; eso se hace en `conceptos.json`.
+- **Por corregir:** sigue en las sesiones mientras se corrige (por ejemplo, otra fotografía). Una vez corregido, vuelve a revisarse en una ronda nueva.
+- **Sin revisión clínica:** los ítems fuera de la muestra (200 de 270). Arquitectura 13.4 pide revisar cada ítem antes del estudio; queda pendiente una ronda con el resto del banco.
+- **Figuras de ACT-07 y decisiones:** se registran, pero no cambian nada solas. Cambiar figuras, colores, conceptos o pictogramas es una decisión clínica y se hace aparte, en la ficha o en `conceptos.json`.
+- La galería muestra el estado de cada ítem, las notas de los clínicos y, en ACT-07, el estado de las figuras; se puede filtrar por estado (`#galeria?actividad=ACT-02&estado=retirado&todos=1`).
+- Mientras una ficha no tenga revisor y fecha, el inicio avisa que la actividad solo sirve para demostración. Arquitectura 4.4 pide que la aplicación se niegue a cargarla; ese bloqueo se activará con el modo de fase del estudio (hoja de ruta, H2.3), para no impedir las demostraciones.
+
 ## Formulario F3 de validez de contenido
 
 `#formulario` es el formato F3 con el que el panel de expertos califica las tres actividades del piloto (Catálogo, sección 2.3). Cualquier persona con el enlace puede llenarlo, sin cuenta:
@@ -153,7 +182,7 @@ npm test
 - las secuencias de ACT-07 y `check-items`;
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
-- la exportación de la revisión clínica y la regla para unir revisiones.
+- la exportación de la revisión clínica, la regla para unir revisiones y su aplicación al banco (con el CSV de ejemplo `test/revision-consolidada-ejemplo.csv`): estados, casos sin resolver, rondas, fichas anotadas y que ningún ítem retirado entre en una sesión.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -167,6 +196,7 @@ src/app.js                    Inicio, sesión, fin de bloque y resumen; rutas
 src/paginas.js                Galería, calibración y créditos
 src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
+src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
 src/revision.css              Estilos de la revisión clínica
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/enlaces.js                Botón del formulario F3 en la galería
@@ -188,6 +218,7 @@ tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
+tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
 assets/                       Imágenes, pictogramas y audios
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)
@@ -238,7 +269,7 @@ Cada ficha es un archivo JSON. La aplicación rechaza cargar una ficha incomplet
 | `lecturasPermitidas` | Qué se puede decir a partir del registro. |
 | `lecturasNoPermitidas` | Qué no se puede concluir. El resumen de la aplicación nunca usa estas frases. |
 | `contraindicaciones` | Cuándo no usar la actividad o cuándo los datos no son interpretables. |
-| `revisionClinica` | `{ "revisor": "", "fecha": "" }`. Vacío hasta que un clínico revise la ficha. |
+| `revisionClinica` | `{ "revisor": "", "fecha": "" }`. Vacío hasta la revisión clínica; lo llena `tools/aplicar-revision.mjs`. |
 
 Campos opcionales que usa el motor:
 
@@ -250,7 +281,7 @@ Campos opcionales que usa el motor:
 - `barajarOpciones`: si es `false`, las opciones conservan su posición.
 - `disposicion`, en cada banda: filas x columnas de las opciones, por ejemplo `"1x4"` o `"2x2"`.
 
-Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica.
+Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica, y solo lo cambia `tools/aplicar-revision.mjs`.
 
 ### Registro
 
@@ -366,7 +397,7 @@ Una fila por sesión, en este orden:
   - mitad (`A` o `B`, para la fase 2);
   - color típico (provisional, hasta tener las fotografías);
   - notas, pictograma de ARASAAC y conceptos que nunca aparecen juntos en una pantalla (`excluir`).
-- [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos y de las reglas de bandas de las fichas. El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos o las fichas y se regenera.
+- [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos, de las reglas de bandas de las fichas y de [`items/revision.json`](items/revision.json). El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos, las fichas o la revisión y se regenera.
 - Códigos: `ACT01-B2-05` significa actividad, banda y número.
   - ACT-01 tiene 10 ítems por banda.
   - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Un bloque de ACT-02 usa 30 conceptos distintos, elegidos al azar. En una misma sesión ningún concepto se repite, aunque cambie la banda: con 60 conceptos caben dos bloques de 30.
@@ -386,9 +417,10 @@ Una fila por sesión, en este orden:
   - los distractores «de aspecto parecido» de B4;
   - el color en ACT-01 B1;
   - los conceptos pendientes (`short`, `camión`).
+- `estadoRevision` (ACT-01 y ACT-02): `sin-revisar`, `aprobado`, `corregir` o `retirado`, según la revisión clínica (ver «Aplicar la revisión al banco»). Los retirados no entran en las sesiones. Las secuencias de ACT-07 no tienen estado propio: sus figuras se revisan en conjunto.
 - Ejemplares: el 1 y el 2 se usan en la práctica; el 3 se reserva para sondas de generalización y no aparece en los ensayos normales.
 
-`npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso y los audios que faltan.
+`npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso, los audios que faltan y cuántos ítems hay en cada estado de revisión clínica.
 
 ## Imágenes, pictogramas y audio
 
@@ -445,7 +477,8 @@ Notas:
 - **Fotografías:** reemplazar los 180 marcadores por fotografías reales con licencia libre.
 - **Audio:** grabar los audios de las consignas (63 claves, ver `npm run check-items`).
 - **Revisión clínica:**
-  - las fichas (`revisionClinica`);
+  - aplicar la revisión de la muestra con `tools/aplicar-revision.mjs` (anota las fichas);
+  - revisar los 200 ítems fuera de la muestra (Arquitectura 13.4);
   - los distractores de B4;
   - el color típico de ACT-01 B1;
   - los conceptos `short` y `camión`.
