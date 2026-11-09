@@ -1,5 +1,7 @@
 # Neuro-BlueMinds · Prototipo E13
 
+[![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
+
 Herramienta de apoyo y medición para terapeutas que trabajan con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
 
 > **Prototipo para revisión de expertos. No es una herramienta diagnóstica.**
@@ -186,6 +188,14 @@ npm test
 
 Antes de publicar, corre también `npm run check-items`.
 
+**Verificación automática.** En cada envío a cualquier rama y en cada pull request, GitHub Actions ([`.github/workflows/verificacion.yml`](.github/workflows/verificacion.yml)) corre, en Node 20 y 22:
+
+1. `npm test`;
+2. `npm run check-items`;
+3. `node tools/build-items.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano.
+
+El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
+
 ## Arquitectura
 
 El motor ejecuta la ficha. La secuencia del ensayo y el registro no tienen código propio por actividad; cada actividad solo aporta cómo se dibuja su pantalla.
@@ -222,6 +232,7 @@ tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las f
 assets/                       Imágenes, pictogramas y audios
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)
+.github/workflows/            Verificación automática en GitHub Actions
 ```
 
 Cada tipo de pantalla (`src/activities/`) aporta dos funciones: `toTrials` convierte los ítems de un bloque en ensayos, y `createView` dibuja la consigna, las opciones y la retroalimentación. Todo lo demás (tiempos, toques, audio, registro) lo hace el motor.
