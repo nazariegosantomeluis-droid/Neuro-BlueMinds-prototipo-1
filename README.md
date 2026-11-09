@@ -22,7 +22,7 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
 ## Privacidad
 
 - Sin cuentas, sin inicio de sesión, sin servidor y sin analítica.
-- No se pide nombre, fecha de nacimiento, correo ni ningún dato que identifique al niño. Solo un código libre opcional (por defecto `DEMO`).
+- En la tableta no existe nada que permita saber quién es el niño real: no se pide ni se guarda nombre, fecha de nacimiento, correo ni ningún dato que lo identifique. El niño es un código seudónimo aleatorio de 128 bits, con un ícono y un color para confirmar que es el correcto, su edad en meses y su estado de consentimiento. La relación entre el código y el niño la lleva el investigador fuera de la aplicación (Arquitectura 9.1).
 - El registro se guarda únicamente en el navegador del dispositivo y se descarga como CSV o JSON. Nada se envía a ningún servidor.
 
 ## Cómo correrlo localmente
@@ -37,7 +37,10 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 ## Uso
 
-1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial y el número de ensayos. También se puede escribir un código opcional del niño (nunca el nombre) y ajustar el volumen. Después se toca «Empezar».
+1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial, el número de ensayos y el participante: un niño inscrito (ver «Niños inscritos», más abajo) o la demostración, sin niño. También se ajusta el volumen. Después se toca «Empezar».
+   - Con niños inscritos hay que elegir a uno de forma deliberada; no hay ninguno preseleccionado.
+   - Con un niño, antes del primer bloque aparece «¿Es este niño?» con su ícono y su color; hay que confirmar.
+   - El consentimiento se comprueba al empezar cada bloque: si no está vigente, no se inicia.
 2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
    - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
@@ -48,7 +51,7 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
-**Modo experto.** Se activa en el inicio, antes de empezar la sesión. Permite elegir cualquier actividad, banda y modalidad.
+**Modo experto.** Se activa en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad.
 - Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
 - El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
 - Sus registros llevan un `sesion_id` que empieza con `EXP-`.
@@ -59,6 +62,15 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Si [`config/enlaces.json`](config/enlaces.json) tiene el campo `formularioF3`, la galería muestra el botón «Calificar en el formulario F3», que abre ese enlace en otra pestaña. Sin el archivo (o sin el campo), no se muestra nada.
 
 **Revisión clínica** (`#revision`). Dos clínicos califican los ítems de muestra antes del panel de expertos. Ver [Revisión clínica](#revisión-clínica).
+
+**Niños inscritos** (`#ninos`). Es el padrón local del prototipo; en el estudio lo entrega el servidor (hoja de ruta, H7.4) y el terapeuta no cambia el consentimiento. La pantalla lo dice en una línea: la tableta no guarda quién es cada niño.
+- Para inscribir solo se pide la edad en meses (de 48 a 131, es decir, de 4 a 10 años) y si la familia autorizó el video. El código, el ícono y el color los asigna la aplicación. No hay ningún campo de texto.
+- El código tiene 128 bits (32 caracteres hexadecimales) y se muestra abreviado (por ejemplo, `7F3A-91C2`). El código completo está en cada fila, para que el investigador lo anote fuera de la aplicación; el registro guarda siempre el completo.
+- El ícono es una forma (círculo, cuadrado, triángulo, estrella, rombo, corazón, luna o hexágono) con un color de una paleta apta para daltonismo. Mientras haya formas sin usar no se repite ninguna, así que la forma identifica al niño aunque no se distinga el color.
+- El consentimiento es `vigente`, `suspendido` o `retirado`. Un niño nuevo queda vigente. Suspendido puede volver a vigente; retirado no se revierte en la tableta. Solo con consentimiento vigente se puede iniciar una sesión.
+- El padrón se guarda en el navegador del dispositivo y no se borra con «Borrar registro».
+- Las sesiones empiezan con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto).
+- No incluye todavía lo que decide la familia al retirar el consentimiento (conservar o eliminar los datos): necesita el servidor.
 
 **Calibración** (`#calibracion`). Se hace una vez en cada dispositivo, antes de la primera sesión: se pone una regla física sobre la regla de 5 cm de la pantalla y se ajusta hasta que coincidan. Ver [Accesibilidad y seguridad sensorial](#accesibilidad-y-seguridad-sensorial).
 
@@ -184,6 +196,7 @@ npm test
 - las secuencias de ACT-07 y `check-items`;
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
+- el padrón de niños: código de 128 bits, ícono y color sin repetirse, edad, consentimiento, quién puede participar y que el padrón no tiene ni puede recibir un dato que identifique al niño;
 - la exportación de la revisión clínica, la regla para unir revisiones y su aplicación al banco (con el CSV de ejemplo `test/revision-consolidada-ejemplo.csv`): estados, casos sin resolver, rondas, fichas anotadas y que ningún ítem retirado entre en una sesión.
 
 Antes de publicar, corre también `npm run check-items`.
@@ -208,6 +221,9 @@ src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
 src/revision.css              Estilos de la revisión clínica
+src/ninos.js                  Padrón de niños: código, ícono, color, edad y consentimiento
+src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
+src/ninos.css                 Estilos del padrón
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/enlaces.js                Botón del formulario F3 en la galería
 src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
@@ -320,9 +336,9 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 
 | Columna | Contenido |
 |---|---|
-| `sesion_id` | Identificador aleatorio de la sesión. Empieza con `EXP-` en modo experto. |
+| `sesion_id` | Identificador aleatorio de la sesión. Empieza con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto). |
 | `bloque`, `ensayo` | Número de bloque en la sesión y de ensayo en el bloque. |
-| `codigo_nino` | Código libre opcional, por defecto `DEMO`. Nunca el nombre. |
+| `codigo_nino` | Código seudónimo aleatorio de 128 bits (32 caracteres hexadecimales) del niño inscrito; `DEMO` en demostración y en modo experto. |
 | `dispositivo` | userAgent y tamaño de pantalla. |
 | `version_app`, `actividad`, `version_ficha` | Versiones y actividad. |
 | `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) y la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos). |

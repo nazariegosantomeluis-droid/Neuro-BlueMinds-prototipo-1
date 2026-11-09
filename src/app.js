@@ -16,6 +16,8 @@ import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
+import { NINO_KEY, NINO_COLUMNS, DEMO, participante, nombreNino, abreviar } from './ninos.js';
+import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -40,6 +42,8 @@ const editSesion = (id, fn) =>
     const r = rows.find((x) => x.sesion_id === id);
     if (r) fn(r);
   });
+// Padrón local de niños: solo código seudónimo, ícono, color, edad en meses y consentimiento.
+const ninos = createLog(undefined, { key: NINO_KEY, columns: NINO_COLUMNS });
 const audio = createAudio();
 const state = {
   fichas: {}, // id → ficha válida
@@ -85,11 +89,16 @@ const randomHex = () =>
   [...crypto.getRandomValues(new Uint8Array(4))].map((b) => b.toString(16).padStart(2, '0')).join('');
 // numero: sesiones iniciadas en este dispositivo; con él alternan las parejas de cajas de ACT-07.
 // orden: por actividad, el orden de las dimensiones (por ejemplo, color y después forma).
-// Las sesiones del modo experto empiezan con EXP- para separarlas de las sesiones reales.
-const newSession = (codigo, experto) => ({
-  id: `${experto ? 'EXP' : 'S'}-${randomHex()}`,
-  experto,
-  codigo,
+// p es el resultado de participante(): las sesiones con niño empiezan con S-, las de demostración
+// con DEMO- y las del modo experto con EXP-, para separarlas en el registro. valor es lo que se
+// eligió en el inicio (el código del niño o DEMO).
+const newSession = (p, valor) => ({
+  id: `${p.prefijo}-${randomHex()}`,
+  experto: p.tipo === 'experto',
+  tipo: p.tipo,
+  valor,
+  nino: p.nino ?? null,
+  codigo: p.codigo,
   bloque: 0,
   numero: Number(prefs.get('nbm.sesiones', '0')),
   usados: {},
@@ -121,7 +130,7 @@ async function init() {
   route();
 }
 
-// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #revision, #formulario (F3), #creditos y #calibracion.
+// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #revision, #formulario (F3), #ninos (padrón), #creditos y #calibracion.
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
@@ -130,6 +139,7 @@ function route() {
     agregarEnlaceF3(app);
   } else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
+  else if (ruta === 'ninos') renderNinos(app, { ninos });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -177,9 +187,18 @@ function renderInicio(msg = '') {
 
   const form = app.querySelector('#inicio');
   form.actividad.onchange = () => {
-    state.form = { actividad: form.actividad.value, modalidad: f.modalidad, codigo: f.codigo, experto: f.experto };
+    state.form = { actividad: form.actividad.value, modalidad: f.modalidad, participante: f.participante, experto: f.experto };
     renderInicio();
   };
+  // El modo experto solo existe en la demostración, sin niño.
+  const sincronizarExperto = () => {
+    const experto = form.querySelector('[name=experto]');
+    if (!experto) return;
+    experto.disabled = form.participante.value !== DEMO;
+    if (experto.disabled) experto.checked = false;
+  };
+  form.participante?.addEventListener('change', sincronizarExperto);
+  sincronizarExperto();
   if (form.banda) {
     form.banda.onchange = () => {
       form.querySelector('#banda-ayuda').textContent = ficha.bandas.find((b) => b.id === form.banda.value).descripcion;
@@ -203,6 +222,10 @@ function camposHTML(ficha, f) {
   const banda = ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0];
   const modalidad = ficha.modalidades.includes(f.modalidad) ? f.modalidad : ficha.modalidades[0];
   const s = state.session;
+  const padron = ninos.rows();
+  // Con niños inscritos hay que elegir de forma deliberada (R6); sin ellos solo existe la demostración.
+  const elegido = f.participante ?? (padron.length ? '' : DEMO);
+  const quien = (x) => (x.nino ? `${nombreNino(x.nino)} · ${abreviar(x.nino.codigo)}` : 'sin niño');
   return `
     <fieldset>
       <legend>Modalidad</legend>
@@ -219,13 +242,17 @@ function camposHTML(ficha, f) {
     </label>
     ${
       s
-        ? `<div><p class="meta">${s.experto ? 'Sesión de modo experto' : 'Sesión en curso'} <strong>${esc(s.id)}</strong> · código ${esc(s.codigo)} · bloques: ${s.bloque}</p>
+        ? `<div><p class="meta">${s.experto ? 'Sesión de modo experto' : s.tipo === 'demo' ? 'Sesión de demostración' : 'Sesión en curso'} <strong>${esc(s.id)}</strong> · ${esc(quien(s))} · bloques: ${s.bloque}</p>
            <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
-        : `<label>Código del niño (opcional)
-             <input name="codigo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(f.codigo ?? 'DEMO')}">
-             <span class="ayuda">Usa un código, nunca el nombre ni otro dato que identifique al niño.</span>
+        : `<label>Participante
+             <select name="participante">
+               ${padron.length ? `<option value="" ${elegido === '' ? 'selected' : ''} disabled>Elige al niño o la demostración</option>` : ''}
+               <option value="${DEMO}" ${elegido === DEMO ? 'selected' : ''}>Demostración (sin niño)</option>
+               ${padron.map((n) => `<option value="${esc(n.codigo)}" ${elegido === n.codigo ? 'selected' : ''}>${esc(nombreNino(n))} · ${esc(abreviar(n.codigo))} · ${esc(n.edad_meses)} meses</option>`).join('')}
+             </select>
+             <span class="ayuda">Los niños se inscriben en <a href="#ninos">Niños inscritos</a>. No se guarda su nombre ni ningún otro dato que lo identifique.</span>
            </label>
-           <label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto
+           <label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto (solo en la demostración)
              <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. Sus registros llevan un sesion_id que empieza con EXP-.</span>
            </label>`
     }
@@ -321,8 +348,15 @@ async function start(form) {
   const banda = ficha.bandas.find((b) => b.id === f.banda);
   const pantalla = PANTALLAS[ficha.pantalla];
   const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));
+  // Quién participa se comprueba en cada bloque: si el consentimiento dejó de estar vigente, no se
+  // inicia (Arquitectura 9.6). En una sesión en curso vale el participante con que empezó.
+  const valor = state.session ? state.session.valor : f.participante;
+  const p = participante(valor, state.session ? state.session.experto : f.experto === '1', ninos.rows());
+  if (p.error) return renderInicio(p.error);
+  // R6: el terapeuta confirma el ícono y el color antes del primer bloque de una sesión con niño.
+  if (!state.session && p.tipo === 'nino' && !(await confirmarNino(app, p.nino))) return renderInicio();
   // La sesión empieza con su primer bloque; hasta entonces no existe.
-  const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO', f.experto === '1');
+  const s = state.session ?? newSession(p, valor);
   const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;

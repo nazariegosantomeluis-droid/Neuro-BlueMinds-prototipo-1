@@ -1,0 +1,37 @@
+/* Niños inscritos (#ninos) y confirmación del niño. Solo usa las variables de styles.css. */
+
+.nino-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nino-tabla th,
+.nino-tabla td {
+  padding: 0.5rem 0.4rem;
+  border-bottom: 1px solid var(--borde);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.nino-celda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nino-tabla details code {
+  word-break: break-all;
+}
+
+.nino-confirmar {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.nino-nombre.grande {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+}
