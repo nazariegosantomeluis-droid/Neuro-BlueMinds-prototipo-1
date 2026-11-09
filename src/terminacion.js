@@ -9,6 +9,6 @@ export const MOTIVOS_TERMINACION = [
   'Otro',
 ];
 
-export const MOTIVO_OBLIGATORIO_MSG = 'Elige el motivo para terminar el bloque.';
+export const MOTIVO_OBLIGATORIO_MSG = 'Elige el motivo para terminar.';
 
 export const faltaMotivo = (accion, motivo) => accion === 'terminar' && !MOTIVOS_TERMINACION.includes(motivo);

@@ -1,9 +1,11 @@
 // Reglas de calidad del ensayo. Son los únicos campos del registro que se
 // calculan a partir de otros; todo lo demás se guarda tal como se midió.
 
-// Versión de los umbrales del motor: los de este archivo y REPEAT_MS, AUDIO_CAP_MS y
-// DECODE_CAP_MS (trial.js). Cambia cuando cambia alguno de ellos o la regla de fuera de tarea.
-export const VERSION_PARAMETROS = '0.2.0';
+// Versión de los umbrales del motor: los de este archivo, REPEAT_MS, AUDIO_CAP_MS y DECODE_CAP_MS
+// (trial.js) y los de la referencia motora (referencia.js: apariciones, esperas, permanencia de
+// 5 s —valor de planeación, por confirmar con los clínicos— y mínimo de toques válidos).
+// Cambia cuando cambia alguno de ellos o la regla de fuera de tarea.
+export const VERSION_PARAMETROS = '0.3.0';
 
 // Un tiempo de respuesta menor a este valor se considera anticipatorio.
 export const ANTICIPATORIA_MS = 150;

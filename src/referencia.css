@@ -1,0 +1,22 @@
+/* Referencia motora: el objetivo es un círculo liso, sin color de marca, sin animación y sin
+   transición, de al menos 2 cm (RNF-04). Solo usa las variables de styles.css. */
+
+.stage.referencia {
+  display: block;
+  --objetivo: calc(var(--cm) * 2.5);
+  --columnas: 4;
+  --filas: 3;
+}
+
+.objetivo {
+  position: absolute;
+  width: var(--objetivo);
+  height: var(--objetivo);
+  left: calc((var(--columna) + 0.5) * 100% / var(--columnas));
+  top: calc((var(--fila) + 0.5) * 100% / var(--filas));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--opcion-fondo);
+  border: calc(var(--cm) * 0.15) solid var(--marco);
+  box-sizing: border-box;
+}

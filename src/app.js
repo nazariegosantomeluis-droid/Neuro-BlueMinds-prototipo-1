@@ -18,6 +18,8 @@ import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './term
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante, nombreNino, abreviar } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
+import { planReferencia, iniciarReferencia } from './engine/referencia.js';
+import * as referencia from './activities/referencia.js';
 
 // Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -397,20 +399,70 @@ async function start(form) {
     });
   }
   if (advertencia) editSesion(s.id, (r) => (r.advertencia_frecuencia = true));
+  // Referencia motora (RF-03): al inicio de cada sesión con niño o de demostración, no en el modo experto.
+  if (!s.referenciaHecha && s.tipo !== 'experto') {
+    s.referenciaHecha = true;
+    const ref = await ejecutarReferencia(s, periodo);
+    if (ref.terminada) {
+      editSesion(s.id, (r) => (r.fin = new Date().toISOString()));
+      cerrarSesion();
+      return renderInicio();
+    }
+  }
   s.bloque++;
   await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
 }
 
-async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, periodo }) {
-  // En modo experto: el código del ítem en una esquina y un botón para pasar al siguiente ítem.
+// Pantalla del niño: escenario y botón de pausa del terapeuta. En modo experto: el código del ítem en
+// una esquina y un botón para pasar al siguiente ítem.
+function montarNino({ experto = false, claseStage = '' } = {}) {
   app.innerHTML = `
     <div class="nino">
-      <div class="stage" id="stage"></div>
+      <div class="stage ${claseStage}" id="stage"></div>
       <button type="button" class="esquina" id="pausa" aria-label="Pausa: tocar dos veces">${ICONO_PAUSA}</button>
-      ${s.experto ? '<p class="codigo-item" id="codigo-item"></p><button type="button" class="siguiente" id="siguiente">Siguiente</button>' : ''}
+      ${experto ? '<p class="codigo-item" id="codigo-item"></p><button type="button" class="siguiente" id="siguiente">Siguiente</button>' : ''}
     </div>`;
   const wrap = app.firstElementChild;
-  const stage = wrap.querySelector('#stage');
+  return { wrap, stage: wrap.querySelector('#stage') };
+}
+
+// Referencia motora al inicio de la sesión. Bloque 0 en la lista de pausas de sesiones.csv.
+async function ejecutarReferencia(s, periodo) {
+  const { wrap, stage } = montarNino({ claseStage: 'referencia' });
+  state.running = true;
+  const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
+  const ref = iniciarReferencia({
+    plan: planReferencia(rng(seedOf(`${s.id}:referencia`))),
+    env: browserEnv({ framePeriod: periodo, audio }),
+    view: referencia.createView(stage),
+    onPause: async (aparicion) => {
+      const t0 = performance.now();
+      const { accion, motivo, nota } = await pausePanel(wrap, true);
+      editSesion(s.id, (r) => {
+        r.pausas.push({ bloque: 0, ensayo: aparicion, duracion_ms: performance.now() - t0 });
+        if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
+      });
+      return accion;
+    },
+  });
+  stage.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const objetivo = e.target.closest('[data-pos]');
+    ref.pointer({ t: eventTime(e), x: Math.round(e.clientX), y: Math.round(e.clientY), pos: objetivo ? Number(objetivo.dataset.pos) : null });
+  });
+  twoTaps(wrap.querySelector('#pausa'), () => ref.pause());
+  try {
+    const { terminada, ...resumen } = await ref.done;
+    editSesion(s.id, (r) => Object.assign(r, resumen));
+    return { terminada };
+  } finally {
+    state.running = false;
+    wake?.release().catch(() => {});
+  }
+}
+
+async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, periodo }) {
+  const { wrap, stage } = montarNino({ experto: s.experto });
   state.running = true;
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: periodo, audio });
@@ -494,7 +546,8 @@ function twoTaps(button, action, ms = 3000) {
   });
 }
 
-function pausePanel(wrap) {
+// enReferencia: la pausa llegó durante la referencia motora, antes de cualquier bloque.
+function pausePanel(wrap, enReferencia = false) {
   return new Promise((resolve) => {
     const capa = document.createElement('div');
     capa.className = 'capa';
@@ -502,9 +555,9 @@ function pausePanel(wrap) {
       <div class="adulto">
         <h1>Sesión en pausa</h1>
         <div class="panel">
-          <p class="meta">El ensayo en curso quedó registrado como interrumpido y no se repetirá.</p>
+          <p class="meta">${enReferencia ? 'La aparición del objetivo en curso se descartó y no se repetirá.' : 'El ensayo en curso quedó registrado como interrumpido y no se repetirá.'}</p>
           <label>Volumen <input type="range" min="0" max="100" value="${volumen()}" data-volumen></label>
-          <label>Motivo (obligatorio si terminas el bloque)
+          <label>Motivo (obligatorio si terminas ${enReferencia ? 'la sesión' : 'el bloque'})
             <select name="motivo">
               <option value="">—</option>
               ${MOTIVOS_TERMINACION.map((m) => `<option>${esc(m)}</option>`).join('')}
@@ -517,7 +570,7 @@ function pausePanel(wrap) {
           <p class="mensaje" role="alert"></p>
           <div class="acciones">
             <button type="button" class="primario" data-r="continuar">Continuar</button>
-            <button type="button" data-r="terminar">Terminar bloque</button>
+            <button type="button" data-r="terminar">${enReferencia ? 'Terminar sesión' : 'Terminar bloque'}</button>
           </div>
         </div>
       </div>`;
