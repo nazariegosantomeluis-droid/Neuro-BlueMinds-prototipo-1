@@ -4,6 +4,9 @@
   "private": true,
   "description": "Prototipo E13 de Neuro-BlueMinds: herramienta de apoyo y medición para terapeutas. No es una herramienta diagnóstica.",
   "author": "Luis Nazariego Santome",
+  "contributors": [
+    "José Miguel Fausto Tapia"
+  ],
   "type": "module",
   "scripts": {
     "test": "node --test",

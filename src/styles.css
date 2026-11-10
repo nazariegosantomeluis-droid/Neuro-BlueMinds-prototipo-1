@@ -919,6 +919,32 @@ blockquote {
 }
 
 /* El lema va en la letra de los títulos, como en la portada del manual. */
+/* Créditos: cada persona con su rol y lo que hizo. */
+.equipo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--esp-4) var(--esp-5);
+  max-width: none;
+  margin: var(--esp-4) 0 0;
+}
+
+.equipo dt {
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-subtitulo);
+  font-weight: 700;
+  color: var(--titulo);
+}
+
+.equipo dd {
+  margin: var(--esp-1) 0 0;
+}
+
+.equipo .equipo-rol {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  color: var(--suave);
+}
+
 .lema {
   font-family: var(--fuente-titulos);
   font-size: var(--letra-subtitulo);

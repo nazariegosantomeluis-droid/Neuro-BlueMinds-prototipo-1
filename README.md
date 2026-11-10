@@ -557,6 +557,13 @@ Notas:
 
 ## Autoría y licencia
 
+| Persona | Rol en el proyecto | Qué hizo en este prototipo |
+|---|---|---|
+| Luis Nazariego Santome | Líder de proyecto; calidad y verificación | Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3 |
+| José Miguel Fausto Tapia | Líder de proyecto; diseño de experiencia y accesibilidad | Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior |
+
+Los mismos créditos aparecen en la aplicación, en `#creditos`.
+
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
 
 AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)). Roca Two (Elena Genova, My Creative Land) y More Sugar (Slidehack) no se incluyen en el repositorio; ver «Tipografías» en [Marca e interfaz](#marca-e-interfaz). Los íconos son de Phosphor Icons (© 2023 Phosphor Icons, licencia MIT); el aviso de la licencia está junto a ellos en `src/styles.css`.

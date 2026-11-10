@@ -277,12 +277,39 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
 
 // ---------- Créditos ----------
 
+// Quién hizo el prototipo. El rol es el que cada persona declaró en el documento de
+// contribuciones del proyecto; el aporte describe su trabajo en este repositorio.
+export const EQUIPO = [
+  {
+    nombre: 'Luis Nazariego Santome',
+    rol: 'Líder de proyecto · calidad y verificación',
+    aporte: 'Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3.',
+  },
+  {
+    nombre: 'José Miguel Fausto Tapia',
+    rol: 'Líder de proyecto · diseño de experiencia y accesibilidad',
+    aporte: 'Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior.',
+  },
+];
+
 export function renderCreditos(app, { conceptos }) {
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('creditos')}
       ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las imágenes y la aplicación.')}
       ${AVISO}
+      <section class="panel">
+        <h2>Equipo</h2>
+        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds. Este prototipo lo hicieron:</p>
+        <dl class="equipo">
+          ${EQUIPO.map((p) => `
+          <div>
+            <dt>${esc(p.nombre)}</dt>
+            <dd class="equipo-rol">${esc(p.rol)}</dd>
+            <dd>${esc(p.aporte)}</dd>
+          </div>`).join('')}
+        </dl>
+      </section>
       <section class="panel">
         <h2>Marca</h2>
         <picture class="logotipo">
