@@ -11,6 +11,7 @@
   "scripts": {
     "test": "node --test",
     "build-items": "node tools/build-items.mjs",
+    "build-posteriores": "node tools/build-posteriores.mjs",
     "check-items": "node tools/check-items.mjs",
     "pictos": "node tools/descargar-pictos.mjs"
   }
