@@ -1,0 +1,100 @@
+{
+  "id": "ACT-11",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Completa el patrón",
+  "objetivo": "Describir si el niño continúa una serie de figuras que sigue una regla, y con qué reglas.",
+  "paradigma": "Completamiento de patrones e inducción de reglas.",
+  "evidencia": "Pendiente: la evidencia de este paradigma en niños con TEA no se buscó en la ronda 2 del Catálogo.",
+  "mecanica": "Arriba aparece una serie de figuras con el último lugar vacío. Después aparecen debajo las opciones y el niño toca la figura que sigue.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "patron",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Patrón AB: dos figuras que se alternan. 2 opciones.",
+      "patron": "AB",
+      "largos": [
+        5,
+        6
+      ]
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "descripcion": "Patrón AAB. 3 opciones.",
+      "patron": "AAB",
+      "largos": [
+        5,
+        6,
+        8,
+        7
+      ]
+    },
+    {
+      "id": "B3",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "descripcion": "Patrón ABC: tres figuras en orden. 3 opciones.",
+      "patron": "ABC",
+      "largos": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "B4",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Regla de dos dimensiones: la forma sigue un patrón y el color otro. 4 opciones.",
+      "patron": "2D",
+      "largos": [
+        6,
+        7,
+        8
+      ]
+    }
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "itemsPorBanda": 10,
+  "repetirItems": true,
+  "figuras": [
+    "circulo",
+    "cuadrado",
+    "triangulo",
+    "estrella"
+  ],
+  "colores": [
+    "azul",
+    "amarillo"
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Cuál sigue?",
+  "resumen": "Eligió la figura que seguía en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Eligió la figura que seguía en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Su razonamiento abstracto es…",
+    "Cualquier estimación de inteligencia"
+  ],
+  "contraindicaciones": [
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». Los colores son azul y amarillo, como en «Cambia la regla», para que se distingan con las formas más frecuentes de daltonismo.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

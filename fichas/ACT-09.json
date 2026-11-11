@@ -1,0 +1,75 @@
+{
+  "id": "ACT-09",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Recuerda y encuentra",
+  "objetivo": "Describir si el niño reconoce un dibujo que vio hace unos segundos, según cuánto dura la espera.",
+  "paradigma": "Emparejamiento con la muestra con demora.",
+  "evidencia": "Pendiente: la evidencia de este paradigma en niños con TEA no se buscó en la ronda 2 del Catálogo.",
+  "mecanica": "La muestra aparece 2 s y desaparece. Tras una pausa en blanco aparecen las opciones, una idéntica a la muestra, y el niño la toca.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "demora",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Sin pausa: las 2 opciones aparecen en cuanto desaparece la muestra.",
+      "demoraMs": 0,
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B2",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Pausa de 2 s y 2 opciones.",
+      "demoraMs": 2000,
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B3",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "descripcion": "Pausa de 5 s y 3 opciones.",
+      "demoraMs": 5000,
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B4",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Pausa de 10 s y 4 opciones; un distractor es de la misma categoría.",
+      "demoraMs": 10000,
+      "distractoresMismaCategoria": 1
+    }
+  ],
+  "modalidades": [
+    "V"
+  ],
+  "ensayosPorBloque": 10,
+  "itemsPorBanda": 10,
+  "repetirItems": true,
+  "ejemplar": 1,
+  "muestraMs": 2000,
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 2000,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Cuál viste?",
+  "resumen": "Tocó el dibujo que había visto en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó el dibujo que había visto en 7 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Su memoria de trabajo es…"
+  ],
+  "contraindicaciones": [
+    "Discapacidad visual no corregida.",
+    "La pausa en blanco no debe superar 10 s."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo gradúa por demora (0, 2, 5 y 10 s) y por número de opciones; cómo se combinan en cada banda es una propuesta. Solo tiene modalidad visual: la pausa se cuenta desde la muestra. La pantalla oculta la muestra a los 2 s; en el motor definitivo ese momento debe quedar en el registro.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

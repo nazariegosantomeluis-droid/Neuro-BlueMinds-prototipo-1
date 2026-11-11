@@ -1,0 +1,262 @@
+{
+  "id": "ACT-03",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Palabra escrita e imagen",
+  "objetivo": "Describir si el niño relaciona una palabra o una frase escrita con la imagen de su significado.",
+  "paradigma": "Emparejamiento de palabra escrita con imagen.",
+  "evidencia": "Hipótesis: una intervención en tableta de emparejamiento de palabra escrita con imagen mejoró la comprensión en 8 preescolares con autismo e hiperlexia, sin grupo control (Macdonald et al., 2022).",
+  "mecanica": "Aparece una palabra escrita, sin voz. Después aparecen debajo los dibujos y el niño toca el que corresponde. En la banda B3 la consigna es una frase de dos palabras, un objeto y su color.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "palabra",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Una palabra y 2 opciones. El distractor es de otra categoría.",
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B2",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Una palabra y 4 opciones de la misma categoría.",
+      "distractoresMismaCategoria": 3
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Una frase de dos palabras (objeto y color) y 4 opciones: el mismo objeto de otro color, otro objeto del mismo color y otro objeto de otro color. Hacen falta las dos palabras para acertar.",
+      "frases": true
+    }
+  ],
+  "bandasPendientes": [
+    "B4: una oración. Necesita dibujos de escenas, que todavía no existen."
+  ],
+  "modalidades": [
+    "V"
+  ],
+  "ensayosPorBloque": 10,
+  "itemsPorBanda": 60,
+  "muestraExpertosPorBanda": 12,
+  "repetirItems": true,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "frases": [
+    {
+      "texto": "carro rojo",
+      "objetivo": [
+        "carro",
+        1
+      ],
+      "mismoObjeto": [
+        "carro",
+        2
+      ],
+      "mismoColor": [
+        "tren",
+        2
+      ],
+      "otro": [
+        "tren",
+        1
+      ]
+    },
+    {
+      "texto": "carreola roja",
+      "objetivo": [
+        "carreola",
+        2
+      ],
+      "mismoObjeto": [
+        "carreola",
+        1
+      ],
+      "mismoColor": [
+        "bicicleta",
+        1
+      ],
+      "otro": [
+        "bicicleta",
+        2
+      ]
+    },
+    {
+      "texto": "suéter rojo",
+      "objetivo": [
+        "sueter",
+        1
+      ],
+      "mismoObjeto": [
+        "sueter",
+        2
+      ],
+      "mismoColor": [
+        "manzana",
+        1
+      ],
+      "otro": [
+        "manzana",
+        2
+      ]
+    },
+    {
+      "texto": "conejo café",
+      "objetivo": [
+        "conejo",
+        2
+      ],
+      "mismoObjeto": [
+        "conejo",
+        1
+      ],
+      "mismoColor": [
+        "caballo",
+        1
+      ],
+      "otro": [
+        "caballo",
+        2
+      ]
+    },
+    {
+      "texto": "paleta amarilla",
+      "objetivo": [
+        "paleta",
+        2
+      ],
+      "mismoObjeto": [
+        "paleta",
+        1
+      ],
+      "mismoColor": [
+        "helicoptero",
+        1
+      ],
+      "otro": [
+        "helicoptero",
+        2
+      ]
+    },
+    {
+      "texto": "peine negro",
+      "objetivo": [
+        "peine",
+        1
+      ],
+      "mismoObjeto": [
+        "peine",
+        2
+      ],
+      "mismoColor": [
+        "zapato",
+        1
+      ],
+      "otro": [
+        "zapato",
+        2
+      ]
+    },
+    {
+      "texto": "almohada azul",
+      "objetivo": [
+        "almohada",
+        2
+      ],
+      "mismoObjeto": [
+        "almohada",
+        1
+      ],
+      "mismoColor": [
+        "plato",
+        2
+      ],
+      "otro": [
+        "plato",
+        1
+      ]
+    },
+    {
+      "texto": "huevo blanco",
+      "objetivo": [
+        "huevo",
+        1
+      ],
+      "mismoObjeto": [
+        "huevo",
+        2
+      ],
+      "mismoColor": [
+        "caballo",
+        2
+      ],
+      "otro": [
+        "caballo",
+        1
+      ]
+    },
+    {
+      "texto": "short rojo",
+      "objetivo": [
+        "short",
+        2
+      ],
+      "mismoObjeto": [
+        "short",
+        1
+      ],
+      "mismoColor": [
+        "carro",
+        1
+      ],
+      "otro": [
+        "carro",
+        2
+      ]
+    },
+    {
+      "texto": "lentes negros",
+      "objetivo": [
+        "lentes",
+        1
+      ],
+      "mismoObjeto": [
+        "lentes",
+        2
+      ],
+      "mismoColor": [
+        "peine",
+        1
+      ],
+      "otro": [
+        "peine",
+        2
+      ]
+    }
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Qué dice?",
+  "resumen": "Tocó la imagen de lo que estaba escrito en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó la imagen de lo que estaba escrito en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Comprende lo que lee"
+  ],
+  "contraindicaciones": [
+    "Solo para niños que ya leen palabras, incluida la hiperlexia; el objetivo es el significado, no la decodificación.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. La actividad solo tiene modalidad visual, porque la voz diría la respuesta. Falta decidir si las palabras van en minúsculas o en mayúsculas y con qué letra.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

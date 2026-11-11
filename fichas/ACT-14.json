@@ -1,0 +1,98 @@
+{
+  "id": "ACT-14",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Reconoce la emoción",
+  "objetivo": "Describir si el niño relaciona la expresión de un rostro dibujado con el pictograma de su emoción.",
+  "paradigma": "Reconocimiento de emociones.",
+  "evidencia": "Establecido para transferencia cercana: el entrenamiento mejora el reconocimiento en tareas iguales o parecidas (Revilla et al., 2025; Zhang et al., 2021; Farashi et al., 2024). Sin respaldo para la vida diaria.",
+  "mecanica": "Arriba aparece un rostro dibujado. Después aparecen debajo los pictogramas de las emociones, siempre en el mismo lugar, y el niño toca el de la emoción del rostro.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "emociones",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Dos emociones muy contrastadas y exageradas: alegría y tristeza.",
+      "emociones": [
+        "alegria",
+        "tristeza"
+      ],
+      "intensidad": "alta"
+    },
+    {
+      "id": "B2",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Las cuatro básicas, exageradas: alegría, tristeza, enojo y miedo.",
+      "emociones": [
+        "alegria",
+        "tristeza",
+        "enojo",
+        "miedo"
+      ],
+      "intensidad": "alta"
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Las cuatro básicas con menor intensidad.",
+      "emociones": [
+        "alegria",
+        "tristeza",
+        "enojo",
+        "miedo"
+      ],
+      "intensidad": "baja"
+    }
+  ],
+  "bandasPendientes": [
+    "B4: la emoción a partir de una situación. Necesita dibujos de escenas, que todavía no existen."
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 12,
+  "repetirItems": true,
+  "estratificarPor": "emocion",
+  "emociones": {
+    "alegria": "alegría",
+    "tristeza": "tristeza",
+    "enojo": "enojo",
+    "miedo": "miedo"
+  },
+  "personajes": [
+    "nina-1",
+    "nino-1",
+    "nina-2",
+    "nino-2",
+    "mujer",
+    "abuelo"
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Cómo se siente?",
+  "resumen": "Eligió el pictograma de la emoción del rostro en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Eligió el pictograma de la emoción del rostro en 9 de 12 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Tiene buenas habilidades sociales",
+    "Entiende las emociones de los demás"
+  ],
+  "contraindicaciones": [
+    "Algunos niños evitan los rostros: se empieza con rostros dibujados y se detiene si hay malestar.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Los rostros y los pictogramas de las emociones se dibujan con código; son una propuesta, con personajes de distinta edad, género y tono de piel. La matriz de confusión del Catálogo necesita al menos 10 presentaciones por emoción: el resumen de un bloque solo cuenta, no interpreta.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

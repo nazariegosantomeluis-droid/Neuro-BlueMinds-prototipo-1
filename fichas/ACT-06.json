@@ -1,0 +1,162 @@
+{
+  "id": "ACT-06",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Clasifica por categoría",
+  "objetivo": "Describir si el niño agrupa dibujos de vocabulario temprano en su categoría, con una regla que no cambia.",
+  "paradigma": "Categorización con regla fija.",
+  "evidencia": "Pendiente: la evidencia de este paradigma en niños con TEA no se buscó en la ronda 2 del Catálogo.",
+  "mecanica": "Abajo hay dos o tres cajas; cada una muestra dos pictogramas de su categoría, por ejemplo perro y gato. Arriba aparece un dibujo y el niño toca la caja de su categoría. Las cajas no cambian de lugar durante el bloque y el juego de cajas alterna entre sesiones.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "categorias",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "2 cajas de categorías básicas. Los dibujos son ejemplares típicos.",
+      "tipicos": true,
+      "juegos": [
+        [
+          "animales",
+          "vehiculos"
+        ],
+        [
+          "alimentos",
+          "ropa"
+        ],
+        [
+          "casa",
+          "cuerpo"
+        ]
+      ]
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "descripcion": "3 cajas. Los dibujos son ejemplares típicos.",
+      "tipicos": true,
+      "juegos": [
+        [
+          "animales",
+          "alimentos",
+          "ropa"
+        ],
+        [
+          "vehiculos",
+          "casa",
+          "cuerpo"
+        ]
+      ]
+    },
+    {
+      "id": "B3",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "2 cajas. Los dibujos son ejemplares poco típicos de su categoría.",
+      "tipicos": false,
+      "juegos": [
+        [
+          "animales",
+          "vehiculos"
+        ],
+        [
+          "alimentos",
+          "ropa"
+        ],
+        [
+          "casa",
+          "cuerpo"
+        ]
+      ]
+    }
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "repetirItems": true,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "emblemas": {
+    "animales": [
+      "perro",
+      "gato"
+    ],
+    "alimentos": [
+      "manzana",
+      "pan"
+    ],
+    "casa": [
+      "cuchara",
+      "plato"
+    ],
+    "ropa": [
+      "playera",
+      "pantalon"
+    ],
+    "vehiculos": [
+      "carro",
+      "avion"
+    ],
+    "cuerpo": [
+      "mano",
+      "pie"
+    ]
+  },
+  "pocoTipicos": {
+    "animales": [
+      "arana",
+      "mariposa"
+    ],
+    "alimentos": [
+      "leche",
+      "paleta",
+      "pastel"
+    ],
+    "casa": [
+      "llaves",
+      "telefono",
+      "jabon"
+    ],
+    "ropa": [
+      "sombrero",
+      "lentes"
+    ],
+    "vehiculos": [
+      "carreola",
+      "helicoptero",
+      "camion-de-bomberos"
+    ],
+    "cuerpo": [
+      "pelo",
+      "dientes",
+      "panza"
+    ]
+  },
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Dónde va?",
+  "resumen": "Tocó la caja de la categoría del dibujo en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó la caja de la categoría del dibujo en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Su pensamiento categorial es…"
+  ],
+  "contraindicaciones": [
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». Qué ejemplares son típicos o poco típicos y qué pictogramas lleva cada caja es una propuesta.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

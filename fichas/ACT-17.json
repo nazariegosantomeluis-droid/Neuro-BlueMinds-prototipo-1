@@ -1,0 +1,45 @@
+{
+  "id": "ACT-17",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "tipo": "pausa",
+  "nombre": "Pausa guiada",
+  "objetivo": "Ofrecer una pausa breve y previsible cuando el terapeuta lo decide.",
+  "paradigma": "Sin paradigma de medición.",
+  "evidencia": "Hipótesis: la retroalimentación visual en tableta ayudó a iniciar la respiración profunda, sin diferencias en la respiración medida (Nguyen et al., 2021).",
+  "mecanica": "Un globo se infla y se desinfla a un ritmo lento, y el terapeuta acompaña. Dura de 1 a 2 minutos y el terapeuta ajusta el ritmo.",
+  "duracionesS": [
+    60,
+    90,
+    120
+  ],
+  "ritmos": [
+    {
+      "id": "lento",
+      "nombre": "Lento",
+      "inflarMs": 4000,
+      "desinflarMs": 6000
+    },
+    {
+      "id": "muy-lento",
+      "nombre": "Muy lento",
+      "inflarMs": 5000,
+      "desinflarMs": 8000
+    }
+  ],
+  "registro": "Solo se registra que ocurrió y cuánto duró, en la fila de la sesión. No produce ensayos ni indicadores.",
+  "lecturasNoPermitidas": [
+    "Reduce la ansiedad",
+    "Trata la hipersensibilidad"
+  ],
+  "contraindicaciones": [
+    "La inicia solo el terapeuta, nunca la aplicación.",
+    "El niño puede rechazarla.",
+    "Se detiene si aumenta el malestar."
+  ],
+  "notaPrototipo": "La mecánica, la duración, la lectura no permitida y las condiciones de uso vienen del Catálogo de actividades (secciones 6 y 7.1). Los dos ritmos y el dibujo del globo son una propuesta para este prototipo.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

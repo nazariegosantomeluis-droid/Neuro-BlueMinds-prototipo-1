@@ -1,0 +1,76 @@
+{
+  "id": "ACT-08",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Busca el objetivo",
+  "objetivo": "Describir cómo encuentra el niño un dibujo conocido entre otros, según cuántos hay y cuánto se parecen.",
+  "paradigma": "Búsqueda visual.",
+  "evidencia": "Pendiente: la evidencia de este paradigma en niños con TEA no se buscó en la ronda 2 del Catálogo.",
+  "mecanica": "Se muestra el objetivo. Después aparece debajo un conjunto de dibujos con un solo objetivo entre distractores, y el objetivo sigue a la vista arriba. El niño toca el objetivo.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "busqueda",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 4,
+      "disposicion": "2x2",
+      "descripcion": "4 dibujos. Los distractores son de otras categorías.",
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B2",
+      "opciones": 8,
+      "disposicion": "2x4",
+      "descripcion": "8 dibujos. Los distractores son de otras categorías.",
+      "distractoresMismaCategoria": 0
+    },
+    {
+      "id": "B3",
+      "opciones": 12,
+      "disposicion": "3x4",
+      "descripcion": "12 dibujos. Dos distractores son de la misma categoría que el objetivo.",
+      "distractoresMismaCategoria": 2
+    },
+    {
+      "id": "B4",
+      "opciones": 16,
+      "disposicion": "4x4",
+      "descripcion": "16 dibujos. Cuatro distractores son de la misma categoría que el objetivo.",
+      "distractoresMismaCategoria": 4
+    }
+  ],
+  "bandasPendientes": [
+    "Variante «el distinto»: tocar el único dibujo diferente de un conjunto de iguales."
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "itemsPorBanda": 10,
+  "repetirItems": true,
+  "ejemplar": 1,
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": {
+    "singular": "Busca {concepto}",
+    "plural": "Busca {concepto}"
+  },
+  "resumen": "Encontró el objetivo en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Encontró el objetivo en 9 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Tiene buena atención selectiva"
+  ],
+  "contraindicaciones": [
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». La pendiente del tiempo según el número de elementos no está definida en el Modelo matemático y no se calcula. Las bandas de 12 y 16 dibujos necesitan una tableta en horizontal.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}
