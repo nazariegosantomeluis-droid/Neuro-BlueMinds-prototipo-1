@@ -30,6 +30,15 @@ function revisarEnsayos(form, enfocar) {
 // Píxeles por centímetro que usa la hoja de estilos (variable --cm).
 const cmPx = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cm')) || 37.8;
 
+// El código de la sesión nunca debe ser el nombre del niño. Un código hecho solo de letras
+// puede serlo: se avisa, sin impedir que el adulto siga. «DEMO» es el código de ejemplo.
+export function pareceNombre(codigo) {
+  const c = String(codigo ?? '').trim();
+  return c.length >= 3 && c.toUpperCase() !== 'DEMO' && /^\p{L}[\p{L} .'’-]*$/u.test(c);
+}
+const avisoDeCodigo = (codigo) =>
+  pareceNombre(codigo) ? `«${codigo.trim()}» no lleva números. Si es el nombre del niño, cámbialo por un código que no lo identifique, por ejemplo N07.` : '';
+
 // ¿Cabe la banda en esta ventana? Devuelve el aviso para el adulto, o '' si cabe.
 export function avisoDeAjuste(ficha, banda) {
   const r = comprobarPantalla({
@@ -155,6 +164,7 @@ function sesionHTML(state, f, forzado) {
                <input name="codigo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(f.codigo ?? 'DEMO')}">
                <span class="ayuda">Usa un código, nunca el nombre ni otro dato que identifique al niño.</span>
              </label>
+             <p class="nota-pantalla" id="aviso-codigo" role="status" ${avisoDeCodigo(f.codigo) ? '' : 'hidden'}>${esc(avisoDeCodigo(f.codigo))}</p>
              ${experto}`
       }
     </div>`;
@@ -192,7 +202,7 @@ export function renderInicio(app, ctx, msg = '') {
   app.innerHTML = `
     <div class="adulto medio">
       ${navHTML('inicio')}
-      ${tituloHTML('Preparar el bloque', 'Elige la actividad y sus ajustes. Durante el bloque, el niño solo ve los estímulos.')}
+      ${tituloHTML('Preparar el bloque', 'Elige la actividad y sus ajustes.')}
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="inicio-columnas${lista ? '' : ' una-columna'}">
       <form class="panel" id="inicio" novalidate>
@@ -298,6 +308,12 @@ export function renderInicio(app, ctx, msg = '') {
       form.querySelector('#resumen-ajustes').textContent = resumenAjustes(elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
     };
   }
+  // El aviso del código acompaña a lo que se escribe; no bloquea.
+  form.codigo?.addEventListener('input', () => {
+    const aviso = form.querySelector('#aviso-codigo');
+    aviso.textContent = avisoDeCodigo(form.codigo.value);
+    aviso.hidden = !aviso.textContent;
+  });
   form.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     ctx.cerrarSesion();
     renderInicio(app, ctx);

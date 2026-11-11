@@ -16,7 +16,7 @@ import { OPCION_MIN_CM, LUGAR_MIN_CM, anchoDeSerie, espacioMinimo, comprobarPant
 import { ESCALA_MIN, ESCALA_MAX, escalaGlobo, pausaGuiada } from '../src/pausa-guiada.js';
 import { bloquesDeSesion, indiceDeItems, contextoDeBloque } from '../src/sesiones.js';
 import { itemDeEjemplo, previaHTML } from '../src/previa.js';
-import { maxEnsayos } from '../src/inicio.js';
+import { maxEnsayos, pareceNombre } from '../src/inicio.js';
 import { esc, miniatura } from '../src/html.js';
 import { EQUIPO } from '../src/paginas.js';
 
@@ -405,6 +405,12 @@ test('el número máximo de ensayos sale de la ficha: «Cambia la regla» no pas
   const f07 = ficha('ACT-07');
   for (const b of f07.bandas) assert.equal(maxEnsayos(f07, b), b.composicion.length * f07.ensayosPorSecuencia);
   assert.equal(maxEnsayos(ficha('ACT-01'), ficha('ACT-01').bandas[0]), 200);
+});
+
+test('el inicio avisa cuando el código de la sesión parece un nombre', () => {
+  for (const c of ['Juan Pérez', 'MATEO', 'María José', 'Ana', 'O’Brien']) assert.equal(pareceNombre(c), true, c);
+  // Los códigos con números, el de ejemplo y los campos vacíos no avisan.
+  for (const c of ['DEMO', 'demo', 'N07', 'P-012', 'niño 3', 'SOFI_2', 'AB', '', undefined]) assert.equal(pareceNombre(c), false, String(c));
 });
 
 // ---------- Utilidades y créditos ----------
