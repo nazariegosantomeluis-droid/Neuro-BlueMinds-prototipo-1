@@ -9,13 +9,42 @@ Este prototipo sirve para que un panel de 6 a 9 expertos (terapia de lenguaje, t
 
 ## Actividades
 
+El Catálogo de actividades de Neuro-BlueMinds tiene 17 actividades. [`fichas/catalogo.json`](fichas/catalogo.json) las lista con su estado, y el estado decide cómo aparece cada una en el prototipo.
+
+**Piloto.** Son las tres que califica el panel de expertos y las únicas que se usan en una sesión con un niño.
+
 | Código | Nombre | Ensayos por bloque | Bandas |
 |---|---|---|---|
 | ACT-01 | Igual a la muestra (familiarización) | 10 | B1 a B3 |
 | ACT-02 | Pictograma e imagen | 30 | B1 a B4 |
 | ACT-07 | Cambia la regla | 30 | B1 a B4 |
 
+**Uso posterior, con prototipo.** El Catálogo las habilita después del piloto y de su propia validez de contenido. Aquí ya se pueden revisar, pero **solo se abren en modo experto**: sus sesiones llevan `EXP-`, y sus ítems no entran en la revisión clínica ni en el formulario F3.
+
+| Código | Nombre | Qué hace el niño | Bandas |
+|---|---|---|---|
+| ACT-03 | Palabra escrita e imagen | Lee una palabra o una frase de dos palabras y toca su dibujo | B1 a B3 |
+| ACT-06 | Clasifica por categoría | Pone cada dibujo en la caja de su categoría (2 o 3 cajas) | B1 a B3 |
+| ACT-08 | Busca el objetivo | Encuentra un dibujo entre 4, 8, 12 o 16 | B1 a B4 |
+| ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | B1 a B4 |
+| ACT-11 | Completa el patrón | Elige la figura que sigue en una serie: AB, AAB, ABC o dos reglas a la vez | B1 a B4 |
+| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado | B1 a B3 |
+| ACT-17 | Pausa guiada | Mira un globo que se infla y se desinfla despacio. No mide nada | Sin bandas |
+
+**Sin prototipo todavía.**
+
+| Código | Nombre | Qué falta |
+|---|---|---|
+| ACT-04 | Oración e imagen | Dibujos de escenas para cada oración |
+| ACT-05 | Sonido e imagen | Grabaciones de sonidos con licencia y volumen normalizado |
+| ACT-10 | Ordena la secuencia | El motor solo admite una respuesta por ensayo; la secuencia necesita un tipo de respuesta nuevo |
+| ACT-15 | Sonidos de las palabras | Voz grabada por una persona hablante nativa; la voz del navegador no distingue bien los sonidos |
+| ACT-16 | Forma la palabra | El mismo tipo de respuesta nuevo que ACT-10 |
+| ACT-12 y ACT-13 | Elige y descubre; Espera la señal | El Catálogo las deja en investigación: no deben usarse todavía |
+
 Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El motor ejecuta la ficha: la secuencia del ensayo y el registro son iguales para todas las actividades; cada actividad solo aporta cómo se dibuja su pantalla.
+
+En las fichas de uso posterior, el paradigma, la mecánica, las bandas, la evidencia, las lecturas no permitidas y las contraindicaciones vienen del Catálogo. Lo demás (el objetivo, las lecturas permitidas, la consigna en voz, el número de ensayos y los ítems) es una propuesta de este prototipo: cada ficha lo dice en `notaPrototipo`, y falta su revisión clínica.
 
 ## Privacidad
 
@@ -35,14 +64,17 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 ## Uso
 
-1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial y el número de ensayos. También se puede escribir un código opcional del niño (nunca el nombre) y ajustar el volumen. Después se toca «Empezar».
+1. **Inicio (para el adulto).** Tiene tres pasos: la actividad; los ajustes del bloque (modalidad, banda inicial y número de ensayos, y el volumen en AV), y la sesión (un código opcional del niño, nunca el nombre, y el modo experto). Después se toca «Empezar», en la barra de abajo, que siempre está a la vista.
+   - «Así lo verá el niño» dibuja en chico un ítem de ejemplo de la banda elegida.
+   - Si el código está hecho solo de letras, se avisa por si fuera un nombre.
+   - Si las opciones de la banda no caben en la pantalla a 2 cm, se avisa antes de empezar. El adulto puede volver o continuar de todos modos.
 2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
    - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
    - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se elige el motivo de una lista y se puede agregar una nota breve (sin nombres ni datos personales).
 3. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
-4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
+4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). «Qué no se puede concluir de este bloque» abre las lecturas no permitidas de la ficha. Desde el resumen se inicia otro bloque de la misma sesión o se termina la sesión.
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
@@ -50,8 +82,16 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
 - El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
 - Sus registros llevan un `sesion_id` que empieza con `EXP-`.
+- Las actividades de uso posterior lo exigen: al elegir una, la casilla queda marcada y no se puede quitar. Si hay una sesión normal en curso, hay que terminarla antes.
 
-**Galería de ítems** (`#galeria`). Muestra todos los ítems por actividad y banda: el código, la consigna, las opciones con la correcta marcada y el estado de revisión. También incluye la ficha técnica de la actividad.
+**Sesiones** (`#sesiones`). Lista las sesiones guardadas en el dispositivo, de la más reciente a la más antigua: fecha, código, número de ensayos, pausas y, de cada bloque, el mismo resumen descriptivo del fin de bloque. Cada sesión se descarga aparte (`sesion-<sesion_id>.csv`, con las columnas del registro por ensayo). El registro completo se sigue descargando desde ahí o desde el inicio.
+
+**Pausa guiada** (`#pausa`, ACT-17). Un globo que se infla y se desinfla despacio, para acompañar una pausa de regulación. No mide nada.
+- La inicia solo el terapeuta: desde el inicio o desde el panel de pausa de un bloque («Pausa guiada con el globo»). La aplicación nunca la propone ni la inicia sola.
+- Se eligen el ritmo (lento o muy lento) y la duración (60, 90 o 120 s). Dos toques en la esquina la detienen en ese momento.
+- No produce ensayos. En la fila de la sesión queda que ocurrió y cuánto duró (`pausas`).
+
+**Galería de ítems** (`#galeria`). Muestra todos los ítems por actividad y banda: el código, la consigna, las opciones con la correcta marcada y el estado de revisión. También incluye la ficha técnica de la actividad y, plegada, la tabla de las 17 actividades del Catálogo con su estado.
 - Por defecto muestra solo la muestra para expertos; una casilla muestra todos.
 - Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
 - Si [`config/enlaces.json`](config/enlaces.json) tiene el campo `formularioF3`, la galería muestra el botón «Calificar en el formulario F3», que abre ese enlace en otra pestaña. Sin el archivo (o sin el campo), no se muestra nada.
@@ -154,7 +194,8 @@ npm test
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
 - la exportación de la revisión clínica y la regla para unir revisiones;
-- la página de producto (`pagina-producto/pagina.test.js`): que sus números coincidan con las fichas y con las columnas del registro, que no cargue nada de servidores externos, que respete las reglas de movimiento y que la pantalla de las bandas use los ítems del banco.
+- el Catálogo y las actividades de uso posterior (`test/catalogo.test.js`, `test/posteriores.test.js` y `test/pantallas.test.js`): el índice de las 17 actividades, las fichas nuevas, las reglas de su banco de ítems, las mismas reglas de tamaño y movimiento en sus pantallas, el aviso de tamaño de pantalla, la pausa guiada, la página de sesiones y la vista previa del inicio;
+- la página de producto (`pagina-producto/pagina.test.js` y `novedades.test.js`): que sus números coincidan con las fichas, con las columnas del registro, con el Catálogo y con el número de pruebas; que no cargue nada de servidores externos; que respete las reglas de movimiento, y que la pantalla de las bandas use los ítems del banco.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -164,14 +205,22 @@ El motor ejecuta la ficha. La secuencia del ensayo y el registro no tienen códi
 
 ```
 index.html                    Página única
-src/app.js                    Inicio, sesión, fin de bloque y resumen; rutas
+src/app.js                    Sesión, pausa, fin de bloque y resumen; rutas
+src/inicio.js                 Inicio: los tres pasos, la vista previa y la barra de «Empezar»
+src/sesiones.js               Página de sesiones guardadas
 src/paginas.js                Galería, calibración y créditos
+src/catalogo.js               Qué actividades hay, su estado y qué pantalla dibuja cada una
+src/previa.js                 Ítem de ejemplo en chico («Así lo verá el niño»)
+src/ajuste-pantalla.js        ¿Cabe la banda en esta pantalla con opciones de 2 cm?
+src/pausa-guiada.js           Pausa guiada (ACT-17): el globo
+src/html.js                   Utilidades de HTML
 src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision.css              Estilos de la revisión clínica
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/enlaces.js                Botón del formulario F3 en la galería
 src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
+src/actividades.css           Estilos de las pantallas de uso posterior y de la pausa guiada
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
@@ -181,10 +230,18 @@ src/engine/quality.js         Reglas de calidad y resumen descriptivo
 src/engine/ficha.js           Carga y validación de fichas
 src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
-fichas/                       Ficha técnica de cada actividad (JSON)
+src/activities/palabra.js     Palabra escrita y dibujos (ACT-03)
+src/activities/categorias.js  Dibujo y cajas de categoría (ACT-06)
+src/activities/busqueda.js    Objetivo y conjunto de dibujos (ACT-08)
+src/activities/demora.js      Muestra que desaparece y opciones (ACT-09)
+src/activities/patron.js      Serie de figuras y opciones (ACT-11)
+src/activities/emociones.js   Rostro y pictogramas de emoción (ACT-14)
+src/activities/rostros.js     Rostros y pictogramas de emoción, dibujados con código
+fichas/                       Ficha técnica de cada actividad (JSON) y catalogo.json
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
+tools/build-posteriores.mjs   Genera items/items-posteriores.json
 tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
@@ -195,6 +252,12 @@ test/                         Pruebas (node --test)
 ```
 
 Cada tipo de pantalla (`src/activities/`) aporta dos funciones: `toTrials` convierte los ítems de un bloque en ensayos, y `createView` dibuja la consigna, las opciones y la retroalimentación. Todo lo demás (tiempos, toques, audio, registro) lo hace el motor.
+
+Las pantallas de uso posterior usan ese mismo contrato; el motor (`src/engine/`) no cambió para ellas. Algunas agregan funciones opcionales:
+
+- `fichaDeBloque(ficha, banda)`: una copia de la ficha con los tiempos de esa banda. ACT-09 la usa para sumar la pausa en blanco al tiempo de la muestra.
+- `resumenExtra(filas, ítems)`: líneas propias para el resumen. ACT-14 cuenta qué pictograma se eligió ante cada emoción.
+- `consignaHTML`, `opcionHTML` y `consignaTexto`: cómo se ve un ítem en la galería y en la vista previa.
 
 ### Estructura del ensayo
 
@@ -250,6 +313,18 @@ Campos opcionales que usa el motor:
 - `repetirItems`: si es `false`, ningún ítem se repite en la sesión.
 - `barajarOpciones`: si es `false`, las opciones conservan su posición.
 - `disposicion`, en cada banda: filas x columnas de las opciones, por ejemplo `"1x4"` o `"2x2"`.
+
+Campos de las fichas de uso posterior:
+
+- `estado`: el del Catálogo (`"Uso posterior"`).
+- `evidencia`, `mecanica` y `notaPrototipo`: el nivel de evidencia y la mecánica del Catálogo, y qué parte de la ficha es propuesta de este prototipo.
+- `bandasPendientes`: bandas del Catálogo que todavía no se pueden construir, con el motivo.
+- `muestraMs` (ACT-09): cuánto se ve la muestra; `demoraMs`, en cada banda, es la pausa en blanco.
+- `juegos` (ACT-06), en cada banda: las cajas de cada juego; `emblemas` y `pocoTipicos` dicen qué pictogramas lleva cada caja y qué conceptos son poco típicos.
+- `patron` y `largos` (ACT-11), en cada banda: la regla de la serie y cuántas figuras muestra.
+- `emociones` e `intensidad` (ACT-14), en cada banda; `estratificarPor: "emocion"` reparte los ensayos por igual entre las emociones.
+
+[`fichas/ACT-17.json`](fichas/ACT-17.json) es descriptiva: la pausa guiada no tiene bandas ni ensayos, solo ritmos y duraciones.
 
 Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica.
 
@@ -350,7 +425,7 @@ Una fila por sesión, en este orden:
 | `sesion_id`, `codigo_nino`, `dispositivo` | Como en el registro por ensayo. |
 | `inicio`, `fin` | Fecha y hora en ISO 8601, en UTC y con «Z» (por ejemplo, `2026-10-30T02:30:04.785Z`), del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
 | `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
-| `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. |
+| `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. Si en esa pausa se usó la pausa guiada, lleva además `pausa_guiada_ms`, lo que duró el globo. Una pausa guiada abierta desde `#pausa` con la sesión en curso queda con `ensayo` vacío. |
 | `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
 | `motivo_terminacion` | Motivo elegido al terminar el bloque: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
 | `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
@@ -391,6 +466,24 @@ Una fila por sesión, en este orden:
 
 `npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso y los audios que faltan.
 
+### Banco de las actividades de uso posterior
+
+[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 394 ítems, todos con `revisionPendiente`.
+
+| Actividad | Ítems | Cómo se arman |
+|---|---|---|
+| ACT-03 | 130 | B1 y B2: un ítem por concepto; la consigna es el nombre escrito. B3: 10 frases de objeto y color (lista `frases` de la ficha), con el mismo objeto en otro color, otro objeto del mismo color y otro objeto de otro color |
+| ACT-06 | 84 | Un ítem por dibujo y juego de cajas. Las cajas no cambian de lugar; cada una lleva dos pictogramas de su categoría, y el dibujo nunca es uno de ellos. El juego de cajas alterna entre sesiones |
+| ACT-08 | 40 | 10 por banda. El objetivo es la misma imagen de la muestra; en B3 y B4, 2 y 4 distractores son de su categoría |
+| ACT-09 | 40 | 10 por banda. La opción correcta es la misma imagen de la muestra |
+| ACT-11 | 40 | 10 por banda. Figuras (círculo, cuadrado, triángulo y estrella) en azul y amarillo; la opción correcta es la que sigue según la regla |
+| ACT-14 | 60 | Cada uno de los 6 personajes muestra una vez cada emoción de la banda. Los pictogramas de emoción no cambian de lugar |
+
+- Ningún ítem usa el ejemplar 3, reservado para las sondas de generalización de ACT-02, ni junta en una pantalla conceptos que se excluyen.
+- No hay archivos de imagen nuevos. ACT-03, 06, 08 y 09 usan los dibujos y pictogramas del banco. Las figuras de ACT-11, y los rostros y pictogramas de emoción de ACT-14, se dibujan con código (`src/activities/patron.js` y `rostros.js`).
+- Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.
+- Las frases de ACT-03 B3 dependen del color de cada dibujo. Si se cambia una imagen del banco, hay que revisar la lista `frases` de la ficha.
+
 ## Imágenes, pictogramas y audio
 
 **Imágenes del banco.** Los 180 ejemplares (60 conceptos, 3 de cada uno) están en `assets/img/<concepto>/<n>.jpg`. Son dibujos de colores al estilo de los dibujos de las libretas de estímulos que usa el equipo: dibujo plano, contorno negro parejo, casi sin sombra y un solo objeto. Son dibujos, no fotografías, porque así son los estímulos de las libretas: un solo objeto, claro y sin detalles que distraigan.
@@ -427,7 +520,7 @@ Para cambiar una imagen:
 
 ## Accesibilidad y seguridad sensorial
 
-- **Tamaño de las opciones (RNF-04).** Cada opción tocable mide al menos 2 cm de lado (hasta 4 cm, según la pantalla) y hay al menos 1 cm entre opciones; las cajas de ACT-07 están separadas por 3 cm. Los tamaños se expresan con la variable `--cm`:
+- **Tamaño de las opciones (RNF-04).** Cada opción tocable mide al menos 2 cm de lado (hasta 4 cm, según la pantalla) y hay al menos 1 cm entre opciones; las cajas de ACT-07 están separadas por 3 cm. En la búsqueda de ACT-08, con hasta 16 dibujos, la separación es de 0.5 cm. Si una banda no cabe en la pantalla con estas medidas, el inicio lo avisa antes de empezar (`src/ajuste-pantalla.js`). Los tamaños se expresan con la variable `--cm`:
   - En una tableta, el `cm` de CSS no mide un centímetro real; en un iPad de 10" mide unos 0.7 cm.
   - Por eso `--cm` se estima suponiendo una tableta de 10" (pantalla táctil) o un monitor de 96 ppp (computadora), y se ajusta en la página de Calibración.
   - En pruebas con pantallas de iPad de 10", tableta Android de 10" e iPad mini, las opciones midieron de 2.97 a 4 cm.
@@ -435,9 +528,11 @@ Para cambiar una imagen:
   - No hay animaciones en bucle ni parpadeos.
   - Las únicas transiciones (el marco de retroalimentación y el botón de pausa) duran de 200 a 300 ms y se desactivan con `prefers-reduced-motion`.
   - Las opciones aparecen sin transición y con opacidad completa, para que el cuadro registrado como aparición sea el real. Sus imágenes se decodifican durante la consigna y se insertan ya decodificadas (`decodificacion_ok`).
-- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. La única excepción es el código del ítem en modo experto.
+  - El globo de la pausa guiada se mueve despacio y sin saltos: un ciclo dura 10 s o más y el tamaño cambia menos de 1 % por cuadro. Con `prefers-reduced-motion` solo alterna entre dos tamaños.
+- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. Las excepciones son el código del ítem en modo experto y la palabra escrita de ACT-03, que es el estímulo.
 - **Retroalimentación.** Sin sonidos de error, sin la palabra «Incorrecto» y sin recompensas que dependan del desempeño: siempre se señala la opción correcta con el mismo marco.
-- **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
+- **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 y de ACT-11 llevan contorno oscuro.
+- **Lectores de pantalla.** Los estímulos de la pantalla del niño no se describen: las imágenes llevan `alt` vacío y los dibujos hechos con código, `aria-hidden`. Describirlos daría la respuesta.
 - **Volumen.** Se ajusta en el inicio y en la pausa.
 
 ## Marca e interfaz
@@ -493,20 +588,23 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 
 **Interfaz del adulto.** Las pantallas se revisaron con las reglas de accesibilidad y uso de UI UX Pro Max:
 
-- El encabezado lleva la marca y debajo las pestañas de las seis secciones, cada una con su ícono, sobre la franja azul claro. La pestaña actual se marca con una barra azul, además del color y el grosor. En el celular, las pestañas van en dos filas de tres, con el ícono sobre el nombre.
+- El encabezado lleva la marca y debajo las pestañas de las siete secciones, cada una con su ícono, sobre la franja azul claro. La pestaña actual se marca con una barra azul, además del color y el grosor. En el celular van cuatro por fila, con el ícono sobre el nombre.
 - Los íconos son de [Phosphor Icons](https://phosphoricons.com) (estilo regular, licencia MIT). Se dibujan con máscaras de CSS (variables `--icono-*` en `src/styles.css`), así que toman el color del texto en los dos temas y los lectores de pantalla no los leen, porque siempre van junto a un texto.
 - Cada pantalla tiene un título con una línea que dice para qué sirve. Al cambiar de pantalla, el foco pasa al título, y el enlace «Saltar al contenido» (visible con el teclado) lleva directo a él.
-- En el inicio, el formulario tiene dos grupos: **Bloque** (actividad, modalidad, volumen, banda y ensayos) y **Sesión** (código del niño y modo experto).
-  - Las tres actividades se eligen en tarjetas que dicen qué hace el niño en cada una.
-  - En pantallas anchas, como una tableta horizontal, el registro va a un lado del formulario.
+- En el inicio, el formulario tiene tres pasos numerados: **Actividad**, **Ajustes del bloque** (modalidad, volumen, banda y ensayos) y **Sesión** (código del niño y modo experto).
+  - Las actividades se eligen en tarjetas, con un esquema de su pantalla y una línea que dice qué hace el niño. Las del piloto van primero; las de uso posterior, en un grupo plegado.
+  - La banda se elige en tarjetas que muestran su número de opciones y su descripción.
+  - En pantallas anchas, como una tableta horizontal, la vista previa («Así lo verá el niño») va a un lado del formulario y lo acompaña al desplazarse.
   - La modalidad se elige con pastillas.
   - El volumen solo aparece en la modalidad AV.
   - El número de ensayos dice su rango permitido; si el valor no es válido, el aviso aparece junto al campo y el bloque no empieza.
-  - Debajo de «Empezar» está la indicación para pausar (dos toques en la esquina).
+  - La barra de «Empezar» queda fija abajo, con el resumen de lo elegido. Al final del formulario está la indicación para pausar (dos toques en la esquina).
   - Mientras se preparan las imágenes, el botón dice «Preparando…».
+  - Debajo del formulario van el registro y el acceso a la pausa guiada.
 - En el registro, cada descarga confirma el nombre del archivo, y «Borrar registro» va aparte, con su confirmación.
 - En la galería, cada opción muestra su nombre y ejemplar en renglones separados. La correcta lleva el marco de la pantalla del niño y la etiqueta «Correcta». La etiqueta «Muestra» solo aparece cuando se ven todos los ítems.
 - En el resumen, el nivel de apoyo se elige con pastillas.
+- En «Sesiones», cada sesión es una tarjeta con su fecha, su código y sus pausas; el resumen de cada bloque se abre dentro de ella.
 - Las secciones que se abren (ficha técnica, identificadores de ARASAAC) tienen una flecha que gira, sin animaciones de entrada.
 
 **Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. El encabezado de las pantallas del adulto lleva el isotipo (40 px) junto al logotipo y la etiqueta «Prototipo E13». Los SVG se vectorizaron de las imágenes del manual; si el equipo de diseño tiene los archivos originales, reemplázalos con el mismo nombre. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
@@ -515,12 +613,12 @@ La interfaz sigue el Manual de marca de AutiPal. Hay dos tipos de pantalla y la 
 
 [`pagina-producto/`](pagina-producto/) es la página que presenta AutiPal, con la estructura de una página de producto de Apple y la marca AutiPal. Se abre con el mismo servidor que el prototipo: <http://localhost:8000/pagina-producto/>.
 
-- **Qué tiene:** el héroe con la tableta, el carrusel de lo más destacado y las tres actividades con sus cifras. Siguen el diseño de las dos pantallas en tema claro y oscuro, las bandas, el recorrido de una sesión, el audio, el registro, el motor, la calibración y la familia Neuro-BlueMinds (con C&W). Al final van lo que viene en investigación, las lecturas permitidas, la privacidad, las fichas, la comparación de las actividades, la accesibilidad, los valores y las notas.
+- **Qué tiene:** el héroe con la tableta, el carrusel de lo más destacado y las tres actividades con sus cifras. Siguen el diseño de las dos pantallas en tema claro y oscuro, las bandas, el recorrido de una sesión, el audio, el registro, el motor, la calibración y la familia Neuro-BlueMinds (con C&W). Después van las actividades en preparación (las seis de uso posterior con prototipo y la pausa guiada), lo que viene en investigación, las lecturas permitidas, la privacidad, las fichas, la comparación de las actividades, la accesibilidad, los valores y las notas.
 - **Archivos:** `index.html` (todo el texto), `pagina.css` y `pagina.js`. Las capturas y figuras están en [`assets/pagina-producto/`](assets/pagina-producto/), con su fila en `items/licencias.csv`. El logotipo y el pictograma salen de `assets/marca/` y `assets/picto/`.
 - **Sin JavaScript** la página se lee completa. El script solo agrega los selectores, el carrusel, el recorrido paso a paso y las apariciones al desplazarse. Nada se mueve solo si el sistema pide reducir el movimiento.
-- **Datos que no se escriben a mano:** cada número que viene de una ficha lleva `data-ficha="ACT-02.ensayosPorBloque"` (o `data-ficha-s` para milisegundos mostrados en segundos, y `data-ficha-pct` para proporciones). `npm test` revisa que coincidan con `fichas/` y que el muro de columnas sea el de `src/engine/logger.js`. Si cambia una ficha, la prueba dice qué dato de la página actualizar.
-- **Lo que todavía no existe va marcado:** las funciones del diseño de Neuro-BlueMinds que no están en el prototipo dicen «En diseño», y C&W aparece como reloj en desarrollo. Las notas al pie lo aclaran.
-- **Capturas e imágenes:** las capturas son del prototipo, con datos de demostración (6 de noviembre de 2026; la galería, 9 de noviembre). La sección de bandas muestra el ítem del tren de cada banda con los dibujos del banco, y `npm test` revisa que coincida con `items/items.json`. Si cambian las imágenes del banco, hay que repetir la captura de la galería.
+- **Datos que no se escriben a mano:** cada número que viene de una ficha lleva `data-ficha="ACT-02.ensayosPorBloque"` (o `data-ficha-s` para milisegundos mostrados en segundos, y `data-ficha-pct` para proporciones). `npm test` revisa que coincidan con `fichas/` y que el muro de columnas sea el de `src/engine/logger.js`. Si cambia una ficha, la prueba dice qué dato de la página actualizar. Igual con el Catálogo (`data-catalogo`, `data-posterior` y `data-nombre`) y con el número de pruebas (`data-pruebas`).
+- **Lo que todavía no existe va marcado:** las funciones del diseño de Neuro-BlueMinds que no están en el prototipo dicen «En diseño», y C&W aparece como reloj en desarrollo. Las actividades de uso posterior dicen «Uso posterior» y que solo se abren en modo experto. Las notas al pie lo aclaran.
+- **Capturas e imágenes:** las capturas son del prototipo, con datos de demostración. Las de la pantalla del niño en «Cambia la regla» son del 6 de noviembre de 2026; las del terapeuta y las de las actividades en preparación, del 11 de noviembre. La sección de bandas muestra el ítem del tren de cada banda con los dibujos del banco, y `npm test` revisa que coincida con `items/items.json`. Si cambian las imágenes del banco o las pantallas del terapeuta, hay que repetir las capturas donde aparecen.
 
 ## Publicación en GitHub Pages
 
@@ -549,6 +647,14 @@ Notas:
   - el color típico de ACT-01 B1;
   - los conceptos `short` y `camión`.
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
+- **Actividades de uso posterior:**
+  - la revisión clínica de sus fichas y de sus 394 ítems; lo que cada ficha propone está en su `notaPrototipo`;
+  - su propia validez de contenido, antes de usarlas con niños;
+  - que un clínico confirme los rostros y los pictogramas de emoción de ACT-14, los colores de las frases de ACT-03 B3 y qué ejemplares son poco típicos en ACT-06;
+  - las bandas que faltan: ACT-03 B4 (una oración) y ACT-14 B4 (la emoción a partir de una situación) necesitan dibujos de escenas; ACT-08 tiene pendiente la variante «el distinto»;
+  - las actividades sin prototipo (ver [Actividades](#actividades)).
+- **Estructura fija de la sesión** (Catálogo, sección 7.1): la rutina de inicio con pictogramas y las transiciones de 5 s entre actividades no están implementadas; hoy el adulto inicia cada bloque.
+- **Versión de la aplicación:** `version_app` sigue en `0.1.0` en el registro. Vive en el motor (`src/engine/logger.js`), que no se tocó; conviene subirla al integrar estos cambios.
 - **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
 - **Latencia de cada tableta y referencia motora:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) y `referencia_motora_ms` quedan vacías hasta medirlas.
