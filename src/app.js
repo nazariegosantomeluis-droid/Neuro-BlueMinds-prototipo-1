@@ -1,6 +1,5 @@
 // Aplicación: pantallas del adulto, sesión del niño y descarga del registro.
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
-import { loadFicha } from './engine/ficha.js';
 import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
 import { pickItems, pickComposed, rng, seedOf, shuffle } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
@@ -8,20 +7,21 @@ import { browserEnv, eventTime } from './engine/clock.js';
 import { createAudio } from './engine/audio.js';
 import { summarize, marcarFueraDeTarea, paraExportar, frecuenciaSesion } from './engine/quality.js';
 import { comprobarFrecuencia } from './frecuencia.js';
-import * as seleccion from './activities/seleccion.js';
-import * as cambiaRegla from './activities/cambia-regla.js';
+import { PANTALLAS, cargarCatalogo, requiereModoExperto } from './catalogo.js';
+import { juegoDeSesion } from './activities/categorias.js';
+import { elegirPorEmocion } from './activities/emociones.js';
 import { esc, navHTML, marcaHTML, tituloHTML, chipHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
+import { renderInicio as dibujarInicio, maxEnsayos, avisoDeAjuste } from './inicio.js';
+import { renderSesiones } from './sesiones.js';
+import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 
-// Actividades del inicio y tipo de pantalla que dibuja cada ficha. Cada pantalla aporta
+// Las actividades y el módulo que dibuja cada pantalla están en catalogo.js. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
-const ACTIVIDADES = ['ACT-01', 'ACT-02', 'ACT-07'];
-const PANTALLAS = { seleccion, 'cambia-regla': cambiaRegla };
 const PICTO_FIN = 'assets/picto/terminar.png';
-const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
 
 const ICONO_PAUSA =
@@ -41,7 +41,9 @@ const editSesion = (id, fn) =>
   });
 const audio = createAudio();
 const state = {
+  catalogo: [], // las 17 actividades del Catálogo, con su estado
   fichas: {}, // id → ficha válida
+  pausa: null, // ficha de la pausa guiada (ACT-17), que no tiene ensayos
   problemas: {}, // id → problemas de la ficha (o del banco de ítems)
   items: [],
   conceptos: [],
@@ -100,20 +102,20 @@ const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 async function init() {
   applyCm();
   audio.setVolume(volumen() / 100);
-  await Promise.all(
-    ACTIVIDADES.map(async (id) => {
-      try {
-        state.fichas[id] = await loadFicha(`fichas/${id}.json`);
-      } catch (e) {
-        state.problemas[id] = e.errors ?? [e.message];
-      }
-    }),
-  );
+  const { catalogo, fichas, pausa, problemas } = await cargarCatalogo();
+  Object.assign(state, { catalogo, fichas, pausa });
+  Object.assign(state.problemas, problemas);
   try {
     state.items = (await (await fetch('items/items.json')).json()).items;
     state.conceptos = (await (await fetch('items/conceptos.json')).json()).conceptos;
   } catch {
     state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json o items/conceptos.json).'];
+  }
+  // El banco de las actividades de uso posterior va aparte: si falta, el piloto sigue funcionando.
+  try {
+    state.items = [...state.items, ...(await (await fetch('items/items-posteriores.json')).json()).items];
+  } catch {
+    state.problemas.posteriores = ['No se pudo cargar el banco de las actividades de uso posterior (items/items-posteriores.json).'];
   }
   // «Saltar al contenido» lleva el foco al título de la pantalla sin cambiar la ruta.
   document.addEventListener('click', (e) => {
@@ -133,7 +135,8 @@ function enfocarTitulo() {
   h1.focus({ preventScroll: true });
 }
 
-// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #revision, #formulario (F3), #creditos y #calibracion.
+// Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #sesiones, #revision, #formulario (F3),
+// #creditos, #calibracion y #pausa (la pausa guiada).
 // Cambiar un filtro de la galería no es cambiar de pantalla: ahí el foco se queda en el filtro.
 let rutaAnterior = null;
 function route() {
@@ -142,7 +145,9 @@ function route() {
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
-  } else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
+  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, registroHTML, bindRegistro });
+  else if (ruta === 'pausa' && state.pausa) renderPausa();
+  else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
@@ -164,165 +169,23 @@ function route() {
 
 // ---------- Inicio ----------
 
-// Qué hace el niño en cada actividad, en una línea, para elegirla sin abrir la ficha.
-const EN_UNA_LINEA = {
-  'ACT-01': 'Encuentra la imagen igual a la muestra.',
-  'ACT-02': 'Del pictograma a otro ejemplar del concepto. En AV, con la palabra hablada.',
-  'ACT-07': 'Clasifica por color o por forma, y después cambia la regla.',
-};
-
-const actividadesHTML = (actual) => `
-  <fieldset class="actividades">
-    <legend>Actividad</legend>
-    ${ACTIVIDADES.map((id) => `
-      <label class="actividad-tarjeta">
-        <input type="radio" name="actividad" value="${id}" ${id === actual ? 'checked' : ''}>
-        <span class="act-cuerpo">
-          <span class="act-codigo">${id}</span>
-          <span class="act-nombre">${esc(state.fichas[id]?.nombre ?? 'Ficha con problemas')}</span>
-          <span class="act-linea">${esc(EN_UNA_LINEA[id] ?? '')}</span>
-        </span>
-      </label>`).join('')}
-  </fieldset>`;
-
-// El formulario tiene dos grupos: qué se aplica (bloque) y con quién (sesión).
-function renderInicio(msg = '') {
-  const f = state.form;
-  const actividad = ACTIVIDADES.includes(f.actividad) ? f.actividad : ACTIVIDADES[0];
-  const ficha = state.fichas[actividad];
-  const problemas = [...(state.problemas[actividad] ?? []), ...(state.problemas.items ?? [])];
-  const lista = Boolean(ficha && !problemas.length);
-  app.innerHTML = `
-    <div class="adulto medio">
-      ${navHTML('inicio')}
-      ${tituloHTML('Preparar el bloque', 'Elige la actividad, la modalidad y la banda. Durante el bloque, el niño solo ve las imágenes.')}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
-      <div class="inicio-columnas">
-      <form class="panel" id="inicio" novalidate>
-        <div class="grupo" role="group" aria-labelledby="grupo-bloque">
-          <h2 class="grupo-titulo" id="grupo-bloque">Bloque</h2>
-          ${actividadesHTML(actividad)}
-          ${problemas.length ? `<div class="problemas" role="alert">Esta actividad no se puede usar:<ul>${problemas.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
-          ${lista ? bloqueHTML(ficha, f) : ''}
-        </div>
-        ${lista ? sesionHTML(f) : ''}
-        <p class="mensaje" role="alert">${esc(msg)}</p>
-        <div class="acciones">
-          <button type="submit" class="primario" ${lista ? '' : 'disabled'}>Empezar</button>
-        </div>
-        ${lista ? '<p class="ayuda">Durante el bloque, para pausar o terminar, toca dos veces el botón de la esquina superior derecha.</p>' : ''}
-      </form>
-      ${registroHTML()}
-      </div>
-    </div>`;
-
-  const form = app.querySelector('#inicio');
-  // Al cambiar de actividad se conservan la modalidad, el código y el modo experto ya elegidos.
-  for (const r of form.querySelectorAll('[name=actividad]')) {
-    r.onchange = () => {
-      const d = Object.fromEntries(new FormData(form));
-      state.form = { actividad: d.actividad, modalidad: d.modalidad ?? f.modalidad, codigo: d.codigo ?? f.codigo, experto: d.experto };
-      renderInicio();
-      app.querySelector('[name=actividad]:checked')?.focus();
-    };
-  }
-  if (form.banda) {
-    form.banda.onchange = () => {
-      const banda = ficha.bandas.find((b) => b.id === form.banda.value);
-      form.querySelector('#banda-ayuda').textContent = banda.descripcion;
-      form.ensayos.max = maxEnsayos(ficha, banda);
-      form.querySelector('#ensayos-ayuda').textContent = ensayosAyuda(ficha, banda);
-    };
-    // El volumen solo importa con voz: se muestra en la modalidad AV.
-    for (const r of form.querySelectorAll('[name=modalidad]')) {
-      r.onchange = () => (form.querySelector('#campo-volumen').hidden = form.modalidad.value !== 'AV');
-    }
-    // El aviso aparece al salir del campo con un valor inválido y se quita en cuanto se corrige,
-    // mientras se escribe: así nada se mueve bajo el dedo al tocar «Empezar».
-    form.ensayos.onblur = () => !ensayosOk(form.ensayos) && revisarEnsayos(form, false);
-    form.ensayos.oninput = () => form.ensayos.hasAttribute('aria-invalid') && revisarEnsayos(form, false);
-  }
-  form.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
-    cerrarSesion();
-    renderInicio();
-  });
-  form.onsubmit = (e) => {
-    e.preventDefault();
-    if (!revisarEnsayos(form, true)) return;
-    audio.unlock(); // dentro del gesto del adulto
-    const boton = form.querySelector('[type=submit]');
-    boton.disabled = true; // un solo bloque aunque se toque dos veces
-    boton.setAttribute('aria-busy', 'true');
-    boton.textContent = 'Preparando…';
-    start(form);
-  };
-  bindVolumen(app);
-  bindRegistro(app, () => renderInicio());
-}
-
-function bloqueHTML(ficha, f) {
-  const banda = ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0];
-  const modalidad = ficha.modalidades.includes(f.modalidad) ? f.modalidad : ficha.modalidades[0];
-  return `
-    <fieldset class="chips">
-      <legend>Modalidad</legend>
-      ${ficha.modalidades.map((m) => chipHTML('modalidad', m, MODALIDADES[m], m === modalidad)).join('')}
-    </fieldset>
-    <label id="campo-volumen" for="volumen-inicio" ${modalidad === 'AV' ? '' : 'hidden'}>Volumen de la voz <output data-volumen-valor>${volumen()} %</output>
-      <input type="range" id="volumen-inicio" min="0" max="100" value="${volumen()}" data-volumen>
-    </label>
-    <label>Banda inicial
-      <select name="banda">
-        ${ficha.bandas.map((b) => `<option value="${b.id}" ${b.id === banda.id ? 'selected' : ''}>${b.id} · ${b.opciones} opciones</option>`).join('')}
-      </select>
-      <span class="ayuda" id="banda-ayuda">${esc(banda.descripcion)}</span>
-    </label>
-    <label>Número de ensayos
-      <input type="number" name="ensayos" min="1" max="${maxEnsayos(ficha, banda)}" step="1" inputmode="numeric" value="${esc(f.ensayos ?? ficha.ensayosPorBloque)}" aria-describedby="ensayos-ayuda ensayos-error">
-      <span class="ayuda" id="ensayos-ayuda">${ensayosAyuda(ficha, banda)}</span>
-      <span class="error-campo" id="ensayos-error"></span>
-    </label>`;
-}
-
-function sesionHTML(f) {
-  const s = state.session;
-  return `
-    <div class="grupo" role="group" aria-labelledby="grupo-sesion">
-      <h2 class="grupo-titulo" id="grupo-sesion">Sesión</h2>
-      ${
-        s
-          ? `<div class="sesion-actual"><p class="meta">${s.experto ? 'Sesión de modo experto' : 'Sesión en curso'} <strong>${esc(s.id)}</strong> · código ${esc(s.codigo)} · bloques: ${s.bloque}</p>
-             <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
-          : `<label>Código del niño (opcional)
-               <input name="codigo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(f.codigo ?? 'DEMO')}">
-               <span class="ayuda">Usa un código, nunca el nombre ni otro dato que identifique al niño.</span>
-             </label>
-             <label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto
-               <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. Sus registros llevan un sesion_id que empieza con EXP-.</span>
-             </label>`
-      }
-    </div>`;
-}
-
-// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias.
-const maxEnsayos = (ficha, banda) => (banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : 200);
-const ensayosAyuda = (ficha, banda) => `De 1 a ${maxEnsayos(ficha, banda)}. La ficha propone ${Math.min(ficha.ensayosPorBloque, maxEnsayos(ficha, banda))}.`;
-
-// El número de ensayos se revisa al salir del campo y al empezar; el aviso queda junto al campo.
-const ensayosOk = (campo) => {
-  const n = Number(campo.value);
-  return campo.value.trim() !== '' && Number.isInteger(n) && n >= 1 && n <= Number(campo.max);
-};
-
-function revisarEnsayos(form, enfocar) {
-  const campo = form.ensayos;
-  const ok = ensayosOk(campo);
-  form.querySelector('#ensayos-error').textContent = ok ? '' : `Escribe un número entero del 1 al ${campo.max}.`;
-  if (ok) campo.removeAttribute('aria-invalid');
-  else campo.setAttribute('aria-invalid', 'true');
-  if (!ok && enfocar) campo.focus();
-  return ok;
-}
+// La pantalla de inicio se dibuja en inicio.js; aquí está lo que necesita de la aplicación.
+const renderInicio = (msg = '') =>
+  dibujarInicio(
+    app,
+    {
+      state,
+      volumen,
+      calibrada: cm.saved() !== null,
+      registroHTML,
+      bindRegistro,
+      bindVolumen,
+      cerrarSesion,
+      empezar: start,
+      desbloquearAudio: () => audio.unlock(),
+    },
+    msg,
+  );
 
 function bindVolumen(root) {
   for (const r of root.querySelectorAll('[data-volumen]')) {
@@ -338,25 +201,25 @@ function bindVolumen(root) {
 // ---------- Registro ----------
 
 // Borrar va aparte de las descargas; cada descarga confirma con el nombre del archivo.
-function registroHTML() {
+// enlaceSesiones: en la página «Sesiones» el enlace a ella misma no se muestra.
+function registroHTML({ enlaceSesiones = true } = {}) {
   const n = log.rows().length;
   const off = n ? '' : 'disabled';
   const cuenta = n ? `${n === 1 ? '1 ensayo guardado' : `${n} ensayos guardados`} en este dispositivo.` : 'Todavía no hay ensayos guardados en este dispositivo.';
   return `
-    <section class="registro">
-      <h2>Registro</h2>
-      <div class="panel">
-        <p class="meta${n ? '' : ' vacio-registro'}">${cuenta} Nada se envía a ningún servidor.</p>
-        ${log.stored ? '' : '<p class="mensaje">No se pudo guardar en el dispositivo. Descarga el registro antes de cerrar esta página.</p>'}
-        <div class="acciones">
-          <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
-          <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
-          <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
-        </div>
-        <p class="meta estado" role="status"></p>
-        <div class="acciones acciones-aparte">
-          <button type="button" class="peligro" data-borrar ${off}>Borrar registro</button>
-        </div>
+    <section class="panel registro" aria-labelledby="registro-titulo">
+      <h2 id="registro-titulo">Registro</h2>
+      <p class="meta${n ? '' : ' vacio-registro'}">${cuenta} Nada se envía a ningún servidor.</p>
+      ${log.stored ? '' : '<p class="mensaje">No se pudo guardar en el dispositivo. Descarga el registro antes de cerrar esta página.</p>'}
+      <div class="acciones">
+        <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
+        <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
+        <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
+      </div>
+      <p class="meta estado" role="status"></p>
+      ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
+      <div class="acciones acciones-aparte">
+        <button type="button" class="peligro" data-borrar ${off}>Borrar registro</button>
       </div>
     </section>`;
 }
@@ -413,23 +276,35 @@ async function preloadImages(srcs) {
 }
 
 async function start(form) {
+  // Una casilla desactivada no llega en el formulario: el modo experto ya elegido se conserva.
+  const antes = state.form;
   const f = (state.form = Object.fromEntries(new FormData(form)));
   const ficha = state.fichas[f.actividad];
-  const banda = ficha.bandas.find((b) => b.id === f.banda);
+  const banda = ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0];
   const pantalla = PANTALLAS[ficha.pantalla];
   const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));
+  // Las actividades de uso posterior no se usan con niños: su sesión siempre es de modo experto.
+  const forzado = requiereModoExperto(ficha);
+  if (forzado) f.experto = antes.experto;
+  if (forzado && state.session && !state.session.experto) {
+    return renderInicio('Esta actividad solo se abre en modo experto. Termina la sesión en curso y vuelve a intentarlo.');
+  }
   // La sesión empieza con su primer bloque; hasta entonces no existe.
-  const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO', f.experto === '1');
+  const s = state.session ?? newSession((f.codigo ?? '').trim() || 'DEMO', forzado || f.experto === '1');
   const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
-  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id);
+  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id);
+  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
+  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
   let picked;
   try {
     if (banda.composicion) {
       // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
       s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
       picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
+    } else if (ficha.estratificarPor === 'emocion') {
+      picked = elegirPorEmocion(bandItems, n, rand);
     } else {
       picked = pickItems(bandItems, n, rand, { repeat, exclude: repeat ? new Set() : usados });
     }
@@ -439,7 +314,7 @@ async function start(form) {
   const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
   const trials = pantalla.toTrials(picked, { ficha, banda, pareja }).slice(0, n);
   try {
-    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src)]).filter(Boolean);
+    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
     await preloadImages([PICTO_FIN, ...srcs]);
   } catch (e) {
     return renderInicio(e.message);
@@ -447,6 +322,9 @@ async function start(form) {
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
+  // Si las opciones no caben a su tamaño mínimo, el adulto decide si sigue.
+  const ajuste = avisoDeAjuste(ficha, banda);
+  if (ajuste && !(await confirmarPantalla(ajuste))) return renderInicio();
   const { periodo, advertencia } = await comprobarFrecuencia(app);
   history.replaceState(null, '', '#inicio'); // al terminar el bloque se vuelve al inicio
   if (!state.session) {
@@ -461,10 +339,30 @@ async function start(form) {
   }
   if (advertencia) editSesion(s.id, (r) => (r.advertencia_frecuencia = true));
   s.bloque++;
-  await runBlock({ ficha, banda: banda.id, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
+  await runBlock({ ficha, banda, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
 }
 
-async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, periodo }) {
+// Aviso antes del bloque: las opciones no caben en esta pantalla a su tamaño mínimo.
+function confirmarPantalla(mensaje) {
+  app.innerHTML = `
+    <div class="adulto">
+      <h1>Tamaño de la pantalla</h1>
+      <div class="panel">
+        <p class="mensaje" role="alert">${esc(mensaje)}</p>
+        <p class="ayuda">Si continúas, las opciones pueden salirse de la pantalla o encimarse, y los tiempos de este bloque no se podrán comparar con los de otros.</p>
+        <div class="acciones">
+          <button type="button" class="primario" data-r="volver">Volver</button>
+          <button type="button" data-r="continuar">Continuar de todos modos</button>
+        </div>
+      </div>
+    </div>`;
+  return new Promise((resolve) => {
+    for (const b of app.querySelectorAll('[data-r]')) b.onclick = () => resolve(b.dataset.r === 'continuar');
+  });
+}
+
+async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usados, pantalla, periodo }) {
+  const banda = bandaDeFicha.id;
   // En modo experto: el código del ítem en una esquina y un botón para pasar al siguiente ítem.
   app.innerHTML = `
     <div class="nino">
@@ -477,10 +375,11 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, 
   state.running = true;
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: periodo, audio });
-  const view = pantalla.createView(stage, state.images);
+  const view = pantalla.createView(stage, state.images, { ficha, banda: bandaDeFicha });
   let ensayo = 0;
   const block = startBlock({
-    ficha,
+    // Algunas pantallas ajustan los tiempos del bloque según la banda (ACT-09: la pausa en blanco).
+    ficha: pantalla.fichaDeBloque?.(ficha, bandaDeFicha) ?? ficha,
     modalidad,
     trials,
     env,
@@ -492,9 +391,10 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, 
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo, nota } = await pausePanel(wrap);
+      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap);
       editSesion(s.id, (r) => {
-        r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0 });
+        // De la pausa guiada solo se registra que ocurrió y cuánto duró.
+        r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
         if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
       return accion;
@@ -532,7 +432,7 @@ async function runBlock({ ficha, banda, modalidad, trials, s, usados, pantalla, 
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
-  state.last = { rows, ficha, banda, modalidad, cambio };
+  state.last = { rows, ficha, banda, modalidad, cambio, extra: pantalla.resumenExtra?.(rows, byCode) ?? [] };
   renderFin();
 }
 
@@ -583,9 +483,19 @@ function pausePanel(wrap) {
             <button type="button" class="primario" data-r="continuar">Continuar</button>
             <button type="button" data-r="terminar">Terminar bloque</button>
           </div>
+          ${state.pausa ? pausaOpcionesHTML(true) : ''}
         </div>
       </div>`;
     bindVolumen(capa);
+    // La pausa guiada corre encima del panel y, al terminar, regresa a él.
+    let guiada = 0;
+    capa.querySelector('[data-guiada]')?.addEventListener('click', async () => {
+      capa.hidden = true;
+      const { duracion_ms } = await pausaGuiada(wrap, { ...opcionesDePausa(capa), icono: ICONO_ADULTO, dosToques: twoTaps });
+      guiada += duracion_ms;
+      capa.hidden = false;
+      capa.querySelector('[data-guiada-estado]').textContent = `La pausa guiada duró ${Math.round(duracion_ms / 1000)} s.`;
+    });
     for (const b of capa.querySelectorAll('[data-r]')) {
       b.onclick = () => {
         const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
@@ -595,11 +505,77 @@ function pausePanel(wrap) {
           return;
         }
         capa.remove();
-        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota') });
+        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota'), guiada_ms: guiada });
       };
     }
     wrap.append(capa);
   });
+}
+
+// ---------- Pausa guiada (ACT-17) ----------
+
+// Duración y ritmo de la pausa. En el panel de pausa van plegadas, para no distraer.
+function pausaOpcionesHTML(plegada) {
+  const p = state.pausa;
+  const minutos = (s) => (s % 60 ? `${Math.floor(s / 60)} min ${s % 60} s` : s === 60 ? '1 minuto' : `${s / 60} minutos`);
+  const cuerpo = `
+    <p class="ayuda">La decide el terapeuta y el niño puede rechazarla. Para detenerla, toca dos veces el botón de la esquina.</p>
+    <fieldset class="chips">
+      <legend>Duración</legend>
+      ${p.duracionesS.map((s, i) => chipHTML('guiada-duracion', s, minutos(s), i === 0)).join('')}
+    </fieldset>
+    <fieldset class="chips">
+      <legend>Ritmo del globo</legend>
+      ${p.ritmos.map((r, i) => chipHTML('guiada-ritmo', r.id, `${r.nombre}: ${r.inflarMs / 1000} s y ${r.desinflarMs / 1000} s`, i === 0)).join('')}
+    </fieldset>
+    <div class="acciones"><button type="button" data-guiada>Empezar la pausa guiada</button></div>
+    <p class="meta" role="status" data-guiada-estado></p>`;
+  return plegada ? `<details class="pausa-opciones"><summary>Pausa guiada con el globo</summary>${cuerpo}</details>` : cuerpo;
+}
+
+function opcionesDePausa(root) {
+  const valor = (name) => root.querySelector(`[name=${name}]:checked`).value;
+  return { duracionS: Number(valor('guiada-duracion')), ritmo: state.pausa.ritmos.find((r) => r.id === valor('guiada-ritmo')) };
+}
+
+// Página #pausa: la pausa guiada fuera de un bloque. Solo queda en el registro si hay una sesión en curso.
+function renderPausa(msg = '') {
+  const p = state.pausa;
+  const lista = (xs) => `<ul>${xs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  app.innerHTML = `
+    <div class="adulto">
+      ${navHTML('pausa')}
+      ${tituloHTML('Pausa guiada', esc(p.objetivo))}
+      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
+      <div class="panel">
+        <p>${esc(p.mecanica)}</p>
+        ${pausaOpcionesHTML(false).replace('data-guiada>', 'data-guiada class="primario">')}
+        <p class="meta">${state.session ? `Queda anotada en la sesión ${esc(state.session.id)}: solo que ocurrió y cuánto duró.` : 'Sin una sesión en curso, la pausa no se guarda en el registro.'} ${esc(msg)}</p>
+      </div>
+      <section class="panel ficha">
+        <h2>${esc(p.id)} ${esc(p.nombre)} · ${esc(p.estado)}</h2>
+        <dl>
+          <dt>Paradigma</dt><dd>${esc(p.paradigma)}</dd>
+          <dt>Evidencia</dt><dd>${esc(p.evidencia)}</dd>
+          <dt>Condiciones de uso</dt><dd>${lista(p.contraindicaciones)}</dd>
+          <dt>Lecturas no permitidas</dt><dd>${lista(p.lecturasNoPermitidas.map((l) => `«${l}»`))}</dd>
+          <dt>Registro</dt><dd>${esc(p.registro)}</dd>
+        </dl>
+        <p class="ayuda">${esc(p.notaPrototipo)}</p>
+      </section>
+    </div>`;
+  app.querySelector('[data-guiada]').onclick = async () => {
+    const opciones = opcionesDePausa(app);
+    app.innerHTML = '<div class="nino"></div>';
+    state.running = true;
+    const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
+    const { duracion_ms, completa } = await pausaGuiada(app.firstElementChild, { ...opciones, icono: ICONO_ADULTO, dosToques: twoTaps });
+    state.running = false;
+    wake?.release().catch(() => {});
+    const s = state.session;
+    if (s) editSesion(s.id, (r) => r.pausas.push({ bloque: s.bloque, ensayo: null, duracion_ms, pausa_guiada_ms: duracion_ms }));
+    renderPausa(`La última pausa duró ${Math.round(duracion_ms / 1000)} s${completa ? '' : ' y se detuvo antes de tiempo'}.`);
+  };
 }
 
 // ---------- Fin de bloque ----------
@@ -615,7 +591,7 @@ function renderFin() {
 }
 
 function renderResumen() {
-  const { rows, ficha, banda, modalidad, cambio } = state.last;
+  const { rows, ficha, banda, modalidad, cambio, extra } = state.last;
   const s = state.session;
   const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
@@ -625,8 +601,12 @@ function renderResumen() {
       ${tituloHTML('Resumen del bloque', `${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}`)}
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
-        <ul class="resumen">${summarize(rows, ficha, { cambio }).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+        <ul class="resumen">${[...summarize(rows, ficha, { cambio }), ...extra].map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
+        <details class="no-concluir">
+          <summary>Qué no se puede concluir de este bloque</summary>
+          <ul>${ficha.lecturasNoPermitidas.map((l) => `<li>«${esc(l)}»</li>`).join('')}</ul>
+        </details>
         <fieldset class="chips">
           <legend>Nivel de apoyo en este bloque</legend>
           ${NIVELES_APOYO.map((n) => chipHTML('apoyo', n, mayuscula(n), nivel === n)).join('')}

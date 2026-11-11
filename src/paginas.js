@@ -1,8 +1,9 @@
 // Páginas para el adulto y el panel de expertos: galería de ítems y créditos.
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
+import { PANTALLAS, esPiloto } from './catalogo.js';
+import { esc } from './html.js';
 
-export const esc = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+export { esc };
 
 // Isotipo y logotipo de AutiPal: versión positiva en tema claro e invertida (blanca) en tema
 // oscuro, las versiones autorizadas por el Manual de marca. El nombre se muestra con el
@@ -40,7 +41,7 @@ export const navHTML = (actual) => `
   <a class="saltar" href="#contenido">Saltar al contenido</a>
   ${marcaHTML(actual === 'inicio')}
   <nav class="nav" aria-label="Secciones">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['sesiones', 'Sesiones'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;
@@ -53,8 +54,9 @@ const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una 
 let focoFiltro = null;
 
 // Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1
-export function renderGaleria(app, { items, fichas, conceptos }, params) {
-  const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02, ACT-07, sin depender del orden de carga
+export function renderGaleria(app, { items, fichas, conceptos, catalogo = [] }, params) {
+  const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02…, sin depender del orden de carga
+  const posteriores = ids.filter((id) => !esPiloto(id));
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];
   const ficha = fichas[actividad];
   const banda = ficha.bandas.some((b) => b.id === params.get('banda')) ? params.get('banda') : 'todas';
@@ -67,7 +69,13 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
   // Las tarjetas se agrupan por banda, en el orden de la ficha, y dentro de cada banda por código.
   const bandas = banda === 'todas' ? ficha.bandas : ficha.bandas.filter((b) => b.id === banda);
   // La etiqueta «Muestra» solo distingue algo cuando se ven todos los ítems.
-  const tarjeta = (it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja], todos) : itemHTML(it, nombre, todos));
+  const mod = PANTALLAS[ficha.pantalla];
+  const tarjeta = (it) =>
+    it.ensayos
+      ? secuenciaHTML(it, ficha.parejas[pareja], todos)
+      : mod?.consignaHTML
+        ? itemPosteriorHTML(it, { mod, ficha, nombre, todos })
+        : itemHTML(it, nombre, todos);
   const cuantos = (n) => (n === 1 ? '1 ítem' : `${n} ítems`);
 
   app.innerHTML = `
@@ -78,9 +86,17 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
       ${AVISO}
       <form class="panel filtros" id="filtros">
         <fieldset class="chips">
-          <legend>Actividad</legend>
-          ${ids.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
+          <legend>${posteriores.length ? 'Actividades del piloto' : 'Actividad'}</legend>
+          ${ids.filter(esPiloto).map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
         </fieldset>
+        ${
+          posteriores.length
+            ? `<fieldset class="chips">
+                <legend>En preparación: uso posterior</legend>
+                ${posteriores.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
+              </fieldset>`
+            : ''
+        }
         <fieldset class="chips">
           <legend>Banda</legend>
           ${chipHTML('banda', 'todas', 'Todas', banda === 'todas')}
@@ -96,10 +112,12 @@ export function renderGaleria(app, { items, fichas, conceptos }, params) {
         }
         <label class="casilla"><input type="checkbox" name="todos" value="1" ${todos ? 'checked' : ''}> Mostrar todos los ítems, no solo la muestra para expertos</label>
       </form>
+      ${esPiloto(ficha.id) ? '' : '<p class="nota-pantalla">Actividad de uso posterior: es un prototipo. No forma parte del piloto, del formulario F3 ni de la revisión clínica, y solo se abre en modo experto.</p>'}
       <details class="panel ficha">
         <summary>Ficha técnica de ${esc(ficha.id)} (versión ${esc(ficha.version)}) · ${revisada ? `revisada por ${esc(ficha.revisionClinica.revisor)}, ${esc(ficha.revisionClinica.fecha)}` : 'sin revisión clínica'}</summary>
         ${fichaHTML(ficha)}
       </details>
+      ${catalogo.length > 3 ? catalogoHTML(catalogo) : ''}
       <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}.</p>
       ${bandas
         .map((b) => {
@@ -136,15 +154,46 @@ function fichaHTML(f) {
   const lista = (xs) => `<ul>${xs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
   return `
     <dl>
+      ${f.estado ? `<dt>Estado</dt><dd>${esc(f.estado)}</dd>` : ''}
       <dt>Objetivo</dt><dd>${esc(f.objetivo)}</dd>
       <dt>Paradigma</dt><dd>${esc(f.paradigma)}</dd>
+      ${f.evidencia ? `<dt>Evidencia</dt><dd>${esc(f.evidencia)}</dd>` : ''}
+      ${f.mecanica ? `<dt>Mecánica</dt><dd>${esc(f.mecanica)}</dd>` : ''}
       ${f.fases ? `<dt>Fases</dt><dd>${esc(f.fases)}</dd>` : ''}
-      <dt>Bandas</dt><dd>${lista(f.bandas.map((b) => `${b.id}: ${b.descripcion}`))}</dd>
+      <dt>Bandas</dt><dd>${lista([...f.bandas.map((b) => `${b.id}: ${b.descripcion}`), ...(f.bandasPendientes ?? []).map((b) => `Sin prototipo. ${b}`)])}</dd>
       <dt>Lecturas permitidas</dt><dd>${lista(f.lecturasPermitidas)}</dd>
       <dt>Lecturas no permitidas</dt><dd>${lista(f.lecturasNoPermitidas)}</dd>
       <dt>Contraindicaciones</dt><dd>${lista(f.contraindicaciones)}</dd>
       <dt>Tiempos</dt><dd>Intervalo ${f.intervaloMs} ms · consigna V ${f.consignaVMs} ms · límite de respuesta ${f.limiteRespuestaMs} ms · retroalimentación ${f.retroalimentacionMs} ms</dd>
+      ${f.notaPrototipo ? `<dt>Nota del prototipo</dt><dd>${esc(f.notaPrototipo)}</dd>` : ''}
     </dl>`;
+}
+
+// Las 17 actividades del Catálogo: cuáles son del piloto, cuáles tienen prototipo y qué falta en las demás.
+function catalogoHTML(catalogo) {
+  const con = catalogo.filter((a) => a.prototipo).length;
+  return `
+    <details class="panel ficha">
+      <summary>Las ${catalogo.length} actividades del Catálogo · ${con} con prototipo</summary>
+      <div class="tabla-ancha">
+        <table class="catalogo">
+          <thead><tr><th scope="col">Actividad</th><th scope="col">Paradigma</th><th scope="col">Estado</th><th scope="col">En este prototipo</th></tr></thead>
+          <tbody>
+            ${catalogo
+              .map(
+                (a) => `<tr>
+                  <th scope="row">${esc(a.id)} ${esc(a.nombre)}</th>
+                  <td>${esc(a.paradigma)}</td>
+                  <td>${esc(a.estado)}</td>
+                  <td>${a.prototipo ? 'Sí' : `No. Falta: ${esc(a.falta)}`}</td>
+                </tr>`,
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+      <p class="ayuda">El estado es el del Catálogo de actividades, versión 1. Las de uso posterior se habilitan después del piloto y de la validez de contenido; las de investigación no se usan todavía.</p>
+    </details>`;
 }
 
 // Pastilla: un botón de opción con su texto visible (filtros de la galería, modalidad y nivel de apoyo).
@@ -180,6 +229,35 @@ function itemHTML(it, nombre, todos) {
               ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
             </li>`;
           })
+          .join('')}
+      </ul>
+      ${motivosHTML(it)}
+    </article>`;
+}
+
+// Tarjeta de un ítem de las actividades de uso posterior. Cada pantalla dice cómo se dibujan su
+// consigna y sus opciones (consignaHTML y opcionHTML) y cómo se describen con palabras.
+function itemPosteriorHTML(it, { mod, ficha, nombre, todos }) {
+  const banda = ficha.bandas.find((b) => b.id === it.banda);
+  const articulo = (id) => `${nombre.get(id).articulo} ${nombre.get(id).nombre}`;
+  const voz = ficha.modalidades.includes('AV') && it.consigna.texto ? `<br><span class="ayuda">Voz en AV: «${esc(it.consigna.texto)}»</span>` : '';
+  return `
+    <article class="item">
+      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it, todos)}</header>
+      <div class="item-consigna item-consigna-${esc(it.consigna.tipo)}">
+        <span class="item-estimulo">${mod.consignaHTML(it.consigna)}</span>
+        <p>${esc(mod.consignaTexto(it, { ficha, banda, nombre: articulo }))}${voz}</p>
+      </div>
+      <ul class="item-opciones ${it.opciones.length > 4 ? 'muchas' : ''}">
+        ${it.opciones
+          .map(
+            (o) => `<li class="${o.correcta ? 'correcta' : ''}">
+              <span class="item-opcion">${mod.opcionHTML(o)}</span>
+              <span>${esc(mod.opcionTexto ? mod.opcionTexto(o) : nombre.get(o.concepto).nombre)}</span>
+              ${o.ejemplar ? `<span class="item-ejemplar">ejemplar ${o.ejemplar}</span>` : ''}
+              ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
+            </li>`,
+          )
           .join('')}
       </ul>
       ${motivosHTML(it)}
