@@ -1,0 +1,217 @@
+/* Pantallas de las actividades de uso posterior (ACT-03, 06, 08, 09, 11 y 14) y de la pausa
+   guiada (ACT-17). Siguen las mismas reglas que styles.css para la pantalla del niño:
+   - RNF-04: cada opción mide al menos 2 cm y hay 0.5 cm o más entre ellas;
+   - RNF-05: nada destella; las transiciones duran de 200 a 300 ms;
+   - fondo liso, sin marca, sin decoración. */
+
+/* ---------- ACT-03: la palabra escrita ---------- */
+
+/* La palabra es el estímulo: letra grande, oscura sobre la misma tarjeta clara de los dibujos. */
+.consigna-texto {
+  grid-row: 1;
+  max-width: calc(100vw - var(--cm) * 2);
+  padding: calc(var(--cm) * 0.35) calc(var(--cm) * 0.8);
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.2);
+  color: #1a1a1a;
+  font-family: 'Noto Sans', system-ui, sans-serif;
+  font-size: min(calc(var(--cm) * 1.3), 9vw);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* ---------- ACT-06: cajas de categoría ---------- */
+
+/* Cada caja es más ancha que alta, para que quepan sus dos pictogramas. El alto nunca baja de 2 cm. */
+.cajas-categoria {
+  --separacion: var(--cm);
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min(
+      (100vw - var(--separacion) * (var(--columnas) + 1)) / (var(--columnas) * 1.7),
+      (50vh - var(--cm) * (var(--filas) + 1)) / var(--filas)
+    ),
+    calc(var(--cm) * 3.2)
+  );
+  grid-template-columns: repeat(var(--columnas), calc(var(--opcion) * 1.7));
+}
+
+.caja-categoria {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  padding: 4%;
+  border: calc(var(--cm) * 0.08) solid var(--control);
+}
+
+.caja-categoria img {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------- ACT-08: búsqueda visual ---------- */
+
+/* El objetivo va arriba y sigue a la vista; el conjunto ocupa el resto de la pantalla. */
+.stage-busqueda {
+  --separacion: calc(var(--cm) * 0.5);
+  --objetivo: clamp(calc(var(--cm) * 2), 16vh, calc(var(--cm) * 2.4));
+  grid-template-rows: auto 1fr;
+  padding: var(--separacion) 0;
+  gap: var(--separacion);
+}
+
+.stage-busqueda .consigna {
+  width: var(--objetivo);
+  height: var(--objetivo);
+  border: calc(var(--cm) * 0.08) solid var(--control);
+}
+
+.stage-busqueda .opciones {
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min(
+      (100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas),
+      (100vh - var(--objetivo) - var(--separacion) * (var(--filas) + 2)) / var(--filas)
+    ),
+    calc(var(--cm) * 3)
+  );
+}
+
+/* ---------- ACT-11: la serie de figuras ---------- */
+
+/* Cada lugar mide hasta 1.9 cm y se encoge para que la serie completa quepa a lo ancho, con
+   1 cm libre a cada lado. ajuste-pantalla.js avisa al adulto si quedaría de menos de 1 cm. */
+.serie {
+  --lugar: min(calc(var(--cm) * 1.9), (100vw - var(--cm) * 2) / var(--lugares) - var(--cm) * 0.3);
+  grid-row: 1;
+  display: flex;
+  gap: calc(var(--cm) * 0.3);
+}
+
+/* El relleno va en centímetros del lugar: un porcentaje se mediría contra el ancho de la serie. */
+.serie-figura {
+  flex: none;
+  width: var(--lugar);
+  height: var(--lugar);
+  padding: calc(var(--lugar) * 0.08);
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.15);
+}
+
+/* El lugar que falta: vacío, con borde punteado. */
+.serie-hueco {
+  background: none;
+  border: calc(var(--cm) * 0.08) dashed var(--control);
+}
+
+/* ---------- ACT-11 y ACT-14: opciones dibujadas con código ---------- */
+
+.opcion-figura {
+  padding: calc(var(--opcion) * 0.08);
+}
+
+.consigna-rostro {
+  overflow: hidden;
+}
+
+/* ---------- ACT-17: pausa guiada ---------- */
+
+.pausa-guiada {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--fondo-nino);
+  overflow: hidden;
+}
+
+.globo {
+  width: min(60vw, 60vh);
+  height: min(60vw, 60vh);
+}
+
+.globo svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ---------- Miniaturas de la galería y de la vista previa del inicio ---------- */
+
+.dib {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.dib svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dib-palabra {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.4em;
+  color: #1a1a1a;
+  font-family: 'Noto Sans', system-ui, sans-serif;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.dib-caja {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  width: 100%;
+  height: 100%;
+  padding: 6%;
+}
+
+.dib-caja img {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* La serie en chico: cada lugar mide lo mismo y se encoge si la serie es larga. El relleno va
+   en rem: un porcentaje se mediría contra el ancho de toda la serie. */
+.dib-serie {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  width: 100%;
+}
+
+.dib-serie .dib {
+  flex: 0 1 2.1rem;
+  aspect-ratio: 1;
+  height: auto;
+  min-width: 0;
+  padding: 0.15rem;
+  background: var(--opcion-fondo);
+  border-radius: 4px;
+}
+
+.dib-serie .dib-hueco {
+  background: none;
+}
+
+.dib-hueco {
+  border: 2px dashed var(--control);
+  border-radius: 4px;
+}
