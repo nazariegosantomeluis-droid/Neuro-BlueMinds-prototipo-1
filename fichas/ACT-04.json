@@ -1,0 +1,160 @@
+{
+  "id": "ACT-04",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Oración e imagen",
+  "objetivo": "Describir si el niño relaciona una oración, escrita o hablada, con la escena que la muestra.",
+  "paradigma": "Verificación de oración con imagen.",
+  "evidencia": "Pendiente: el Catálogo no tiene todavía la búsqueda de evidencia de este paradigma.",
+  "mecanica": "Arriba aparece una oración: escrita en V y dicha por la voz en AV (con una bocina en lugar del texto). Después aparecen debajo las escenas y el niño toca la que muestra lo que dice la oración. En la banda B5 arriba están la escena y la oración, y el niño toca la palomita si la oración dice lo que muestra la escena, o el tache si no.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "oracion",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "estructura": "sujeto-verbo",
+      "descripcion": "Sujeto y verbo («La niña duerme.»): 2 escenas con la misma persona haciendo cosas distintas."
+    },
+    {
+      "id": "B2",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "estructura": "sujeto-verbo-objeto",
+      "descripcion": "Sujeto, verbo y objeto («El niño come una manzana.»): 4 escenas; cada una de las otras cambia una sola parte: la persona, la acción o el objeto."
+    },
+    {
+      "id": "B3",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "estructura": "negacion",
+      "descripcion": "Negación («La niña no duerme.»): 2 escenas; la correcta es la que no hace esa acción."
+    },
+    {
+      "id": "B4",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "estructura": "lugar",
+      "descripcion": "Relaciones de lugar («El gato está dentro de la caja.»): 3 escenas con el mismo animal u objeto en distintos lugares."
+    },
+    {
+      "id": "B5",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "estructura": "verificacion",
+      "descripcion": "Verificación: una escena y una oración; palomita si la oración dice lo que muestra la escena, tache si no. La mitad dicen lo que muestra."
+    }
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "acciones": {
+    "duerme": {
+      "verbo": "duerme",
+      "objeto": "almohada"
+    },
+    "come": {
+      "verbo": "come",
+      "objetos": [
+        "manzana",
+        "platano",
+        "galleta",
+        "paleta",
+        "naranja"
+      ]
+    },
+    "bebe": {
+      "verbo": "bebe",
+      "objeto": "leche"
+    },
+    "corre": {
+      "verbo": "corre"
+    },
+    "salta": {
+      "verbo": "salta"
+    },
+    "peina": {
+      "verbo": "se peina",
+      "objeto": "peine"
+    },
+    "barre": {
+      "verbo": "barre",
+      "objeto": "escoba"
+    },
+    "telefono": {
+      "verbo": "habla por teléfono",
+      "objeto": "telefono"
+    },
+    "abraza": {
+      "verbo": "abraza",
+      "objetos": [
+        "perro",
+        "gato",
+        "conejo",
+        "pato",
+        "pollito"
+      ]
+    }
+  },
+  "sinObjeto": [
+    "duerme",
+    "come",
+    "bebe",
+    "corre",
+    "salta",
+    "peina",
+    "barre",
+    "telefono"
+  ],
+  "conObjeto": [
+    "come",
+    "abraza"
+  ],
+  "lugares": {
+    "caja": [
+      "dentro",
+      "arriba",
+      "lado"
+    ],
+    "mesa": [
+      "arriba",
+      "abajo",
+      "lado"
+    ]
+  },
+  "figuras": [
+    "gato",
+    "perro",
+    "pato",
+    "conejo",
+    "pollito",
+    "zapato"
+  ],
+  "verificaciones": 24,
+  "muestraExpertosPorBanda": 6,
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 3000,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "La niña duerme.",
+  "resumen": "Tocó la escena de la oración en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó la escena de la oración en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Su nivel de comprensión del lenguaje es…"
+  ],
+  "contraindicaciones": [
+    "La versión escrita (V) exige lectura: solo para niños que ya leen oraciones.",
+    "La versión hablada (AV) exige oír bien: hipoacusia no corregida.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y estructura: sujeto y verbo; sujeto, verbo y objeto; negación; relaciones espaciales), la verificación con dos opciones, la lectura no permitida y la contraindicación de la versión escrita vienen del Catálogo de actividades (sección 6). Las oraciones, las escenas, los tiempos y el número de ensayos son una propuesta y esperan revisión clínica. Las escenas se dibujan con código: un niño (pelo corto y pantalón) o una niña (coletas y falda), con cuatro tonos de piel, haciendo una acción; los objetos y los animales son recortes de los dibujos del banco (ejemplar 1) en assets/escenas. En una misma pantalla la persona se ve siempre igual. En la verificación (B5), el Catálogo propone el modelo EZ; este prototipo solo cuenta. En V la oración se lee 3 s antes de que aparezcan las escenas; en AV las escenas aparecen al terminar la voz, que es la del navegador hasta tener la voz grabada.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

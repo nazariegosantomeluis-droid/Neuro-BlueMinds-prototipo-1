@@ -1,0 +1,86 @@
+{
+  "id": "ACT-12",
+  "version": "0.1.0",
+  "estado": "Investigación",
+  "nombre": "Elige y descubre",
+  "objetivo": "Describir cómo el niño elige entre dos cofres cuando uno tiene la estrella más veces que el otro, y qué hace cuando esa ventaja pasa al otro cofre.",
+  "paradigma": "Aprendizaje probabilístico por recompensa.",
+  "evidencia": "Moderada en adultos: las medidas conductuales y computacionales de una tarea de aprendizaje probabilístico con inversión son suficientemente confiables (Waltmann et al., 2022). Sin datos en niños con autismo.",
+  "mecanica": "Aparecen dos cofres, siempre en el mismo lugar: uno azul con candado redondo y uno naranja con candado cuadrado. El niño toca uno; ese cofre se abre y muestra una estrella o nada. Uno de los dos tiene la estrella más veces que el otro. En las bandas B3 y B4, a la mitad del bloque, el otro cofre pasa a ser el que más premia, sin aviso.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "cofres",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "probabilidad": 0.9,
+      "inversion": false,
+      "ensayosMax": 40,
+      "descripcion": "El cofre que más premia tiene la estrella 9 de cada 10 veces. Sin cambio."
+    },
+    {
+      "id": "B2",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "probabilidad": 0.8,
+      "inversion": false,
+      "ensayosMax": 40,
+      "descripcion": "El cofre que más premia tiene la estrella 8 de cada 10 veces. Sin cambio."
+    },
+    {
+      "id": "B3",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "probabilidad": 0.8,
+      "inversion": true,
+      "ensayosMax": 40,
+      "descripcion": "8 de cada 10 veces, y a la mitad del bloque la ventaja pasa al otro cofre."
+    },
+    {
+      "id": "B4",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "probabilidad": 0.7,
+      "inversion": true,
+      "ensayosMax": 40,
+      "descripcion": "7 de cada 10 veces, y a la mitad del bloque la ventaja pasa al otro cofre."
+    }
+  ],
+  "modalidades": [
+    "V"
+  ],
+  "ensayosPorBloque": 40,
+  "programasPorBanda": 6,
+  "muestraExpertosPorBanda": 2,
+  "maxEnganososSeguidos": 2,
+  "cofres": {
+    "a": "azul",
+    "b": "naranja"
+  },
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 800,
+  "consignaVMs": 300,
+  "retroalimentacionMs": 1200,
+  "consignaAV": "¿Cuál cofre?",
+  "resumen": "Eligió el cofre que más premiaba en ese momento en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Eligió el cofre que más premiaba en ese momento en 30 de 40 ensayos",
+    "Después del cambio, eligió el nuevo cofre que más premiaba en 12 de 20 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Es sensible a la recompensa",
+    "No tolera la incertidumbre"
+  ],
+  "contraindicaciones": [
+    "Los cofres vacíos son inevitables por diseño: vigilar la frustración y detener el bloque si aumenta el malestar.",
+    "Antes de estimar los parámetros del modelo de aprendizaje (α_RL, β e ICU) hay que verificar que se recuperan con 80 elecciones o más. Este prototipo no los calcula.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y la contraindicación de la frustración vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, los 40 ensayos por bloque, los cofres, la estrella y los programas de premios son una propuesta para este prototipo. En cada ensayo la estrella está en un solo cofre; en cada mitad del bloque, el cofre que más premia la tiene en la proporción exacta de la banda, y nunca hay más de 2 ensayos seguidos en que la tenga el otro. En el registro, «acierto» es elegir el cofre que más premiaba en ese momento; si hubo estrella se sabe con el código del ensayo y el banco.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

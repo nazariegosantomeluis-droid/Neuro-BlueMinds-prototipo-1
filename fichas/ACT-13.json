@@ -1,0 +1,85 @@
+{
+  "id": "ACT-13",
+  "version": "0.1.0",
+  "estado": "Investigación",
+  "nombre": "Espera la señal",
+  "objetivo": "Describir si el niño toca el estímulo de «sí» cuando aparece y deja sin tocar el de «no».",
+  "paradigma": "Respuesta y no respuesta.",
+  "evidencia": "Mixta. El Catálogo pide definir sus indicadores en el Modelo matemático y un diseño contra el efecto techo antes de usarla.",
+  "mecanica": "Antes del bloque, una pantalla muestra el globo con un dedo que toca y la nube con una mano abierta. Después aparecen uno por uno, en el centro: el niño toca el globo y deja la nube sin tocar. Cada uno se quita al tocarlo o cuando se acaba su tiempo.",
+  "tipoRespuesta": "seleccion_unica",
+  "respuesta": "tocar_o_no_tocar",
+  "pantalla": "senal",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 1,
+      "proporcionNo": 0.5,
+      "limiteMs": 2000,
+      "intervaloMs": 1200,
+      "ensayosMax": 30,
+      "descripcion": "La mitad son nubes. Ritmo lento: cada estímulo dura 2 s."
+    },
+    {
+      "id": "B2",
+      "opciones": 1,
+      "proporcionNo": 0.3,
+      "limiteMs": 2000,
+      "intervaloMs": 1200,
+      "ensayosMax": 30,
+      "descripcion": "3 de cada 10 son nubes. Ritmo lento."
+    },
+    {
+      "id": "B3",
+      "opciones": 1,
+      "proporcionNo": 0.3,
+      "limiteMs": 1200,
+      "intervaloMs": 700,
+      "ensayosMax": 30,
+      "descripcion": "3 de cada 10 son nubes. Ritmo rápido: cada estímulo dura 1.2 s."
+    },
+    {
+      "id": "B4",
+      "opciones": 1,
+      "proporcionNo": 0.2,
+      "limiteMs": 1200,
+      "intervaloMs": 700,
+      "ensayosMax": 30,
+      "descripcion": "2 de cada 10 son nubes. Ritmo rápido."
+    }
+  ],
+  "modalidades": [
+    "V"
+  ],
+  "ensayosPorBloque": 30,
+  "programasPorBanda": 6,
+  "muestraExpertosPorBanda": 2,
+  "maxNoSeguidos": 2,
+  "estimulos": {
+    "si": "globo",
+    "no": "nube"
+  },
+  "limiteRespuestaMs": 2000,
+  "intervaloMs": 1200,
+  "consignaVMs": 500,
+  "retroalimentacionMs": 300,
+  "anuncioMs": 6000,
+  "consignaAV": "Toca el globo.",
+  "resumen": "Tocó el estímulo en {aciertos} de {ensayos} presentaciones",
+  "lecturasPermitidas": [
+    "Tocó 20 de 21 globos y dejó sin tocar 7 de 9 nubes"
+  ],
+  "lecturasNoPermitidas": [
+    "Es impulsivo"
+  ],
+  "contraindicaciones": [
+    "Antes de usarla hay que definir sus indicadores en el Modelo matemático: omisiones solo ante el «sí» y errores de comisión solo ante el «no».",
+    "Necesita un diseño contra el efecto techo; las bandas de este prototipo son una propuesta.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica general, el criterio de las bandas (proporción de «no» y ritmo), la lectura no permitida y las condiciones para usarla vienen del Catálogo de actividades (sección 6). Los estímulos, las proporciones, los tiempos y los 30 ensayos por bloque son una propuesta. Cada presentación tiene un solo estímulo; el bloque nunca empieza con una nube ni pone más de dos nubes seguidas. En el registro, una nube tiene pos_correcta = 0: si no se toca queda con omision = true y es la respuesta esperada; si se toca, es un error de comisión. El resumen del bloque los cuenta así, por separado.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

@@ -24,12 +24,30 @@ test('la sección «En preparación» lista las actividades de uso posterior que
 });
 
 test('los totales del Catálogo que dice la página son los de fichas/catalogo.json', () => {
+  const EN_LETRA = { 0: 'cero', 1: 'una', 2: 'dos', 3: 'tres', 4: 'cuatro', 5: 'cinco', 6: 'seis', 7: 'siete', 8: 'ocho', 9: 'nueve', 10: 'diez', 11: 'once', 12: 'doce', 13: 'trece', 14: 'catorce' };
+  const cuantas = (estado) => actividades.filter((a) => a.estado === estado).length;
   assert.deepEqual(textoDe('data-catalogo', 'total'), [String(actividades.length)]);
   assert.deepEqual(textoDe('data-catalogo', 'sin-prototipo'), [String(actividades.filter((a) => !a.prototipo).length)]);
-  // «cinco necesitan… y dos siguen en investigación».
-  assert.equal(actividades.filter((a) => !a.prototipo && a.estado === 'Uso posterior').length, 5);
-  assert.equal(actividades.filter((a) => a.estado === 'Investigación').length, 2);
-  assert.match(html, /cinco necesitan dibujos de escenas, grabaciones o un tipo de respuesta nuevo, y dos siguen en investigación/);
+  assert.deepEqual(textoDe('data-catalogo', 'piloto'), [EN_LETRA[cuantas('Piloto')]]);
+  assert.deepEqual(textoDe('data-catalogo', 'posterior'), [EN_LETRA[cuantas('Uso posterior')]]);
+  assert.deepEqual(textoDe('data-catalogo', 'investigacion'), [EN_LETRA[cuantas('Investigación')]]);
+  // El título cuenta las que no son del piloto.
+  const fuera = actividades.length - cuantas('Piloto');
+  assert.match(html, new RegExp(`>${EN_LETRA[fuera][0].toUpperCase()}${EN_LETRA[fuera].slice(1)} actividades más\\.`));
+});
+
+test('las actividades en investigación van aparte, con su nombre y su captura', () => {
+  const enInvestigacion = actividades.filter((a) => a.estado === 'Investigación');
+  const enPagina = [...html.matchAll(/data-investigacion="(ACT-\d{2})"/g)].map((m) => m[1]);
+  assert.deepEqual(enPagina, enInvestigacion.filter((a) => a.prototipo).map((a) => a.id));
+  for (const a of enInvestigacion) {
+    assert.deepEqual(textoDe('data-investigacion', a.id), [a.id]);
+    assert.deepEqual(textoDe('data-nombre', a.id), [a.nombre], a.id);
+    assert.ok(html.includes(`../assets/pagina-producto/${a.id.toLowerCase()}.webp`), `${a.id}: captura`);
+    assert.ok(existsSync(new URL(`../assets/pagina-producto/${a.id.toLowerCase()}.webp`, import.meta.url)), `${a.id}: archivo`);
+  }
+  // Nunca con la insignia de uso posterior.
+  assert.doesNotMatch(html, /Uso posterior · <span data-investigacion/);
 });
 
 test('la página dice que las actividades en preparación solo se abren en modo experto', () => {

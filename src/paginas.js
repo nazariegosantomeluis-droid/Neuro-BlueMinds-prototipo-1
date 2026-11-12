@@ -1,6 +1,6 @@
 // Páginas para el adulto y el panel de expertos: galería de ítems y créditos.
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
-import { PANTALLAS, esPiloto } from './catalogo.js';
+import { PANTALLAS, esPiloto, INVESTIGACION } from './catalogo.js';
 import { esc } from './html.js';
 import { ETIQUETAS_REVISION, revisadaClinicamente, filtrarPorEstado, notasDe, textoFiguras } from './revision-estado.js';
 
@@ -57,7 +57,8 @@ let focoFiltro = null;
 // Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1&estado=retirado
 export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], revision }, params) {
   const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02…, sin depender del orden de carga
-  const posteriores = ids.filter((id) => !esPiloto(id));
+  const posteriores = ids.filter((id) => !esPiloto(id) && !INVESTIGACION.includes(id));
+  const enInvestigacion = ids.filter((id) => INVESTIGACION.includes(id));
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];
   const ficha = fichas[actividad];
   const banda = ficha.bandas.some((b) => b.id === params.get('banda')) ? params.get('banda') : 'todas';
@@ -75,7 +76,9 @@ export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], re
   // La etiqueta «Muestra» solo distingue algo cuando se ven todos los ítems.
   const mod = PANTALLAS[ficha.pantalla];
   const tarjeta = (it) =>
-    it.ensayos
+    mod?.galeriaHTML
+      ? itemPropioHTML(it, { mod, ficha, nombre, todos })
+      : it.ensayos
       ? secuenciaHTML(it, ficha.parejas[pareja], todos)
       : mod?.consignaHTML
         ? itemPosteriorHTML(it, { mod, ficha, nombre, todos })
@@ -94,7 +97,7 @@ export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], re
       ${AVISO}
       <form class="panel filtros" id="filtros">
         <fieldset class="chips">
-          <legend>${posteriores.length ? 'Actividades del piloto' : 'Actividad'}</legend>
+          <legend>${posteriores.length || enInvestigacion.length ? 'Actividades del piloto' : 'Actividad'}</legend>
           ${ids.filter(esPiloto).map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
         </fieldset>
         ${
@@ -102,6 +105,14 @@ export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], re
             ? `<fieldset class="chips">
                 <legend>En preparación: uso posterior</legend>
                 ${posteriores.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
+              </fieldset>`
+            : ''
+        }
+        ${
+          enInvestigacion.length
+            ? `<fieldset class="chips">
+                <legend>En investigación</legend>
+                ${enInvestigacion.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
               </fieldset>`
             : ''
         }
@@ -130,7 +141,13 @@ export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], re
         }
         <label class="casilla"><input type="checkbox" name="todos" value="1" ${todos ? 'checked' : ''}> Mostrar todos los ítems, no solo la muestra para expertos</label>
       </form>
-      ${esPiloto(ficha.id) ? '' : '<p class="nota-pantalla">Actividad de uso posterior: es un prototipo. No forma parte del piloto, del formulario F3 ni de la revisión clínica, y solo se abre en modo experto.</p>'}
+      ${
+        esPiloto(ficha.id)
+          ? ''
+          : INVESTIGACION.includes(ficha.id)
+            ? '<p class="nota-pantalla">Actividad en investigación: el Catálogo pide definir antes sus indicadores. Es un prototipo para revisar la mecánica; no forma parte del piloto, del formulario F3 ni de la revisión clínica, y solo se abre en modo experto.</p>'
+            : '<p class="nota-pantalla">Actividad de uso posterior: es un prototipo. No forma parte del piloto, del formulario F3 ni de la revisión clínica, y solo se abre en modo experto.</p>'
+      }
       <details class="panel ficha">
         <summary>Ficha técnica de ${esc(ficha.id)} (versión ${esc(ficha.version)}) · ${revisada ? `revisada por ${esc(ficha.revisionClinica.revisor)}, ${esc(ficha.revisionClinica.fecha)}` : 'sin revisión clínica'}</summary>
         ${fichaHTML(ficha)}
@@ -264,7 +281,9 @@ function itemHTML(it, nombre, todos, clinica) {
 function itemPosteriorHTML(it, { mod, ficha, nombre, todos }) {
   const banda = ficha.bandas.find((b) => b.id === it.banda);
   const articulo = (id) => `${nombre.get(id).articulo} ${nombre.get(id).nombre}`;
-  const voz = ficha.modalidades.includes('AV') && it.consigna.texto ? `<br><span class="ayuda">Voz en AV: «${esc(it.consigna.texto)}»</span>` : '';
+  // En ACT-05 la consigna es un sonido y en ACT-15 la voz ya va en la descripción.
+  const conVoz = ficha.modalidades.includes('AV') && it.consigna.texto && !['sonido', 'palabra'].includes(it.consigna.tipo);
+  const voz = conVoz ? `<br><span class="ayuda">Voz en AV: «${esc(it.consigna.texto)}»</span>` : '';
   return `
     <article class="item">
       <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it, todos)}</header>
@@ -272,18 +291,32 @@ function itemPosteriorHTML(it, { mod, ficha, nombre, todos }) {
         <span class="item-estimulo">${mod.consignaHTML(it.consigna)}</span>
         <p>${esc(mod.consignaTexto(it, { ficha, banda, nombre: articulo }))}${voz}</p>
       </div>
+      ${mod.escucharHTML?.(it) ?? ''}
       <ul class="item-opciones ${it.opciones.length > 4 ? 'muchas' : ''}">
         ${it.opciones
           .map(
             (o) => `<li class="${o.correcta ? 'correcta' : ''}">
               <span class="item-opcion">${mod.opcionHTML(o)}</span>
-              <span>${esc(mod.opcionTexto ? mod.opcionTexto(o) : nombre.get(o.concepto).nombre)}</span>
+              <span>${esc(mod.opcionTexto?.(o) ?? nombre.get(o.concepto).nombre)}</span>
               ${o.ejemplar ? `<span class="item-ejemplar">ejemplar ${o.ejemplar}</span>` : ''}
               ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
             </li>`,
           )
           .join('')}
       </ul>
+      ${motivosHTML(it)}
+    </article>`;
+}
+
+// Tarjeta de un ítem que su pantalla describe a su manera: un programa de premios, una serie de
+// presentaciones, una secuencia o una escena.
+function itemPropioHTML(it, { mod, ficha, nombre, todos }) {
+  const banda = ficha.bandas.find((b) => b.id === it.banda);
+  const articulo = (id) => `${nombre.get(id).articulo} ${nombre.get(id).nombre}`;
+  return `
+    <article class="item item-propio">
+      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it, todos)}</header>
+      ${mod.galeriaHTML(it, { ficha, banda, nombre: articulo })}
       ${motivosHTML(it)}
     </article>`;
 }
@@ -437,7 +470,8 @@ export function renderCreditos(app, { conceptos }) {
       </section>
       <section class="panel">
         <h2>Imágenes y audio</h2>
-        <p>Las imágenes de los ejemplares son dibujos hechos para este prototipo: la mayoría con inteligencia artificial en Canva y otros como variantes de esos dibujos o con código. Son originales, no muestran a personas reales y están pendientes de revisión clínica. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <p>Las imágenes de los ejemplares son dibujos hechos para este prototipo: la mayoría con inteligencia artificial en Canva y otros como variantes de esos dibujos o con código. Son originales, no muestran a personas reales y están pendientes de revisión clínica. Las escenas de «Oración e imagen» se dibujan con código, con recortes de esos mismos dibujos. Mientras no haya archivos de voz, las consignas usan la voz del navegador.</p>
+        <p>Los sonidos de «Sonido e imagen» son grabaciones de <a href="https://freesound.org">Freesound</a> incluidas en el conjunto ESC-50 (Karol J. Piczak, 2015), con licencia CC0 1.0 o CC BY 3.0. Se recortaron y se igualó su volumen. Autor, enlace y licencia de cada uno, como los de todos los archivos, en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>

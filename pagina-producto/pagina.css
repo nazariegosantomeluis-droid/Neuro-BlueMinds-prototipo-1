@@ -1710,6 +1710,32 @@ details[open] > summary .mas svg {
   border-radius: clamp(11px, 1.4vw, 16px);
 }
 
+/* Las dos en investigación van aparte, después de las de uso posterior, y del mismo tamaño que
+   las de arriba: la rejilla guarda el lugar de la tercera columna. */
+.preparacion__investigacion {
+  max-width: 46em;
+  margin-top: clamp(56px, 7vw, 96px);
+}
+
+.preparacion__subtitulo {
+  color: var(--acento);
+  font-family: var(--fuente-titulos);
+  font-size: clamp(28px, 2.6vw, 38px);
+  font-weight: 700;
+  line-height: 1.12;
+}
+
+.preparacion__investigacion p {
+  margin-top: 14px;
+  color: var(--suave);
+  font-size: clamp(17px, 1.4vw, 19px);
+}
+
+.preparacion__rejilla {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--min, 300px)), 1fr));
+  margin-top: 28px;
+}
+
 .preparacion__nota {
   max-width: 46em;
   margin-top: 28px;

@@ -14,9 +14,21 @@ const piloto = leer('items/items.json').items;
 const byId = new Map(conceptos.map((c) => [c.id, c]));
 const of = (actividad, banda) => items.filter((i) => i.actividad === actividad && (!banda || i.banda === banda));
 const existe = (ruta) => existsSync(new URL(`../${ruta}`, import.meta.url));
-// Todas las rutas de imagen que un ítem pone en pantalla.
-const rutas = (it) => [it.consigna.src, ...it.opciones.flatMap((o) => [o.src, ...(o.emblemas ?? [])])].filter(Boolean);
-const conConceptos = ['ACT-03', 'ACT-08', 'ACT-09'];
+// Todas las rutas de imagen que un ítem pone en pantalla: la consigna, las opciones, los recortes
+// de las escenas (ACT-04), el dibujo y las tarjetas de las secuencias (ACT-10 y ACT-16).
+const recortes = (e) => [e?.objeto?.src, e?.figura?.src];
+const rutas = (it) =>
+  [
+    it.consigna?.src,
+    it.imagen,
+    ...recortes(it.consigna?.escena),
+    ...(it.opciones ?? []).flatMap((o) => [o.src, ...(o.emblemas ?? []), ...recortes(o.escena)]),
+    ...(it.tarjetas ?? []).map((t) => t.src),
+  ].filter(Boolean);
+// Las que ponen varios conceptos del banco en una misma pantalla.
+const conConceptos = ['ACT-03', 'ACT-05', 'ACT-08', 'ACT-09', 'ACT-15'];
+// Ítems que agrupan varios ensayos: programas (ACT-12 y ACT-13) y secuencias (ACT-10 y ACT-16).
+const agrupan = (id) => ['ACT-10', 'ACT-12', 'ACT-13', 'ACT-16'].includes(id);
 
 test('items-posteriores.json está al día con las fichas (regenerar con npm run build-posteriores)', () => {
   assert.deepEqual(buildPosteriores(inputs), items);
@@ -45,7 +57,7 @@ test('todos los ítems son una propuesta: quedan marcados para revisión clínic
 });
 
 test('cada banda tiene ítems, con el número de opciones de su ficha y una sola correcta', () => {
-  for (const id of POSTERIORES) {
+  for (const id of POSTERIORES.filter((x) => !agrupan(x))) {
     for (const b of fichas[id].bandas) {
       const band = of(id, b.id);
       assert.ok(band.length >= fichas[id].ensayosPorBloque, `${id} ${b.id}: ${band.length} ítems`);
@@ -61,20 +73,27 @@ test('cada banda tiene ítems, con el número de opciones de su ficha y una sola
 test('ningún ítem usa el ejemplar 3, reservado para las sondas de generalización de ACT-02', () => {
   for (const it of items) {
     assert.notEqual(it.ejemplar, EJEMPLAR_RESERVADO, it.codigo);
-    for (const o of it.opciones) assert.notEqual(o.ejemplar, EJEMPLAR_RESERVADO, `${it.codigo}: ${o.id}`);
+    for (const o of [...(it.opciones ?? []), ...(it.tarjetas ?? [])]) assert.notEqual(o.ejemplar, EJEMPLAR_RESERVADO, `${it.codigo}: ${o.id}`);
     for (const src of rutas(it)) assert.doesNotMatch(src, new RegExp(`/${EJEMPLAR_RESERVADO}\\.\\w+$`), `${it.codigo}: ${src}`);
   }
 });
 
 test('todas las imágenes que los ítems nombran existen, y no hay archivos nuevos sin licencia', () => {
   for (const src of new Set(items.flatMap(rutas))) assert.ok(existe(src), src);
-  // Las figuras, los rostros y los pictogramas de emoción se dibujan con código: no agregan archivos.
-  for (const it of [...of('ACT-11'), ...of('ACT-14')]) assert.deepEqual(rutas(it), [], it.codigo);
+  // Las figuras, los rostros, los pictogramas de emoción, los cofres, el globo y la nube se dibujan
+  // con código: no agregan archivos. Las historias de ACT-10 en V tampoco.
+  for (const it of [...of('ACT-11'), ...of('ACT-12'), ...of('ACT-13'), ...of('ACT-14'), ...of('ACT-10').filter((i) => i.modalidad === 'V')]) assert.deepEqual(rutas(it), [], it.codigo);
+  // Los sonidos y el silencio de las secuencias sí son archivos, con su licencia.
+  const audios = new Set(items.flatMap((it) => [it.consigna?.audio, ...(it.ensayos ?? []).map((e) => e.consigna?.audio)]).filter(Boolean));
+  for (const a of [...audios].filter((x) => x.startsWith('sonido-') || x === 'silencio')) assert.ok(existe(`assets/audio/${a}.mp3`), a);
 });
 
 test('ningún par excluido aparece en la misma pantalla', () => {
-  for (const it of items.filter((i) => conConceptos.includes(i.actividad))) {
-    const cs = it.opciones.map((o) => byId.get(o.concepto));
+  // También las tarjetas de las instrucciones habladas de ACT-10.
+  const pantallas = [...items.filter((i) => conConceptos.includes(i.actividad)).map((i) => [i.codigo, i.opciones]), ...of('ACT-10').filter((i) => i.modalidad === 'AV').map((i) => [i.codigo, i.tarjetas])];
+  for (const [codigo, conCosas] of pantallas) {
+    const cs = conCosas.filter((o) => o.concepto).map((o) => byId.get(o.concepto));
+    const it = { codigo };
     for (const a of cs) for (const b of cs) assert.ok(!a.excluir.includes(b.id), `${it.codigo}: ${a.id} con ${b.id}`);
   }
 });

@@ -1,0 +1,107 @@
+{
+  "id": "ACT-10",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Ordena la secuencia",
+  "objetivo": "Describir si el niño ordena los momentos de una historia sencilla, o sigue una instrucción hablada de varios pasos.",
+  "paradigma": "Secuenciación.",
+  "evidencia": "Pendiente: el Catálogo no tiene todavía la búsqueda de evidencia de este paradigma.",
+  "mecanica": "Arriba hay tantos lugares vacíos como tarjetas, y abajo las tarjetas revueltas. El niño toca la que va primero, después la que sigue, y así hasta el final; cada tarjeta pasa a su lugar. En V las tarjetas son los momentos de una historia dibujada (una planta crece, nace un pollito, una vela se consume…). En AV la voz da una instrucción de varios pasos («Toca el perro y después el carro») y las tarjetas son dibujos del banco.",
+  "tipoRespuesta": "seleccion_unica",
+  "unidadDelBloque": "secuencia",
+  "pantalla": "secuencia",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "elementos": 2,
+      "momentos": [
+        1,
+        5
+      ],
+      "descripcion": "2 tarjetas: lo que pasa primero y lo que pasa al final."
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "elementos": 3,
+      "momentos": [
+        1,
+        3,
+        5
+      ],
+      "descripcion": "3 tarjetas."
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "elementos": 4,
+      "momentos": [
+        1,
+        2,
+        4,
+        5
+      ],
+      "descripcion": "4 tarjetas."
+    },
+    {
+      "id": "B4",
+      "opciones": 5,
+      "elementos": 5,
+      "momentos": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "descripcion": "5 tarjetas."
+    }
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 6,
+  "ensayosMax": 20,
+  "historias": [
+    "planta",
+    "manzana",
+    "sandwich",
+    "pollito",
+    "vela",
+    "vaso",
+    "helado"
+  ],
+  "ordenesPorHistoria": 2,
+  "instruccionesPorBanda": 10,
+  "muestraExpertosPorBanda": 4,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 500,
+  "consignaVMs": 1000,
+  "retroalimentacionMs": 700,
+  "consignaAV": "Toca el perro y después el carro.",
+  "resumen": "Tocó la tarjeta que seguía en {aciertos} de {ensayos} pasos",
+  "resumenSecuencia": "Hizo completas y en orden {completas} de {secuencias} secuencias",
+  "lecturasPermitidas": [
+    "Hizo completas y en orden 4 de 6 secuencias",
+    "Tocó la tarjeta que seguía en 10 de 12 pasos"
+  ],
+  "lecturasNoPermitidas": [
+    "Sabe planificar"
+  ],
+  "contraindicaciones": [
+    "La versión AV exige oír bien: hipoacusia no corregida.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (número de elementos), la respuesta «secuencia» con A1 por secuencia completa y la lectura no permitida vienen del Catálogo de actividades (sección 6). Las historias dibujadas con código, las instrucciones, los tiempos y los 6 bloques de secuencias son una propuesta y esperan revisión clínica. Cada historia cambia en un solo sentido (crece, se come, se arma, nace, se consume, se llena o se derrite) para que el orden no dependa de una convención. En la última tarjeta no hay que elegir: pasa sola a su lugar. Cada paso es un ensayo del motor: el niño toca la tarjeta que sigue entre las que quedan. Al terminar el paso, la tarjeta correcta pasa a su lugar con el mismo marco de siempre, haya acertado o no, y la secuencia sigue. El Catálogo pide la respuesta «secuencia» con A1 por secuencia completa: el resumen cuenta aparte las secuencias hechas sin errores. En el registro, cada paso queda con su código (por ejemplo, ACT10-B2-03-1) y «Número de secuencias» cuenta secuencias completas.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

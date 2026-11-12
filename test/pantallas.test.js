@@ -29,11 +29,13 @@ const piloto = leer('items/items.json').items;
 const posteriores = leer('items/items-posteriores.json').items;
 const banco = [...piloto, ...posteriores];
 const css = texto('src/actividades.css');
-const POSTERIORES = ['ACT-03', 'ACT-06', 'ACT-08', 'ACT-09', 'ACT-11', 'ACT-14'];
+const POSTERIORES = leer('fichas/catalogo.json').actividades.map((a) => a.id).filter((id) => !PILOTO.includes(id) && id !== 'ACT-17');
+// Pantallas nuevas que no ponen texto en la pantalla del niño.
+const SIN_TEXTO = ['busqueda', 'categorias', 'demora', 'emociones', 'patron', 'rostros', 'cofres', 'senal', 'sonido', 'fonologia', 'escenas', 'historias'];
 // Código nuevo que corre en el navegador.
 const NUEVOS = [
-  'src/catalogo.js', 'src/html.js', 'src/inicio.js', 'src/previa.js', 'src/sesiones.js', 'src/ajuste-pantalla.js', 'src/pausa-guiada.js',
-  ...['busqueda', 'categorias', 'demora', 'emociones', 'palabra', 'patron', 'rostros'].map((m) => `src/activities/${m}.js`),
+  'src/catalogo.js', 'src/html.js', 'src/inicio.js', 'src/previa.js', 'src/sesiones.js', 'src/resumen.js', 'src/ajuste-pantalla.js', 'src/pausa-guiada.js',
+  ...[...SIN_TEXTO, 'palabra', 'secuencia', 'oracion'].map((m) => `src/activities/${m}.js`),
 ];
 const reglas = (hoja) => [...hoja.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, selector, cuerpo]) => ({ selector: selector.trim(), cuerpo }));
 
@@ -55,8 +57,10 @@ test('RNF-05: las opciones y los estímulos nuevos aparecen de golpe, sin opacid
 
 test('RNF-04: en las pantallas nuevas cada opción mide al menos 2 cm y hay 0.5 cm o más entre ellas', () => {
   const tamanos = [...css.matchAll(/--opcion:\s*([^;]+);/g)].map(([, v]) => v.replace(/\s+/g, ' '));
-  assert.equal(tamanos.length, 2, 'las cajas de categoría y el conjunto de la búsqueda');
-  for (const v of tamanos) assert.match(v, /^clamp\( calc\(var\(--cm\) \* 2\),/, v);
+  // Cajas de categoría, búsqueda, cofres, estímulo de «Espera la señal», tarjetas de las
+  // secuencias, escenas y palomita y tache.
+  assert.equal(tamanos.length, 7);
+  for (const v of tamanos) assert.match(v, /^clamp\( ?calc\(var\(--cm\) \* 2\),/, v);
   for (const [, v] of css.matchAll(/--separacion:\s*([^;]+);/g)) {
     const cm = v.trim() === 'var(--cm)' ? 1 : Number(/calc\(var\(--cm\) \* ([\d.]+)\)/.exec(v)?.[1]);
     assert.ok(cm >= 0.5, `separación de ${v}`);
@@ -72,12 +76,18 @@ test('el código nuevo no usa setInterval ni animaciones de la API, ni carga nad
   }
 });
 
-test('la pantalla del niño sigue sin texto: solo la palabra de ACT-03, que es el estímulo', () => {
-  for (const m of ['busqueda', 'categorias', 'demora', 'emociones', 'patron', 'rostros']) {
-    assert.doesNotMatch(texto(`src/activities/${m}.js`), /textContent|innerText|<text[\s>]/, m);
-  }
+test('la pantalla del niño sigue sin texto, salvo el estímulo escrito de ACT-03, ACT-04 y ACT-16', () => {
+  for (const m of SIN_TEXTO) assert.doesNotMatch(texto(`src/activities/${m}.js`), /textContent|innerText|<text[\s>]/, m);
   assert.doesNotMatch(texto('src/pausa-guiada.js'), /textContent|innerText|<text[\s>]/);
-  assert.match(texto('src/activities/palabra.js'), /box\.textContent = consigna\.texto/);
+  // La palabra de ACT-03, la oración escrita de ACT-04 (solo en V) y las piezas de ACT-16.
+  const solo = (m, linea) => {
+    const usos = texto(`src/activities/${m}.js`).match(/^.*textContent.*$/gm) ?? [];
+    assert.deepEqual(usos.map((u) => u.trim()), [linea], m);
+  };
+  solo('palabra', 'box.textContent = consigna.texto;');
+  solo('oracion', 'texto.textContent = consigna.texto;');
+  solo('secuencia', 'pieza.textContent = t.texto;');
+  assert.match(texto('src/activities/oracion.js'), /if \(modalidad === 'AV'\) box\.append\(div\('consigna consigna-bocina', BOCINA\)\);\s*else \{/);
 });
 
 test('index.html carga la hoja de las actividades nuevas después de la principal, sin servidores externos', () => {
@@ -127,7 +137,8 @@ test('comprobarPantalla avisa cuando no cabe y sugiere girar la tableta si así 
   for (const id of [...PILOTO, ...POSTERIORES]) {
     const f = ficha(id);
     for (const b of f.bandas) {
-      const r = comprobarPantalla({ pantalla: f.pantalla, disposicion: b.disposicion, lugares: b.largos ? Math.max(...b.largos) + 1 : 0, ...tableta });
+      // Igual que el inicio: sin disposición en la ficha, las opciones van en una fila.
+      const r = comprobarPantalla({ pantalla: f.pantalla, disposicion: b.disposicion ?? `1x${b.opciones}`, lugares: b.largos ? Math.max(...b.largos) + 1 : 0, ...tableta });
       assert.ok(r.cabe, `${id} ${b.id} cabe en una tableta de 10 pulgadas en horizontal`);
       assert.equal(r.falta, null);
     }
@@ -393,7 +404,10 @@ test('la vista previa del inicio dibuja un ítem de ejemplo de cada banda, con s
     for (const banda of f.bandas) {
       const html = previaHTML({ ficha: f, banda, items: banco });
       assert.match(html, /role="img" aria-label="Ejemplo de la pantalla del niño: /, `${id} ${banda.id}`);
-      assert.equal(html.match(/class="previa-caja/g).length, banda.opciones + 1, `${id} ${banda.id}: la consigna y sus opciones`);
+      // Las opciones de la banda, abajo; arriba, la consigna (en las secuencias, los lugares vacíos).
+      const [arriba, abajo] = html.split('class="previa-opciones"');
+      assert.equal(abajo.match(/class="previa-caja/g).length, banda.opciones, `${id} ${banda.id}: sus opciones`);
+      if (!PANTALLAS[f.pantalla].previa) assert.equal(arriba.match(/class="previa-caja/g).length, 1, `${id} ${banda.id}: la consigna`);
       assert.doesNotMatch(html, /undefined|NaN/, `${id} ${banda.id}`);
       const ejemplo = itemDeEjemplo(banco, f, banda);
       assert.ok(ejemplo.muestraExpertos, `${id} ${banda.id}: el ejemplo sale de la muestra para expertos`);

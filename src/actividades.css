@@ -215,3 +215,415 @@
   border: 2px dashed var(--control);
   border-radius: 4px;
 }
+
+/* ---------- ACT-12: elige y descubre (investigación) ---------- */
+
+/* Los dos cofres van en el centro de la pantalla, grandes y bien separados. */
+.stage-cofres {
+  grid-template-rows: 1fr;
+}
+
+.opciones-cofres {
+  grid-row: 1;
+  --separacion: calc(var(--cm) * 2);
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min((100vw - var(--separacion) * 3) / 2, 70vh - var(--cm) * 2),
+    calc(var(--cm) * 5.5)
+  );
+}
+
+.opcion-cofre {
+  padding: calc(var(--opcion) * 0.04);
+}
+
+/* ---------- ACT-13: espera la señal (investigación) ---------- */
+
+/* Un estímulo a la vez, en el centro. Antes del bloque, qué se toca y qué no. */
+.stage-senal {
+  grid-template-rows: 1fr;
+}
+
+.senal-fijacion {
+  grid-row: 1;
+  grid-column: 1;
+  width: var(--cm);
+  height: var(--cm);
+}
+
+.senal-estimulo {
+  grid-row: 1;
+  grid-column: 1;
+  --opcion: clamp(calc(var(--cm) * 2), min(60vh, 60vw), calc(var(--cm) * 6));
+  width: var(--opcion);
+  height: var(--opcion);
+}
+
+.senal-anuncio {
+  grid-row: 1;
+  display: grid;
+  gap: var(--cm);
+  justify-items: center;
+}
+
+.senal-fila {
+  display: flex;
+  gap: var(--cm);
+  align-items: center;
+  padding: calc(var(--cm) * 0.3) calc(var(--cm) * 0.6);
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.3);
+}
+
+.senal-fila svg {
+  width: min(calc(var(--cm) * 3.5), 18vh);
+  height: min(calc(var(--cm) * 3.5), 18vh);
+}
+
+/* ---------- Galería: programas de ACT-12 y series de ACT-13 ---------- */
+
+.item-programa {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.item-programa p {
+  margin: 0;
+}
+
+.dib-cofres {
+  display: flex;
+  gap: 4%;
+  width: 7.5rem;
+  padding: 0.25rem;
+}
+
+.dib-cofres svg {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Una marca por ensayo: azul o naranja según dónde está la estrella; en ACT-13, llena el «sí»
+   y con borde la nube. La forma también cambia, para no depender del color. */
+.programa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+}
+
+.programa-marca {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid var(--texto);
+}
+
+.programa-a {
+  background: #2f7fc1;
+  border-radius: 50%;
+}
+
+.programa-b {
+  background: #e69f00;
+  border-radius: 2px;
+}
+
+.programa-si {
+  background: #e69f00;
+  border-radius: 50%;
+}
+
+.programa-no {
+  background: var(--opcion-fondo);
+  border-radius: 2px;
+}
+
+.programa-cambio {
+  width: 3px;
+  margin: 0 3px;
+  background: var(--texto);
+}
+
+/* Vista previa: los cofres y el estímulo, más grandes que las opciones normales. */
+.previa-cofres,
+.previa-senal {
+  grid-template-rows: auto 1fr;
+}
+
+.previa-cofres .previa-opciones {
+  --lado: 34%;
+  gap: 14%;
+}
+
+.previa-senal .previa-opciones {
+  --lado: 28%;
+}
+
+.previa-consigna .previa-senal {
+  display: flex;
+  gap: 2%;
+  justify-content: center;
+  width: 80%;
+}
+
+.previa-consigna .previa-senal svg {
+  width: 22%;
+  height: auto;
+}
+
+/* ---------- ACT-10 y ACT-16: secuencias por pasos ---------- */
+
+/* Arriba, los lugares de la secuencia (y en ACT-16 el dibujo); abajo, las tarjetas revueltas.
+   Las tarjetas miden al menos 2 cm, con 1 cm entre ellas; los lugares miden lo mismo si caben. */
+.stage-secuencia {
+  grid-template-rows: 1fr;
+}
+
+.tablero-secuencia {
+  --separacion: var(--cm);
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min(
+      (100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas),
+      (50vh - var(--cm) * 2)
+    ),
+    calc(var(--cm) * 3.6)
+  );
+  --hueco: min(var(--opcion), (100vw - var(--cm) * 0.5 * (var(--lugares) + 1)) / var(--lugares));
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.secuencia-arriba {
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--cm) * 0.5);
+}
+
+/* En ACT-16 el dibujo va arriba de los lugares y deja espacio para ellos. */
+.secuencia-imagen {
+  width: min(calc(var(--cm) * 3), 22vh);
+  height: min(calc(var(--cm) * 3), 22vh);
+}
+
+.secuencia-piezas {
+  --hueco: min(var(--opcion), (100vw - var(--cm) * 0.5 * (var(--lugares) + 1)) / var(--lugares), 22vh);
+}
+
+.huecos {
+  display: grid;
+  grid-template-columns: repeat(var(--lugares), var(--hueco));
+  grid-auto-rows: var(--hueco);
+  gap: calc(var(--cm) * 0.5);
+}
+
+/* Un lugar vacío: contorno punteado; el que sigue, con el contorno más marcado. */
+.hueco {
+  border: calc(var(--cm) * 0.08) dashed var(--control);
+  border-radius: calc(var(--cm) * 0.3);
+  overflow: hidden;
+}
+
+.hueco-siguiente {
+  border-style: solid;
+  border-width: calc(var(--cm) * 0.12);
+}
+
+.hueco.lleno {
+  border-style: solid;
+  border-color: transparent;
+  background: var(--opcion-fondo);
+}
+
+.hueco.marco {
+  box-shadow: 0 0 0 calc(var(--cm) * 0.2) var(--marco);
+}
+
+.cartas {
+  display: grid;
+  grid-template-columns: repeat(var(--columnas), var(--opcion));
+  grid-auto-rows: var(--opcion);
+  gap: var(--separacion);
+}
+
+/* La tarjeta que ya pasó a su lugar deja su contorno vacío, sin nada que tocar. */
+.carta.usada {
+  background: none;
+  border: calc(var(--cm) * 0.08) dashed var(--control);
+}
+
+.carta svg,
+.hueco svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.carta img,
+.hueco img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Sílabas, letras y palabras: la misma letra de la palabra de ACT-03. Las palabras largas de la
+   banda B4 la reducen para toda su secuencia (--escala-pieza, de secuencia.js), sin salirse de la tarjeta. */
+.pieza {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: #1a1a1a;
+  font-family: 'Noto Sans', system-ui, sans-serif;
+  font-size: calc(var(--opcion) * 0.36 * var(--escala-pieza, 1));
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.hueco .pieza {
+  font-size: calc(var(--hueco) * 0.36 * var(--escala-pieza, 1));
+}
+
+/* Una carta nunca crece con su contenido: mide lo que mide su columna. (No se llaman «tarjeta»
+   ni «secuencia»: esos nombres ya son de la tarjeta de ACT-07 y de la lista de la galería.) */
+.cartas > .carta,
+.huecos > .hueco {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Vista previa: los lugares vacíos arriba. */
+.previa-secuencia {
+  grid-template-rows: 1fr 1fr;
+}
+
+.previa-huecos {
+  display: grid;
+  grid-template-columns: repeat(var(--lugares), 1fr);
+  gap: 4%;
+  width: min(90%, calc(var(--lugares) * 18%));
+}
+
+.previa-hueco {
+  aspect-ratio: 1;
+  border: 2px dashed var(--control);
+  border-radius: 10%;
+}
+
+.previa-secuencia .previa-consigna .previa-caja {
+  width: 18%;
+}
+
+/* Piezas escritas en la galería y en la vista previa: la misma proporción que en la pantalla del
+   niño (la letra mide 0.36 del lado de su caja, con la reducción de su secuencia). */
+.dib-pieza {
+  container-type: inline-size;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: #1a1a1a;
+  font-family: 'Noto Sans', system-ui, sans-serif;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.dib-pieza > span {
+  font-size: calc(36cqw * var(--escala-pieza, 1));
+  white-space: nowrap;
+}
+
+/* ---------- ACT-05 y ACT-15: la bocina mientras suena el sonido o la voz ---------- */
+
+.consigna-bocina {
+  padding: calc(var(--cm) * 0.6);
+}
+
+.consigna-bocina svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Galería: el reproductor del sonido de cada ítem de ACT-05. */
+.item-audio {
+  display: block;
+  width: 100%;
+  max-width: 18rem;
+  height: 2.5rem;
+}
+
+/* ---------- ACT-04: oración e imagen ---------- */
+
+/* La oración arriba, en una línea si cabe; las escenas abajo, más grandes que las opciones normales. */
+.stage-oracion {
+  grid-template-rows: auto 1fr;
+}
+
+.consigna-oracion {
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--cm) * 0.6);
+  align-items: center;
+  justify-content: center;
+  padding-top: calc(var(--cm) * 1.2);
+}
+
+.consigna-oracion .consigna-texto {
+  font-size: min(calc(var(--cm) * 0.9), 6vw);
+}
+
+.consigna-oracion .consigna-bocina {
+  width: min(calc(var(--cm) * 3), 22vh);
+  height: min(calc(var(--cm) * 3), 22vh);
+}
+
+.escena-consigna {
+  width: min(calc(var(--cm) * 5.5), 40vh);
+  height: min(calc(var(--cm) * 5.5), 40vh);
+}
+
+.escena-consigna svg,
+.opcion-escena svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.opciones-escenas {
+  --opcion: clamp(
+    calc(var(--cm) * 2),
+    min((100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas), 100vh - var(--cm) * 7),
+    calc(var(--cm) * 5.5)
+  );
+}
+
+/* Palomita y tache: medianos, para que la escena de arriba sea lo principal. */
+.opciones-simbolos {
+  --opcion: clamp(calc(var(--cm) * 2), 22vh, calc(var(--cm) * 3.2));
+  --separacion: calc(var(--cm) * 2);
+}
+
+/* Galería y vista previa: la oración en letra de la galería. */
+.dib-oracion {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.previa-oracion .previa-consigna .previa-caja {
+  width: auto;
+  aspect-ratio: auto;
+  max-width: 90%;
+  padding: 2% 4%;
+}

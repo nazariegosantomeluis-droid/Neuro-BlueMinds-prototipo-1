@@ -9,9 +9,16 @@ import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js
 
 export const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 
-// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias.
-export const maxEnsayos = (ficha, banda) => (banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : 200);
-const ensayosAyuda = (ficha, banda) => `De 1 a ${maxEnsayos(ficha, banda)}. La ficha propone ${Math.min(ficha.ensayosPorBloque, maxEnsayos(ficha, banda))}.`;
+// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias. Una banda
+// puede fijar su propio máximo (ACT-12 y ACT-13: el largo de sus programas).
+export const maxEnsayos = (ficha, banda) =>
+  banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : (banda.ensayosMax ?? ficha.ensayosMax ?? 200);
+// En «Ordena la secuencia» y «Forma la palabra» el bloque se cuenta en secuencias; cada paso es un ensayo.
+export const unidadDelBloque = (ficha) => (ficha.unidadDelBloque === 'secuencia' ? { una: 'secuencia', varias: 'secuencias', campo: 'Número de secuencias' } : { una: 'ensayo', varias: 'ensayos', campo: 'Número de ensayos' });
+const ensayosAyuda = (ficha, banda) =>
+  `De 1 a ${maxEnsayos(ficha, banda)}. La ficha propone ${Math.min(ficha.ensayosPorBloque, maxEnsayos(ficha, banda))}.${ficha.unidadDelBloque === 'secuencia' ? ' Cada paso de una secuencia queda como un ensayo en el registro.' : ''}`;
+// Nota de la modalidad cuando la actividad solo tiene una.
+const NOTA_MODALIDAD = { V: 'Esta actividad solo tiene modalidad visual.', AV: 'Esta actividad solo tiene modalidad con sonido: revisa el volumen antes de empezar.' };
 
 // El número de ensayos se revisa al salir del campo y al empezar; el aviso queda junto al campo.
 const ensayosOk = (campo) => {
@@ -66,18 +73,25 @@ const paso = (n, id, titulo) =>
 
 // ---------- Paso 1: actividad ----------
 
+const NOTA_GRUPO = {
+  posterior: 'Prototipos de actividades que el Catálogo deja para después del piloto. Solo se abren en modo experto y todavía no se usan con niños.',
+  investigacion:
+    'El Catálogo deja estas actividades en investigación: antes de usarlas hay que definir sus indicadores en el Modelo matemático. Sus prototipos solo se abren en modo experto, para revisarlas.',
+};
+
 function actividadesHTML({ state, actual }) {
   // Con una sesión normal en curso no se puede cambiar a modo experto: se termina primero.
   const sesionNormal = Boolean(state.session && !state.session.experto);
   return grupos(state.catalogo, state.fichas, state.problemas)
     .filter((g) => g.actividades.length)
     .map((g) => {
-      const posterior = g.id === 'posterior';
+      // Las de uso posterior y las de investigación solo se abren en modo experto.
+      const posterior = g.id !== 'piloto';
       const nota = !posterior
         ? ''
         : sesionNormal
           ? 'Hay una sesión normal en curso. Termínala para probar estas actividades, que solo se abren en modo experto.'
-          : 'Prototipos de actividades que el Catálogo deja para después del piloto. Solo se abren en modo experto y todavía no se usan con niños.';
+          : NOTA_GRUPO[g.id];
       const tarjetas = g.actividades
           .map(
             ({ id }) => `
@@ -118,7 +132,7 @@ function bloqueHTML(ficha, f, volumen) {
     <fieldset class="chips">
       <legend>Modalidad</legend>
       ${ficha.modalidades.map((m) => chipHTML('modalidad', m, MODALIDADES[m], m === modalidad)).join('')}
-      ${ficha.modalidades.length === 1 ? '<p class="ayuda">Esta actividad solo tiene modalidad visual.</p>' : ''}
+      ${ficha.modalidades.length === 1 ? `<p class="ayuda">${NOTA_MODALIDAD[ficha.modalidades[0]]}</p>` : ''}
     </fieldset>
     <label id="campo-volumen" for="volumen-inicio" ${modalidad === 'AV' ? '' : 'hidden'}>Volumen de la voz <output data-volumen-valor>${volumen} %</output>
       <input type="range" id="volumen-inicio" min="0" max="100" value="${volumen}" data-volumen>
@@ -140,7 +154,7 @@ function bloqueHTML(ficha, f, volumen) {
         .join('')}
       ${ficha.bandasPendientes?.length ? `<p class="ayuda bandas-nota">Todavía sin prototipo: ${esc(ficha.bandasPendientes.join(' '))}</p>` : ''}
     </fieldset>
-    <label>Número de ensayos
+    <label>${unidadDelBloque(ficha).campo}
       <input type="number" name="ensayos" min="1" max="${maxEnsayos(ficha, banda)}" step="1" inputmode="numeric" value="${esc(f.ensayos ?? ficha.ensayosPorBloque)}" aria-describedby="ensayos-ayuda ensayos-error">
       <span class="ayuda" id="ensayos-ayuda">${ensayosAyuda(ficha, banda)}</span>
       <span class="error-campo" id="ensayos-error"></span>
@@ -209,15 +223,20 @@ function sesionHTML(state, f, forzado, padron) {
 // ---------- Vista previa y resumen de lo elegido ----------
 
 function pieDePrevia(state, ficha, banda, modalidad) {
-  const item = itemDeEjemplo(state.items, ficha, banda);
+  const item = itemDeEjemplo(state.items, ficha, banda, modalidad);
   if (!item) return 'Esta banda todavía no tiene ítems.';
-  const voz = modalidad === 'AV' && (item.consigna?.texto ?? item.ensayos?.[0]?.consigna?.texto);
+  // En ACT-05 la consigna es un sonido grabado, no la voz.
+  if (item.consigna?.tipo === 'sonido') {
+    const nombre = state.conceptos.find((c) => c.id === item.concepto)?.nombre ?? item.concepto;
+    return `Ejemplo: ítem ${item.codigo}. Suena la grabación ${item.grabacion} de «${nombre}».`;
+  }
+  const voz = modalidad === 'AV' && (item.consigna?.texto || item.ensayos?.[0]?.consigna?.texto);
   // Algunas pantallas aclaran en qué se diferencia el bloque de este dibujo.
   const nota = PANTALLAS[ficha.pantalla]?.notaPrevia?.(ficha, banda);
   return `Ejemplo: ítem ${item.codigo}.${voz ? ` La voz dice «${voz}».` : ''}${nota ? ` ${nota}` : ''}`;
 }
 
-const resumenAjustes = (banda, modalidad, ensayos) => `Banda ${banda.id} · modalidad ${modalidad} · ${ensayos || '—'} ensayos`;
+const resumenAjustes = (ficha, banda, modalidad, ensayos) => `Banda ${banda.id} · modalidad ${modalidad} · ${ensayos || '—'} ${unidadDelBloque(ficha).varias}`;
 
 // ---------- Pantalla ----------
 
@@ -265,7 +284,7 @@ export function renderInicio(app, ctx, msg = '') {
         <div class="barra-empezar">
           <p class="barra-resumen">
             <strong>${lista ? `${esc(ficha.id)} · ${esc(ficha.nombre)}` : 'Elige una actividad'}</strong>
-            <span id="resumen-ajustes">${lista ? esc(resumenAjustes(banda0, modalidad0, f.ensayos ?? ficha.ensayosPorBloque)) : ''}</span>
+            <span id="resumen-ajustes">${lista ? esc(resumenAjustes(ficha, banda0, modalidad0, f.ensayos ?? ficha.ensayosPorBloque)) : ''}</span>
           </p>
           <button type="submit" class="primario" ${lista ? '' : 'disabled'}>Empezar</button>
         </div>
@@ -275,7 +294,7 @@ export function renderInicio(app, ctx, msg = '') {
           ? `<div class="lateral">
                <section class="panel previa" aria-labelledby="previa-titulo">
                  <h2 id="previa-titulo">Así lo verá el niño</h2>
-                 <div id="previa">${previaHTML({ ficha, banda: banda0, items: state.items })}</div>
+                 <div id="previa">${previaHTML({ ficha, banda: banda0, items: state.items, modalidad: modalidad0 })}</div>
                  <p class="meta" id="previa-pie">${esc(pieDePrevia(state, ficha, banda0, modalidad0))}</p>
                  <p class="nota-pantalla" id="previa-ajuste" role="status" ${avisoDeAjuste(ficha, banda0) ? '' : 'hidden'}>${esc(avisoDeAjuste(ficha, banda0))}</p>
                  ${ctx.calibrada ? '' : '<p class="meta previa-calibracion">Los tamaños en centímetros son una estimación: esta pantalla no está calibrada. <a href="#calibracion">Calibrarla</a> toma un minuto.</p>'}
@@ -325,8 +344,8 @@ export function renderInicio(app, ctx, msg = '') {
       form.ensayos.max = maxEnsayos(ficha, banda);
       form.querySelector('#ensayos-ayuda').textContent = ensayosAyuda(ficha, banda);
       form.querySelector('#campo-volumen').hidden = form.modalidad.value !== 'AV';
-      form.querySelector('#resumen-ajustes').textContent = resumenAjustes(banda, form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
-      app.querySelector('#previa').innerHTML = previaHTML({ ficha, banda, items: state.items });
+      form.querySelector('#resumen-ajustes').textContent = resumenAjustes(ficha, banda, form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
+      app.querySelector('#previa').innerHTML = previaHTML({ ficha, banda, items: state.items, modalidad: form.modalidad.value });
       app.querySelector('#previa-pie').textContent = pieDePrevia(state, ficha, banda, form.modalidad.value);
       const ajuste = app.querySelector('#previa-ajuste');
       ajuste.textContent = avisoDeAjuste(ficha, banda);
@@ -346,7 +365,7 @@ export function renderInicio(app, ctx, msg = '') {
     form.ensayos.onblur = () => !ensayosOk(form.ensayos) && revisarEnsayos(form, false);
     form.ensayos.oninput = () => {
       if (form.ensayos.hasAttribute('aria-invalid')) revisarEnsayos(form, false);
-      form.querySelector('#resumen-ajustes').textContent = resumenAjustes(elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
+      form.querySelector('#resumen-ajustes').textContent = resumenAjustes(ficha, elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
     };
   }
   // El modo experto solo existe en la demostración, sin niño. Con modo experto no hay referencia motora.

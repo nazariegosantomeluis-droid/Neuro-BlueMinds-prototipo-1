@@ -20,6 +20,9 @@ const REPARTO = {
   'cambia-regla': { zona: 'mitad', separacion: 3, proporcion: 1 },
   categorias: { zona: 'mitad', separacion: 1, proporcion: 1.7 },
   busqueda: { zona: 'completa', separacion: 0.5, proporcion: 1, objetivo: 2 },
+  // ACT-12: los dos cofres van en el centro, con 2 cm entre ellos; se pide lo mismo que si
+  // ocuparan la mitad de abajo, que es más estricto.
+  cofres: { zona: 'mitad', separacion: 2, proporcion: 1 },
 };
 
 // Margen libre alrededor de las opciones cuando ya están a su tamaño mínimo.

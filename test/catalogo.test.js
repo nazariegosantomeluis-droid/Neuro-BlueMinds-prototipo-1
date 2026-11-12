@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { validateFicha } from '../src/engine/ficha.js';
-import { PANTALLAS, PILOTO, ESTADOS, EN_UNA_LINEA, ESQUEMAS, esPiloto, requiereModoExperto, cargarCatalogo, grupos } from '../src/catalogo.js';
+import { PANTALLAS, PILOTO, INVESTIGACION, ESTADOS, EN_UNA_LINEA, ESQUEMAS, esPiloto, requiereModoExperto, cargarCatalogo, grupos, problemasDeFicha, RESPUESTA_TOCAR_O_NO } from '../src/catalogo.js';
 
 const leer = (ruta) => JSON.parse(readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8'));
 const { actividades } = leer('fichas/catalogo.json');
 const conPrototipo = actividades.filter((a) => a.prototipo);
 const ficha = (id) => leer(`fichas/${id}.json`);
-const POSTERIORES = ['ACT-03', 'ACT-06', 'ACT-08', 'ACT-09', 'ACT-11', 'ACT-14'];
+// Todas las actividades del Catálogo con ensayos que no son del piloto: de uso posterior y de investigación.
+const POSTERIORES = actividades.map((a) => a.id).filter((id) => !PILOTO.includes(id) && id !== 'ACT-17');
 
 // fetch de mentira: sirve los archivos del repositorio y deja cambiar o quitar algunos.
 const servir = (cambios = {}) => async (url) => {
@@ -28,13 +28,19 @@ test('el índice tiene las 17 actividades del Catálogo, en orden y con su estad
   assert.equal(de('Uso posterior').length, 12);
 });
 
-test('las actividades de investigación no tienen prototipo, y las que no lo tienen dicen qué falta', () => {
+test('las 17 actividades tienen prototipo; las de investigación siguen marcadas como tales', () => {
   for (const a of actividades) {
-    if (a.estado === 'Investigación') assert.equal(a.prototipo, false, `${a.id} no debe usarse todavía`);
     if (a.prototipo) assert.equal(a.falta, undefined, a.id);
     else assert.ok(typeof a.falta === 'string' && a.falta.trim(), `${a.id}: falta decir qué falta`);
   }
   assert.deepEqual(conPrototipo.map((a) => a.id), [...PILOTO, ...POSTERIORES, 'ACT-17'].sort());
+  assert.equal(POSTERIORES.length, 13);
+  // ACT-12 y ACT-13 tienen prototipo, pero el Catálogo las deja en investigación: su ficha lo dice.
+  assert.deepEqual(INVESTIGACION, ['ACT-12', 'ACT-13']);
+  for (const id of INVESTIGACION) {
+    assert.equal(ficha(id).estado, 'Investigación', id);
+    assert.match(ficha(id).notaPrototipo, /No se usa con niños/, id);
+  }
 });
 
 test('cada actividad con prototipo tiene su ficha, con el mismo nombre que el Catálogo', () => {
@@ -50,7 +56,7 @@ test('cada actividad con prototipo tiene su ficha, con el mismo nombre que el Ca
 test('las fichas de uso posterior están completas y nombran una pantalla que existe', () => {
   for (const id of POSTERIORES) {
     const f = ficha(id);
-    assert.deepEqual(validateFicha(f), [], id);
+    assert.deepEqual(problemasDeFicha(f), [], id);
     assert.ok(PANTALLAS[f.pantalla], `${id}: pantalla «${f.pantalla}»`);
     // Lo que el Catálogo pide a toda ficha, más de dónde salió cada dato del prototipo.
     for (const k of ['evidencia', 'mecanica', 'notaPrototipo']) assert.ok(f[k]?.trim(), `${id}: falta «${k}»`);
@@ -71,7 +77,9 @@ test('cada pantalla sabe armar ensayos y dibujarse; las nuevas, además, mostrar
   }
   for (const id of POSTERIORES) {
     const mod = PANTALLAS[ficha(id).pantalla];
-    for (const k of ['consignaHTML', 'opcionHTML', 'consignaTexto']) assert.equal(typeof mod[k], 'function', `${id}: ${k}`);
+    // O se describe con consigna y opciones, o trae su propia tarjeta de galería y su vista previa.
+    const propias = mod.galeriaHTML ? ['galeriaHTML', 'previa', 'consignaTexto'] : ['consignaHTML', 'opcionHTML', 'consignaTexto'];
+    for (const k of propias) assert.equal(typeof mod[k], 'function', `${id}: ${k}`);
   }
 });
 
@@ -121,12 +129,27 @@ test('sin el índice del Catálogo, la aplicación sigue con las tres actividade
   assert.equal(pausa, null);
 });
 
-test('el inicio agrupa las actividades en piloto y uso posterior; la pausa no es una de ellas', async () => {
+test('el inicio agrupa las actividades en piloto, uso posterior e investigación; la pausa no es una de ellas', async () => {
   const { catalogo, fichas, problemas } = await cargarCatalogo(servir());
-  const [piloto, posterior] = grupos(catalogo, fichas, problemas);
+  const [piloto, posterior, investigacion] = grupos(catalogo, fichas, problemas);
   assert.deepEqual(piloto.actividades.map((a) => a.id), PILOTO);
-  assert.deepEqual(posterior.actividades.map((a) => a.id), POSTERIORES);
+  assert.deepEqual(posterior.actividades.map((a) => a.id), POSTERIORES.filter((id) => !INVESTIGACION.includes(id)));
+  assert.deepEqual(investigacion.actividades.map((a) => a.id), INVESTIGACION);
   // Una ficha con problemas sigue en su grupo, para que el aviso se vea al elegirla.
   const [, conProblemas] = grupos(catalogo, { ...fichas, 'ACT-08': undefined }, { 'ACT-08': ['Falta el campo «bandas».'] });
   assert.ok(conProblemas.actividades.some((a) => a.id === 'ACT-08'));
+});
+
+test('«Espera la señal» se valida como las demás, con un solo estímulo por presentación', () => {
+  const f = ficha('ACT-13');
+  assert.equal(f.respuesta, RESPUESTA_TOCAR_O_NO);
+  assert.deepEqual(problemasDeFicha(f), []);
+  // Con 2 opciones ya no es su tipo de respuesta.
+  assert.ok(problemasDeFicha({ ...f, bandas: f.bandas.map((b) => ({ ...b, opciones: 2 })) }).some((p) => p.includes('«opciones»: 1')));
+  // Lo demás se revisa igual que en cualquier ficha.
+  const { contraindicaciones, ...sinContra } = f;
+  assert.ok(problemasDeFicha(sinContra).some((p) => p.includes('contraindicaciones')));
+  // Las demás fichas siguen sin aceptar una sola opción.
+  const f01 = ficha('ACT-01');
+  assert.ok(problemasDeFicha({ ...f01, bandas: [{ ...f01.bandas[0], opciones: 1, disposicion: undefined }] }).some((p) => p.includes('(2 o más)')));
 });

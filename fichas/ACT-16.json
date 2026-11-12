@@ -1,0 +1,272 @@
+{
+  "id": "ACT-16",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Forma la palabra",
+  "objetivo": "Describir si el niño forma el nombre de un dibujo tocando sus sílabas o sus letras en orden, o una frase con sus palabras.",
+  "paradigma": "Composición con sílabas o letras.",
+  "evidencia": "Hipótesis: el Catálogo la incluye como práctica de lectoescritura, sin estudios en niños con autismo que la respalden.",
+  "mecanica": "Arriba aparece el dibujo y, debajo, un lugar vacío por cada sílaba, letra o palabra. Abajo están las piezas revueltas, con una o dos que sobran. El niño toca las piezas en orden y cada una pasa a su lugar. En AV, la voz dice además la palabra o la frase.",
+  "tipoRespuesta": "seleccion_unica",
+  "unidadDelBloque": "secuencia",
+  "pantalla": "secuencia",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 3,
+      "unidad": "silaba",
+      "piezas": 3,
+      "descripcion": "Palabras de 2 sílabas; 3 sílabas para elegir, una sobra."
+    },
+    {
+      "id": "B2",
+      "opciones": 4,
+      "unidad": "silaba",
+      "piezas": 4,
+      "descripcion": "Palabras de 3 sílabas; 4 sílabas para elegir, una sobra."
+    },
+    {
+      "id": "B3",
+      "opciones": 5,
+      "unidad": "letra",
+      "piezas": 5,
+      "descripcion": "Palabras de 3 o 4 letras; 5 letras para elegir, una o dos sobran."
+    },
+    {
+      "id": "B4",
+      "opciones": 4,
+      "unidad": "palabra",
+      "piezas": 4,
+      "descripcion": "Una frase de 3 palabras (artículo, objeto y color); 4 palabras para elegir, una sobra."
+    }
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 6,
+  "ensayosMax": 20,
+  "palabras": {
+    "B1": [
+      [
+        "gato",
+        "ga",
+        "to"
+      ],
+      [
+        "pato",
+        "pa",
+        "to"
+      ],
+      [
+        "vaca",
+        "va",
+        "ca"
+      ],
+      [
+        "mano",
+        "ma",
+        "no"
+      ],
+      [
+        "boca",
+        "bo",
+        "ca"
+      ],
+      [
+        "pelo",
+        "pe",
+        "lo"
+      ],
+      [
+        "vaso",
+        "va",
+        "so"
+      ],
+      [
+        "moto",
+        "mo",
+        "to"
+      ],
+      [
+        "carro",
+        "ca",
+        "rro"
+      ],
+      [
+        "leche",
+        "le",
+        "che"
+      ],
+      [
+        "huevo",
+        "hue",
+        "vo"
+      ],
+      [
+        "barco",
+        "bar",
+        "co"
+      ],
+      [
+        "perro",
+        "pe",
+        "rro"
+      ],
+      [
+        "plato",
+        "pla",
+        "to"
+      ],
+      [
+        "falda",
+        "fal",
+        "da"
+      ],
+      [
+        "llaves",
+        "lla",
+        "ves"
+      ]
+    ],
+    "B2": [
+      [
+        "zapato",
+        "za",
+        "pa",
+        "to"
+      ],
+      [
+        "conejo",
+        "co",
+        "ne",
+        "jo"
+      ],
+      [
+        "paleta",
+        "pa",
+        "le",
+        "ta"
+      ],
+      [
+        "galleta",
+        "ga",
+        "lle",
+        "ta"
+      ],
+      [
+        "cuchara",
+        "cu",
+        "cha",
+        "ra"
+      ],
+      [
+        "caballo",
+        "ca",
+        "ba",
+        "llo"
+      ],
+      [
+        "pollito",
+        "po",
+        "lli",
+        "to"
+      ],
+      [
+        "manzana",
+        "man",
+        "za",
+        "na"
+      ],
+      [
+        "naranja",
+        "na",
+        "ran",
+        "ja"
+      ],
+      [
+        "cabeza",
+        "ca",
+        "be",
+        "za"
+      ],
+      [
+        "oreja",
+        "o",
+        "re",
+        "ja"
+      ],
+      [
+        "escoba",
+        "es",
+        "co",
+        "ba"
+      ],
+      [
+        "tortilla",
+        "tor",
+        "ti",
+        "lla"
+      ],
+      [
+        "vestido",
+        "ves",
+        "ti",
+        "do"
+      ],
+      [
+        "sombrero",
+        "som",
+        "bre",
+        "ro"
+      ],
+      [
+        "platano",
+        "plá",
+        "ta",
+        "no"
+      ]
+    ],
+    "B3": [
+      "pan",
+      "pie",
+      "tren",
+      "gato",
+      "pato",
+      "mano",
+      "boca",
+      "pelo",
+      "vaso"
+    ]
+  },
+  "letrasSobrantes": "aeioumpsltrncdb",
+  "muestraExpertosPorBanda": 4,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 500,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 700,
+  "consignaAV": "gato",
+  "resumen": "Tocó la pieza que seguía en {aciertos} de {ensayos} pasos",
+  "resumenSecuencia": "Formó sin errores {completas} de {secuencias} palabras o frases",
+  "lecturasPermitidas": [
+    "Formó sin errores 4 de 6 palabras",
+    "Tocó la pieza que seguía en 14 de 16 pasos"
+  ],
+  "lecturasNoPermitidas": [
+    "Su nivel de escritura es…"
+  ],
+  "contraindicaciones": [
+    "Solo cuando el terapeuta fija un objetivo de lectoescritura; exige conocer las letras o las sílabas.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y unidad: sílaba, letra, palabra), la respuesta «secuencia» con A1 por palabra completa y la lectura no permitida vienen del Catálogo de actividades (sección 6). Las palabras, su división en sílabas, las piezas que sobran, los tiempos y los 6 bloques de palabras son una propuesta y esperan revisión clínica. Las palabras son los nombres de los dibujos del banco (ejemplares 1 y 2); las frases de B4 son las de «Palabra escrita e imagen» B3, con su artículo. Las letras van en minúsculas, como en «Palabra escrita e imagen»; falta decidir la letra con los clínicos. Cada paso es un ensayo del motor: el niño toca la tarjeta que sigue entre las que quedan. Al terminar el paso, la tarjeta correcta pasa a su lugar con el mismo marco de siempre, haya acertado o no, y la secuencia sigue. El Catálogo pide la respuesta «secuencia» con A1 por secuencia completa: el resumen cuenta aparte las secuencias hechas sin errores. En el registro, cada paso queda con su código (por ejemplo, ACT10-B2-03-1) y «Número de secuencias» cuenta secuencias completas.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

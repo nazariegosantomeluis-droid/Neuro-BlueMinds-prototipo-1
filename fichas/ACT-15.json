@@ -1,0 +1,197 @@
+{
+  "id": "ACT-15",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Sonidos de las palabras",
+  "objetivo": "Describir si el niño reconoce, con palabras habladas e imágenes, las que riman, las que empiezan igual y las que suenan igual.",
+  "paradigma": "Conciencia fonológica.",
+  "evidencia": "Moderada preliminar: la enseñanza explícita de conciencia fonológica la mejora en preescolares autistas, aunque no con tableta (Hudson et al., 2017); programas por computadora mejoraron la lectura de palabras frente a controles, con muestras de 20 a 26 niños (Nally et al., 2021; Bailey et al., 2017). Algunas ganancias no se consolidaron.",
+  "mecanica": "La voz dice una pregunta con una palabra («¿Cuál rima con gato?») mientras arriba se ve una bocina. Después aparecen debajo los dibujos y el niño toca el que responde. En la banda B4 la voz dice dos palabras y el niño toca «igual» (dos figuras iguales) o «diferente» (dos figuras distintas).",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "fonologia",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "tarea": "rima",
+      "descripcion": "¿Cuál rima? 2 opciones; la otra no se parece en nada."
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "tarea": "rima",
+      "descripcion": "¿Cuál rima? 3 opciones; una empieza igual que la palabra, pero no rima."
+    },
+    {
+      "id": "B3",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "tarea": "inicio",
+      "descripcion": "¿Cuál empieza como…? 3 opciones; la correcta empieza con la misma sílaba."
+    },
+    {
+      "id": "B4",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "tarea": "igual",
+      "descripcion": "¿Suenan igual? Dos palabras: iguales o que cambian en un solo sonido (gato y pato)."
+    }
+  ],
+  "modalidades": [
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "rimas": [
+    [
+      "gato",
+      "pato",
+      "plato",
+      "zapato"
+    ],
+    [
+      "galleta",
+      "paleta",
+      "bicicleta"
+    ],
+    [
+      "pantalon",
+      "avion",
+      "jabon"
+    ],
+    [
+      "lentes",
+      "dientes"
+    ]
+  ],
+  "inicios": {
+    "pa": [
+      "pato",
+      "pajaro",
+      "paleta"
+    ],
+    "pan": [
+      "pan",
+      "pantalon",
+      "panza"
+    ],
+    "ca": [
+      "caballo",
+      "cabeza",
+      "carro",
+      "carreola"
+    ],
+    "ga": [
+      "gato",
+      "galleta"
+    ],
+    "pe": [
+      "perro",
+      "pelo"
+    ],
+    "va": [
+      "vaca",
+      "vaso"
+    ],
+    "na": [
+      "naranja",
+      "nariz"
+    ],
+    "o": [
+      "ojo",
+      "oreja"
+    ],
+    "a": [
+      "avion",
+      "arana"
+    ],
+    "ma": [
+      "mano",
+      "mariposa"
+    ],
+    "pla": [
+      "plato",
+      "platano",
+      "playera"
+    ]
+  },
+  "pares": [
+    [
+      "gato",
+      "pato"
+    ],
+    [
+      "mesa",
+      "pesa"
+    ],
+    [
+      "casa",
+      "taza"
+    ],
+    [
+      "boca",
+      "foca"
+    ],
+    [
+      "dedo",
+      "dado"
+    ],
+    [
+      "pelo",
+      "palo"
+    ],
+    [
+      "luna",
+      "cuna"
+    ],
+    [
+      "toro",
+      "loro"
+    ],
+    [
+      "rana",
+      "lana"
+    ],
+    [
+      "mapa",
+      "papa"
+    ],
+    [
+      "sol",
+      "col"
+    ],
+    [
+      "coma",
+      "goma"
+    ]
+  ],
+  "muestraExpertosPorBanda": 6,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Cuál rima con gato?",
+  "resumen": "Tocó la respuesta en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó el dibujo que rimaba en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Tiene dislexia",
+    "Tiene riesgo de problemas de lectura"
+  ],
+  "contraindicaciones": [
+    "Solo cuando el terapeuta fija un objetivo de lectoescritura.",
+    "Solo con sonido; hipoacusia no corregida.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica general, el criterio de las bandas (tipo de tarea y parecido entre sonidos), la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). Las palabras, las bandas, las figuras de «igual» y «diferente», el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Mientras no exista la voz grabada por una persona hablante nativa, la voz es la del navegador: en el registro queda audio_fuente = sintesis, con un inicio menos preciso. Por eso no se usan sonidos sueltos (como «/m/»), solo palabras completas. Los dibujos son los del banco (ejemplares 1 y 2).",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

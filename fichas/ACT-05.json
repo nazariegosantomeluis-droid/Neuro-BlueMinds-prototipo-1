@@ -1,0 +1,81 @@
+{
+  "id": "ACT-05",
+  "version": "0.1.0",
+  "estado": "Uso posterior",
+  "nombre": "Sonido e imagen",
+  "objetivo": "Describir si el niño relaciona un sonido que no es habla con la imagen de lo que lo produce.",
+  "paradigma": "Emparejamiento de sonido no verbal con imagen.",
+  "evidencia": "Pendiente: el Catálogo no tiene todavía la búsqueda de evidencia de este paradigma.",
+  "mecanica": "Suena un sonido de un animal, un vehículo o un objeto, mientras arriba se ve una bocina. Al terminar el sonido aparecen debajo los dibujos y el niño toca lo que hace ese sonido.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "sonido",
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "mismoGrupo": false,
+      "descripcion": "2 opciones con sonidos muy distintos: el distractor es de otro grupo (animal, vehículo u objeto)."
+    },
+    {
+      "id": "B2",
+      "opciones": 3,
+      "disposicion": "1x3",
+      "mismoGrupo": false,
+      "descripcion": "3 opciones, cada una de un grupo distinto."
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "mismoGrupo": true,
+      "descripcion": "4 opciones con sonidos parecidos: todos animales o todos vehículos."
+    }
+  ],
+  "modalidades": [
+    "AV"
+  ],
+  "ensayosPorBloque": 10,
+  "sonidos": {
+    "perro": "animales",
+    "gato": "animales",
+    "vaca": "animales",
+    "pajaro": "animales",
+    "tren": "vehiculos",
+    "avion": "vehiculos",
+    "helicoptero": "vehiculos",
+    "carro": "vehiculos",
+    "camion-de-bomberos": "vehiculos",
+    "cepillo-de-dientes": "objetos",
+    "mano": "objetos",
+    "vaso": "objetos"
+  },
+  "grabacionesPorSonido": 2,
+  "muestraExpertosPorBanda": 6,
+  "ejemplares": [
+    1,
+    2
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "Escucha.",
+  "resumen": "Tocó lo que hacía el sonido en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Tocó lo que hacía el sonido en 8 de 10 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Tiene alterada la discriminación auditiva"
+  ],
+  "contraindicaciones": [
+    "Hipoacusia no corregida.",
+    "Con hipersensibilidad auditiva: escuchar antes los sonidos y bajar el volumen, o no usarla.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Solo tiene modalidad con sonido. Los sonidos son grabaciones reales de Freesound incluidas en el conjunto ESC-50 (Piczak, 2015), con licencia CC0 o CC BY, dos por cada uno de los 12 sonidos: perro (ladrido), gato (maullido), vaca (mugido), pájaro (canto), tren, avión, helicóptero, carro (claxon), camión de bomberos (sirena), cepillo de dientes, mano (aplausos) y vaso (agua que se sirve). Cada uno se recortó a 2.1 s y se igualó el volumen; falta escucharlos con los clínicos. Autor y enlace de cada uno en items/licencias.csv.",
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

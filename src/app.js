@@ -5,7 +5,8 @@ import { pickItems, pickComposed, rng, seedOf, shuffle, disponibleEnSesion } fro
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, eventTime } from './engine/clock.js';
 import { createAudio } from './engine/audio.js';
-import { summarize, marcarFueraDeTarea, paraExportar, frecuenciaSesion } from './engine/quality.js';
+import { marcarFueraDeTarea, paraExportar, frecuenciaSesion } from './engine/quality.js';
+import { lineasDelBloque } from './resumen.js';
 import { comprobarFrecuencia } from './frecuencia.js';
 import { PANTALLAS, cargarCatalogo, requiereModoExperto } from './catalogo.js';
 import { juegoDeSesion } from './activities/categorias.js';
@@ -324,9 +325,15 @@ async function start(form) {
   let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
   // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
   if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
+  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
+  bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === f.modalidad);
   let picked;
   try {
-    if (banda.composicion) {
+    if (pantalla.elegir) {
+      // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
+      // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
+      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat });
+    } else if (banda.composicion) {
       // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
       s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
       picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
@@ -339,7 +346,9 @@ async function start(form) {
     return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
   }
   const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
-  const trials = pantalla.toTrials(picked, { ficha, banda, pareja }).slice(0, n);
+  // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
+  const todos = pantalla.toTrials(picked, { ficha, banda, pareja, modalidad: f.modalidad });
+  const trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
   try {
     const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
     await preloadImages([PICTO_FIN, ...srcs]);
@@ -452,7 +461,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   state.running = true;
   const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
   const env = browserEnv({ framePeriod: periodo, audio });
-  const view = pantalla.createView(stage, state.images, { ficha, banda: bandaDeFicha });
+  const view = pantalla.createView(stage, state.images, { ficha, banda: bandaDeFicha, modalidad });
   let ensayo = 0;
   const block = startBlock({
     // Algunas pantallas ajustan los tiempos del bloque según la banda (ACT-09: la pausa en blanco).
@@ -509,7 +518,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
-  state.last = { rows, ficha, banda, modalidad, cambio, extra: pantalla.resumenExtra?.(rows, byCode) ?? [] };
+  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio }) };
   renderFin();
 }
 
@@ -669,7 +678,7 @@ function renderFin() {
 }
 
 function renderResumen() {
-  const { rows, ficha, banda, modalidad, cambio, extra } = state.last;
+  const { ficha, banda, modalidad, lineas } = state.last;
   const s = state.session;
   const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
@@ -679,7 +688,7 @@ function renderResumen() {
       ${tituloHTML('Resumen del bloque', `${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}`)}
       <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
-        <ul class="resumen">${[...summarize(rows, ficha, { cambio }), ...extra].map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+        <ul class="resumen">${lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
         <details class="no-concluir">
           <summary>Qué no se puede concluir de este bloque</summary>

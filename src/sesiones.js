@@ -1,7 +1,8 @@
 // Página «Sesiones»: las sesiones guardadas en este dispositivo, con el resumen de cada bloque
 // y la descarga de cada sesión. Solo lee el registro; no cambia nada de lo medido.
 import { toCSV, download } from './engine/logger.js';
-import { summarize, paraExportar } from './engine/quality.js';
+import { paraExportar } from './engine/quality.js';
+import { lineasDelBloque } from './resumen.js';
 import { REF_MIN_VALIDOS } from './engine/referencia.js';
 import { nombreNino, abreviar } from './ninos.js';
 import { PANTALLAS } from './catalogo.js';
@@ -59,12 +60,13 @@ export function bloquesDeSesion(rows) {
   return [...porBloque.entries()].sort(([a], [b]) => a - b).map(([bloque, filas]) => ({ bloque, filas }));
 }
 
-// Índice del banco por código de ensayo. Los ítems de «Cambia la regla» son secuencias: ahí el
-// código que queda en el registro es el de cada ensayo de la secuencia.
+// Índice del banco por código de ensayo. Algunos ítems agrupan varios ensayos: las secuencias de
+// «Cambia la regla», los pasos de «Ordena la secuencia» y «Forma la palabra», y los programas de
+// «Elige y descubre» y «Espera la señal». Ahí el registro guarda el código de cada ensayo.
 export function indiceDeItems(items) {
   const indice = new Map();
   for (const it of items) {
-    if (it.ensayos) for (const e of it.ensayos) indice.set(e.codigo, e);
+    if (it.ensayos) for (const e of it.ensayos) indice.set(e.codigo, { ...e, secuencia: it.codigo });
     else indice.set(it.codigo, it);
   }
   return indice;
@@ -77,8 +79,18 @@ export function contextoDeBloque(filas, ficha, indice) {
   const reglas = filas.map((r) => indice.get(r.item)?.regla ?? null);
   const cambiaron = new Set(filas.filter((r, k) => k > 0 && reglas[k] && reglas[k - 1] && reglas[k] !== reglas[k - 1]));
   const completo = filas.every((r) => indice.has(r.item));
-  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice)) || [];
+  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice, ficha)) || [];
   return { cambio: (r) => cambiaron.has(r), extra };
+}
+
+// Las líneas del resumen de un bloque guardado. Una pantalla con resumen propio solo lo usa si
+// todos sus ítems siguen en el banco; si no, quedan las líneas del motor.
+export function lineasDeBloque(filas, ficha, indice) {
+  const mod = PANTALLAS[ficha.pantalla];
+  const completo = filas.every((r) => indice.has(r.item));
+  if (completo && mod?.resumen) return lineasDelBloque(filas, ficha, mod, indice);
+  const { cambio, extra } = contextoDeBloque(filas, ficha, indice);
+  return [...lineasDelBloque(filas, ficha, null, indice, { cambio }), ...extra];
 }
 
 function bloqueHTML({ bloque, filas }, sesion, fichas, indice) {
@@ -87,10 +99,7 @@ function bloqueHTML({ bloque, filas }, sesion, fichas, indice) {
   const nivel = sesion.nivel_apoyo?.find((n) => n.bloque === bloque)?.nivel;
   // Sin la ficha (por ejemplo, un registro de otra versión) solo se cuentan los ensayos.
   let lineas = [plural(filas.length, 'ensayo registrado', 'ensayos registrados')];
-  if (ficha) {
-    const { cambio, extra } = contextoDeBloque(filas, ficha, indice);
-    lineas = [...summarize(filas, ficha, { cambio }), ...extra];
-  }
+  if (ficha) lineas = lineasDeBloque(filas, ficha, indice);
   return `
     <li class="sesion-bloque">
       <p class="sesion-bloque-titulo"><strong>Bloque ${bloque}</strong> · ${esc(r.actividad)} ${esc(ficha?.nombre ?? '')} · banda ${esc(r.banda)} · modalidad ${esc(r.modalidad)}${nivel ? ` · apoyo ${esc(nivel)}` : ''}</p>
