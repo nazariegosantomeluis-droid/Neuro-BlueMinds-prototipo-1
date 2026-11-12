@@ -601,9 +601,13 @@ Una fila por sesión, en este orden:
 
 **Imágenes del banco.** Los 180 ejemplares (60 conceptos, 3 de cada uno) están en `assets/img/<concepto>/<n>.jpg`. Son dibujos de colores al estilo de los dibujos de las libretas de estímulos que usa el equipo: dibujo plano, contorno negro parejo, casi sin sombra y un solo objeto. Son dibujos, no fotografías, porque así son los estímulos de las libretas: un solo objeto, claro y sin detalles que distraigan.
 
-- 134 los generó Canva con inteligencia artificial, con una indicación escrita para cada ejemplar.
-- 44 son variantes sin IA de esos dibujos: otro color o volteados en espejo. Se hicieron así porque se acabaron los créditos de IA de Canva del mes; desde el 30 de noviembre se pueden rehacer con IA.
+Los diseñó José Miguel Fausto Tapia:
+
+- 134 a partir de iteraciones con la inteligencia artificial de Canva, con una indicación escrita para cada ejemplar;
+- 44 son variantes de esos dibujos, rehechas sin IA: otro color o volteados en espejo. Se hicieron así porque se acabaron los créditos de IA de Canva del mes; desde el 30 de noviembre se pueden rehacer con IA;
 - 2 se dibujaron con código: el huevo estrellado y la media naranja.
+
+**Son de uso libre.** Según los [Términos de productos de IA de Canva](https://www.canva.com/policies/ai-product-terms/), la imagen que se genera es de quien la genera y se puede usar para cualquier fin lícito: el banco no paga licencia ni tiene que dar crédito a Canva. Los mismos términos piden no presentar como hecha sin IA una imagen hecha con IA; por eso `licencias.csv` dice cómo se hizo cada dibujo, y así debe seguir.
 
 Todos tienen las mismas reglas:
 
@@ -611,7 +615,7 @@ Todos tienen las mismas reglas:
 - el objeto completo, al centro, ocupando cerca del 70 % del cuadro;
 - 1000 × 1000 px, sin texto, marcas ni logotipos.
 
-Son dibujos originales: no copian láminas de ninguna prueba y no muestran a personas reales. Cada uno tiene su fila en `items/licencias.csv` con su origen (IA de Canva, variante sin IA o dibujo con código), el enlace al dibujo de Canva del que sale y estado `propuesta`, porque falta la revisión clínica.
+Son dibujos originales: no copian láminas de ninguna prueba y no muestran a personas reales. Cada uno tiene su fila en `items/licencias.csv` con su origen («Diseño propio a partir de iteraciones con la IA de Canva», «Variante rehecha sin IA de un diseño propio hecho con la IA de Canva» o «Dibujo propio hecho con código (SVG)»), el enlace al dibujo de Canva del que sale y estado `propuesta`, porque falta la revisión clínica.
 
 - El ejemplar 1 tiene el color típico de `conceptos.json`. Los ejemplares 2 y 3 muestran el mismo concepto en otro color, tipo o ángulo.
 - Se respetan las notas de cada concepto: el pollito sin gallina, la paleta de dulce en sus tres ejemplares, la leche que no parece agua, el vaso sin asa y el camión como autobús urbano.
@@ -791,14 +795,16 @@ Notas:
 
 ## Autoría y licencia
 
+Luis Nazariego Santome y José Miguel Fausto Tapia son los cofundadores de Neuro-BlueMinds.
+
 | Persona | Rol en el proyecto | Qué hizo en este prototipo |
 |---|---|---|
-| Luis Nazariego Santome | Líder de proyecto; calidad y verificación | Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3 |
-| José Miguel Fausto Tapia | Líder de proyecto; diseño de experiencia y accesibilidad | Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior |
+| Luis Nazariego Santome | Cofundador; líder de proyecto; calidad y verificación | Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3 |
+| José Miguel Fausto Tapia | Cofundador; líder de proyecto; diseño de experiencia y accesibilidad. Rol secundario: apoyo en el desarrollo de las actividades | Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, diseño de los dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior y de investigación |
 
 Los mismos créditos aparecen en la aplicación, en `#creditos`.
 
-© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
+© 2026 Luis Nazariego Santome y José Miguel Fausto Tapia, cofundadores de Neuro-BlueMinds. Todos los derechos reservados.
 
 AutiPal, su isotipo y su logotipo son propiedad de Neuro-BlueMinds. Las tipografías Noto Sans y Noto Serif conservan su licencia SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)). Roca Two (Elena Genova, My Creative Land) y More Sugar (Slidehack) no se incluyen en el repositorio; ver «Tipografías» en [Marca e interfaz](#marca-e-interfaz). Los íconos son de Phosphor Icons (© 2023 Phosphor Icons, licencia MIT); el aviso de la licencia está junto a ellos en `src/styles.css`.
 

@@ -269,7 +269,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         ejemplar: n,
         origen: 'Marcador provisional del proyecto',
         autor: 'Equipo Neuro-BlueMinds',
-        propietario: 'Luis Nazariego Santome y equipo Neuro-BlueMinds',
+        propietario: 'Luis Nazariego Santome y José Miguel Fausto Tapia, cofundadores de Neuro-BlueMinds',
         licencia: 'Todos los derechos reservados',
         estado: 'marcador',
         notas: n === 3 ? 'Reservado para sondas de generalización. Reemplazar por una fotografía real con licencia libre.' : 'Reemplazar por una fotografía real con licencia libre.',

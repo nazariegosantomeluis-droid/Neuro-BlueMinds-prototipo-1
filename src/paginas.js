@@ -412,18 +412,21 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
 
 // ---------- Créditos ----------
 
-// Quién hizo el prototipo. El rol es el que cada persona declaró en el documento de
-// contribuciones del proyecto; el aporte describe su trabajo en este repositorio.
+// Quién hizo el prototipo. Los dos son cofundadores de Neuro-BlueMinds. El rol es el que cada
+// persona declaró en el documento de contribuciones del proyecto, y el rol secundario, el que
+// sumó después; el aporte describe su trabajo en este repositorio.
+export const COFUNDADORES = 'Luis Nazariego Santome y José Miguel Fausto Tapia';
 export const EQUIPO = [
   {
     nombre: 'Luis Nazariego Santome',
-    rol: 'Líder de proyecto · calidad y verificación',
+    rol: 'Cofundador · líder de proyecto · calidad y verificación',
     aporte: 'Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3.',
   },
   {
     nombre: 'José Miguel Fausto Tapia',
-    rol: 'Líder de proyecto · diseño de experiencia y accesibilidad',
-    aporte: 'Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior.',
+    rol: 'Cofundador · líder de proyecto · diseño de experiencia y accesibilidad',
+    rolSecundario: 'Apoyo en el desarrollo de las actividades',
+    aporte: 'Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, diseño de los dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior y de investigación.',
   },
 ];
 
@@ -435,12 +438,13 @@ export function renderCreditos(app, { conceptos }) {
       ${AVISO}
       <section class="panel">
         <h2>Equipo</h2>
-        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds. Este prototipo lo hicieron:</p>
+        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds, que cofundaron ${esc(COFUNDADORES)}. Este prototipo lo hicieron:</p>
         <dl class="equipo">
           ${EQUIPO.map((p) => `
           <div>
             <dt>${esc(p.nombre)}</dt>
             <dd class="equipo-rol">${esc(p.rol)}</dd>
+            ${p.rolSecundario ? `<dd class="equipo-rol">Rol secundario: ${esc(p.rolSecundario.charAt(0).toLowerCase() + p.rolSecundario.slice(1))}</dd>` : ''}
             <dd>${esc(p.aporte)}</dd>
           </div>`).join('')}
         </dl>
@@ -470,12 +474,14 @@ export function renderCreditos(app, { conceptos }) {
       </section>
       <section class="panel">
         <h2>Imágenes y audio</h2>
-        <p>Las imágenes de los ejemplares son dibujos hechos para este prototipo: la mayoría con inteligencia artificial en Canva y otros como variantes de esos dibujos o con código. Son originales, no muestran a personas reales y están pendientes de revisión clínica. Las escenas de «Oración e imagen» se dibujan con código, con recortes de esos mismos dibujos. Mientras no haya archivos de voz, las consignas usan la voz del navegador.</p>
+        <p>Las imágenes de los ejemplares son dibujos originales que diseñó José Miguel Fausto Tapia para este prototipo: 134 a partir de iteraciones con la inteligencia artificial de Canva, 44 como variantes de esos dibujos, rehechas sin IA (otro color o en espejo), y 2 con código. No copian láminas de ninguna prueba, no muestran a personas reales y están pendientes de revisión clínica.</p>
+        <p>Son de uso libre: según los <a href="https://www.canva.com/policies/ai-product-terms/">Términos de productos de IA de Canva</a>, la imagen que se genera es de quien la genera y se puede usar para cualquier fin lícito, sin pagar licencia ni dar crédito a Canva. Los mismos términos piden no presentar como hecha sin IA una imagen hecha con IA; por eso aquí y en <a href="items/licencias.csv">items/licencias.csv</a> se dice cómo se hizo cada dibujo.</p>
+        <p>Las escenas de «Oración e imagen» se dibujan con código, con recortes de esos mismos dibujos. Mientras no haya archivos de voz, las consignas usan la voz del navegador.</p>
         <p>Los sonidos de «Sonido e imagen» son grabaciones de <a href="https://freesound.org">Freesound</a> incluidas en el conjunto ESC-50 (Karol J. Piczak, 2015), con licencia CC0 1.0 o CC BY 3.0. Se recortaron y se igualó su volumen. Autor, enlace y licencia de cada uno, como los de todos los archivos, en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>
-        <p>© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.</p>
+        <p>© 2026 ${esc(COFUNDADORES)}, cofundadores de Neuro-BlueMinds. Todos los derechos reservados.</p>
         <p>Incluye el código, las fichas técnicas, el banco de ítems y las figuras de la actividad «Cambia la regla». No incluye los pictogramas de ARASAAC, que conservan su propia licencia.</p>
         <p>Los íconos de las pantallas del adulto son de Phosphor Icons (© 2023 Phosphor Icons), con licencia MIT.</p>
       </section>
