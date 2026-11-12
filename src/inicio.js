@@ -146,7 +146,7 @@ function bloqueHTML(ficha, f, volumen) {
           <input type="radio" name="banda" value="${esc(b.id)}" ${b.id === banda.id ? 'checked' : ''}>
           <span class="banda-cuerpo">
             <span class="banda-id">${esc(b.id)}</span>
-            <span class="banda-opciones">${b.opciones} opciones</span>
+            <span class="banda-opciones">${opcionesDeBanda(ficha, b)}</span>
             <span class="banda-desc">${esc(b.descripcion)}</span>
           </span>
         </label>`,
@@ -161,7 +161,21 @@ function bloqueHTML(ficha, f, volumen) {
     </label>`;
 }
 
+// Qué muestra cada banda: opciones, tarjetas de una secuencia o un estímulo a la vez.
+const opcionesDeBanda = (ficha, b) =>
+  ficha.respuesta === 'tocar_o_no_tocar'
+    ? 'Un estímulo a la vez'
+    : ficha.unidadDelBloque === 'secuencia'
+      ? `${b.opciones} tarjetas`
+      : `${b.opciones} ${b.opciones === 1 ? 'opción' : 'opciones'}`;
+
 // ---------- Paso 3: sesión ----------
+
+// Cómo se dice el estado del Catálogo en las ayudas de la sesión.
+const DE_ESTADO = {
+  'Uso posterior': { grupo: 'de uso posterior', esta: 'es de uso posterior' },
+  Investigación: { grupo: 'en investigación', esta: 'está en investigación' },
+};
 
 // Quién participa: un niño del padrón (ninos.js) o la demostración, sin niño. No hay ningún campo
 // de texto: la tableta no guarda nada que diga quién es el niño.
@@ -179,16 +193,18 @@ export function participanteElegido(valor, padron, forzado = false) {
   return padron.length ? '' : DEMO;
 }
 
-function sesionHTML(state, f, forzado, padron) {
+function sesionHTML(state, f, forzado, padron, estado) {
+  const de = DE_ESTADO[estado] ?? DE_ESTADO['Uso posterior'];
   const s = state.session;
   const elegido = participanteElegido(f.participante, padron, forzado);
   const opcionNino = (n) =>
     `<option value="${esc(n.codigo)}" ${elegido === n.codigo ? 'selected' : ''}>${esc(nombreNino(n))} · ${esc(abreviar(n.codigo))} · ${esc(n.edad_meses)} meses${CONSENTIMIENTO_NO_VIGENTE[n.consentimiento] ?? ''}</option>`;
-  // Las actividades de uso posterior no se usan con niños: solo demostración y modo experto.
+  // Las actividades de uso posterior y las de investigación no se usan con niños: solo
+  // demostración y modo experto.
   const participante = forzado
     ? `<label>Participante
          <select name="participante" disabled><option value="${DEMO}" selected>Demostración (sin niño)</option></select>
-         <span class="ayuda">Las actividades de uso posterior solo se abren en la demostración, sin niño.</span>
+         <span class="ayuda">Las actividades ${de.grupo} solo se abren en la demostración, sin niño.</span>
        </label>`
     : `<label>Participante
          <select name="participante" aria-describedby="participante-ayuda participante-error">
@@ -201,7 +217,7 @@ function sesionHTML(state, f, forzado, padron) {
        </label>`;
   const experto = forzado
     ? `<label class="casilla"><input type="checkbox" name="experto" value="1" checked disabled> Modo experto
-         <span class="ayuda">Esta actividad es de uso posterior: solo se abre en modo experto. Sus registros llevan un sesion_id que empieza con EXP-.</span>
+         <span class="ayuda">Esta actividad ${de.esta}: solo se abre en modo experto. Sus registros llevan un sesion_id que empieza con EXP-.</span>
        </label>`
     : `<label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto (solo en la demostración)
          <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. No hace la referencia motora. Sus registros llevan un sesion_id que empieza con EXP-.</span>
@@ -276,7 +292,7 @@ export function renderInicio(app, ctx, msg = '') {
                  ${paso(2, 'grupo-bloque', 'Ajustes del bloque')}
                  ${bloqueHTML(ficha, f, ctx.volumen())}
                </div>
-               ${sesionHTML(state, f, forzado, padron)}`
+               ${sesionHTML(state, f, forzado, padron, ficha.estado)}`
             : ''
         }
         <p class="mensaje" role="alert">${esc(msg)}</p>
