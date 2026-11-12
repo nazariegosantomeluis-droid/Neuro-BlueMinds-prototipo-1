@@ -35,6 +35,10 @@ export function shuffle(arr, rand) {
 // para la regla de no repetir en la sesión.
 export const itemKey = (it) => it.concepto ?? it.codigo;
 
+// Un ítem retirado en la revisión clínica no se usa en las sesiones; uno «por corregir» sí,
+// mientras se corrige (items/revision.json).
+export const disponibleEnSesion = (it) => it.estadoRevision !== 'retirado';
+
 // Arma un bloque según la composición de la banda (ficha): una casilla por ítem.
 // "{a}" y "{b}" se reemplazan por las dimensiones en el orden de la sesión, por ejemplo
 // ["{a}", "{a}>{b}", "{b}"] → color, color>forma, forma. Cada casilla toma, al azar y

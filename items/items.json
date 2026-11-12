@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "descripcion": "Banco de ítems generado por tools/build-items.mjs. No editar a mano: modificar conceptos.json o las fichas y regenerar.",
+  "descripcion": "Banco de ítems generado por tools/build-items.mjs. No editar a mano: modificar conceptos.json, las fichas o revision.json y regenerar.",
   "items": [
     {
       "codigo": "ACT01-B1-01",
@@ -33,7 +33,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-02",
@@ -66,7 +67,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-03",
@@ -99,7 +101,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-04",
@@ -132,7 +135,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-05",
@@ -165,7 +169,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-06",
@@ -198,7 +203,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-07",
@@ -232,7 +238,8 @@
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color.",
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-08",
@@ -265,7 +272,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-09",
@@ -298,7 +306,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B1-10",
@@ -331,7 +340,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar con la fotografía que el distractor es de otro color."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-01",
@@ -369,7 +379,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-02",
@@ -407,7 +418,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-03",
@@ -445,7 +457,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-04",
@@ -483,7 +496,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-05",
@@ -521,7 +535,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-06",
@@ -559,7 +574,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-07",
@@ -597,7 +613,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-08",
@@ -635,7 +652,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-09",
@@ -673,7 +691,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B2-10",
@@ -713,7 +732,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-01",
@@ -760,7 +780,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-02",
@@ -805,7 +826,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-03",
@@ -850,7 +872,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-04",
@@ -895,7 +918,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-05",
@@ -940,7 +964,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-06",
@@ -985,7 +1010,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-07",
@@ -1030,7 +1056,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-08",
@@ -1075,7 +1102,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-09",
@@ -1120,7 +1148,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT01-B3-10",
@@ -1165,7 +1194,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-01",
@@ -1197,7 +1227,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-02",
@@ -1229,7 +1260,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-03",
@@ -1263,7 +1295,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-04",
@@ -1295,7 +1328,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-05",
@@ -1327,7 +1361,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-06",
@@ -1359,7 +1394,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-07",
@@ -1391,7 +1427,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-08",
@@ -1423,7 +1460,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-09",
@@ -1455,7 +1493,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-10",
@@ -1487,7 +1526,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-11",
@@ -1519,7 +1559,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-12",
@@ -1551,7 +1592,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-13",
@@ -1583,7 +1625,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-14",
@@ -1615,7 +1658,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-15",
@@ -1647,7 +1691,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-16",
@@ -1679,7 +1724,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-17",
@@ -1711,7 +1757,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-18",
@@ -1745,7 +1792,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-19",
@@ -1777,7 +1825,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-20",
@@ -1809,7 +1858,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-21",
@@ -1841,7 +1891,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-22",
@@ -1873,7 +1924,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-23",
@@ -1905,7 +1957,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-24",
@@ -1937,7 +1990,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-25",
@@ -1969,7 +2023,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-26",
@@ -2001,7 +2056,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-27",
@@ -2033,7 +2089,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-28",
@@ -2065,7 +2122,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-29",
@@ -2097,7 +2155,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-30",
@@ -2129,7 +2188,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-31",
@@ -2161,7 +2221,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-32",
@@ -2195,7 +2256,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-33",
@@ -2227,7 +2289,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-34",
@@ -2259,7 +2322,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-35",
@@ -2291,7 +2355,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-36",
@@ -2323,7 +2388,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-37",
@@ -2355,7 +2421,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-38",
@@ -2387,7 +2454,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-39",
@@ -2421,7 +2489,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-40",
@@ -2453,7 +2522,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-41",
@@ -2485,7 +2555,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-42",
@@ -2517,7 +2588,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-43",
@@ -2549,7 +2621,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-44",
@@ -2581,7 +2654,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-45",
@@ -2613,7 +2687,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-46",
@@ -2645,7 +2720,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-47",
@@ -2677,7 +2753,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-48",
@@ -2711,7 +2788,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-49",
@@ -2743,7 +2821,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-50",
@@ -2775,7 +2854,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-51",
@@ -2807,7 +2887,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-52",
@@ -2839,7 +2920,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-53",
@@ -2871,7 +2953,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-54",
@@ -2903,7 +2986,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-55",
@@ -2935,7 +3019,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-56",
@@ -2967,7 +3052,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-57",
@@ -2999,7 +3085,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-58",
@@ -3031,7 +3118,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-59",
@@ -3063,7 +3151,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B1-60",
@@ -3095,7 +3184,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-01",
@@ -3134,7 +3224,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-02",
@@ -3173,7 +3264,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-03",
@@ -3212,7 +3304,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-04",
@@ -3251,7 +3344,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-05",
@@ -3290,7 +3384,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-06",
@@ -3331,7 +3426,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-07",
@@ -3370,7 +3466,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-08",
@@ -3409,7 +3506,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-09",
@@ -3448,7 +3546,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-10",
@@ -3487,7 +3586,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-11",
@@ -3526,7 +3626,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-12",
@@ -3567,7 +3668,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-13",
@@ -3606,7 +3708,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-14",
@@ -3645,7 +3748,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-15",
@@ -3684,7 +3788,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-16",
@@ -3725,7 +3830,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-17",
@@ -3764,7 +3870,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-18",
@@ -3803,7 +3910,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-19",
@@ -3842,7 +3950,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-20",
@@ -3881,7 +3990,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-21",
@@ -3920,7 +4030,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-22",
@@ -3959,7 +4070,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-23",
@@ -3998,7 +4110,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-24",
@@ -4037,7 +4150,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-25",
@@ -4076,7 +4190,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-26",
@@ -4115,7 +4230,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-27",
@@ -4154,7 +4270,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-28",
@@ -4193,7 +4310,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-29",
@@ -4232,7 +4350,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-30",
@@ -4271,7 +4390,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-31",
@@ -4310,7 +4430,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-32",
@@ -4349,7 +4470,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-33",
@@ -4388,7 +4510,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-34",
@@ -4429,7 +4552,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-35",
@@ -4468,7 +4592,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-36",
@@ -4507,7 +4632,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-37",
@@ -4546,7 +4672,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-38",
@@ -4585,7 +4712,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-39",
@@ -4626,7 +4754,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-40",
@@ -4665,7 +4794,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-41",
@@ -4704,7 +4834,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-42",
@@ -4743,7 +4874,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-43",
@@ -4782,7 +4914,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-44",
@@ -4821,7 +4954,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-45",
@@ -4860,7 +4994,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-46",
@@ -4899,7 +5034,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-47",
@@ -4938,7 +5074,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-48",
@@ -4979,7 +5116,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-49",
@@ -5018,7 +5156,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-50",
@@ -5057,7 +5196,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-51",
@@ -5096,7 +5236,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-52",
@@ -5137,7 +5278,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-53",
@@ -5176,7 +5318,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-54",
@@ -5215,7 +5358,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-55",
@@ -5254,7 +5398,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-56",
@@ -5293,7 +5438,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-57",
@@ -5332,7 +5478,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-58",
@@ -5373,7 +5520,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-59",
@@ -5412,7 +5560,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B2-60",
@@ -5451,7 +5600,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-01",
@@ -5497,7 +5647,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-02",
@@ -5543,7 +5694,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-03",
@@ -5589,7 +5741,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-04",
@@ -5635,7 +5788,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-05",
@@ -5681,7 +5835,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-06",
@@ -5727,7 +5882,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-07",
@@ -5773,7 +5929,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-08",
@@ -5819,7 +5976,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-09",
@@ -5865,7 +6023,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-10",
@@ -5911,7 +6070,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-11",
@@ -5957,7 +6117,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-12",
@@ -6003,7 +6164,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-13",
@@ -6049,7 +6211,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-14",
@@ -6095,7 +6258,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-15",
@@ -6141,7 +6305,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-16",
@@ -6187,7 +6352,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-17",
@@ -6233,7 +6399,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-18",
@@ -6279,7 +6446,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-19",
@@ -6325,7 +6493,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-20",
@@ -6371,7 +6540,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-21",
@@ -6417,7 +6587,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-22",
@@ -6463,7 +6634,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-23",
@@ -6509,7 +6681,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-24",
@@ -6555,7 +6728,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-25",
@@ -6601,7 +6775,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-26",
@@ -6647,7 +6822,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-27",
@@ -6693,7 +6869,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-28",
@@ -6739,7 +6916,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-29",
@@ -6785,7 +6963,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-30",
@@ -6831,7 +7010,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-31",
@@ -6877,7 +7057,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-32",
@@ -6923,7 +7104,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-33",
@@ -6969,7 +7151,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-34",
@@ -7017,7 +7200,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-35",
@@ -7063,7 +7247,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-36",
@@ -7109,7 +7294,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-37",
@@ -7155,7 +7341,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-38",
@@ -7201,7 +7388,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-39",
@@ -7249,7 +7437,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-40",
@@ -7295,7 +7484,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-41",
@@ -7341,7 +7531,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-42",
@@ -7387,7 +7578,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-43",
@@ -7433,7 +7625,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-44",
@@ -7481,7 +7674,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-45",
@@ -7527,7 +7721,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-46",
@@ -7573,7 +7768,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-47",
@@ -7619,7 +7815,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-48",
@@ -7668,7 +7865,8 @@
       "motivosRevision": [
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga.",
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-49",
@@ -7714,7 +7912,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-50",
@@ -7760,7 +7959,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-51",
@@ -7806,7 +8006,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-52",
@@ -7852,7 +8053,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-53",
@@ -7898,7 +8100,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-54",
@@ -7944,7 +8147,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-55",
@@ -7990,7 +8194,8 @@
       ],
       "muestraExpertos": true,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-56",
@@ -8036,7 +8241,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-57",
@@ -8082,7 +8288,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-58",
@@ -8128,7 +8335,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-59",
@@ -8174,7 +8382,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B3-60",
@@ -8220,7 +8429,8 @@
       ],
       "muestraExpertos": false,
       "revisionPendiente": false,
-      "motivosRevision": []
+      "motivosRevision": [],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-01",
@@ -8268,7 +8478,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-02",
@@ -8316,7 +8527,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-03",
@@ -8364,7 +8576,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-04",
@@ -8412,7 +8625,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-05",
@@ -8460,7 +8674,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-06",
@@ -8508,7 +8723,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-07",
@@ -8556,7 +8772,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-08",
@@ -8604,7 +8821,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-09",
@@ -8652,7 +8870,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-10",
@@ -8700,7 +8919,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-11",
@@ -8748,7 +8968,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-12",
@@ -8796,7 +9017,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-13",
@@ -8844,7 +9066,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-14",
@@ -8892,7 +9115,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-15",
@@ -8940,7 +9164,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-16",
@@ -8988,7 +9213,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-17",
@@ -9036,7 +9262,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-18",
@@ -9084,7 +9311,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-19",
@@ -9132,7 +9360,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-20",
@@ -9180,7 +9409,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-21",
@@ -9228,7 +9458,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-22",
@@ -9276,7 +9507,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-23",
@@ -9324,7 +9556,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-24",
@@ -9372,7 +9605,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-25",
@@ -9421,7 +9655,8 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido.",
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-26",
@@ -9469,7 +9704,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-27",
@@ -9517,7 +9753,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-28",
@@ -9565,7 +9802,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-29",
@@ -9613,7 +9851,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-30",
@@ -9661,7 +9900,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-31",
@@ -9709,7 +9949,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-32",
@@ -9757,7 +9998,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-33",
@@ -9805,7 +10047,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-34",
@@ -9854,7 +10097,8 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido.",
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-35",
@@ -9902,7 +10146,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-36",
@@ -9950,7 +10195,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-37",
@@ -9998,7 +10244,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-38",
@@ -10046,7 +10293,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-39",
@@ -10095,7 +10343,8 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido.",
         "Incluye «short»: Confirmar con los expertos."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-40",
@@ -10143,7 +10392,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-41",
@@ -10191,7 +10441,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-42",
@@ -10239,7 +10490,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-43",
@@ -10287,7 +10539,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-44",
@@ -10335,7 +10588,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-45",
@@ -10383,7 +10637,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-46",
@@ -10431,7 +10686,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-47",
@@ -10480,7 +10736,8 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido.",
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-48",
@@ -10529,7 +10786,8 @@
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido.",
         "Incluye «camión»: Definir si es el autobús urbano o el camión de carga."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-49",
@@ -10577,7 +10835,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-50",
@@ -10625,7 +10884,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-51",
@@ -10673,7 +10933,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-52",
@@ -10721,7 +10982,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-53",
@@ -10769,7 +11031,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-54",
@@ -10817,7 +11080,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-55",
@@ -10865,7 +11129,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-56",
@@ -10913,7 +11178,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-57",
@@ -10961,7 +11227,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-58",
@@ -11009,7 +11276,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-59",
@@ -11057,7 +11325,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT02-B4-60",
@@ -11105,7 +11374,8 @@
       "revisionPendiente": true,
       "motivosRevision": [
         "Confirmar que los distractores de la misma categoría son de aspecto parecido."
-      ]
+      ],
+      "estadoRevision": "sin-revisar"
     },
     {
       "codigo": "ACT07-B1-01",

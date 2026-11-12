@@ -14,9 +14,11 @@ import { elegirPorEmocion, resumenExtra, PRESENTACIONES_MIN } from '../src/activ
 import { PERSONAJES, EMOCIONES, NOMBRE_EMOCION, rostroSVG, pictoEmocionSVG } from '../src/activities/rostros.js';
 import { OPCION_MIN_CM, LUGAR_MIN_CM, anchoDeSerie, espacioMinimo, comprobarPantalla, avisoPantalla } from '../src/ajuste-pantalla.js';
 import { ESCALA_MIN, ESCALA_MAX, escalaGlobo, pausaGuiada } from '../src/pausa-guiada.js';
-import { bloquesDeSesion, indiceDeItems, contextoDeBloque } from '../src/sesiones.js';
+import { bloquesDeSesion, indiceDeItems, contextoDeBloque, tipoDeSesion, participanteDeSesion, lineaReferencia } from '../src/sesiones.js';
 import { itemDeEjemplo, previaHTML } from '../src/previa.js';
-import { maxEnsayos, pareceNombre } from '../src/inicio.js';
+import { maxEnsayos, participanteElegido } from '../src/inicio.js';
+import { DEMO, crearNino, abreviar, nombreNino, participante } from '../src/ninos.js';
+import { REF_MIN_VALIDOS } from '../src/engine/referencia.js';
 import { esc, miniatura } from '../src/html.js';
 import { EQUIPO } from '../src/paginas.js';
 
@@ -407,10 +409,70 @@ test('el número máximo de ensayos sale de la ficha: «Cambia la regla» no pas
   assert.equal(maxEnsayos(ficha('ACT-01'), ficha('ACT-01').bandas[0]), 200);
 });
 
-test('el inicio avisa cuando el código de la sesión parece un nombre', () => {
-  for (const c of ['Juan Pérez', 'MATEO', 'María José', 'Ana', 'O’Brien']) assert.equal(pareceNombre(c), true, c);
-  // Los códigos con números, el de ejemplo y los campos vacíos no avisan.
-  for (const c of ['DEMO', 'demo', 'N07', 'P-012', 'niño 3', 'SOFI_2', 'AB', '', undefined]) assert.equal(pareceNombre(c), false, String(c));
+// ---------- El inicio y las sesiones con el padrón de niños y la referencia motora ----------
+
+test('el inicio no preselecciona a ningún niño: con padrón hay que elegir; sin padrón solo hay demostración', () => {
+  const a = crearNino({ edad_meses: 60 });
+  const b = crearNino({ edad_meses: 72 }, [a]);
+  assert.equal(participanteElegido(undefined, []), DEMO);
+  assert.equal(participanteElegido(undefined, [a, b]), '', 'con niños inscritos se elige de forma deliberada');
+  assert.equal(participanteElegido(b.codigo, [a, b]), b.codigo);
+  assert.equal(participanteElegido(DEMO, [a, b]), DEMO);
+  // Un código que ya no está en el padrón no deja a otro participante elegido en silencio.
+  assert.equal(participanteElegido('f'.repeat(32), [a, b]), '');
+  assert.equal(participanteElegido('f'.repeat(32), []), DEMO);
+});
+
+test('las actividades de uso posterior no se usan con niños: siempre demostración y modo experto', () => {
+  const a = crearNino({ edad_meses: 60 });
+  assert.equal(participanteElegido(a.codigo, [a], true), DEMO);
+  assert.deepEqual(participante(DEMO, true, [a]), { tipo: 'experto', prefijo: 'EXP', codigo: DEMO });
+  const app = texto('src/app.js');
+  assert.match(app, /const valor = state\.session \? state\.session\.valor : forzado \? DEMO : f\.participante;/);
+  assert.match(app, /participante\(valor, state\.session \? state\.session\.experto : forzado \|\| f\.experto === '1', ninos\.rows\(\)\)/);
+});
+
+test('el inicio no tiene ningún campo de texto: ni código libre ni nombre', () => {
+  const inicio = texto('src/inicio.js');
+  assert.doesNotMatch(inicio, /name="codigo"|<textarea|type="(text|email|tel|date|search)"|contenteditable/i);
+  assert.match(inicio, /<select name="participante"/);
+  // La única entrada que se escribe es el número de ensayos.
+  assert.deepEqual([...inicio.matchAll(/<input type="(\w+)"/g)].map((m) => m[1]).filter((t) => !['radio', 'checkbox', 'range'].includes(t)), ['number']);
+});
+
+test('la página de sesiones distingue niño, demostración y modo experto por el prefijo de la sesión', () => {
+  assert.equal(tipoDeSesion('S-1a2b3c4d'), 'nino');
+  assert.equal(tipoDeSesion('DEMO-1a2b3c4d'), 'demo');
+  assert.equal(tipoDeSesion('EXP-1a2b3c4d'), 'experto');
+});
+
+test('la página de sesiones nombra al niño por su ícono y su código abreviado, nunca por un dato personal', () => {
+  const n = crearNino({ edad_meses: 80 });
+  const sesion = { sesion_id: 'S-1a2b3c4d', codigo_nino: n.codigo };
+  assert.equal(participanteDeSesion(sesion, [n]), `${nombreNino(n)} · ${abreviar(n.codigo)}`);
+  // Si el niño ya no está en el padrón de este dispositivo, queda el código abreviado.
+  assert.equal(participanteDeSesion(sesion, []), `código ${abreviar(n.codigo)}`);
+  assert.ok(!participanteDeSesion(sesion, []).includes(n.codigo), 'el código completo no se muestra');
+  // Las sesiones guardadas con una versión anterior conservan su código tal cual.
+  assert.equal(participanteDeSesion({ sesion_id: 'S-00ff00ff', codigo_nino: 'N07' }, [n]), 'código N07');
+  for (const id of ['DEMO-1a2b3c4d', 'EXP-1a2b3c4d']) assert.equal(participanteDeSesion({ sesion_id: id, codigo_nino: DEMO }, [n]), 'sin niño');
+});
+
+test('la página de sesiones describe la referencia motora sin interpretarla', () => {
+  assert.equal(lineaReferencia({ sesion_id: 'EXP-1' }), '', 'el modo experto no tiene referencia');
+  assert.equal(lineaReferencia({ sesion_id: 'S-1', referencia_motora_n: null, referencia_motora_ms: null }), '');
+  assert.equal(
+    lineaReferencia({ referencia_motora_ms: 512.4, referencia_motora_n: 6, referencia_motora_anticipados: 0 }),
+    'referencia motora: mediana de 512 ms en 6 toques válidos',
+  );
+  assert.equal(
+    lineaReferencia({ referencia_motora_ms: 480, referencia_motora_n: 5, referencia_motora_anticipados: 2 }),
+    'referencia motora: mediana de 480 ms en 5 toques válidos; 2 toques anticipados, que no cuentan',
+  );
+  assert.equal(
+    lineaReferencia({ referencia_motora_ms: null, referencia_motora_n: 3, referencia_motora_anticipados: 1 }),
+    `referencia motora no disponible (3 toques válidos de los ${REF_MIN_VALIDOS} necesarios; 1 toque anticipado, que no cuenta)`,
+  );
 });
 
 // ---------- Utilidades y créditos ----------

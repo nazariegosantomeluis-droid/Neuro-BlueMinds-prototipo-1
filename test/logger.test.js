@@ -25,7 +25,8 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',
     'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
-    'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia', 'referencia_motora_ms',
+    'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia',
+    'referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques',
   ]);
 });
 

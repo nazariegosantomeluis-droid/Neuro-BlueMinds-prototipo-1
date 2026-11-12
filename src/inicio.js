@@ -4,6 +4,8 @@ import { esc, navHTML, tituloHTML, chipHTML } from './paginas.js';
 import { EN_UNA_LINEA, ESQUEMAS, PANTALLAS, grupos, requiereModoExperto } from './catalogo.js';
 import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
+import { DEMO, nombreNino, abreviar } from './ninos.js';
+import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
 
 export const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 
@@ -27,17 +29,20 @@ function revisarEnsayos(form, enfocar) {
   return ok;
 }
 
+// Con niños inscritos hay que elegir al participante antes de empezar; el aviso queda junto al campo.
+function revisarParticipante(form, enfocar) {
+  const campo = form.participante;
+  if (!campo || campo.disabled) return true;
+  const ok = campo.value !== '';
+  form.querySelector('#participante-error').textContent = ok ? '' : ELIGE_PARTICIPANTE;
+  if (ok) campo.removeAttribute('aria-invalid');
+  else campo.setAttribute('aria-invalid', 'true');
+  if (!ok && enfocar) campo.focus();
+  return ok;
+}
+
 // Píxeles por centímetro que usa la hoja de estilos (variable --cm).
 const cmPx = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cm')) || 37.8;
-
-// El código de la sesión nunca debe ser el nombre del niño. Un código hecho solo de letras
-// puede serlo: se avisa, sin impedir que el adulto siga. «DEMO» es el código de ejemplo.
-export function pareceNombre(codigo) {
-  const c = String(codigo ?? '').trim();
-  return c.length >= 3 && c.toUpperCase() !== 'DEMO' && /^\p{L}[\p{L} .'’-]*$/u.test(c);
-}
-const avisoDeCodigo = (codigo) =>
-  pareceNombre(codigo) ? `«${codigo.trim()}» no lleva números. Si es el nombre del niño, cámbialo por un código que no lo identifique, por ejemplo N07.` : '';
 
 // ¿Cabe la banda en esta ventana? Devuelve el aviso para el adulto, o '' si cabe.
 export function avisoDeAjuste(ficha, banda) {
@@ -144,28 +149,59 @@ function bloqueHTML(ficha, f, volumen) {
 
 // ---------- Paso 3: sesión ----------
 
-function sesionHTML(state, f, forzado) {
+// Quién participa: un niño del padrón (ninos.js) o la demostración, sin niño. No hay ningún campo
+// de texto: la tableta no guarda nada que diga quién es el niño.
+const quien = (s) => (s.nino ? `${nombreNino(s.nino)} · ${abreviar(s.nino.codigo)}` : 'sin niño');
+const tipoDeSesion = (s) => (s.experto ? 'Sesión de modo experto' : s.tipo === 'demo' ? 'Sesión de demostración' : 'Sesión en curso');
+const CONSENTIMIENTO_NO_VIGENTE = { suspendido: ' · consentimiento suspendido', retirado: ' · consentimiento retirado' };
+const ELIGE_PARTICIPANTE = 'Elige al niño o la demostración.';
+const NOTA_REFERENCIA = `La sesión empieza con la referencia motora: antes del primer bloque, el niño toca un círculo que aparece de ${REF_MIN_APARICIONES} a ${REF_MAX_APARICIONES} veces.`;
+
+// Lo elegido en el inicio, si sigue siendo válido. Con niños inscritos hay que elegir de forma
+// deliberada (R6): no hay ninguno preseleccionado. Sin ellos solo existe la demostración.
+export function participanteElegido(valor, padron, forzado = false) {
+  if (forzado) return DEMO;
+  if (valor === DEMO || padron.some((n) => n.codigo === valor)) return valor;
+  return padron.length ? '' : DEMO;
+}
+
+function sesionHTML(state, f, forzado, padron) {
   const s = state.session;
+  const elegido = participanteElegido(f.participante, padron, forzado);
+  const opcionNino = (n) =>
+    `<option value="${esc(n.codigo)}" ${elegido === n.codigo ? 'selected' : ''}>${esc(nombreNino(n))} · ${esc(abreviar(n.codigo))} · ${esc(n.edad_meses)} meses${CONSENTIMIENTO_NO_VIGENTE[n.consentimiento] ?? ''}</option>`;
+  // Las actividades de uso posterior no se usan con niños: solo demostración y modo experto.
+  const participante = forzado
+    ? `<label>Participante
+         <select name="participante" disabled><option value="${DEMO}" selected>Demostración (sin niño)</option></select>
+         <span class="ayuda">Las actividades de uso posterior solo se abren en la demostración, sin niño.</span>
+       </label>`
+    : `<label>Participante
+         <select name="participante" aria-describedby="participante-ayuda participante-error">
+           ${padron.length ? `<option value="" ${elegido === '' ? 'selected' : ''} disabled>Elige al niño o la demostración</option>` : ''}
+           <option value="${DEMO}" ${elegido === DEMO ? 'selected' : ''}>Demostración (sin niño)</option>
+           ${padron.map(opcionNino).join('')}
+         </select>
+         <span class="ayuda" id="participante-ayuda">Los niños se inscriben en <a href="#ninos">Niños inscritos</a>. No se guarda su nombre ni ningún otro dato que lo identifique.</span>
+         <span class="error-campo" id="participante-error"></span>
+       </label>`;
   const experto = forzado
     ? `<label class="casilla"><input type="checkbox" name="experto" value="1" checked disabled> Modo experto
          <span class="ayuda">Esta actividad es de uso posterior: solo se abre en modo experto. Sus registros llevan un sesion_id que empieza con EXP-.</span>
        </label>`
-    : `<label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto
-         <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. Sus registros llevan un sesion_id que empieza con EXP-.</span>
+    : `<label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto (solo en la demostración)
+         <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. No hace la referencia motora. Sus registros llevan un sesion_id que empieza con EXP-.</span>
        </label>`;
   return `
     <div class="grupo paso" role="group" aria-labelledby="grupo-sesion">
       ${paso(3, 'grupo-sesion', 'Sesión')}
       ${
         s
-          ? `<div class="sesion-actual"><p class="meta">${s.experto ? 'Sesión de modo experto' : 'Sesión en curso'} <strong>${esc(s.id)}</strong> · código ${esc(s.codigo)} · bloques: ${s.bloque}</p>
+          ? `<div class="sesion-actual"><p class="meta">${tipoDeSesion(s)} <strong>${esc(s.id)}</strong> · ${esc(quien(s))} · bloques: ${s.bloque}</p>
              <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
-          : `<label>Código del niño (opcional)
-               <input name="codigo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(f.codigo ?? 'DEMO')}">
-               <span class="ayuda">Usa un código, nunca el nombre ni otro dato que identifique al niño.</span>
-             </label>
-             <p class="nota-pantalla" id="aviso-codigo" role="status" ${avisoDeCodigo(f.codigo) ? '' : 'hidden'}>${esc(avisoDeCodigo(f.codigo))}</p>
-             ${experto}`
+          : `${participante}
+             ${experto}
+             <p class="ayuda" id="nota-referencia" ${forzado || f.experto ? 'hidden' : ''}>${esc(NOTA_REFERENCIA)}</p>`
       }
     </div>`;
 }
@@ -185,7 +221,7 @@ const resumenAjustes = (banda, modalidad, ensayos) => `Banda ${banda.id} · moda
 
 // ---------- Pantalla ----------
 
-// ctx: { state, volumen, calibrada, registroHTML, bindRegistro, bindVolumen, cerrarSesion, empezar, desbloquearAudio }
+// ctx: { state, volumen, calibrada, padron, avisoSinRevision, registroHTML, bindRegistro, bindVolumen, cerrarSesion, empezar, desbloquearAudio }
 export function renderInicio(app, ctx, msg = '') {
   const { state } = ctx;
   const f = state.form;
@@ -198,6 +234,9 @@ export function renderInicio(app, ctx, msg = '') {
   const forzado = lista && deUsoPosterior;
   const banda0 = lista ? (ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0]) : null;
   const modalidad0 = lista ? (ficha.modalidades.includes(f.modalidad) ? f.modalidad : ficha.modalidades[0]) : null;
+  const padron = ctx.padron();
+  // Mientras la ficha no tenga revisor y fecha, la actividad solo sirve para demostración y pruebas.
+  const sinRevision = lista ? ctx.avisoSinRevision(ficha) : '';
 
   app.innerHTML = `
     <div class="adulto medio">
@@ -210,6 +249,7 @@ export function renderInicio(app, ctx, msg = '') {
           ${paso(1, 'grupo-actividad', 'Actividad')}
           ${actividadesHTML({ state, actual: actividad })}
           ${problemas.length ? `<div class="problemas" role="alert">Esta actividad no se puede usar:<ul>${problemas.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>` : ''}
+          ${sinRevision ? `<p class="aviso" id="sin-revision">${esc(sinRevision)}</p>` : ''}
         </div>
         ${
           lista
@@ -217,7 +257,7 @@ export function renderInicio(app, ctx, msg = '') {
                  ${paso(2, 'grupo-bloque', 'Ajustes del bloque')}
                  ${bloqueHTML(ficha, f, ctx.volumen())}
                </div>
-               ${sesionHTML(state, f, forzado)}`
+               ${sesionHTML(state, f, forzado, padron)}`
             : ''
         }
         <p class="mensaje" role="alert">${esc(msg)}</p>
@@ -261,16 +301,17 @@ export function renderInicio(app, ctx, msg = '') {
   const form = app.querySelector('#inicio');
   const elegida = () => ficha.bandas.find((b) => b.id === form.banda.value) ?? ficha.bandas[0];
 
-  // Al cambiar de actividad se conservan la modalidad, el código y el modo experto ya elegidos.
+  // Al cambiar de actividad se conservan la modalidad, el participante y el modo experto ya elegidos.
+  // En una actividad de uso posterior esos dos controles van fijos y se conserva lo de antes.
   for (const r of form.querySelectorAll('[name=actividad]')) {
     r.onchange = () => {
       const d = Object.fromEntries(new FormData(form));
-      const casilla = form.querySelector('[name=experto]');
+      const libres = Boolean(form.participante) && !forzado;
       state.form = {
         actividad: d.actividad,
         modalidad: d.modalidad ?? f.modalidad,
-        codigo: d.codigo ?? f.codigo,
-        experto: casilla && !casilla.disabled ? d.experto : f.experto,
+        participante: libres ? d.participante : f.participante,
+        experto: libres ? d.experto : f.experto,
       };
       renderInicio(app, ctx);
       app.querySelector('[name=actividad]:checked')?.focus();
@@ -308,19 +349,27 @@ export function renderInicio(app, ctx, msg = '') {
       form.querySelector('#resumen-ajustes').textContent = resumenAjustes(elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
     };
   }
-  // El aviso del código acompaña a lo que se escribe; no bloquea.
-  form.codigo?.addEventListener('input', () => {
-    const aviso = form.querySelector('#aviso-codigo');
-    aviso.textContent = avisoDeCodigo(form.codigo.value);
-    aviso.hidden = !aviso.textContent;
+  // El modo experto solo existe en la demostración, sin niño. Con modo experto no hay referencia motora.
+  const casillaExperto = form.querySelector('[name=experto]');
+  const sincronizarExperto = () => {
+    if (!form.participante || !casillaExperto || forzado) return;
+    casillaExperto.disabled = form.participante.value !== DEMO;
+    if (casillaExperto.disabled) casillaExperto.checked = false;
+    form.querySelector('#nota-referencia').hidden = casillaExperto.checked;
+  };
+  form.participante?.addEventListener('change', () => {
+    revisarParticipante(form, false);
+    sincronizarExperto();
   });
+  casillaExperto?.addEventListener('change', sincronizarExperto);
+  sincronizarExperto();
   form.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     ctx.cerrarSesion();
     renderInicio(app, ctx);
   });
   form.onsubmit = (e) => {
     e.preventDefault();
-    if (!lista || !revisarEnsayos(form, true)) return;
+    if (!lista || !revisarEnsayos(form, true) || !revisarParticipante(form, true)) return;
     ctx.desbloquearAudio(); // dentro del gesto del adulto
     const boton = form.querySelector('[type=submit]');
     boton.disabled = true; // un solo bloque aunque se toque dos veces

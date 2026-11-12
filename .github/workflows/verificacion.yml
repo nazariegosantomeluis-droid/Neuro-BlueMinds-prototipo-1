@@ -1,0 +1,42 @@
+# Verificación de cada cambio (hoja de ruta, H8.1; Arquitectura y software, sección 15):
+# pruebas, archivos y licencias del banco, y que el banco generado coincida con el del
+# repositorio. Corre en cada envío a cualquier rama y en cada pull request.
+name: verificacion
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verificacion:
+    name: Verificación (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Pruebas
+        run: npm test
+
+      - name: Archivos y licencias del banco
+        run: npm run check-items
+
+      - name: El banco generado coincide con el del repositorio
+        run: |
+          node tools/build-items.mjs
+          cambios="$(git status --porcelain -- items assets)"
+          if [ -n "$cambios" ]; then
+            echo "El banco de ítems no está al día. Corre node tools/build-items.mjs y sube el resultado:"
+            echo "$cambios"
+            exit 1
+          fi

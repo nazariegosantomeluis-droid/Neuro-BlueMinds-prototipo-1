@@ -1,5 +1,7 @@
 # AutiPal · Prototipo E13
 
+[![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
+
 AutiPal es la aplicación de Neuro-BlueMinds. Herramienta de apoyo y medición para terapeutas que trabajan con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
 
 > **Prototipo para revisión de expertos. No es una herramienta diagnóstica.**
@@ -49,7 +51,7 @@ En las fichas de uso posterior, el paradigma, la mecánica, las bandas, la evide
 ## Privacidad
 
 - Sin cuentas, sin inicio de sesión, sin servidor y sin analítica.
-- No se pide nombre, fecha de nacimiento, correo ni ningún dato que identifique al niño. Solo un código libre opcional (por defecto `DEMO`).
+- En la tableta no existe nada que permita saber quién es el niño real: no se pide ni se guarda nombre, fecha de nacimiento, correo ni ningún dato que lo identifique. El niño es un código seudónimo aleatorio de 128 bits, con un ícono y un color para confirmar que es el correcto, su edad en meses y su estado de consentimiento. La relación entre el código y el niño la lleva el investigador fuera de la aplicación (Arquitectura 9.1).
 - El registro se guarda únicamente en el navegador del dispositivo y se descarga como CSV o JSON. Nada se envía a ningún servidor.
 
 ## Cómo correrlo localmente
@@ -64,27 +66,36 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 ## Uso
 
-1. **Inicio (para el adulto).** Tiene tres pasos: la actividad; los ajustes del bloque (modalidad, banda inicial y número de ensayos, y el volumen en AV), y la sesión (un código opcional del niño, nunca el nombre, y el modo experto). Después se toca «Empezar», en la barra de abajo, que siempre está a la vista.
+1. **Inicio (para el adulto).** Tiene tres pasos: la actividad; los ajustes del bloque (modalidad, banda inicial y número de ensayos, y el volumen en AV), y la sesión (el participante y el modo experto). El participante es un niño inscrito (ver «Niños inscritos», más abajo) o la demostración, sin niño; no hay ningún campo de texto. Después se toca «Empezar», en la barra de abajo, que siempre está a la vista.
    - «Así lo verá el niño» dibuja en chico un ítem de ejemplo de la banda elegida.
-   - Si el código está hecho solo de letras, se avisa por si fuera un nombre.
    - Si las opciones de la banda no caben en la pantalla a 2 cm, se avisa antes de empezar. El adulto puede volver o continuar de todos modos.
-2. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
+   - Con niños inscritos hay que elegir a uno de forma deliberada; no hay ninguno preseleccionado.
+   - Con un niño, antes del primer bloque aparece «¿Es este niño?» con su ícono y su color; hay que confirmar.
+   - El consentimiento se comprueba al empezar cada bloque: si no está vigente, no se inicia.
+   - Mientras la ficha de la actividad no tenga revisión clínica registrada, el inicio avisa que solo sirve para demostración y pruebas.
+2. **Referencia motora.** Al empezar cada sesión, antes del primer bloque, aparece un círculo liso en una celda de la pantalla (4 columnas por 3 filas) de 6 a 8 veces, con esperas de 800 a 1,500 ms, y el niño lo toca. La mediana de esos tiempos queda en `sesiones.csv` (`referencia_motora_ms`) y se reporta junto a la latencia de las actividades: no se resta.
+   - Se hace en las sesiones con niño y en la demostración; **no** en el modo experto.
+   - Si el niño no lo toca, el objetivo permanece 5 s y se registra como omisión. Ese tiempo es un valor de planeación, **por confirmar con los clínicos** (Arquitectura 4.6 no lo fija).
+   - Los toques de menos de 150 ms (anticipatorios, el mismo umbral del Modelo matemático 3.3) se registran con su marca, se cuentan aparte y no entran en la mediana ni en el mínimo.
+   - Con menos de 5 toques válidos la referencia queda «no disponible» (`referencia_motora_ms` vacía) y la sesión continúa.
+   - La pausa del terapeuta funciona igual: descarta la aparición en curso, que no se repite. Si se termina desde ahí, la sesión termina sin bloques.
+3. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
    - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
    - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se elige el motivo de una lista y se puede agregar una nota breve (sin nombres ni datos personales).
-3. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
-4. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). «Qué no se puede concluir de este bloque» abre las lecturas no permitidas de la ficha. Desde el resumen se inicia otro bloque de la misma sesión o se termina la sesión.
+4. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
+5. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). «Qué no se puede concluir de este bloque» abre las lecturas no permitidas de la ficha. Desde el resumen se inicia otro bloque de la misma sesión o se termina la sesión.
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
-**Modo experto.** Se activa en el inicio, antes de empezar la sesión. Permite elegir cualquier actividad, banda y modalidad.
+**Modo experto.** Se activa en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad. No hace la referencia motora.
 - Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
 - El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
 - Sus registros llevan un `sesion_id` que empieza con `EXP-`.
-- Las actividades de uso posterior lo exigen: al elegir una, la casilla queda marcada y no se puede quitar. Si hay una sesión normal en curso, hay que terminarla antes.
+- Las actividades de uso posterior lo exigen: al elegir una, el participante queda fijo en la demostración y la casilla queda marcada; ninguno de los dos se puede cambiar. Si hay una sesión con niño o de demostración en curso, hay que terminarla antes.
 
-**Sesiones** (`#sesiones`). Lista las sesiones guardadas en el dispositivo, de la más reciente a la más antigua: fecha, código, número de ensayos, pausas y, de cada bloque, el mismo resumen descriptivo del fin de bloque. Cada sesión se descarga aparte (`sesion-<sesion_id>.csv`, con las columnas del registro por ensayo). El registro completo se sigue descargando desde ahí o desde el inicio.
+**Sesiones** (`#sesiones`). Lista las sesiones guardadas en el dispositivo, de la más reciente a la más antigua: fecha, tipo (con niño, demostración o modo experto), el niño por su ícono y su código abreviado, número de ensayos, la referencia motora, pausas y, de cada bloque, el mismo resumen descriptivo del fin de bloque. Cada sesión se descarga aparte (`sesion-<sesion_id>.csv`, con las columnas del registro por ensayo). El registro completo se sigue descargando desde ahí o desde el inicio.
 
 **Pausa guiada** (`#pausa`, ACT-17). Un globo que se infla y se desinfla despacio, para acompañar una pausa de regulación. No mide nada.
 - La inicia solo el terapeuta: desde el inicio o desde el panel de pausa de un bloque («Pausa guiada con el globo»). La aplicación nunca la propone ni la inicia sola.
@@ -97,6 +108,15 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Si [`config/enlaces.json`](config/enlaces.json) tiene el campo `formularioF3`, la galería muestra el botón «Calificar en el formulario F3», que abre ese enlace en otra pestaña. Sin el archivo (o sin el campo), no se muestra nada.
 
 **Revisión clínica** (`#revision`). Dos clínicos califican los ítems de muestra antes del panel de expertos. Ver [Revisión clínica](#revisión-clínica).
+
+**Niños inscritos** (`#ninos`). Es el padrón local del prototipo; en el estudio lo entrega el servidor (hoja de ruta, H7.4) y el terapeuta no cambia el consentimiento. La pantalla lo dice en una línea: la tableta no guarda quién es cada niño.
+- Para inscribir solo se pide la edad en meses (de 48 a 131, es decir, de 4 a 10 años) y si la familia autorizó el video. El código, el ícono y el color los asigna la aplicación. No hay ningún campo de texto.
+- El código tiene 128 bits (32 caracteres hexadecimales) y se muestra abreviado (por ejemplo, `7F3A-91C2`). El código completo está en cada fila, para que el investigador lo anote fuera de la aplicación; el registro guarda siempre el completo.
+- El ícono es una forma (círculo, cuadrado, triángulo, estrella, rombo, corazón, luna o hexágono) con un color de una paleta apta para daltonismo. Mientras haya formas sin usar no se repite ninguna, así que la forma identifica al niño aunque no se distinga el color.
+- El consentimiento es `vigente`, `suspendido` o `retirado`. Un niño nuevo queda vigente. Suspendido puede volver a vigente; retirado no se revierte en la tableta. Solo con consentimiento vigente se puede iniciar una sesión.
+- El padrón se guarda en el navegador del dispositivo y no se borra con «Borrar registro».
+- Las sesiones empiezan con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto).
+- No incluye todavía lo que decide la familia al retirar el consentimiento (conservar o eliminar los datos): necesita el servidor.
 
 **Calibración** (`#calibracion`). Se hace una vez en cada dispositivo, antes de la primera sesión: se pone una regla física sobre la regla de 5 cm de la pantalla y se ajusta hasta que coincidan. Ver [Accesibilidad y seguridad sensorial](#accesibilidad-y-seguridad-sensorial).
 
@@ -152,6 +172,35 @@ Escribe `revision-consolidada.csv` en la carpeta actual, con una fila por ítem:
   - `Revisar en reunión` si alguno pide retirar o si a algún revisor le falta el ítem.
 - **Decisiones** (camión, short, tortilla): la opción elegida si todos coinciden; si no, `Revisar en reunión`.
 
+**Aplicar la revisión al banco.** Primero se resuelven en una reunión con los clínicos los casos `Revisar en reunión`, y la decisión acordada se escribe en la columna `decision` de `revision-consolidada.csv`: `Aprobado`, `Corregir` o `Retirar` en los ítems y las figuras, y la opción elegida en las decisiones. Después:
+
+```
+node tools/aplicar-revision.mjs revision-consolidada.csv \
+  --revisor "AB=Nombre Apellido, terapia de lenguaje" \
+  --revisor "CD=Nombre Apellido, psicología" \
+  --fecha 2026-11-15
+```
+
+- Hay un `--revisor` por cada columna de iniciales del CSV, con el nombre completo y la profesión (el CSV solo trae las iniciales). La fecha es la de la revisión; si se omite, se usa la de hoy.
+- Con `--prueba` muestra el resumen sin escribir nada.
+- No aplica nada mientras quede un caso sin decisión final, falte el nombre de un revisor o el CSV mencione un ítem que no existe.
+
+Qué hace:
+
+- Escribe [`items/revision.json`](items/revision.json): el estado de cada ítem revisado (`aprobado`, `corregir` o `retirado`), con sus problemas, los comentarios de cada revisor y la fecha; el de las figuras de ACT-07; las tres decisiones, y las rondas de revisión. Una segunda ronda sustituye solo los ítems que revisa.
+- Anota en la ficha de cada actividad revisada el revisor y la fecha (`revisionClinica`), sin cambiar nada más.
+- Regenera `items/items.json`: cada ítem de ACT-01 y ACT-02 lleva `estadoRevision`.
+- Muestra un resumen: cuántos ítems quedan en cada estado, los retirados y por corregir con sus motivos, y las decisiones.
+
+Efecto en la aplicación:
+
+- **Retirado:** el ítem no se usa en ninguna sesión, aunque siga en el banco y en la galería. Solo se retira ese ítem. Si el motivo apunta al concepto o a su imagen («Imagen poco reconocible», «No adecuado para niños de México», «Molesto o aversivo»), el resumen lo señala para decidir si se retira el concepto completo; eso se hace en `conceptos.json`.
+- **Por corregir:** sigue en las sesiones mientras se corrige (por ejemplo, otra fotografía). Una vez corregido, vuelve a revisarse en una ronda nueva.
+- **Sin revisión clínica:** los ítems fuera de la muestra (200 de 270). Arquitectura 13.4 pide revisar cada ítem antes del estudio; queda pendiente una ronda con el resto del banco.
+- **Figuras de ACT-07 y decisiones:** se registran, pero no cambian nada solas. Cambiar figuras, colores, conceptos o pictogramas es una decisión clínica y se hace aparte, en la ficha o en `conceptos.json`.
+- La galería muestra el estado de cada ítem, las notas de los clínicos y, en ACT-07, el estado de las figuras; se puede filtrar por estado (`#galeria?actividad=ACT-02&estado=retirado&todos=1`).
+- Mientras una ficha no tenga revisor y fecha, el inicio avisa que la actividad solo sirve para demostración. Arquitectura 4.4 pide que la aplicación se niegue a cargarla; ese bloqueo se activará con el modo de fase del estudio (hoja de ruta, H2.3), para no impedir las demostraciones.
+
 ## Formulario F3 de validez de contenido
 
 `#formulario` es el formato F3 con el que el panel de expertos califica las tres actividades del piloto (Catálogo, sección 2.3). Cualquier persona con el enlace puede llenarlo, sin cuenta:
@@ -193,11 +242,21 @@ npm test
 - las secuencias de ACT-07 y `check-items`;
 - los requisitos de tamaño y movimiento de la hoja de estilos;
 - fuera de tarea y la frecuencia de la pantalla;
-- la exportación de la revisión clínica y la regla para unir revisiones;
+- la referencia motora con tiempo simulado: plan de 6 a 8 apariciones, esperas, mediana, toques anticipatorios, mínimo de 5 toques válidos, permanencia, toques fuera, pausa y terminar;
+- el padrón de niños: código de 128 bits, ícono y color sin repetirse, edad, consentimiento, quién puede participar y que el padrón no tiene ni puede recibir un dato que identifique al niño;
+- la exportación de la revisión clínica, la regla para unir revisiones y su aplicación al banco (con el CSV de ejemplo `test/revision-consolidada-ejemplo.csv`): estados, casos sin resolver, rondas, fichas anotadas y que ningún ítem retirado entre en una sesión.
 - el Catálogo y las actividades de uso posterior (`test/catalogo.test.js`, `test/posteriores.test.js` y `test/pantallas.test.js`): el índice de las 17 actividades, las fichas nuevas, las reglas de su banco de ítems, las mismas reglas de tamaño y movimiento en sus pantallas, el aviso de tamaño de pantalla, la pausa guiada, la página de sesiones y la vista previa del inicio;
 - la página de producto (`pagina-producto/pagina.test.js` y `novedades.test.js`): que sus números coincidan con las fichas, con las columnas del registro, con el Catálogo y con el número de pruebas; que no cargue nada de servidores externos; que respete las reglas de movimiento, y que la pantalla de las bandas use los ítems del banco.
 
 Antes de publicar, corre también `npm run check-items`.
+
+**Verificación automática.** En cada envío a cualquier rama y en cada pull request, GitHub Actions ([`.github/workflows/verificacion.yml`](.github/workflows/verificacion.yml)) corre, en Node 20 y 22:
+
+1. `npm test`;
+2. `npm run check-items`;
+3. `node tools/build-items.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano.
+
+El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
 
 ## Arquitectura
 
@@ -216,7 +275,12 @@ src/pausa-guiada.js           Pausa guiada (ACT-17): el globo
 src/html.js                   Utilidades de HTML
 src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
+src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
 src/revision.css              Estilos de la revisión clínica
+src/ninos.js                  Padrón de niños: código, ícono, color, edad y consentimiento
+src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
+src/ninos.css                 Estilos del padrón
+src/referencia.css            Estilos del objetivo de la referencia motora
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/enlaces.js                Botón del formulario F3 en la galería
 src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
@@ -227,6 +291,7 @@ src/engine/audio.js           Audio de las consignas: Web Audio y voz del navega
 src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
 src/engine/selector.js        Selección de ítems por banda, con semilla
 src/engine/quality.js         Reglas de calidad y resumen descriptivo
+src/engine/referencia.js      Referencia motora: plan, ejecución y resumen
 src/engine/ficha.js           Carga y validación de fichas
 src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
@@ -237,6 +302,7 @@ src/activities/demora.js      Muestra que desaparece y opciones (ACT-09)
 src/activities/patron.js      Serie de figuras y opciones (ACT-11)
 src/activities/emociones.js   Rostro y pictogramas de emoción (ACT-14)
 src/activities/rostros.js     Rostros y pictogramas de emoción, dibujados con código
+src/activities/referencia.js  Pantalla del objetivo de la referencia motora
 fichas/                       Ficha técnica de cada actividad (JSON) y catalogo.json
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
@@ -246,9 +312,11 @@ tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
+tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
 assets/                       Imágenes, pictogramas, audios, tipografías (fonts/) y marca (marca/)
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)
+.github/workflows/            Verificación automática en GitHub Actions
 ```
 
 Cada tipo de pantalla (`src/activities/`) aporta dos funciones: `toTrials` convierte los ítems de un bloque en ensayos, y `createView` dibuja la consigna, las opciones y la retroalimentación. Todo lo demás (tiempos, toques, audio, registro) lo hace el motor.
@@ -302,7 +370,7 @@ Cada ficha es un archivo JSON. La aplicación rechaza cargar una ficha incomplet
 | `lecturasPermitidas` | Qué se puede decir a partir del registro. |
 | `lecturasNoPermitidas` | Qué no se puede concluir. El resumen de la aplicación nunca usa estas frases. |
 | `contraindicaciones` | Cuándo no usar la actividad o cuándo los datos no son interpretables. |
-| `revisionClinica` | `{ "revisor": "", "fecha": "" }`. Vacío hasta que un clínico revise la ficha. |
+| `revisionClinica` | `{ "revisor": "", "fecha": "" }`. Vacío hasta la revisión clínica; lo llena `tools/aplicar-revision.mjs`. |
 
 Campos opcionales que usa el motor:
 
@@ -326,7 +394,7 @@ Campos de las fichas de uso posterior:
 
 [`fichas/ACT-17.json`](fichas/ACT-17.json) es descriptiva: la pausa guiada no tiene bandas ni ensayos, solo ritmos y duraciones.
 
-Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica.
+Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica, y solo lo cambia `tools/aplicar-revision.mjs`.
 
 ### Registro
 
@@ -354,12 +422,12 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 
 | Columna | Contenido |
 |---|---|
-| `sesion_id` | Identificador aleatorio de la sesión. Empieza con `EXP-` en modo experto. |
+| `sesion_id` | Identificador aleatorio de la sesión. Empieza con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto). |
 | `bloque`, `ensayo` | Número de bloque en la sesión y de ensayo en el bloque. |
-| `codigo_nino` | Código libre opcional, por defecto `DEMO`. Nunca el nombre. |
+| `codigo_nino` | Código seudónimo aleatorio de 128 bits (32 caracteres hexadecimales) del niño inscrito; `DEMO` en demostración y en modo experto. |
 | `dispositivo` | userAgent y tamaño de pantalla. |
 | `version_app`, `actividad`, `version_ficha` | Versiones y actividad. |
-| `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) y la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos). |
+| `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos) y los de la referencia motora (6 a 8 apariciones, esperas de 800 a 1,500 ms, permanencia de 5 s —valor de planeación, por confirmar con los clínicos—, anticipatoria de 150 ms y mínimo de 5 toques válidos). Vale `0.3.0`. |
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
 | `modo_fase` | Por ahora siempre `prototipo`. |
@@ -425,7 +493,7 @@ Una fila por sesión, en este orden:
 | `sesion_id`, `codigo_nino`, `dispositivo` | Como en el registro por ensayo. |
 | `inicio`, `fin` | Fecha y hora en ISO 8601, en UTC y con «Z» (por ejemplo, `2026-10-30T02:30:04.785Z`), del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
 | `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
-| `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. Si en esa pausa se usó la pausa guiada, lleva además `pausa_guiada_ms`, lo que duró el globo. Una pausa guiada abierta desde `#pausa` con la sesión en curso queda con `ensayo` vacío. |
+| `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. `bloque` 0 es la referencia motora, y entonces `ensayo` es el número de aparición del objetivo. Si en esa pausa se usó la pausa guiada, lleva además `pausa_guiada_ms`, lo que duró el globo. Una pausa guiada abierta desde `#pausa` con la sesión en curso queda con `ensayo` vacío. |
 | `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
 | `motivo_terminacion` | Motivo elegido al terminar el bloque: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
 | `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
@@ -433,7 +501,10 @@ Una fila por sesión, en este orden:
 | `frecuencia_hz` | Frecuencia de la pantalla: 1000 / mediana de `periodo_cuadro_ms` de la sesión, redondeada. |
 | `proporcion_periodo_lento` | Proporción de ensayos con `periodo_cuadro_ms` mayor de 20 ms. |
 | `advertencia_frecuencia` | `true` si el adulto continuó después del aviso de frecuencia baja. |
-| `referencia_motora_ms` | Vacía por ahora. |
+| `referencia_motora_ms` | Mediana, en ms, del tiempo del toque al objetivo desde el cuadro en que aparece, con los toques válidos. Es bruta (no se le resta la latencia del dispositivo) y se reporta junto a la latencia de las actividades sin restarse. Vacía si hubo menos de 5 toques válidos («no disponible»), en el modo experto o si la sesión se terminó durante la referencia. |
+| `referencia_motora_n` | Toques válidos: con tiempo, sin anticipar y sin pausa. El mínimo para tener referencia es 5. |
+| `referencia_motora_anticipados` | Toques de menos de 150 ms desde la aparición (mismo umbral de respuesta anticipatoria del Modelo matemático 3.3). Se registran y se cuentan aparte; no entran en la mediana ni en el mínimo. |
+| `referencia_motora_toques` | Lista JSON de las 6 a 8 apariciones: `aparicion`, `pos` (celda, por filas), `tr_ms` (vacío si no hubo toque), `x`, `y` (del toque), `anticipatorio`, `omision`, `interrumpida` (pausa) y `fuera`, los toques fuera del objetivo, con `t_ms` respecto de la aparición (o del inicio de la espera si `antes` es verdadero), `x` e `y`. |
 
 ## Banco de ítems
 
@@ -442,7 +513,7 @@ Una fila por sesión, en este orden:
   - mitad (`A` o `B`, para la fase 2);
   - color típico, que es el del dibujo del ejemplar 1;
   - notas, pictograma de ARASAAC y conceptos que nunca aparecen juntos en una pantalla (`excluir`).
-- [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos y de las reglas de bandas de las fichas. El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos o las fichas y se regenera.
+- [`items/items.json`](items/items.json) se genera con `npm run build-items` a partir de los conceptos, de las reglas de bandas de las fichas y de [`items/revision.json`](items/revision.json). El azar usa semillas fijas, así que el resultado es reproducible. No se edita a mano: se cambian los conceptos, las fichas o la revisión y se regenera.
 - Códigos: `ACT01-B2-05` significa actividad, banda y número.
   - ACT-01 tiene 10 ítems por banda.
   - ACT-02 tiene un ítem por concepto y banda; el número sigue el orden de `conceptos.json` (`ACT02-B3-01` a `ACT02-B3-60`). Un bloque de ACT-02 usa 30 conceptos distintos, elegidos al azar. En una misma sesión ningún concepto se repite, aunque cambie la banda: con 60 conceptos caben dos bloques de 30.
@@ -462,9 +533,10 @@ Una fila por sesión, en este orden:
   - los distractores «de aspecto parecido» de B4;
   - el color en ACT-01 B1;
   - los conceptos pendientes (`short`, `camión`).
+- `estadoRevision` (ACT-01 y ACT-02): `sin-revisar`, `aprobado`, `corregir` o `retirado`, según la revisión clínica (ver «Aplicar la revisión al banco»). Los retirados no entran en las sesiones. Las secuencias de ACT-07 no tienen estado propio: sus figuras se revisan en conjunto.
 - Ejemplares: el 1 y el 2 se usan en la práctica; el 3 se reserva para sondas de generalización y no aparece en los ensayos normales.
 
-`npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso y los audios que faltan.
+`npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso, los audios que faltan y cuántos ítems hay en cada estado de revisión clínica.
 
 ### Banco de las actividades de uso posterior
 
@@ -642,7 +714,8 @@ Notas:
 - **Imágenes:** que un clínico revise los 180 dibujos generados con IA (estado `propuesta` en `licencias.csv`).
 - **Audio:** grabar los audios de las consignas (63 claves, ver `npm run check-items`).
 - **Revisión clínica:**
-  - las fichas (`revisionClinica`);
+  - aplicar la revisión de la muestra con `tools/aplicar-revision.mjs` (anota las fichas);
+  - revisar los 200 ítems fuera de la muestra (Arquitectura 13.4);
   - los distractores de B4;
   - el color típico de ACT-01 B1;
   - los conceptos `short` y `camión`.
@@ -657,7 +730,8 @@ Notas:
 - **Versión de la aplicación:** `version_app` sigue en `0.1.0` en el registro. Vive en el motor (`src/engine/logger.js`), que no se tocó; conviene subirla al integrar estos cambios.
 - **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
-- **Latencia de cada tableta y referencia motora:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) y `referencia_motora_ms` quedan vacías hasta medirlas.
+- **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
+- **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.
 - **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
 - **Uso sin conexión:** no está implementado (era opcional en este hito).
 

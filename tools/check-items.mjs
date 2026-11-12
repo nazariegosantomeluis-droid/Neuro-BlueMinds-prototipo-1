@@ -52,8 +52,13 @@ export function checkItems(root = DEFAULT_ROOT) {
     .filter((r) => r.estado === 'revisar' || r.estado === 'pendiente')
     .map((r) => `${r.archivo} (${r.estado}): ${r.notas}`);
 
+  // Estado de la revisión clínica de los ítems con imágenes (ACT-07 no tiene estado por ítem).
+  const revision = {};
+  for (const it of items) if (it.estadoRevision) revision[it.estadoRevision] = (revision[it.estadoRevision] ?? 0) + 1;
+
   return {
     errors: [...errors].sort(),
+    revision,
     warnings,
     placeholders: [...placeholders].sort(),
     missingAudio: [...missingAudio].sort(),
@@ -72,6 +77,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (const [c, ns] of Object.entries(byConcept)) console.log(`  ${c}: ${ns.join(', ')}`);
   console.log(`Audios que faltan (${r.missingAudio.length}); mientras falten se usa la voz del navegador.`);
   for (const a of r.missingAudio) console.log(`  ${a}`);
+  const n = (k) => r.revision[k] ?? 0;
+  console.log(
+    `Revisión clínica de ACT-01 y ACT-02: ${n('aprobado')} aprobados, ${n('corregir')} por corregir, ${n('retirado')} retirados (fuera de las sesiones), ${n('sin-revisar')} sin revisar.`,
+  );
   if (r.warnings.length) console.log(`Para revisar (${r.warnings.length}):`);
   for (const w of r.warnings) console.log(`  ${w}`);
   if (r.errors.length) {
