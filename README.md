@@ -464,10 +464,10 @@ Una fila por sesión, en este orden:
 
 ## Imágenes, pictogramas y audio
 
-**Fotografías.** Por ahora cada ejemplar es un marcador provisional en `assets/img/<concepto>/<n>.svg` (fondo gris con el nombre del concepto y «EJEMPLAR n PENDIENTE»). Para reemplazar uno por una fotografía real con licencia libre:
+**Fotografías.** Por ahora cada ejemplar es un dibujo provisional en `assets/img/<concepto>/<n>.jpg`, hecho con la IA de Canva en la rama `mejoras-autipal`; su fila en `items/licencias.csv` lo dice. Se van a reemplazar por fotografías reales con licencia libre, primero los 92 de los ítems de muestra para expertos. Para reemplazar uno:
 
 1. Guarda la fotografía como `assets/img/<concepto>/<n>.jpg` (también sirven `.png` o `.webp`). El identificador del concepto está en `conceptos.json`; por ejemplo, `cepillo-de-dientes`.
-2. Borra el marcador `.svg` y su fila en `items/licencias.csv`.
+2. Si la fotografía no es `.jpg`, borra el dibujo `.jpg`. Borra también su fila en `items/licencias.csv`.
 3. Agrega la fila de la fotografía en `items/licencias.csv`: origen, autor, licencia y dirección de origen.
 4. Corre `npm run build-items` (el banco pasa a usar la fotografía) y `npm run check-items`.
 
@@ -491,7 +491,7 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
   - No hay animaciones en bucle ni parpadeos.
   - Las únicas transiciones (el marco de retroalimentación y el botón de pausa) duran de 200 a 300 ms y se desactivan con `prefers-reduced-motion`.
   - Las opciones aparecen sin transición y con opacidad completa, para que el cuadro registrado como aparición sea el real. Sus imágenes se decodifican durante la consigna y se insertan ya decodificadas (`decodificacion_ok`).
-- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. Las excepciones son los marcadores provisionales, que muestran el nombre del concepto hasta que lleguen las fotografías, y el código del ítem en modo experto.
+- **Pantalla del niño.** Fondo neutro, sin texto y sin elementos que distraigan. La excepción es el código del ítem en modo experto. Si algún ejemplar volviera a quedar sin imagen, su marcador provisional muestra el nombre del concepto.
 - **Retroalimentación.** Sin sonidos de error, sin la palabra «Incorrecto» y sin recompensas que dependan del desempeño: siempre se señala la opción correcta con el mismo marco.
 - **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
 - **Volumen.** Se ajusta en el inicio y en la pausa.
@@ -514,7 +514,7 @@ Notas:
 
 ## Pendientes
 
-- **Fotografías:** reemplazar los 180 marcadores por fotografías reales con licencia libre.
+- **Fotografías:** reemplazar los 180 dibujos provisionales por fotografías reales con licencia libre, primero los 92 de los ítems de muestra para expertos.
 - **Audio:** grabar los audios de las consignas (63 claves, ver `npm run check-items`).
 - **Revisión clínica:**
   - aplicar la revisión de la muestra con `tools/aplicar-revision.mjs` (anota las fichas);

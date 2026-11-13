@@ -255,7 +255,7 @@ export function renderCreditos(app, { conceptos }) {
       </section>
       <section class="panel">
         <h2>Fotografías y audio</h2>
-        <p>Las imágenes de los ejemplares son marcadores provisionales. Se reemplazarán por fotografías reales con licencia libre. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <p>Por ahora, las imágenes de los ejemplares son dibujos provisionales hechos con la IA de Canva. Se reemplazarán por fotografías reales con licencia libre. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>
