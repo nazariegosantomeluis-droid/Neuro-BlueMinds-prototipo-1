@@ -1,6 +1,6 @@
 {
   "id": "ACT-17",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "tipo": "pausa",
   "nombre": "Pausa guiada",
@@ -28,6 +28,7 @@
     }
   ],
   "registro": "Solo se registra que ocurrió y cuánto duró, en la fila de la sesión. No produce ensayos ni indicadores.",
+  "ensayosExcepcion": "No tiene ensayos: es una pausa sin respuesta evaluable (Arquitectura 4.5).",
   "lecturasNoPermitidas": [
     "Reduce la ansiedad",
     "Trata la hipersensibilidad"
@@ -38,6 +39,10 @@
     "Se detiene si aumenta el malestar."
   ],
   "notaPrototipo": "La mecánica, la duración, la lectura no permitida y las condiciones de uso vienen del Catálogo de actividades (secciones 6 y 7.1). Los dos ritmos y el dibujo del globo son una propuesta para este prototipo.",
+  "pendientesClinicos": [
+    "Aprobar los ritmos, la duración y el dibujo de la pausa.",
+    "Confirmar cómo la ofrece el terapeuta y cómo se registra que el niño la rechazó o se detuvo."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

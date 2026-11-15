@@ -1,6 +1,6 @@
 {
   "id": "ACT-11",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Completa el patrón",
   "objetivo": "Describir si el niño continúa una serie de figuras que sigue una regla, y con qué reglas.",
@@ -63,7 +63,7 @@
     "V",
     "AV"
   ],
-  "ensayosPorBloque": 10,
+  "ensayosPorBloque": 30,
   "itemsPorBanda": 10,
   "repetirItems": true,
   "figuras": [
@@ -90,9 +90,15 @@
     "Cualquier estimación de inteligencia"
   ],
   "contraindicaciones": [
-    "Discapacidad visual no corregida."
+    "Pendiente de decisión clínica."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». Los colores son azul y amarillo, como en «Cambia la regla», para que se distingan con las formas más frecuentes de daltonismo.",
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: quedan pendientes de decisión clínica. Los colores son azul y amarillo, como en «Cambia la regla», para que se distingan con las formas más frecuentes de daltonismo.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar las figuras, los colores y el largo de las series de cada banda.",
+    "Aprobar la consigna en voz.",
+    "Fijar las contraindicaciones: el Catálogo (sección 6.2) no lista ninguna."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

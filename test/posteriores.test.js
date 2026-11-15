@@ -60,7 +60,9 @@ test('cada banda tiene ítems, con el número de opciones de su ficha y una sola
   for (const id of POSTERIORES.filter((x) => !agrupan(x))) {
     for (const b of fichas[id].bandas) {
       const band = of(id, b.id);
-      assert.ok(band.length >= fichas[id].ensayosPorBloque, `${id} ${b.id}: ${band.length} ítems`);
+      // Con menos ítems que ensayos, el bloque los repite (nunca dos veces seguidas): la ficha lo permite.
+      assert.ok(band.length >= 10, `${id} ${b.id}: ${band.length} ítems`);
+      if (band.length < fichas[id].ensayosPorBloque) assert.notEqual(fichas[id].repetirItems, false, `${id} ${b.id}: repite ítems`);
       for (const it of band) {
         assert.equal(it.opciones.length, b.opciones, it.codigo);
         assert.equal(it.opciones.filter((o) => o.correcta).length, 1, it.codigo);
@@ -156,7 +158,7 @@ test('ACT-06: las cajas son fijas, con dos pictogramas de su categoría, y el di
     b.juegos.forEach((cats, juego) => {
       assert.equal(cats.length, b.opciones, `${b.id}, juego ${juego}`);
       const cartas = of('ACT-06', b.id).filter((i) => i.juego === juego);
-      assert.ok(cartas.length >= f.ensayosPorBloque, `${b.id}, juego ${juego}: ${cartas.length} dibujos`);
+      assert.ok(cartas.length >= 10 && f.repetirItems !== false, `${b.id}, juego ${juego}: ${cartas.length} dibujos`);
       const porCat = cats.map((cat) => cartas.filter((i) => byId.get(i.concepto).categoria === cat).length);
       assert.equal(new Set(porCat).size, 1, `${b.id}, juego ${juego}: mismo número de dibujos por caja (${porCat})`);
       for (const it of cartas) {

@@ -1,6 +1,6 @@
 {
   "id": "ACT-15",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Sonidos de las palabras",
   "objetivo": "Describir si el niño reconoce, con palabras habladas e imágenes, las que riman, las que empiezan igual y las que suenan igual.",
@@ -42,7 +42,7 @@
   "modalidades": [
     "AV"
   ],
-  "ensayosPorBloque": 10,
+  "ensayosPorBloque": 30,
   "rimas": [
     [
       "gato",
@@ -190,6 +190,13 @@
     "Discapacidad visual no corregida."
   ],
   "notaPrototipo": "El paradigma, la mecánica general, el criterio de las bandas (tipo de tarea y parecido entre sonidos), la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). Las palabras, las bandas, las figuras de «igual» y «diferente», el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Mientras no exista la voz grabada por una persona hablante nativa, la voz es la del navegador: en el registro queda audio_fuente = sintesis, con un inicio menos preciso. Por eso no se usan sonidos sueltos (como «/m/»), solo palabras completas. Los dibujos son los del banco (ejemplares 1 y 2).",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar las palabras de las rimas, los inicios con la misma sílaba y los pares que cambian en un solo sonido.",
+    "Aprobar las figuras de «igual» y «diferente».",
+    "Grabar la voz de una persona hablante nativa: sin ella la actividad no se usa (la voz del navegador no sirve para esta tarea).",
+    "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

@@ -1,6 +1,6 @@
 {
   "id": "ACT-08",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Busca el objetivo",
   "objetivo": "Describir cómo encuentra el niño un dibujo conocido entre otros, según cuántos hay y cuánto se parecen.",
@@ -46,7 +46,7 @@
     "V",
     "AV"
   ],
-  "ensayosPorBloque": 10,
+  "ensayosPorBloque": 30,
   "itemsPorBanda": 10,
   "repetirItems": true,
   "ejemplar": 1,
@@ -66,9 +66,15 @@
     "Tiene buena atención selectiva"
   ],
   "contraindicaciones": [
-    "Discapacidad visual no corregida."
+    "Pendiente de decisión clínica."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». La pendiente del tiempo según el número de elementos no está definida en el Modelo matemático y no se calcula. Las bandas de 12 y 16 dibujos necesitan una tableta en horizontal.",
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: quedan pendientes de decisión clínica. La pendiente del tiempo según el número de elementos no está definida en el Modelo matemático y no se calcula. Las bandas de 12 y 16 dibujos necesitan una tableta en horizontal.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar qué distractores cuentan como parecidos (de la misma categoría) en B3 y B4.",
+    "Aprobar la consigna en voz.",
+    "Fijar las contraindicaciones: el Catálogo (sección 6.2) no lista ninguna; solo anota que la pendiente del tiempo según el número de elementos no está definida en el Modelo matemático."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

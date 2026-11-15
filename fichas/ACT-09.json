@@ -1,6 +1,6 @@
 {
   "id": "ACT-09",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Recuerda y encuentra",
   "objetivo": "Describir si el niño reconoce un dibujo que vio hace unos segundos, según cuánto dura la espera.",
@@ -46,7 +46,7 @@
   "modalidades": [
     "V"
   ],
-  "ensayosPorBloque": 10,
+  "ensayosPorBloque": 30,
   "itemsPorBanda": 10,
   "repetirItems": true,
   "ejemplar": 1,
@@ -68,6 +68,13 @@
     "La pausa en blanco no debe superar 10 s."
   ],
   "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo gradúa por demora (0, 2, 5 y 10 s) y por número de opciones; cómo se combinan en cada banda es una propuesta. Solo tiene modalidad visual: la pausa se cuenta desde la muestra. La pantalla oculta la muestra a los 2 s; en el motor definitivo ese momento debe quedar en el registro.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar cómo se combinan la demora (0, 2, 5 y 10 s) y el número de opciones en cada banda.",
+    "Aprobar la duración de la muestra (2 s) y la consigna en voz.",
+    "Confirmar que la actividad solo tenga modalidad visual.",
+    "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

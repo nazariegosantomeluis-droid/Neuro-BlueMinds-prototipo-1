@@ -1,6 +1,6 @@
 {
   "id": "ACT-14",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Reconoce la emoción",
   "objetivo": "Describir si el niño relaciona la expresión de un rostro dibujado con el pictograma de su emoción.",
@@ -56,7 +56,7 @@
     "V",
     "AV"
   ],
-  "ensayosPorBloque": 12,
+  "ensayosPorBloque": 40,
   "repetirItems": true,
   "estratificarPor": "emocion",
   "emociones": {
@@ -91,6 +91,13 @@
     "Discapacidad visual no corregida."
   ],
   "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Los rostros y los pictogramas de las emociones se dibujan con código; son una propuesta, con personajes de distinta edad, género y tono de piel. La matriz de confusión del Catálogo necesita al menos 10 presentaciones por emoción: el resumen de un bloque solo cuenta, no interpreta.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar los rostros dibujados con código: personajes, edades, tonos de piel e intensidades.",
+    "Elegir el estilo de los pictogramas de respuesta (lista «estilosPictograma»): no deben poder resolverse copiando la forma de la boca del rostro.",
+    "Falta la banda B4, la emoción a partir de una situación: necesita escenas de situaciones.",
+    "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

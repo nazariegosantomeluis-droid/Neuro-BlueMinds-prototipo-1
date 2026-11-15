@@ -283,7 +283,7 @@ test('el bloque de emociones reparte los ensayos por igual y no repite la misma 
       assert.equal(elegidos.length, f.ensayosPorBloque);
       for (const e of b.emociones) assert.equal(elegidos.filter((i) => i.emocion === e).length, f.ensayosPorBloque / b.emociones.length, `${b.id}: ${e}`);
       elegidos.forEach((it, k) => assert.ok(k < 2 || !(elegidos[k - 1].emocion === it.emocion && elegidos[k - 2].emocion === it.emocion), `${b.id}: tres seguidas`));
-      assert.equal(new Set(elegidos.map((i) => i.codigo)).size, elegidos.length, `${b.id}: sin ítems repetidos mientras alcancen`);
+      assert.equal(new Set(elegidos.map((i) => i.codigo)).size, Math.min(elegidos.length, deBanda.length), `${b.id}: usa todos los ítems antes de repetir`);
       assert.deepEqual(elegirPorEmocion(deBanda, f.ensayosPorBloque, rng(semilla)), elegidos, 'la misma semilla da el mismo bloque');
     }
     // Con más ensayos que ítems, da otra vuelta en lugar de fallar.

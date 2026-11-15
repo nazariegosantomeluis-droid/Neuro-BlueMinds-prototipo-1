@@ -1,6 +1,6 @@
 {
   "id": "ACT-06",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "estado": "Uso posterior",
   "nombre": "Clasifica por categoría",
   "objetivo": "Describir si el niño agrupa dibujos de vocabulario temprano en su categoría, con una regla que no cambia.",
@@ -77,7 +77,7 @@
     "V",
     "AV"
   ],
-  "ensayosPorBloque": 10,
+  "ensayosPorBloque": 30,
   "repetirItems": true,
   "ejemplares": [
     1,
@@ -152,9 +152,16 @@
     "Su pensamiento categorial es…"
   ],
   "contraindicaciones": [
-    "Discapacidad visual no corregida."
+    "Pendiente de decisión clínica."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: se copió la de «Igual a la muestra». Qué ejemplares son típicos o poco típicos y qué pictogramas lleva cada caja es una propuesta.",
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. El Catálogo no lista contraindicaciones para esta actividad: quedan pendientes de decisión clínica. Qué ejemplares son típicos o poco típicos y qué pictogramas lleva cada caja es una propuesta.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar qué ejemplares son típicos y cuáles poco típicos (lista «pocoTipicos»).",
+    "Aprobar los dos pictogramas que lleva cada caja (lista «emblemas»).",
+    "Aprobar la consigna en voz.",
+    "Fijar las contraindicaciones: el Catálogo (sección 6.2) no lista ninguna."
+  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""
