@@ -5,6 +5,7 @@ import { paraExportar } from './engine/quality.js';
 import { lineasDelBloque } from './resumen.js';
 import { REF_MIN_VALIDOS } from './engine/referencia.js';
 import { nombreNino, abreviar } from './ninos.js';
+import { PANTALLAS } from './catalogo.js';
 import { esc, navHTML, tituloHTML } from './paginas.js';
 
 
@@ -58,8 +59,9 @@ export function bloquesDeSesion(rows) {
   return [...porBloque.entries()].sort(([a], [b]) => a - b).map(([bloque, filas]) => ({ bloque, filas }));
 }
 
-// Índice del banco por código de ensayo. Los ítems de «Cambia la regla» agrupan los ensayos de
-// una secuencia; ahí el registro guarda el código de cada ensayo.
+// Índice del banco por código de ensayo. Algunos ítems agrupan varios ensayos: las secuencias de
+// «Cambia la regla», los pasos de «Ordena la secuencia» y «Forma la palabra», y los programas de
+// «Elige y descubre» y «Espera la señal». Ahí el registro guarda el código de cada ensayo.
 export function indiceDeItems(items) {
   const indice = new Map();
   for (const it of items) {
@@ -70,25 +72,33 @@ export function indiceDeItems(items) {
 }
 
 // Lo que el resumen de un bloque necesita y el registro no guarda: en qué ensayos cambió la
-// regla (ACT-07). Se reconstruye con el banco de ítems.
-export function contextoDeBloque(filas, ficha, indice) {
+// regla (ACT-07) y las líneas propias de la actividad (ACT-14: por emoción). Se reconstruye con
+// el banco de ítems; si algún ítem ya no está en el banco, esas líneas se omiten.
+export function contextoDeBloque(filas, ficha, indice, { previas = [] } = {}) {
   const reglas = filas.map((r) => indice.get(r.item)?.regla ?? null);
   const cambiaron = new Set(filas.filter((r, k) => k > 0 && reglas[k] && reglas[k - 1] && reglas[k] !== reglas[k - 1]));
-  return { cambio: (r) => cambiaron.has(r) };
+  const completo = filas.every((r) => indice.has(r.item));
+  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice, ficha, { previas })) || [];
+  return { cambio: (r) => cambiaron.has(r), extra };
 }
 
-// Las líneas del resumen de un bloque guardado, iguales a las del fin de bloque.
-export function lineasDeBloque(filas, ficha, indice) {
-  return lineasDelBloque(filas, ficha, contextoDeBloque(filas, ficha, indice));
+// Las líneas del resumen de un bloque guardado. Una pantalla con resumen propio solo lo usa si
+// todos sus ítems siguen en el banco; si no, quedan las líneas del motor.
+export function lineasDeBloque(filas, ficha, indice, { previas = [] } = {}) {
+  const mod = PANTALLAS[ficha.pantalla];
+  const completo = filas.every((r) => indice.has(r.item));
+  if (completo && mod?.resumen) return lineasDelBloque(filas, ficha, mod, indice);
+  const { cambio, extra } = contextoDeBloque(filas, ficha, indice, { previas });
+  return [...lineasDelBloque(filas, ficha, null, indice, { cambio }), ...extra];
 }
 
-function bloqueHTML({ bloque, filas }, sesion, fichas, indice) {
+function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = []) {
   const [r] = filas;
   const ficha = fichas[r.actividad];
   const nivel = sesion.nivel_apoyo?.find((n) => n.bloque === bloque)?.nivel;
   // Sin la ficha (por ejemplo, un registro de otra versión) solo se cuentan los ensayos.
   let lineas = [plural(filas.length, 'ensayo registrado', 'ensayos registrados')];
-  if (ficha) lineas = lineasDeBloque(filas, ficha, indice);
+  if (ficha) lineas = lineasDeBloque(filas, ficha, indice, { previas });
   return `
     <li class="sesion-bloque">
       <p class="sesion-bloque-titulo"><strong>Bloque ${bloque}</strong> · ${esc(r.actividad)} ${esc(ficha?.nombre ?? '')} · banda ${esc(r.banda)} · modalidad ${esc(r.modalidad)}${nivel ? ` · apoyo ${esc(nivel)}` : ''}</p>
@@ -100,9 +110,11 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
   const bloques = bloquesDeSesion(rows);
   const tipo = ETIQUETA_TIPO[tipoDeSesion(sesion.sesion_id)];
   const pausas = sesion.pausas ?? [];
+  const guiadas = pausas.filter((p) => p.pausa_guiada_ms);
   const notas = [
     lineaReferencia(sesion),
     pausas.length ? `${plural(pausas.length, 'pausa', 'pausas')} (${duracion(pausas.reduce((t, p) => t + (p.duracion_ms ?? 0), 0))})` : '',
+    guiadas.length ? `${plural(guiadas.length, 'pausa guiada', 'pausas guiadas')} (${duracion(guiadas.reduce((t, p) => t + p.pausa_guiada_ms, 0))})` : '',
     sesion.terminada_antes ? `terminó antes de tiempo${sesion.motivo_terminacion ? `: ${sesion.motivo_terminacion}` : ''}` : '',
     sesion.advertencia_frecuencia ? 'se continuó con aviso de frecuencia de pantalla' : '',
   ].filter(Boolean);
@@ -123,7 +135,7 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
         bloques.length
           ? `<details class="sesion-detalle">
                <summary>Ver el resumen de ${bloques.length === 1 ? 'su bloque' : `sus ${bloques.length} bloques`}</summary>
-               <ol class="sesion-bloques">${bloques.map((b) => bloqueHTML(b, sesion, fichas, indice)).join('')}</ol>
+               <ol class="sesion-bloques">${bloques.map((b, k) => bloqueHTML(b, sesion, fichas, indice, bloques.slice(0, k).flatMap((x) => x.filas))).join('')}</ol>
                <p class="ayuda">Describe lo registrado. No es un puntaje ni una interpretación clínica.</p>
              </details>`
           : '<p class="meta">Esta sesión no tiene ensayos guardados.</p>'

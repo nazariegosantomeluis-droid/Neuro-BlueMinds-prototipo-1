@@ -1,0 +1,116 @@
+{
+  "id": "ACT-14",
+  "version": "0.2.0",
+  "estado": "Uso posterior",
+  "nombre": "Reconoce la emoción",
+  "objetivo": "Describir si el niño relaciona la expresión de un rostro dibujado con el pictograma de su emoción.",
+  "paradigma": "Reconocimiento de emociones.",
+  "evidencia": "Establecido para transferencia cercana: el entrenamiento mejora el reconocimiento en tareas iguales o parecidas (Revilla et al., 2025; Zhang et al., 2021; Farashi et al., 2024). Sin respaldo para la vida diaria.",
+  "mecanica": "Arriba aparece un rostro dibujado. Después aparecen debajo los pictogramas de las emociones, siempre en el mismo lugar, y el niño toca el de la emoción del rostro.",
+  "tipoRespuesta": "seleccion_unica",
+  "pantalla": "emociones",
+  "barajarOpciones": false,
+  "bandas": [
+    {
+      "id": "B1",
+      "opciones": 2,
+      "disposicion": "1x2",
+      "descripcion": "Dos emociones muy contrastadas y exageradas: alegría y tristeza.",
+      "emociones": [
+        "alegria",
+        "tristeza"
+      ],
+      "intensidad": "alta"
+    },
+    {
+      "id": "B2",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Las cuatro básicas, exageradas: alegría, tristeza, enojo y miedo.",
+      "emociones": [
+        "alegria",
+        "tristeza",
+        "enojo",
+        "miedo"
+      ],
+      "intensidad": "alta"
+    },
+    {
+      "id": "B3",
+      "opciones": 4,
+      "disposicion": "1x4",
+      "descripcion": "Las cuatro básicas con menor intensidad.",
+      "emociones": [
+        "alegria",
+        "tristeza",
+        "enojo",
+        "miedo"
+      ],
+      "intensidad": "baja"
+    }
+  ],
+  "bandasPendientes": [
+    "B4: la emoción a partir de una situación. Necesita escenas de situaciones (por ejemplo, un regalo o un juguete roto); las escenas dibujadas con código de ACT-04 todavía no las tienen."
+  ],
+  "modalidades": [
+    "V",
+    "AV"
+  ],
+  "ensayosPorBloque": 40,
+  "repetirItems": true,
+  "estratificarPor": "emocion",
+  "emociones": {
+    "alegria": "alegría",
+    "tristeza": "tristeza",
+    "enojo": "enojo",
+    "miedo": "miedo"
+  },
+  "personajes": [
+    "nina-1",
+    "nino-1",
+    "nina-2",
+    "nino-2",
+    "mujer",
+    "abuelo"
+  ],
+  "estiloPictograma": "postura",
+  "estilosPictograma": [
+    {
+      "id": "postura",
+      "descripcion": "Figura de cuerpo entero con la cabeza sin rasgos: la emoción se lee en la postura (salta con los brazos arriba; cabeza baja y brazos colgando; puños en la cadera y pisotón; se echa para atrás con las manos al frente). No puede resolverse copiando la boca ni las cejas del rostro. Es la propuesta en uso."
+    },
+    {
+      "id": "cara",
+      "descripcion": "Cara esquemática con la expresión (el estilo anterior). Su boca repite la forma de la del rostro (risa, dientes, boca abierta): puede resolverse copiando la forma sin reconocer la emoción. No se recomienda."
+    }
+  ],
+  "limiteRespuestaMs": 10000,
+  "intervaloMs": 1000,
+  "consignaVMs": 1500,
+  "retroalimentacionMs": 1000,
+  "consignaAV": "¿Cómo se siente?",
+  "resumen": "Eligió el pictograma de la emoción del rostro en {aciertos} de {ensayos} ensayos",
+  "lecturasPermitidas": [
+    "Eligió el pictograma de la emoción del rostro en 9 de 12 ensayos"
+  ],
+  "lecturasNoPermitidas": [
+    "Tiene buenas habilidades sociales",
+    "Entiende las emociones de los demás"
+  ],
+  "contraindicaciones": [
+    "Algunos niños evitan los rostros: se empieza con rostros dibujados y se detiene si hay malestar.",
+    "Discapacidad visual no corregida."
+  ],
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Los rostros y los pictogramas de las emociones se dibujan con código; son una propuesta, con personajes de distinta edad, género y tono de piel. Los pictogramas de respuesta no son caras: con caras esquemáticas el niño podía elegir copiando la forma de la boca del rostro sin reconocer la emoción. La propuesta en uso son figuras de cuerpo entero sin rasgos en la cara («estiloPictograma»: «postura»); la elección del estilo es una decisión clínica pendiente («estilosPictograma»). Falta la banda B4, la emoción a partir de una situación («bandasPendientes»). La matriz de confusión del Catálogo necesita al menos 10 presentaciones por emoción: el resumen de un bloque solo cuenta, no interpreta.",
+  "pendientesClinicos": [
+    "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
+    "Aprobar los rostros dibujados con código: personajes, edades, tonos de piel e intensidades.",
+    "Elegir el estilo de los pictogramas de respuesta (lista «estilosPictograma»): no deben poder resolverse copiando la forma de la boca del rostro.",
+    "Falta la banda B4, la emoción a partir de una situación: necesita escenas de situaciones.",
+    "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
+  ],
+  "revisionClinica": {
+    "revisor": "",
+    "fecha": ""
+  }
+}

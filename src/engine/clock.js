@@ -20,6 +20,24 @@ export function nextPaint(raf = globalThis.requestAnimationFrame) {
   return new Promise((resolve) => raf(() => raf(resolve)));
 }
 
+// Cambio a una hora dada, alineado al cuadro: en cada cuadro se mira si el siguiente ya llega
+// a la hora pedida (con medio cuadro de margen); en ese cuadro se hace el cambio y se da el
+// timestamp del cuadro siguiente, cuando el cambio ya está en pantalla (como nextPaint). Así el
+// cambio queda a menos de medio cuadro de la hora pedida y no depende de setTimeout.
+export function frameAt(target, change, period, raf = globalThis.requestAnimationFrame) {
+  return new Promise((resolve) => {
+    const tick = (ts) => {
+      if (ts + 1.5 * period < target) {
+        raf(tick);
+        return;
+      }
+      change();
+      raf(resolve);
+    };
+    raf(tick);
+  });
+}
+
 // Periodo normal de cuadro del dispositivo (60 Hz ≈ 16.7 ms; 120 Hz ≈ 8.3 ms; con el
 // ahorro de energía, 30 Hz ≈ 33.3 ms): mediana de los intervalos durante ms milisegundos.
 export function measureFramePeriod(ms = 1000, raf = globalThis.requestAnimationFrame) {
@@ -97,6 +115,7 @@ export function browserEnv({ framePeriod, audio }) {
     now,
     sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
     nextPaint: () => nextPaint(),
+    frameAt: (target, change) => frameAt(target, change, framePeriod),
     frames: frameMonitor(framePeriod),
     focus: focusMonitor(),
     audio,

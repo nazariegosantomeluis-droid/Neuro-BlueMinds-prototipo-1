@@ -1,0 +1,3413 @@
+{
+  "tabletaCmPx": 59,
+  "dpr": 1.5,
+  "tamanosCm": [
+    3,
+    4,
+    4.5,
+    5,
+    6
+  ],
+  "umbral": {
+    "ladoMm": 4,
+    "areaMm2": 25
+  },
+  "escenaCm": 4.5,
+  "noPasanAlTamanoDeEscena": [
+    "pato mesa: arriba / abajo",
+    "conejo mesa: arriba / abajo"
+  ],
+  "tamanoEnQueTodosPasan": 6,
+  "ambiguosDeLaRevision": [
+    "nina: peina / telefono",
+    "nino: peina / telefono",
+    "pato caja: dentro / arriba",
+    "pollito caja: dentro / arriba",
+    "zapato caja: dentro / arriba",
+    "abraza: conejo / pato",
+    "conejo mesa: arriba / abajo",
+    "pato mesa: arriba / abajo"
+  ],
+  "pares": [
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / come",
+      "porTamano": {
+        "3": {
+          "areaMm2": 403.2,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 712.9,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1110.7,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1596.8,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 898.6,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / bebe",
+      "porTamano": {
+        "3": {
+          "areaMm2": 371.8,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 654.1,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1018.7,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1465.1,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 824.5,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 378.6,
+          "ladoMm": 25.9
+        },
+        "4": {
+          "areaMm2": 669.6,
+          "ladoMm": 34.5
+        },
+        "5": {
+          "areaMm2": 1040.8,
+          "ladoMm": 43.1
+        },
+        "6": {
+          "areaMm2": 1498.7,
+          "ladoMm": 51.6
+        },
+        "4.5": {
+          "areaMm2": 843.4,
+          "ladoMm": 38.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 396.4,
+          "ladoMm": 26.7
+        },
+        "4": {
+          "areaMm2": 701.2,
+          "ladoMm": 35.5
+        },
+        "5": {
+          "areaMm2": 1090.5,
+          "ladoMm": 44.3
+        },
+        "6": {
+          "areaMm2": 1568.6,
+          "ladoMm": 53.1
+        },
+        "4.5": {
+          "areaMm2": 883.6,
+          "ladoMm": 39.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 403.6,
+          "ladoMm": 26.7
+        },
+        "4": {
+          "areaMm2": 711.7,
+          "ladoMm": 35.5
+        },
+        "5": {
+          "areaMm2": 1108.6,
+          "ladoMm": 44.3
+        },
+        "6": {
+          "areaMm2": 1594.5,
+          "ladoMm": 53.1
+        },
+        "4.5": {
+          "areaMm2": 897.1,
+          "ladoMm": 39.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 396.3,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 700.2,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1091.2,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1570.1,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 882.9,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 397,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 701.6,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1093,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1572.2,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 884.5,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: duerme / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 394.8,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 697.2,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1085,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1561.1,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 878.2,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / bebe",
+      "porTamano": {
+        "3": {
+          "areaMm2": 52.8,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 93,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 145.2,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 207.9,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 117.4,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 151.9,
+          "ladoMm": 18.5
+        },
+        "4": {
+          "areaMm2": 266.6,
+          "ladoMm": 24.6
+        },
+        "5": {
+          "areaMm2": 409.8,
+          "ladoMm": 30.7
+        },
+        "6": {
+          "areaMm2": 574.4,
+          "ladoMm": 35
+        },
+        "4.5": {
+          "areaMm2": 330.5,
+          "ladoMm": 27.7
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 197.4,
+          "ladoMm": 13.2
+        },
+        "4": {
+          "areaMm2": 347.1,
+          "ladoMm": 17.5
+        },
+        "5": {
+          "areaMm2": 542.6,
+          "ladoMm": 21.9
+        },
+        "6": {
+          "areaMm2": 778.1,
+          "ladoMm": 26.2
+        },
+        "4.5": {
+          "areaMm2": 438.1,
+          "ladoMm": 19.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 63.5,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 110.1,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 172,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 247.7,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 139.1,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 110.5,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 195,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 304.1,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 437.3,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 245.9,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 50.4,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 88.8,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 138.6,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 199.2,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 112.3,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: come / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 103.3,
+          "ladoMm": 13.6
+        },
+        "4": {
+          "areaMm2": 181.5,
+          "ladoMm": 18
+        },
+        "5": {
+          "areaMm2": 283.2,
+          "ladoMm": 22.5
+        },
+        "6": {
+          "areaMm2": 407.4,
+          "ladoMm": 26.9
+        },
+        "4.5": {
+          "areaMm2": 228.8,
+          "ladoMm": 20.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 138.8,
+          "ladoMm": 18.3
+        },
+        "4": {
+          "areaMm2": 242.2,
+          "ladoMm": 24.4
+        },
+        "5": {
+          "areaMm2": 370.9,
+          "ladoMm": 30.5
+        },
+        "6": {
+          "areaMm2": 518.5,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 299.4,
+          "ladoMm": 27.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 182,
+          "ladoMm": 11.8
+        },
+        "4": {
+          "areaMm2": 318.1,
+          "ladoMm": 15.6
+        },
+        "5": {
+          "areaMm2": 497.3,
+          "ladoMm": 19.5
+        },
+        "6": {
+          "areaMm2": 713.3,
+          "ladoMm": 23.4
+        },
+        "4.5": {
+          "areaMm2": 401.6,
+          "ladoMm": 17.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 50.8,
+          "ladoMm": 6.8
+        },
+        "4": {
+          "areaMm2": 86.4,
+          "ladoMm": 9
+        },
+        "5": {
+          "areaMm2": 135.3,
+          "ladoMm": 11.4
+        },
+        "6": {
+          "areaMm2": 194.7,
+          "ladoMm": 13.8
+        },
+        "4.5": {
+          "areaMm2": 109.7,
+          "ladoMm": 10.3
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 92.4,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 161.2,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 251.4,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 360.9,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 203.6,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 41.1,
+          "ladoMm": 6.1
+        },
+        "4": {
+          "areaMm2": 70.5,
+          "ladoMm": 8.1
+        },
+        "5": {
+          "areaMm2": 110.3,
+          "ladoMm": 10.2
+        },
+        "6": {
+          "areaMm2": 158.9,
+          "ladoMm": 12.1
+        },
+        "4.5": {
+          "areaMm2": 89.6,
+          "ladoMm": 9.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: bebe / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 84.6,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 146.7,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 228.5,
+          "ladoMm": 20.7
+        },
+        "6": {
+          "areaMm2": 328.2,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 185,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: corre / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 191.9,
+          "ladoMm": 18.3
+        },
+        "4": {
+          "areaMm2": 337.1,
+          "ladoMm": 24.4
+        },
+        "5": {
+          "areaMm2": 518.7,
+          "ladoMm": 30.5
+        },
+        "6": {
+          "areaMm2": 733.6,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 419.5,
+          "ladoMm": 27.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: corre / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 143.2,
+          "ladoMm": 18.3
+        },
+        "4": {
+          "areaMm2": 248.8,
+          "ladoMm": 24.4
+        },
+        "5": {
+          "areaMm2": 381.5,
+          "ladoMm": 30.5
+        },
+        "6": {
+          "areaMm2": 533.4,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 307.8,
+          "ladoMm": 27.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: corre / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 166.6,
+          "ladoMm": 22.7
+        },
+        "4": {
+          "areaMm2": 292.6,
+          "ladoMm": 30.3
+        },
+        "5": {
+          "areaMm2": 449.3,
+          "ladoMm": 37.9
+        },
+        "6": {
+          "areaMm2": 631.3,
+          "ladoMm": 43.6
+        },
+        "4.5": {
+          "areaMm2": 362.8,
+          "ladoMm": 34
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: corre / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 132.6,
+          "ladoMm": 18.3
+        },
+        "4": {
+          "areaMm2": 231.8,
+          "ladoMm": 24.4
+        },
+        "5": {
+          "areaMm2": 354.4,
+          "ladoMm": 30.5
+        },
+        "6": {
+          "areaMm2": 494.7,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 286,
+          "ladoMm": 27.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: corre / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 157.2,
+          "ladoMm": 18.3
+        },
+        "4": {
+          "areaMm2": 274.7,
+          "ladoMm": 24.4
+        },
+        "5": {
+          "areaMm2": 421.3,
+          "ladoMm": 30.5
+        },
+        "6": {
+          "areaMm2": 591.6,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 340,
+          "ladoMm": 27.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: salta / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 172.8,
+          "ladoMm": 12.8
+        },
+        "4": {
+          "areaMm2": 301.2,
+          "ladoMm": 16.9
+        },
+        "5": {
+          "areaMm2": 470.6,
+          "ladoMm": 21.2
+        },
+        "6": {
+          "areaMm2": 674.6,
+          "ladoMm": 25.5
+        },
+        "4.5": {
+          "areaMm2": 380,
+          "ladoMm": 19.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: salta / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 201,
+          "ladoMm": 17.4
+        },
+        "4": {
+          "areaMm2": 352.9,
+          "ladoMm": 23.2
+        },
+        "5": {
+          "areaMm2": 551.6,
+          "ladoMm": 29
+        },
+        "6": {
+          "areaMm2": 791.5,
+          "ladoMm": 34.8
+        },
+        "4.5": {
+          "areaMm2": 445.4,
+          "ladoMm": 26.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: salta / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 179.9,
+          "ladoMm": 12.2
+        },
+        "4": {
+          "areaMm2": 315.6,
+          "ladoMm": 16.2
+        },
+        "5": {
+          "areaMm2": 493,
+          "ladoMm": 20.2
+        },
+        "6": {
+          "areaMm2": 707,
+          "ladoMm": 24.2
+        },
+        "4.5": {
+          "areaMm2": 398.2,
+          "ladoMm": 18.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: salta / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 188.5,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 330.5,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 515.7,
+          "ladoMm": 20.7
+        },
+        "6": {
+          "areaMm2": 739,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 416.8,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: peina / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 76.8,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 135.2,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 210.4,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 302.1,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 170.4,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: peina / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 30.8,
+          "ladoMm": 6.8
+        },
+        "4": {
+          "areaMm2": 51.4,
+          "ladoMm": 9
+        },
+        "5": {
+          "areaMm2": 46.2,
+          "ladoMm": 9.7
+        },
+        "6": {
+          "areaMm2": 115.3,
+          "ladoMm": 13.8
+        },
+        "4.5": {
+          "areaMm2": 65.1,
+          "ladoMm": 10.3
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: peina / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 68.9,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 120.8,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 187.8,
+          "ladoMm": 20.7
+        },
+        "6": {
+          "areaMm2": 269.5,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 151.9,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: barre / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 84.8,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 148.7,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 231.6,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 332.5,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 187.5,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: barre / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 81.4,
+          "ladoMm": 16.2
+        },
+        "4": {
+          "areaMm2": 142.3,
+          "ladoMm": 21.6
+        },
+        "5": {
+          "areaMm2": 222,
+          "ladoMm": 26.9
+        },
+        "6": {
+          "areaMm2": 318.8,
+          "ladoMm": 32.3
+        },
+        "4.5": {
+          "areaMm2": 179.6,
+          "ladoMm": 24.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nina: telefono / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 77.3,
+          "ladoMm": 12.5
+        },
+        "4": {
+          "areaMm2": 134.9,
+          "ladoMm": 16.6
+        },
+        "5": {
+          "areaMm2": 210.2,
+          "ladoMm": 20.8
+        },
+        "6": {
+          "areaMm2": 301.7,
+          "ladoMm": 24.9
+        },
+        "4.5": {
+          "areaMm2": 170,
+          "ladoMm": 18.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / come",
+      "porTamano": {
+        "3": {
+          "areaMm2": 388.6,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 687.2,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1070.1,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1536.8,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 866.1,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / bebe",
+      "porTamano": {
+        "3": {
+          "areaMm2": 355.7,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 625.6,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 973.8,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1399.2,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 788.6,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 360.3,
+          "ladoMm": 25.9
+        },
+        "4": {
+          "areaMm2": 637.7,
+          "ladoMm": 34.5
+        },
+        "5": {
+          "areaMm2": 990.1,
+          "ladoMm": 43.1
+        },
+        "6": {
+          "areaMm2": 1425.4,
+          "ladoMm": 51.6
+        },
+        "4.5": {
+          "areaMm2": 802.9,
+          "ladoMm": 38.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 388.9,
+          "ladoMm": 26.7
+        },
+        "4": {
+          "areaMm2": 687.4,
+          "ladoMm": 35.5
+        },
+        "5": {
+          "areaMm2": 1069.3,
+          "ladoMm": 44.3
+        },
+        "6": {
+          "areaMm2": 1537.9,
+          "ladoMm": 53.1
+        },
+        "4.5": {
+          "areaMm2": 866.1,
+          "ladoMm": 39.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 387.1,
+          "ladoMm": 26.7
+        },
+        "4": {
+          "areaMm2": 682.4,
+          "ladoMm": 35.5
+        },
+        "5": {
+          "areaMm2": 1062.3,
+          "ladoMm": 44.3
+        },
+        "6": {
+          "areaMm2": 1526.7,
+          "ladoMm": 53.1
+        },
+        "4.5": {
+          "areaMm2": 860.1,
+          "ladoMm": 39.8
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 377.7,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 667.4,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1039.2,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1494.4,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 841.4,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 384,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 678.4,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1056.4,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1518.1,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 855.1,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: duerme / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 377.1,
+          "ladoMm": 25.8
+        },
+        "4": {
+          "areaMm2": 665.8,
+          "ladoMm": 34.2
+        },
+        "5": {
+          "areaMm2": 1035.7,
+          "ladoMm": 42.7
+        },
+        "6": {
+          "areaMm2": 1489.3,
+          "ladoMm": 51.2
+        },
+        "4.5": {
+          "areaMm2": 838.9,
+          "ladoMm": 38.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / bebe",
+      "porTamano": {
+        "3": {
+          "areaMm2": 53.3,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 93.9,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 146.7,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 209.6,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 118.5,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 150.8,
+          "ladoMm": 18.5
+        },
+        "4": {
+          "areaMm2": 265.8,
+          "ladoMm": 24.6
+        },
+        "5": {
+          "areaMm2": 407.2,
+          "ladoMm": 30.7
+        },
+        "6": {
+          "areaMm2": 572.4,
+          "ladoMm": 35
+        },
+        "4.5": {
+          "areaMm2": 328.8,
+          "ladoMm": 27.7
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 188,
+          "ladoMm": 12.8
+        },
+        "4": {
+          "areaMm2": 332.9,
+          "ladoMm": 16.9
+        },
+        "5": {
+          "areaMm2": 517.8,
+          "ladoMm": 21.1
+        },
+        "6": {
+          "areaMm2": 741.3,
+          "ladoMm": 25.3
+        },
+        "4.5": {
+          "areaMm2": 417.9,
+          "ladoMm": 19.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 65.7,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 113.6,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 177.4,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 254.3,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 143.4,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 112.6,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 198.7,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 309.8,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 444.1,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 250.4,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 52.2,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 91.8,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 143.3,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 205.7,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 116,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: come / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 104.7,
+          "ladoMm": 13.6
+        },
+        "4": {
+          "areaMm2": 183.3,
+          "ladoMm": 18
+        },
+        "5": {
+          "areaMm2": 286,
+          "ladoMm": 22.5
+        },
+        "6": {
+          "areaMm2": 410,
+          "ladoMm": 26.9
+        },
+        "4.5": {
+          "areaMm2": 231,
+          "ladoMm": 20.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / corre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 135.4,
+          "ladoMm": 17.7
+        },
+        "4": {
+          "areaMm2": 237.7,
+          "ladoMm": 23.6
+        },
+        "5": {
+          "areaMm2": 362.3,
+          "ladoMm": 29.5
+        },
+        "6": {
+          "areaMm2": 508.9,
+          "ladoMm": 33.6
+        },
+        "4.5": {
+          "areaMm2": 293.2,
+          "ladoMm": 26.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 171.7,
+          "ladoMm": 11.2
+        },
+        "4": {
+          "areaMm2": 302.3,
+          "ladoMm": 14.8
+        },
+        "5": {
+          "areaMm2": 469.9,
+          "ladoMm": 18.5
+        },
+        "6": {
+          "areaMm2": 673,
+          "ladoMm": 22.3
+        },
+        "4.5": {
+          "areaMm2": 379.4,
+          "ladoMm": 16.7
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 51.6,
+          "ladoMm": 6.8
+        },
+        "4": {
+          "areaMm2": 87.5,
+          "ladoMm": 9
+        },
+        "5": {
+          "areaMm2": 136.9,
+          "ladoMm": 11.4
+        },
+        "6": {
+          "areaMm2": 197,
+          "ladoMm": 13.8
+        },
+        "4.5": {
+          "areaMm2": 110.8,
+          "ladoMm": 10.3
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 92.4,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 160.9,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 250.6,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 360,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 203,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 44.2,
+          "ladoMm": 6.1
+        },
+        "4": {
+          "areaMm2": 75.9,
+          "ladoMm": 8.1
+        },
+        "5": {
+          "areaMm2": 118.8,
+          "ladoMm": 10.2
+        },
+        "6": {
+          "areaMm2": 171.1,
+          "ladoMm": 12.1
+        },
+        "4.5": {
+          "areaMm2": 96.4,
+          "ladoMm": 9.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: bebe / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 83.9,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 144.5,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 224.9,
+          "ladoMm": 20.7
+        },
+        "6": {
+          "areaMm2": 323.1,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 182.1,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: corre / salta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 177.4,
+          "ladoMm": 17.7
+        },
+        "4": {
+          "areaMm2": 312.9,
+          "ladoMm": 23.6
+        },
+        "5": {
+          "areaMm2": 480.4,
+          "ladoMm": 29.5
+        },
+        "6": {
+          "areaMm2": 678.3,
+          "ladoMm": 33.6
+        },
+        "4.5": {
+          "areaMm2": 388.6,
+          "ladoMm": 26.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: corre / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 141.4,
+          "ladoMm": 18.1
+        },
+        "4": {
+          "areaMm2": 246.4,
+          "ladoMm": 24.1
+        },
+        "5": {
+          "areaMm2": 376.2,
+          "ladoMm": 30.1
+        },
+        "6": {
+          "areaMm2": 528.3,
+          "ladoMm": 34.4
+        },
+        "4.5": {
+          "areaMm2": 304.2,
+          "ladoMm": 27.1
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: corre / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 164.7,
+          "ladoMm": 22.7
+        },
+        "4": {
+          "areaMm2": 290.6,
+          "ladoMm": 30.3
+        },
+        "5": {
+          "areaMm2": 444.7,
+          "ladoMm": 37.9
+        },
+        "6": {
+          "areaMm2": 627.1,
+          "ladoMm": 43.6
+        },
+        "4.5": {
+          "areaMm2": 359.6,
+          "ladoMm": 34
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: corre / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 132.9,
+          "ladoMm": 17.7
+        },
+        "4": {
+          "areaMm2": 233.3,
+          "ladoMm": 23.6
+        },
+        "5": {
+          "areaMm2": 355.5,
+          "ladoMm": 29.5
+        },
+        "6": {
+          "areaMm2": 498.8,
+          "ladoMm": 33.6
+        },
+        "4.5": {
+          "areaMm2": 287.3,
+          "ladoMm": 26.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: corre / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 154.2,
+          "ladoMm": 17.7
+        },
+        "4": {
+          "areaMm2": 270,
+          "ladoMm": 23.6
+        },
+        "5": {
+          "areaMm2": 413.2,
+          "ladoMm": 29.5
+        },
+        "6": {
+          "areaMm2": 582.7,
+          "ladoMm": 33.6
+        },
+        "4.5": {
+          "areaMm2": 334.2,
+          "ladoMm": 26.6
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: salta / peina",
+      "porTamano": {
+        "3": {
+          "areaMm2": 166.5,
+          "ladoMm": 12.3
+        },
+        "4": {
+          "areaMm2": 292.7,
+          "ladoMm": 16.4
+        },
+        "5": {
+          "areaMm2": 454.5,
+          "ladoMm": 20.5
+        },
+        "6": {
+          "areaMm2": 651,
+          "ladoMm": 24.6
+        },
+        "4.5": {
+          "areaMm2": 367.3,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: salta / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 190.8,
+          "ladoMm": 16.9
+        },
+        "4": {
+          "areaMm2": 337.2,
+          "ladoMm": 22.6
+        },
+        "5": {
+          "areaMm2": 525,
+          "ladoMm": 28.2
+        },
+        "6": {
+          "areaMm2": 752.2,
+          "ladoMm": 33.9
+        },
+        "4.5": {
+          "areaMm2": 423.5,
+          "ladoMm": 25.4
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: salta / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 170.3,
+          "ladoMm": 11.8
+        },
+        "4": {
+          "areaMm2": 301,
+          "ladoMm": 15.6
+        },
+        "5": {
+          "areaMm2": 467.4,
+          "ladoMm": 19.4
+        },
+        "6": {
+          "areaMm2": 669.5,
+          "ladoMm": 23.3
+        },
+        "4.5": {
+          "areaMm2": 377.6,
+          "ladoMm": 17.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: salta / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 179.1,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 314.7,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 490.9,
+          "ladoMm": 20.7
+        },
+        "6": {
+          "areaMm2": 703.3,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 396,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: peina / barre",
+      "porTamano": {
+        "3": {
+          "areaMm2": 94.8,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 164.4,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 256,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 364.4,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 207.3,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: peina / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 36.1,
+          "ladoMm": 6.8
+        },
+        "4": {
+          "areaMm2": 60.2,
+          "ladoMm": 9
+        },
+        "5": {
+          "areaMm2": 94.3,
+          "ladoMm": 11.4
+        },
+        "6": {
+          "areaMm2": 135.1,
+          "ladoMm": 13.8
+        },
+        "4.5": {
+          "areaMm2": 76.2,
+          "ladoMm": 10.3
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: peina / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 86.2,
+          "ladoMm": 13.1
+        },
+        "4": {
+          "areaMm2": 148.1,
+          "ladoMm": 17.4
+        },
+        "5": {
+          "areaMm2": 230.5,
+          "ladoMm": 21.8
+        },
+        "6": {
+          "areaMm2": 327.7,
+          "ladoMm": 26.2
+        },
+        "4.5": {
+          "areaMm2": 186.5,
+          "ladoMm": 19.7
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: barre / telefono",
+      "porTamano": {
+        "3": {
+          "areaMm2": 92,
+          "ladoMm": 16.4
+        },
+        "4": {
+          "areaMm2": 161,
+          "ladoMm": 21.8
+        },
+        "5": {
+          "areaMm2": 250.9,
+          "ladoMm": 27.3
+        },
+        "6": {
+          "areaMm2": 360.3,
+          "ladoMm": 32.8
+        },
+        "4.5": {
+          "areaMm2": 203.3,
+          "ladoMm": 24.5
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: barre / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 82,
+          "ladoMm": 16.2
+        },
+        "4": {
+          "areaMm2": 142.8,
+          "ladoMm": 21.6
+        },
+        "5": {
+          "areaMm2": 222.5,
+          "ladoMm": 26.9
+        },
+        "6": {
+          "areaMm2": 319.5,
+          "ladoMm": 32.3
+        },
+        "4.5": {
+          "areaMm2": 180.1,
+          "ladoMm": 24.2
+        }
+      }
+    },
+    {
+      "tipo": "accion",
+      "clave": "nino: telefono / abraza",
+      "porTamano": {
+        "3": {
+          "areaMm2": 83.8,
+          "ladoMm": 12.5
+        },
+        "4": {
+          "areaMm2": 145.4,
+          "ladoMm": 16.6
+        },
+        "5": {
+          "areaMm2": 226.6,
+          "ladoMm": 20.8
+        },
+        "6": {
+          "areaMm2": 325.4,
+          "ladoMm": 24.9
+        },
+        "4.5": {
+          "areaMm2": 183.4,
+          "ladoMm": 18.6
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: manzana / platano",
+      "porTamano": {
+        "3": {
+          "areaMm2": 46.2,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 81.8,
+          "ladoMm": 9.8
+        },
+        "5": {
+          "areaMm2": 128,
+          "ladoMm": 12.4
+        },
+        "6": {
+          "areaMm2": 184.5,
+          "ladoMm": 14.8
+        },
+        "4.5": {
+          "areaMm2": 103.4,
+          "ladoMm": 11.2
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: manzana / galleta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 51.4,
+          "ladoMm": 8.1
+        },
+        "4": {
+          "areaMm2": 90.7,
+          "ladoMm": 10.8
+        },
+        "5": {
+          "areaMm2": 142.2,
+          "ladoMm": 13.6
+        },
+        "6": {
+          "areaMm2": 204,
+          "ladoMm": 16
+        },
+        "4.5": {
+          "areaMm2": 114.7,
+          "ladoMm": 12.2
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: manzana / paleta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 41.1,
+          "ladoMm": 7.3
+        },
+        "4": {
+          "areaMm2": 72.9,
+          "ladoMm": 9.7
+        },
+        "5": {
+          "areaMm2": 114.3,
+          "ladoMm": 12.2
+        },
+        "6": {
+          "areaMm2": 163.1,
+          "ladoMm": 14.6
+        },
+        "4.5": {
+          "areaMm2": 92.2,
+          "ladoMm": 11.1
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: manzana / naranja",
+      "porTamano": {
+        "3": {
+          "areaMm2": 44.5,
+          "ladoMm": 7.7
+        },
+        "4": {
+          "areaMm2": 79,
+          "ladoMm": 10.3
+        },
+        "5": {
+          "areaMm2": 123.7,
+          "ladoMm": 12.8
+        },
+        "6": {
+          "areaMm2": 177.7,
+          "ladoMm": 15.3
+        },
+        "4.5": {
+          "areaMm2": 99.8,
+          "ladoMm": 11.5
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: platano / galleta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 51.2,
+          "ladoMm": 8.1
+        },
+        "4": {
+          "areaMm2": 91.1,
+          "ladoMm": 10.8
+        },
+        "5": {
+          "areaMm2": 143.1,
+          "ladoMm": 13.6
+        },
+        "6": {
+          "areaMm2": 204.8,
+          "ladoMm": 16
+        },
+        "4.5": {
+          "areaMm2": 115.3,
+          "ladoMm": 12.2
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: platano / paleta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 34.5,
+          "ladoMm": 7.1
+        },
+        "4": {
+          "areaMm2": 61.2,
+          "ladoMm": 9.5
+        },
+        "5": {
+          "areaMm2": 95.8,
+          "ladoMm": 12
+        },
+        "6": {
+          "areaMm2": 135.7,
+          "ladoMm": 14.2
+        },
+        "4.5": {
+          "areaMm2": 77.5,
+          "ladoMm": 10.7
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: platano / naranja",
+      "porTamano": {
+        "3": {
+          "areaMm2": 49,
+          "ladoMm": 7.7
+        },
+        "4": {
+          "areaMm2": 86.9,
+          "ladoMm": 10.3
+        },
+        "5": {
+          "areaMm2": 136.1,
+          "ladoMm": 12.8
+        },
+        "6": {
+          "areaMm2": 195.5,
+          "ladoMm": 15.3
+        },
+        "4.5": {
+          "areaMm2": 109.8,
+          "ladoMm": 11.5
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: galleta / paleta",
+      "porTamano": {
+        "3": {
+          "areaMm2": 49.6,
+          "ladoMm": 8.1
+        },
+        "4": {
+          "areaMm2": 87.8,
+          "ladoMm": 10.7
+        },
+        "5": {
+          "areaMm2": 137.6,
+          "ladoMm": 13.4
+        },
+        "6": {
+          "areaMm2": 196.8,
+          "ladoMm": 16
+        },
+        "4.5": {
+          "areaMm2": 111.1,
+          "ladoMm": 12.2
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: galleta / naranja",
+      "porTamano": {
+        "3": {
+          "areaMm2": 50.4,
+          "ladoMm": 8.1
+        },
+        "4": {
+          "areaMm2": 89.1,
+          "ladoMm": 10.8
+        },
+        "5": {
+          "areaMm2": 139.6,
+          "ladoMm": 13.6
+        },
+        "6": {
+          "areaMm2": 200.4,
+          "ladoMm": 16
+        },
+        "4.5": {
+          "areaMm2": 112.5,
+          "ladoMm": 12.2
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "come: paleta / naranja",
+      "porTamano": {
+        "3": {
+          "areaMm2": 47.4,
+          "ladoMm": 7.7
+        },
+        "4": {
+          "areaMm2": 84,
+          "ladoMm": 10.3
+        },
+        "5": {
+          "areaMm2": 131.5,
+          "ladoMm": 12.8
+        },
+        "6": {
+          "areaMm2": 188.4,
+          "ladoMm": 15.3
+        },
+        "4.5": {
+          "areaMm2": 106.1,
+          "ladoMm": 11.5
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: perro / gato",
+      "porTamano": {
+        "3": {
+          "areaMm2": 56.7,
+          "ladoMm": 12.3
+        },
+        "4": {
+          "areaMm2": 82.9,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 129.6,
+          "ladoMm": 20.6
+        },
+        "6": {
+          "areaMm2": 186.3,
+          "ladoMm": 24.6
+        },
+        "4.5": {
+          "areaMm2": 104.7,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: perro / conejo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 58,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 81.2,
+          "ladoMm": 14.9
+        },
+        "5": {
+          "areaMm2": 126.4,
+          "ladoMm": 18.5
+        },
+        "6": {
+          "areaMm2": 181.6,
+          "ladoMm": 22.3
+        },
+        "4.5": {
+          "areaMm2": 102.2,
+          "ladoMm": 16.7
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: perro / pato",
+      "porTamano": {
+        "3": {
+          "areaMm2": 43.6,
+          "ladoMm": 12.3
+        },
+        "4": {
+          "areaMm2": 76.4,
+          "ladoMm": 16.4
+        },
+        "5": {
+          "areaMm2": 118.9,
+          "ladoMm": 20.5
+        },
+        "6": {
+          "areaMm2": 170.8,
+          "ladoMm": 24.7
+        },
+        "4.5": {
+          "areaMm2": 96.1,
+          "ladoMm": 18.4
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: perro / pollito",
+      "porTamano": {
+        "3": {
+          "areaMm2": 50.5,
+          "ladoMm": 12.4
+        },
+        "4": {
+          "areaMm2": 89.3,
+          "ladoMm": 16.5
+        },
+        "5": {
+          "areaMm2": 139.4,
+          "ladoMm": 20.6
+        },
+        "6": {
+          "areaMm2": 151.3,
+          "ladoMm": 22.3
+        },
+        "4.5": {
+          "areaMm2": 112.8,
+          "ladoMm": 18.5
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: gato / conejo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 49.7,
+          "ladoMm": 10.7
+        },
+        "4": {
+          "areaMm2": 89.4,
+          "ladoMm": 14.2
+        },
+        "5": {
+          "areaMm2": 111.6,
+          "ladoMm": 17.9
+        },
+        "6": {
+          "areaMm2": 160.4,
+          "ladoMm": 21.4
+        },
+        "4.5": {
+          "areaMm2": 90.2,
+          "ladoMm": 16
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: gato / pato",
+      "porTamano": {
+        "3": {
+          "areaMm2": 48.6,
+          "ladoMm": 10.7
+        },
+        "4": {
+          "areaMm2": 86.9,
+          "ladoMm": 14.2
+        },
+        "5": {
+          "areaMm2": 135.8,
+          "ladoMm": 17.9
+        },
+        "6": {
+          "areaMm2": 195.3,
+          "ladoMm": 21.4
+        },
+        "4.5": {
+          "areaMm2": 110,
+          "ladoMm": 16
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: gato / pollito",
+      "porTamano": {
+        "3": {
+          "areaMm2": 52.1,
+          "ladoMm": 10.7
+        },
+        "4": {
+          "areaMm2": 92,
+          "ladoMm": 14.2
+        },
+        "5": {
+          "areaMm2": 143.3,
+          "ladoMm": 17.9
+        },
+        "6": {
+          "areaMm2": 206.3,
+          "ladoMm": 21.4
+        },
+        "4.5": {
+          "areaMm2": 116.3,
+          "ladoMm": 16
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: conejo / pato",
+      "porTamano": {
+        "3": {
+          "areaMm2": 32,
+          "ladoMm": 9.5
+        },
+        "4": {
+          "areaMm2": 53.6,
+          "ladoMm": 12.4
+        },
+        "5": {
+          "areaMm2": 84.2,
+          "ladoMm": 15.7
+        },
+        "6": {
+          "areaMm2": 120.4,
+          "ladoMm": 18.8
+        },
+        "4.5": {
+          "areaMm2": 67.7,
+          "ladoMm": 14
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: conejo / pollito",
+      "porTamano": {
+        "3": {
+          "areaMm2": 43.6,
+          "ladoMm": 9.4
+        },
+        "4": {
+          "areaMm2": 52.2,
+          "ladoMm": 12.3
+        },
+        "5": {
+          "areaMm2": 81.8,
+          "ladoMm": 15.4
+        },
+        "6": {
+          "areaMm2": 117.2,
+          "ladoMm": 18.4
+        },
+        "4.5": {
+          "areaMm2": 65.9,
+          "ladoMm": 13.9
+        }
+      }
+    },
+    {
+      "tipo": "objeto",
+      "clave": "abraza: pato / pollito",
+      "porTamano": {
+        "3": {
+          "areaMm2": 33.4,
+          "ladoMm": 9.5
+        },
+        "4": {
+          "areaMm2": 57.8,
+          "ladoMm": 12.4
+        },
+        "5": {
+          "areaMm2": 49.8,
+          "ladoMm": 11.4
+        },
+        "6": {
+          "areaMm2": 71.1,
+          "ladoMm": 13.8
+        },
+        "4.5": {
+          "areaMm2": 40.4,
+          "ladoMm": 10.3
+        }
+      }
+    },
+    {
+      "tipo": "sujeto",
+      "clave": "come: niña / niño",
+      "porTamano": {
+        "3": {
+          "areaMm2": 31.1,
+          "ladoMm": 7.9
+        },
+        "4": {
+          "areaMm2": 56.2,
+          "ladoMm": 10.6
+        },
+        "5": {
+          "areaMm2": 86.6,
+          "ladoMm": 13.4
+        },
+        "6": {
+          "areaMm2": 125.1,
+          "ladoMm": 15.9
+        },
+        "4.5": {
+          "areaMm2": 69.8,
+          "ladoMm": 12
+        }
+      }
+    },
+    {
+      "tipo": "sujeto",
+      "clave": "abraza: niña / niño",
+      "porTamano": {
+        "3": {
+          "areaMm2": 25.4,
+          "ladoMm": 7.9
+        },
+        "4": {
+          "areaMm2": 45.9,
+          "ladoMm": 10.6
+        },
+        "5": {
+          "areaMm2": 70.7,
+          "ladoMm": 13.4
+        },
+        "6": {
+          "areaMm2": 102.7,
+          "ladoMm": 15.9
+        },
+        "4.5": {
+          "areaMm2": 57.6,
+          "ladoMm": 12
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 65.8,
+          "ladoMm": 10.3
+        },
+        "4": {
+          "areaMm2": 116.3,
+          "ladoMm": 13.9
+        },
+        "5": {
+          "areaMm2": 183.2,
+          "ladoMm": 17.3
+        },
+        "6": {
+          "areaMm2": 261.6,
+          "ladoMm": 20.8
+        },
+        "4.5": {
+          "areaMm2": 147.4,
+          "ladoMm": 15.6
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 217.1,
+          "ladoMm": 20.8
+        },
+        "4": {
+          "areaMm2": 385,
+          "ladoMm": 27.8
+        },
+        "5": {
+          "areaMm2": 599.3,
+          "ladoMm": 34.7
+        },
+        "6": {
+          "areaMm2": 571.3,
+          "ladoMm": 36.3
+        },
+        "4.5": {
+          "areaMm2": 480.4,
+          "ladoMm": 31.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 224.8,
+          "ladoMm": 24.3
+        },
+        "4": {
+          "areaMm2": 268.6,
+          "ladoMm": 22.8
+        },
+        "5": {
+          "areaMm2": 417.5,
+          "ladoMm": 28.6
+        },
+        "6": {
+          "areaMm2": 600.4,
+          "ladoMm": 34.4
+        },
+        "4.5": {
+          "areaMm2": 334.9,
+          "ladoMm": 25.6
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 51.1,
+          "ladoMm": 9
+        },
+        "4": {
+          "areaMm2": 90.4,
+          "ladoMm": 12.1
+        },
+        "5": {
+          "areaMm2": 139.4,
+          "ladoMm": 15.1
+        },
+        "6": {
+          "areaMm2": 200.2,
+          "ladoMm": 18.1
+        },
+        "4.5": {
+          "areaMm2": 112.5,
+          "ladoMm": 13.6
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 226.6,
+          "ladoMm": 25
+        },
+        "4": {
+          "areaMm2": 399.8,
+          "ladoMm": 33.2
+        },
+        "5": {
+          "areaMm2": 617.6,
+          "ladoMm": 41.6
+        },
+        "6": {
+          "areaMm2": 888.7,
+          "ladoMm": 49.7
+        },
+        "4.5": {
+          "areaMm2": 500.9,
+          "ladoMm": 37.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "gato mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 206.1,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 362.9,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 560.5,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 808.2,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 455.7,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 74.3,
+          "ladoMm": 12
+        },
+        "4": {
+          "areaMm2": 128.7,
+          "ladoMm": 15.8
+        },
+        "5": {
+          "areaMm2": 201.7,
+          "ladoMm": 19.9
+        },
+        "6": {
+          "areaMm2": 290,
+          "ladoMm": 23.8
+        },
+        "4.5": {
+          "areaMm2": 163,
+          "ladoMm": 17.9
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 209.3,
+          "ladoMm": 19.7
+        },
+        "4": {
+          "areaMm2": 371.3,
+          "ladoMm": 26.3
+        },
+        "5": {
+          "areaMm2": 575,
+          "ladoMm": 32.9
+        },
+        "6": {
+          "areaMm2": 826.8,
+          "ladoMm": 39.4
+        },
+        "4.5": {
+          "areaMm2": 463.2,
+          "ladoMm": 29.6
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 209.9,
+          "ladoMm": 23.3
+        },
+        "4": {
+          "areaMm2": 242.4,
+          "ladoMm": 24.7
+        },
+        "5": {
+          "areaMm2": 375.6,
+          "ladoMm": 31
+        },
+        "6": {
+          "areaMm2": 358.7,
+          "ladoMm": 25.2
+        },
+        "4.5": {
+          "areaMm2": 303.2,
+          "ladoMm": 27.8
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 42.6,
+          "ladoMm": 8.6
+        },
+        "4": {
+          "areaMm2": 75.3,
+          "ladoMm": 11.3
+        },
+        "5": {
+          "areaMm2": 115.2,
+          "ladoMm": 14.1
+        },
+        "6": {
+          "areaMm2": 165.3,
+          "ladoMm": 16.8
+        },
+        "4.5": {
+          "areaMm2": 92.8,
+          "ladoMm": 12.7
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 214,
+          "ladoMm": 24
+        },
+        "4": {
+          "areaMm2": 376.8,
+          "ladoMm": 31.9
+        },
+        "5": {
+          "areaMm2": 582.6,
+          "ladoMm": 39.9
+        },
+        "6": {
+          "areaMm2": 671.9,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 475.3,
+          "ladoMm": 35.8
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "perro mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 191.7,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 336.9,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 520.6,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 749.7,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 427.2,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 24.4,
+          "ladoMm": 9.3
+        },
+        "4": {
+          "areaMm2": 38.4,
+          "ladoMm": 12.2
+        },
+        "5": {
+          "areaMm2": 59.2,
+          "ladoMm": 15.3
+        },
+        "6": {
+          "areaMm2": 86,
+          "ladoMm": 18.3
+        },
+        "4.5": {
+          "areaMm2": 47.9,
+          "ladoMm": 13.8
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 172.1,
+          "ladoMm": 20.8
+        },
+        "4": {
+          "areaMm2": 174.8,
+          "ladoMm": 22.6
+        },
+        "5": {
+          "areaMm2": 266.7,
+          "ladoMm": 28.2
+        },
+        "6": {
+          "areaMm2": 383.9,
+          "ladoMm": 33.9
+        },
+        "4.5": {
+          "areaMm2": 215,
+          "ladoMm": 25.4
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 97,
+          "ladoMm": 16.2
+        },
+        "4": {
+          "areaMm2": 170.4,
+          "ladoMm": 21.5
+        },
+        "5": {
+          "areaMm2": 233.4,
+          "ladoMm": 19
+        },
+        "6": {
+          "areaMm2": 335.4,
+          "ladoMm": 22.8
+        },
+        "4.5": {
+          "areaMm2": 209.6,
+          "ladoMm": 24.1
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 10.6,
+          "ladoMm": 8
+        },
+        "4": {
+          "areaMm2": 18.7,
+          "ladoMm": 10.6
+        },
+        "5": {
+          "areaMm2": 24.9,
+          "ladoMm": 13.2
+        },
+        "6": {
+          "areaMm2": 35.6,
+          "ladoMm": 15.9
+        },
+        "4.5": {
+          "areaMm2": 20,
+          "ladoMm": 12
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 164.9,
+          "ladoMm": 25
+        },
+        "4": {
+          "areaMm2": 290.8,
+          "ladoMm": 33.2
+        },
+        "5": {
+          "areaMm2": 446.7,
+          "ladoMm": 41.6
+        },
+        "6": {
+          "areaMm2": 640.3,
+          "ladoMm": 49.7
+        },
+        "4.5": {
+          "areaMm2": 365.1,
+          "ladoMm": 37.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pato mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 160.5,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 282.9,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 436.1,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 625.5,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 358.4,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 31.7,
+          "ladoMm": 9.2
+        },
+        "4": {
+          "areaMm2": 49.5,
+          "ladoMm": 12.2
+        },
+        "5": {
+          "areaMm2": 77.3,
+          "ladoMm": 15.3
+        },
+        "6": {
+          "areaMm2": 111.3,
+          "ladoMm": 18.3
+        },
+        "4.5": {
+          "areaMm2": 61.8,
+          "ladoMm": 13.8
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 176.8,
+          "ladoMm": 20.8
+        },
+        "4": {
+          "areaMm2": 312.8,
+          "ladoMm": 27.8
+        },
+        "5": {
+          "areaMm2": 279.2,
+          "ladoMm": 28.2
+        },
+        "6": {
+          "areaMm2": 401,
+          "ladoMm": 33.9
+        },
+        "4.5": {
+          "areaMm2": 385.7,
+          "ladoMm": 31.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 98.3,
+          "ladoMm": 16
+        },
+        "4": {
+          "areaMm2": 171.7,
+          "ladoMm": 21.5
+        },
+        "5": {
+          "areaMm2": 261.5,
+          "ladoMm": 26.7
+        },
+        "6": {
+          "areaMm2": 375.4,
+          "ladoMm": 32.1
+        },
+        "4.5": {
+          "areaMm2": 210.3,
+          "ladoMm": 24.1
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 11.2,
+          "ladoMm": 7.9
+        },
+        "4": {
+          "areaMm2": 19.9,
+          "ladoMm": 10.6
+        },
+        "5": {
+          "areaMm2": 25.4,
+          "ladoMm": 13.2
+        },
+        "6": {
+          "areaMm2": 36.7,
+          "ladoMm": 15.9
+        },
+        "4.5": {
+          "areaMm2": 20.8,
+          "ladoMm": 12
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 166.6,
+          "ladoMm": 25
+        },
+        "4": {
+          "areaMm2": 294.4,
+          "ladoMm": 33.2
+        },
+        "5": {
+          "areaMm2": 448.4,
+          "ladoMm": 41.6
+        },
+        "6": {
+          "areaMm2": 643.8,
+          "ladoMm": 49.7
+        },
+        "4.5": {
+          "areaMm2": 368.5,
+          "ladoMm": 37.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "conejo mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 162,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 286,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 437.4,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 627.9,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 361.9,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 61,
+          "ladoMm": 8.7
+        },
+        "4": {
+          "areaMm2": 105.8,
+          "ladoMm": 11.8
+        },
+        "5": {
+          "areaMm2": 165.6,
+          "ladoMm": 14.7
+        },
+        "6": {
+          "areaMm2": 238.1,
+          "ladoMm": 17.5
+        },
+        "4.5": {
+          "areaMm2": 133.7,
+          "ladoMm": 13.1
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 218.4,
+          "ladoMm": 20.8
+        },
+        "4": {
+          "areaMm2": 258.9,
+          "ladoMm": 22.1
+        },
+        "5": {
+          "areaMm2": 400.6,
+          "ladoMm": 27.7
+        },
+        "6": {
+          "areaMm2": 575.5,
+          "ladoMm": 33.1
+        },
+        "4.5": {
+          "areaMm2": 322.6,
+          "ladoMm": 24.9
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 143.9,
+          "ladoMm": 15.6
+        },
+        "4": {
+          "areaMm2": 255.2,
+          "ladoMm": 20.9
+        },
+        "5": {
+          "areaMm2": 394.3,
+          "ladoMm": 26.1
+        },
+        "6": {
+          "areaMm2": 566.8,
+          "ladoMm": 31.3
+        },
+        "4.5": {
+          "areaMm2": 317.6,
+          "ladoMm": 23.5
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 41.7,
+          "ladoMm": 7.6
+        },
+        "4": {
+          "areaMm2": 73.8,
+          "ladoMm": 10.1
+        },
+        "5": {
+          "areaMm2": 113.7,
+          "ladoMm": 12.7
+        },
+        "6": {
+          "areaMm2": 163.1,
+          "ladoMm": 15.1
+        },
+        "4.5": {
+          "areaMm2": 91.7,
+          "ladoMm": 11.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 210.6,
+          "ladoMm": 25
+        },
+        "4": {
+          "areaMm2": 371.8,
+          "ladoMm": 33.2
+        },
+        "5": {
+          "areaMm2": 576.1,
+          "ladoMm": 41.6
+        },
+        "6": {
+          "areaMm2": 827,
+          "ladoMm": 49.7
+        },
+        "4.5": {
+          "areaMm2": 467.7,
+          "ladoMm": 37.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "pollito mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 190.8,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 336.1,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 521.2,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 749.3,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 424.1,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato caja: dentro / arriba",
+      "porTamano": {
+        "3": {
+          "areaMm2": 74.3,
+          "ladoMm": 8.9
+        },
+        "4": {
+          "areaMm2": 129.9,
+          "ladoMm": 11.9
+        },
+        "5": {
+          "areaMm2": 202.6,
+          "ladoMm": 14.8
+        },
+        "6": {
+          "areaMm2": 291.2,
+          "ladoMm": 17.9
+        },
+        "4.5": {
+          "areaMm2": 163.6,
+          "ladoMm": 13.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato caja: dentro / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 201.3,
+          "ladoMm": 17.7
+        },
+        "4": {
+          "areaMm2": 359.9,
+          "ladoMm": 23.7
+        },
+        "5": {
+          "areaMm2": 556.1,
+          "ladoMm": 29.6
+        },
+        "6": {
+          "areaMm2": 801.9,
+          "ladoMm": 35.5
+        },
+        "4.5": {
+          "areaMm2": 448.5,
+          "ladoMm": 26.6
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato caja: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 90,
+          "ladoMm": 12.7
+        },
+        "4": {
+          "areaMm2": 162.2,
+          "ladoMm": 16.8
+        },
+        "5": {
+          "areaMm2": 249.2,
+          "ladoMm": 21
+        },
+        "6": {
+          "areaMm2": 358.4,
+          "ladoMm": 25.2
+        },
+        "4.5": {
+          "areaMm2": 201.6,
+          "ladoMm": 18.9
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato mesa: arriba / abajo",
+      "porTamano": {
+        "3": {
+          "areaMm2": 35.5,
+          "ladoMm": 5
+        },
+        "4": {
+          "areaMm2": 62.7,
+          "ladoMm": 6.6
+        },
+        "5": {
+          "areaMm2": 97,
+          "ladoMm": 8.2
+        },
+        "6": {
+          "areaMm2": 139.1,
+          "ladoMm": 9.8
+        },
+        "4.5": {
+          "areaMm2": 78.1,
+          "ladoMm": 7.3
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato mesa: arriba / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 169.5,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 299.2,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 464.5,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 665.7,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 378.4,
+          "ladoMm": 21.2
+        }
+      }
+    },
+    {
+      "tipo": "lugar",
+      "clave": "zapato mesa: abajo / lado",
+      "porTamano": {
+        "3": {
+          "areaMm2": 187.9,
+          "ladoMm": 14.2
+        },
+        "4": {
+          "areaMm2": 331.9,
+          "ladoMm": 19
+        },
+        "5": {
+          "areaMm2": 514.8,
+          "ladoMm": 23.7
+        },
+        "6": {
+          "areaMm2": 737.3,
+          "ladoMm": 28.4
+        },
+        "4.5": {
+          "areaMm2": 419,
+          "ladoMm": 21.2
+        }
+      }
+    }
+  ]
+}

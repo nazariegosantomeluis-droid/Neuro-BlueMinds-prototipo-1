@@ -1,5 +1,7 @@
 # AutiPal · Prototipo E13
 
+> **Rama `actividades-posteriores`: no se une a `main` antes del piloto** (Catálogo de actividades, sección 6). Contiene las 14 actividades del Catálogo que no son del piloto, solo en modo experto, para que el equipo revise su mecánica. El piloto (ACT-01, ACT-02 y ACT-07) es idéntico al de `main`.
+
 [![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
 
 **AutiPal** es la aplicación de Neuro-BlueMinds: una herramienta de apoyo y medición para el terapeuta que trabaja con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
@@ -17,7 +19,43 @@ Este prototipo sirve para que un panel de 6 a 9 expertos (terapia de lenguaje, t
 | ACT-02 | Pictograma e imagen | 30 | B1 a B4 |
 | ACT-07 | Cambia la regla | 30 | B1 a B4 |
 
-Son las tres del estudio piloto (Catálogo de actividades, sección 5). Las demás actividades del Catálogo y la pausa guiada no forman parte de esta versión: el Catálogo las deja para después del piloto (secciones 6 y 7.1).
+Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las únicas que se usan en una sesión con un niño.
+
+**Uso posterior, con prototipo.** El Catálogo las habilita después del piloto y de su propia validez de contenido. Aquí ya se pueden revisar, pero **solo se abren en modo experto**: sus sesiones llevan `EXP-`, y sus ítems no entran en la revisión clínica ni en el formulario F3.
+
+| Código | Nombre | Qué hace el niño | Modalidad | Bandas |
+|---|---|---|---|---|
+| ACT-03 | Palabra escrita e imagen | Lee una palabra o una frase de dos palabras y toca su dibujo | V y AV | B1 a B3 |
+| ACT-04 | Oración e imagen | Lee o escucha una oración y toca la escena que la muestra; en B5 dice con una palomita o un tache si la oración dice lo que muestra la escena | V y AV | B1 a B5 |
+| ACT-05 | Sonido e imagen | Escucha un sonido que no es habla (un maullido, un tren) y toca lo que lo produce | Solo AV | B1 a B3 |
+| ACT-06 | Clasifica por categoría | Pone cada dibujo en la caja de su categoría (2 o 3 cajas) | V y AV | B1 a B3 |
+| ACT-08 | Busca el objetivo | Encuentra un dibujo entre 4, 8, 12 o 16 | V y AV | B1 a B4 |
+| ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | Solo V | B1 a B4 |
+| ACT-10 | Ordena la secuencia | Toca en orden los momentos de una historia (V) o los dibujos que nombra una instrucción de varios pasos (AV); de 2 a 5 tarjetas | V y AV | B1 a B4 |
+| ACT-11 | Completa el patrón | Elige la figura que sigue en una serie: AB, AAB, ABC o dos reglas a la vez | V y AV | B1 a B4 |
+| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado; los pictogramas son figuras de cuerpo entero | V y AV | B1 a B3 (falta B4) |
+| ACT-15 | Sonidos de las palabras | Escucha una palabra y toca la que rima o la que empieza igual; en B4 dice si dos palabras suenan igual | Solo AV | B1 a B4 |
+| ACT-16 | Forma la palabra | Forma el nombre de un dibujo tocando sus sílabas o sus letras en orden, o una frase con sus palabras; una pieza sobra | V y AV | B1 a B4 |
+| ACT-17 | Pausa guiada | Mira un globo que se infla y se desinfla despacio. No mide nada. Solo en una sesión en modo experto | — | Sin bandas |
+
+**En investigación, con prototipo.** El Catálogo deja dos actividades en investigación: antes de usarlas hay que definir sus indicadores en el Modelo matemático. Su prototipo sirve para que el equipo revise la mecánica. Se abren solo en modo experto, van aparte en el inicio, en un grupo plegado, y no entran en el piloto, en la revisión clínica ni en el formulario F3.
+
+| Código | Nombre | Qué hace el niño | Modalidad | Bandas |
+|---|---|---|---|---|
+| ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, a la mitad del bloque esa ventaja pasa al otro cofre | Solo V | B1 a B4 |
+| ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
+
+En esta rama todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
+
+Ensayos por bloque (Arquitectura 4.4: de 20 a 40, 30 por defecto). Donde la mecánica no lo permite, la ficha lo explica en `ensayosExcepcion`:
+
+| Actividades | Ensayos por bloque | Por qué |
+|---|---|---|
+| ACT-03, 04, 05, 06, 08, 09, 11, 13 y 15 | 30 | El valor por defecto. |
+| ACT-12 | 40 | Dos bloques de 40 de la misma banda se juntan en la sesión para llegar a las 80 elecciones que pide el Catálogo (`juntarBloques`). |
+| ACT-14 | 40 | 10 presentaciones por emoción en B2 y B3, el mínimo del Catálogo para la matriz de confusión. |
+| ACT-10 y ACT-16 | 10 secuencias | Un ensayo es una secuencia completa (Arquitectura 4.5); 20 secuencias serían hasta 80 toques y repetirían secuencias. A1 necesita 20: dos bloques. |
+| ACT-17 | Sin ensayos | Es una pausa sin respuesta evaluable. |
 
 Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El motor ejecuta la ficha: la secuencia del ensayo y el registro son iguales para todas las actividades; cada actividad solo aporta cómo se dibuja su pantalla.
 
@@ -220,7 +258,7 @@ Antes de publicar, corre también `npm run check-items`.
 
 1. `npm test`;
 2. `npm run check-items`;
-3. `node tools/build-items.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano.
+3. `node tools/build-items.mjs` y, en esta rama, `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
 
 El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
 
@@ -253,6 +291,8 @@ src/styles.css                Estilos: marca AutiPal en el adulto, pantalla del 
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
+src/voz-grabada.js            Aviso y resumen de las actividades que requieren la voz grabada (ACT-15)
+src/pausa-permiso.js          Cuándo se puede abrir la pausa guiada (ACT-17)
 src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
 src/engine/selector.js        Selección de ítems por banda, con semilla
 src/engine/quality.js         Reglas de calidad y resumen descriptivo
@@ -261,6 +301,7 @@ src/engine/ficha.js           Carga y validación de fichas
 src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 src/activities/referencia.js  Pantalla del objetivo de la referencia motora
+src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
 fichas/                       Ficha técnica de cada actividad (JSON)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
@@ -268,10 +309,14 @@ tools/build-items.mjs         Genera items/items.json y los marcadores provision
 tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
+tools/simular-piloto.mjs      Simula bloques del piloto; test/fixtures guarda lo que registraba el motor antes de la tanda 2
+tools/build-posteriores.mjs   Genera items/items-posteriores.json (actividades de uso posterior)
+tools/medir-escenas.mjs       Mide a tamaño real si las escenas de ACT-04 se distinguen
+tools/sonidos.mjs             Mide y corrige la sonoridad y el inicio de los sonidos de ACT-05
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
 tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
 assets/                       Imágenes, pictogramas, audios, marca (assets/marca) y tipografías (assets/fonts)
-docs/                         Registro de ejemplo
+docs/                         Registro de ejemplo y medidas de escenas (ACT-04) y sonidos (ACT-05)
 test/                         Pruebas (node --test)
 .github/workflows/            Verificación automática en GitHub Actions
 ```
@@ -392,7 +437,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `cuadros_perdidos`, `cuadros_total` | Intervalos entre cuadros mayores a 1.5 veces el periodo normal, y total de intervalos medidos. |
 | `periodo_cuadro_ms` | Mediana de los intervalos entre cuadros (`requestAnimationFrame`) durante el ensayo: unos 16.7 ms a 60 Hz y 33.3 ms a 30 Hz. |
 | `interrumpido` | `true` si el terapeuta pausó durante el ensayo. Ese ensayo no se repite. |
-| `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. |
+| `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. En las actividades que requieren la voz grabada (ACT-15), también si la consigna sonó con la voz del navegador (`audio_fuente = sintesis`): ese ensayo nunca queda como válido. |
 | `tr_bruto_ms` | `t_toque − t_opciones`. |
 | `latencia_dispositivo_ms` | Latencia táctil y de pantalla de la tableta. Vacía hasta medir cada tableta. |
 | `tr_corregido_ms` | `tr_bruto_ms − latencia_dispositivo_ms`. Vacío si no hay latencia. |
@@ -400,6 +445,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `fuera_de_tarea` | `true` si ln(RT) está a más de 3 MAD de la mediana, según el Modelo matemático (3.2 y 3.3). Detalles abajo. |
 | `fuera_de_tarea_provisional` | `false` si `fuera_de_tarea` se calculó al cerrar la sesión; `true` si la sesión seguía abierta al exportar. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
+| `t_muestra_fin` | Solo ACT-09: cuadro en que la muestra ya no se ve. La quita el motor, no la pantalla: en cada cuadro (`requestAnimationFrame`) mira si el siguiente llega a `t_consigna_inicio` + 2 s, con medio cuadro de margen; en ese cuadro la quita y guarda el timestamp del cuadro siguiente, como `t_opciones`. La pausa en blanco real es `t_opciones − t_muestra_fin`. Vacía en las demás actividades y si se pausó mientras se veía la muestra. Va al final para que las columnas anteriores no cambien de lugar. |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 
@@ -475,6 +521,49 @@ Una fila por sesión, en este orden:
 - `estadoRevision` (ACT-01 y ACT-02): `sin-revisar`, `aprobado`, `corregir` o `retirado`, según la revisión clínica (ver «Aplicar la revisión al banco»). Los retirados no entran en las sesiones. Las secuencias de ACT-07 no tienen estado propio: sus figuras se revisan en conjunto.
 - Ejemplares: el 1 y el 2 se usan en la práctica; el 3 se reserva para sondas de generalización y no aparece en los ensayos normales.
 
+### Banco de las actividades de uso posterior
+
+[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 817 ítems, todos con `revisionPendiente`. En ACT-10 y ACT-16 un ítem es una secuencia completa, con sus pasos; en ACT-12 y ACT-13, el programa o la serie de un bloque, con sus ensayos.
+
+| Actividad | Ítems | Cómo se arman |
+|---|---|---|
+| ACT-03 | 130 | B1 y B2: un ítem por concepto; la consigna es el nombre escrito. B3: 10 frases de objeto y color (lista `frases` de la ficha), con el mismo objeto en otro color, otro objeto del mismo color y otro objeto de otro color |
+| ACT-06 | 84 | Un ítem por dibujo y juego de cajas. Las cajas no cambian de lugar; cada una lleva dos pictogramas de su categoría, y el dibujo nunca es uno de ellos. El juego de cajas alterna entre sesiones |
+| ACT-08 | 40 | 10 por banda. El objetivo es la misma imagen de la muestra; en B3 y B4, 2 y 4 distractores son de su categoría |
+| ACT-09 | 40 | 10 por banda. La opción correcta es la misma imagen de la muestra |
+| ACT-11 | 40 | 10 por banda. Figuras (círculo, cuadrado, triángulo y estrella) en azul y amarillo; la opción correcta es la que sigue según la regla |
+| ACT-14 | 60 | Cada uno de los 6 personajes muestra una vez cada emoción de la banda. Los pictogramas de emoción no cambian de lugar |
+| ACT-04 | 88 | Escenas de una niña o un niño que duerme, come, bebe, corre, salta, se peina, barre, habla por teléfono o abraza a un animal, y de un animal u objeto dentro, arriba, abajo o al lado de una caja o una mesa. En B2 cada distractor cambia una sola parte de la oración: la persona, la acción o el objeto. En B5, la mitad de las oraciones dicen lo que muestra la escena |
+| ACT-05 | 66 | Un ítem por grabación (12 sonidos, 2 grabaciones de cada uno) y banda. Los distractores también tienen sonido: de otro grupo en B1 y B2, del mismo grupo en B3 (todos animales o todos vehículos) |
+| ACT-10 | 96 | V: 7 historias de 5 momentos (la planta que crece, la manzana que se come, el sándwich, el pollito, la vela, el vaso que se llena y el helado), cada una en 2 órdenes revueltos. AV: 10 instrucciones por banda con dibujos del banco de categorías distintas |
+| ACT-12 | 24 | 6 programas de 40 ensayos por banda. En cada mitad del bloque el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
+| ACT-13 | 24 | 6 series de 30 presentaciones por banda, con la proporción de nubes de la banda. Nunca empiezan con una nube ni ponen más de 2 seguidas |
+| ACT-15 | 75 | Rimas (B1 y B2; en B2 un distractor empieza igual que la palabra, pero no rima), inicios con la misma sílaba (B3) y pares que cambian en un solo sonido, dichos iguales o distintos (B4) |
+| ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra (en B3, una o dos), y nunca repite una pieza de la palabra |
+
+- Ningún ítem usa el ejemplar 3, reservado para las sondas de generalización de ACT-02, ni junta en una pantalla conceptos que se excluyen.
+- ACT-03, 05, 06, 08, 09, 10 (en AV), 15 y 16 usan los dibujos y pictogramas del banco. Las figuras de ACT-11, los rostros y pictogramas de emoción de ACT-14, las escenas de ACT-04, las historias de ACT-10, los cofres de ACT-12, el pez y la nube de ACT-13 (no el globo de la pausa guiada), y las figuras de «igual» y «diferente» de ACT-15 se dibujan con código.
+- Las escenas de ACT-04 son personas dibujadas con código, con objetos y animales recortados de los dibujos del banco (`assets/escenas/`). Cada ítem fija el tono de piel, el pelo y la ropa de la persona, así que en sus opciones solo cambia lo que dice la oración.
+- **Tamaño de las escenas de ACT-04.** Miden al menos 4.5 cm (`opcionMinCm` de la ficha) y crecen hasta 8 cm si la pantalla lo permite. Si no caben a 4.5 cm (por ejemplo, las 4 escenas de B2 en una tableta en vertical), el inicio lo avisa antes de empezar.
+- **Medición de las escenas.** `node tools/medir-escenas.mjs` (necesita Playwright con Chromium; no corre en la verificación de GitHub) dibuja, con la densidad de una tableta de 10 pulgadas (59 px CSS por cm), cada par de escenas que puede ir junto en un ítem: dos acciones, dos objetos de la misma acción, el niño y la niña, y dos relaciones de lugar. Mide la mayor zona en que cambian y la compara con un umbral propuesto (4 mm de lado menor y 25 mm²). Escribe [`docs/medicion-escenas.json`](docs/medicion-escenas.json) y [`docs/escenas-tamano-real.png`](docs/escenas-tamano-real.png). Es un filtro para la revisión, no un criterio clínico: «come» y «bebe», y todas las demás acciones, lo pasan a 4.5 cm.
+- **Escenas que siguen siendo ambiguas** (revisión a ojo a 4.5 cm, lista `accionesAmbiguas` de la ficha): «se peina» frente a «habla por teléfono»; «dentro» frente a «arriba» de la caja con el pato, el pollito y el zapato; «abraza al conejo» frente a «abraza al pato»; y «arriba» frente a «abajo» de la mesa con el conejo y el pato, que a ojo se distinguen pero no pasan el filtro por debajo de 6 cm. Quedan para la revisión clínica.
+- En la secuencia, las tarjetas se revuelven de modo que con 3 o más nunca quedan ya en orden.
+- **ACT-10 y ACT-16: la secuencia completa es el ensayo** (Catálogo 6.2: A1 por secuencia completa, o por palabra).
+  - El resumen del bloque empieza por las secuencias hechas completas y en orden. Las cortadas por una pausa o un salto no entran en la cuenta y se informan aparte. Los pasos van después, como detalle.
+  - Los tiempos entre toques no son tiempos de respuesta comparables (Arquitectura 4.5): el resumen no da su mediana y sus filas quedan con `fuera_de_tarea` vacío.
+  - El registro sigue guardando una fila por paso, con su código (`ACT10-B2-03-1`).
+  - La última tarjeta pasa sola a su lugar y no es un paso ni tiene fila (`ultimaTarjeta: "sola"` en la ficha). En ACT-16 eso pasa aunque sobren piezas; con `"elige"`, el niño elegiría la última entre las que quedan. Queda como decisión clínica.
+  - Un bloque propone 10 secuencias; A1 necesita 20 (Modelo matemático 4.1), que se juntan con dos bloques.
+- **ACT-14: los pictogramas de respuesta no son caras.** Con caras esquemáticas el niño podía acertar copiando la forma de la boca del rostro (risa, dientes, boca abierta) sin reconocer la emoción. La propuesta en uso son figuras de cuerpo entero con la cabeza sin rasgos, en las que la emoción se lee en la postura (`estiloPictograma: "postura"`). La ficha describe los dos estilos en `estilosPictograma`; elegir uno es una decisión clínica pendiente. Falta la banda B4, la emoción a partir de una situación, que necesita escenas de situaciones.
+- **ACT-17, la pausa guiada, solo se abre en una sesión en modo experto**, y nunca durante una sesión del piloto ni en un bloque de una actividad del piloto (`src/pausa-permiso.js`). No aparece en el panel de pausa de las sesiones con niños ni en la referencia motora; la página «Pausa guiada» y el inicio solo la ofrecen con una sesión en modo experto en curso, y queda anotada en esa sesión.
+- **ACT-15 requiere la voz grabada** (`requiereVozGrabada` en la ficha), que todavía no existe. Con la voz del navegador, antes del bloque aparece un aviso y el adulto decide si la abre solo para revisar la mecánica. El motor deja cada ensayo con `audio_fuente = sintesis` como fallo técnico (`fallo_tecnico = true`, `peso_calidad = 0`): nunca queda como válido, y el resumen del bloque no lo cuenta.
+- **ACT-12: dos bloques de 40 se juntan en 80 elecciones.** El Catálogo pide 80 elecciones o más para verificar que se recuperan los parámetros del modelo de aprendizaje, y un bloque tiene como mucho 40 ensayos (Arquitectura 4.4). Por eso (`juntarBloques` de la ficha):
+  - El segundo bloque de la misma banda en la sesión elige un programa que empieza con el cofre que terminó premiando más en el primero. Así las 80 elecciones son un solo programa: en B1 y B2 el mismo cofre premia más todo el tiempo; en B3 y B4 la ventaja cambia en las elecciones 21 y 61.
+  - El resumen de cada bloque, al terminarlo y en «Sesiones», cuenta las elecciones de esa banda en la sesión y, si son menos de 80, pide otro bloque. Las omisiones y los ensayos interrumpidos no cuentan como elecciones.
+  - Este prototipo no calcula los parámetros.
+- Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.
+- Las frases de ACT-03 B3 dependen del color de cada dibujo. Si se cambia una imagen del banco, hay que revisar la lista `frases` de la ficha.
+
 `npm run check-items` verifica que todo archivo usado exista y tenga su fila en [`items/licencias.csv`](items/licencias.csv), y falla si no. También lista los marcadores provisionales que siguen en uso, los audios que faltan y cuántos ítems hay en cada estado de revisión clínica.
 
 ## Imágenes, pictogramas y audio
@@ -489,6 +578,20 @@ Una fila por sesión, en este orden:
 No se usan fotografías inventadas ni generadas. Respeta las notas de cada concepto; por ejemplo, el pollito sin gallina y la misma forma de paleta en sus tres ejemplares.
 
 **Audio.** Cada consigna tiene una clave, y su archivo va en `assets/audio/<clave>.mp3`; por ejemplo, `cual-es-igual.mp3` o `donde-esta-el-perro.mp3`. `npm run check-items` lista las claves que faltan. Cada archivo necesita su fila en `licencias.csv`. Mientras falte, la aplicación usa la voz del navegador en español de México y lo registra como `audio_fuente` = `sintesis`.
+
+**Recortes para las escenas de ACT-04.** Los 16 archivos de `assets/escenas/<concepto>.png` son dibujos sin el fondo blanco (manzana, plátano, galleta, paleta, naranja, leche, peine, escoba, teléfono, almohada, perro, gato, conejo, pato, pollito y zapato), para ponerlos dentro de una escena. Cada uno tiene su fila en `licencias.csv`, que dice de qué dibujo sale.
+
+**Sonidos de ACT-05.** Los 24 archivos `assets/audio/sonido-<concepto>-<1|2>.mp3` (el perro, el gato, la vaca, el pájaro, el tren, el avión, el helicóptero, el claxon del carro, la sirena del camión de bomberos, el cepillo de dientes, unas manos que aplauden y el agua que se sirve en un vaso) son grabaciones reales de [Freesound](https://freesound.org) reunidas en el conjunto ESC-50 (K. J. Piczak, 2015). Solo se usaron grabaciones con licencia CC0 o CC BY; cada una tiene su fila en `licencias.csv` con su autor, su licencia y su dirección en Freesound, como pide CC BY.
+
+- Primero se recortaron a 2.1 s, mono, con 15 ms de entrada y 250 ms de salida. Ese paso decía dejar un volumen parejo, pero no lo dejó: la sonoridad iba de −29.2 a −20.8 LUFS, algunos picos llegaban a −1.4 dBTP, y ocho grabaciones tenían de 70 a 355 ms de ruido de fondo antes del sonido (carro-2, gato-2, mano-1, pájaro-1, perro-1, perro-2, vaca-1 y vaso-1).
+- Ahora `node tools/sonidos.mjs` los mide con ffmpeg y `node tools/sonidos.mjs --corregir` los corrigió. Se corrió una sola vez sobre las grabaciones originales:
+  - **Sonoridad:** todos quedan en −27 LUFS ± 1 (EBU R128), con pico verdadero de −3 dBTP o menos. −27 es el objetivo más alto en el que el sonido con más picos, el cepillo de dientes 2, no pasa de −3 dBTP.
+  - **Inicio:** el sonido empieza en la primera ventana de 5 ms que está a 20 dB o menos de la ventana más fuerte del archivo. Así el ruido de fondo de la grabación no cuenta como inicio. Se recorta lo que hay antes de 15 ms del inicio y se pone una entrada suave de 10 ms. Todos empiezan antes de 50 ms (de 5 a 20 ms). Si un navegador no quita el retardo del codificador MP3 (unos 26 ms), siguen por debajo de 50 ms.
+  - Duran ahora de 1.76 a 2.1 s, en MP3 mono de 44.1 kHz y 96 kbps.
+- `docs/medicion-sonidos.json` guarda la medida de cada archivo y su huella SHA-256. Las pruebas comprueban que todos cumplen y que los archivos son los medidos. Si se cambia un sonido, hay que volver a correr `node tools/sonidos.mjs`.
+- Ninguno es un sonido de error ni de premio: son el estímulo.
+- `silencio.mp3` es un archivo sin sonido. Lo usan los pasos de ACT-10 y ACT-16 después del primero, para que la instrucción no se repita en cada paso de la secuencia.
+- Las consignas habladas de ACT-04, ACT-10, ACT-15 y ACT-16 todavía usan la voz del navegador.
 
 **Pictogramas.** Se descargan una sola vez de ARASAAC con `npm run pictos`, a `assets/picto/<concepto>.png`. El identificador de cada uno está en `conceptos.json` (`arasaac`) y en `licencias.csv`. Para cambiar uno:
 

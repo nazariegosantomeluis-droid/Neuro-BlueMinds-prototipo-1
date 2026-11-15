@@ -17,6 +17,8 @@ export const COLUMNS = [
   'toques_fuera', 'toques_repetidos', 'perdida_foco', 'cuadros_perdidos', 'cuadros_total', 'periodo_cuadro_ms',
   'interrumpido', 'fallo_tecnico', 'tr_bruto_ms', 'latencia_dispositivo_ms', 'tr_corregido_ms',
   'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional', 'peso_calidad',
+  // Al final, para que las columnas del piloto no cambien de lugar. Solo la llena ACT-09.
+  't_muestra_fin',
 ];
 
 // Una fila por sesión (sesiones.csv).

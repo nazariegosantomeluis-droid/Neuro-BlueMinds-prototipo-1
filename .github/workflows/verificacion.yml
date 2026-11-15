@@ -1,6 +1,6 @@
 # Verificación de cada cambio (hoja de ruta, H8.1; Arquitectura y software, sección 15):
-# pruebas, archivos y licencias del banco, y que el banco generado coincida con el del
-# repositorio. Corre en cada envío a cualquier rama y en cada pull request.
+# pruebas, archivos y licencias del banco, y que los dos bancos generados (piloto y uso
+# posterior) coincidan con los del repositorio. Corre en cada envío a cualquier rama y en cada pull request.
 name: verificacion
 
 on:
@@ -34,9 +34,10 @@ jobs:
       - name: El banco generado coincide con el del repositorio
         run: |
           node tools/build-items.mjs
+          node tools/build-posteriores.mjs
           cambios="$(git status --porcelain -- items assets)"
           if [ -n "$cambios" ]; then
-            echo "El banco de ítems no está al día. Corre node tools/build-items.mjs y sube el resultado:"
+            echo "El banco de ítems no está al día. Corre node tools/build-items.mjs y node tools/build-posteriores.mjs y sube el resultado:"
             echo "$cambios"
             exit 1
           fi

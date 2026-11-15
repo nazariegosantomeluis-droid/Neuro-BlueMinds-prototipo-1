@@ -21,6 +21,8 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'cuadros_perdidos', 'cuadros_total', 'periodo_cuadro_ms', 'interrumpido', 'fallo_tecnico', 'tr_bruto_ms',
     'latencia_dispositivo_ms', 'tr_corregido_ms', 'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional',
     'peso_calidad',
+    // Tanda 2: al final, para que las columnas anteriores no cambien de lugar.
+    't_muestra_fin',
   ]);
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',

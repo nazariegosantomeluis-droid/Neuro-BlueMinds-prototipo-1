@@ -1,17 +1,25 @@
 // Pantalla de inicio: el adulto prepara el bloque en tres pasos (actividad, ajustes y sesión),
 // ve un ejemplo de lo que verá el niño y empieza. El botón «Empezar» siempre queda a la vista.
 import { esc, navHTML, tituloHTML, chipHTML } from './paginas.js';
-import { EN_UNA_LINEA, ESQUEMAS, grupos } from './catalogo.js';
+import { EN_UNA_LINEA, ESQUEMAS, PANTALLAS, grupos, requiereModoExperto } from './catalogo.js';
 import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
+import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { DEMO, nombreNino, abreviar } from './ninos.js';
 import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
 
 export const MODALIDADES = { V: 'V · solo visual', AV: 'AV · visual con voz' };
 
-// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias.
-export const maxEnsayos = (ficha, banda) => (banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : 200);
-const ensayosAyuda = (ficha, banda) => `De 1 a ${maxEnsayos(ficha, banda)}. La ficha propone ${Math.min(ficha.ensayosPorBloque, maxEnsayos(ficha, banda))}.`;
+// Un bloque armado por composición (ACT-07) tiene tantos ensayos como sus secuencias. Una banda
+// puede fijar su propio máximo (ACT-12 y ACT-13: el largo de sus programas).
+export const maxEnsayos = (ficha, banda) =>
+  banda.composicion ? banda.composicion.length * ficha.ensayosPorSecuencia : (banda.ensayosMax ?? ficha.ensayosMax ?? 200);
+// En «Ordena la secuencia» y «Forma la palabra» el bloque se cuenta en secuencias; cada paso es un ensayo.
+export const unidadDelBloque = (ficha) => (ficha.unidadDelBloque === 'secuencia' ? { una: 'secuencia', varias: 'secuencias', campo: 'Número de secuencias' } : { una: 'ensayo', varias: 'ensayos', campo: 'Número de ensayos' });
+const ensayosAyuda = (ficha, banda) =>
+  `De 1 a ${maxEnsayos(ficha, banda)}. La ficha propone ${Math.min(ficha.ensayosPorBloque, maxEnsayos(ficha, banda))}.${ficha.unidadDelBloque === 'secuencia' ? ' Cada paso de una secuencia queda como un ensayo en el registro.' : ''}`;
+// Nota de la modalidad cuando la actividad solo tiene una.
+const NOTA_MODALIDAD = { V: 'Esta actividad solo tiene modalidad visual.', AV: 'Esta actividad solo tiene modalidad con sonido: revisa el volumen antes de empezar.' };
 
 // El número de ensayos se revisa al salir del campo y al empezar; el aviso queda junto al campo.
 const ensayosOk = (campo) => {
@@ -49,6 +57,10 @@ export function avisoDeAjuste(ficha, banda) {
   const r = comprobarPantalla({
     pantalla: ficha.pantalla,
     disposicion: banda.disposicion ?? `1x${banda.opciones}`,
+    // La serie más larga de la banda, más el lugar vacío (ACT-11).
+    lugares: banda.largos ? Math.max(...banda.largos) + 1 : 0,
+    // Las escenas de ACT-04 piden más de 2 cm para que se distinga la acción (ficha, «opcionMinCm»).
+    ...(ficha.opcionMinCm ? { opcionMin: ficha.opcionMinCm } : {}),
     anchoPx: innerWidth,
     altoPx: innerHeight,
     cmPx: cmPx(),
@@ -64,23 +76,54 @@ const paso = (n, id, titulo) =>
 
 // ---------- Paso 1: actividad ----------
 
+const NOTA_GRUPO = {
+  posterior: 'Prototipos de actividades que el Catálogo deja para después del piloto. Solo se abren en modo experto y todavía no se usan con niños.',
+  investigacion:
+    'El Catálogo deja estas actividades en investigación: antes de usarlas hay que definir sus indicadores en el Modelo matemático. Sus prototipos solo se abren en modo experto, para revisarlas.',
+};
+
 function actividadesHTML({ state, actual }) {
-  const [piloto] = grupos(state.catalogo, state.fichas, state.problemas);
-  const tarjetas = piloto.actividades
-    .map(
-      ({ id }) => `
-      <label class="actividad-tarjeta">
-        <input type="radio" name="actividad" value="${id}" ${id === actual ? 'checked' : ''}>
-        <span class="act-cuerpo">
-          <span class="act-esquema">${ESQUEMAS[id] ?? ''}</span>
-          <span class="act-codigo">${id}</span>
-          <span class="act-nombre">${esc(state.fichas[id]?.nombre ?? 'Ficha con problemas')}</span>
-          <span class="act-linea">${esc(EN_UNA_LINEA[id] ?? '')}</span>
-        </span>
-      </label>`,
-    )
+  // Con una sesión normal en curso no se puede cambiar a modo experto: se termina primero.
+  const sesionNormal = Boolean(state.session && !state.session.experto);
+  return grupos(state.catalogo, state.fichas, state.problemas)
+    .filter((g) => g.actividades.length)
+    .map((g) => {
+      // Las de uso posterior y las de investigación solo se abren en modo experto.
+      const posterior = g.id !== 'piloto';
+      const nota = !posterior
+        ? ''
+        : sesionNormal
+          ? 'Hay una sesión normal en curso. Termínala para probar estas actividades, que solo se abren en modo experto.'
+          : NOTA_GRUPO[g.id];
+      const tarjetas = g.actividades
+          .map(
+            ({ id }) => `
+          <label class="actividad-tarjeta">
+            <input type="radio" name="actividad" value="${id}" ${id === actual ? 'checked' : ''} ${posterior && sesionNormal ? 'disabled' : ''}>
+            <span class="act-cuerpo">
+              <span class="act-esquema">${ESQUEMAS[id] ?? ''}</span>
+              <span class="act-codigo">${id}</span>
+              <span class="act-nombre">${esc(state.fichas[id]?.nombre ?? 'Ficha con problemas')}</span>
+              <span class="act-linea">${esc(EN_UNA_LINEA[id] ?? '')}</span>
+            </span>
+          </label>`,
+          )
+          .join('');
+      // Las del piloto se ven siempre. Las de uso posterior van plegadas, para que preparar una
+      // sesión normal siga siendo corto; se abren solas cuando la elegida es una de ellas.
+      if (!posterior) return `<fieldset class="actividades"><legend>${g.titulo}</legend>${tarjetas}</fieldset>`;
+      const abierta = g.actividades.some((a) => a.id === actual);
+      return `
+      <details class="grupo-posterior" ${abierta ? 'open' : ''}>
+        <summary>${g.titulo} (${g.actividades.length})</summary>
+        <fieldset class="actividades">
+          <legend class="oculto">${g.titulo}</legend>
+          <p class="ayuda actividades-nota">${nota}</p>
+          ${tarjetas}
+        </fieldset>
+      </details>`;
+    })
     .join('');
-  return `<fieldset class="actividades"><legend>${piloto.titulo}</legend>${tarjetas}</fieldset>`;
 }
 
 // ---------- Paso 2: ajustes del bloque ----------
@@ -92,6 +135,7 @@ function bloqueHTML(ficha, f, volumen) {
     <fieldset class="chips">
       <legend>Modalidad</legend>
       ${ficha.modalidades.map((m) => chipHTML('modalidad', m, MODALIDADES[m], m === modalidad)).join('')}
+      ${ficha.modalidades.length === 1 ? `<p class="ayuda">${NOTA_MODALIDAD[ficha.modalidades[0]]}</p>` : ''}
     </fieldset>
     <label id="campo-volumen" for="volumen-inicio" ${modalidad === 'AV' ? '' : 'hidden'}>Volumen de la voz <output data-volumen-valor>${volumen} %</output>
       <input type="range" id="volumen-inicio" min="0" max="100" value="${volumen}" data-volumen>
@@ -105,21 +149,36 @@ function bloqueHTML(ficha, f, volumen) {
           <input type="radio" name="banda" value="${esc(b.id)}" ${b.id === banda.id ? 'checked' : ''}>
           <span class="banda-cuerpo">
             <span class="banda-id">${esc(b.id)}</span>
-            <span class="banda-opciones">${b.opciones} opciones</span>
+            <span class="banda-opciones">${opcionesDeBanda(ficha, b)}</span>
             <span class="banda-desc">${esc(b.descripcion)}</span>
           </span>
         </label>`,
         )
         .join('')}
+      ${ficha.bandasPendientes?.length ? `<p class="ayuda bandas-nota">Todavía sin prototipo: ${esc(ficha.bandasPendientes.join(' '))}</p>` : ''}
     </fieldset>
-    <label>Número de ensayos
+    <label>${unidadDelBloque(ficha).campo}
       <input type="number" name="ensayos" min="1" max="${maxEnsayos(ficha, banda)}" step="1" inputmode="numeric" value="${esc(f.ensayos ?? ficha.ensayosPorBloque)}" aria-describedby="ensayos-ayuda ensayos-error">
       <span class="ayuda" id="ensayos-ayuda">${ensayosAyuda(ficha, banda)}</span>
       <span class="error-campo" id="ensayos-error"></span>
     </label>`;
 }
 
+// Qué muestra cada banda: opciones, tarjetas de una secuencia o un estímulo a la vez.
+const opcionesDeBanda = (ficha, b) =>
+  ficha.respuesta === 'tocar_o_no_tocar'
+    ? 'Un estímulo a la vez'
+    : ficha.unidadDelBloque === 'secuencia'
+      ? `${b.opciones} tarjetas`
+      : `${b.opciones} ${b.opciones === 1 ? 'opción' : 'opciones'}`;
+
 // ---------- Paso 3: sesión ----------
+
+// Cómo se dice el estado del Catálogo en las ayudas de la sesión.
+const DE_ESTADO = {
+  'Uso posterior': { grupo: 'de uso posterior', esta: 'es de uso posterior' },
+  Investigación: { grupo: 'en investigación', esta: 'está en investigación' },
+};
 
 // Quién participa: un niño del padrón (ninos.js) o la demostración, sin niño. No hay ningún campo
 // de texto: la tableta no guarda nada que diga quién es el niño.
@@ -131,17 +190,26 @@ const NOTA_REFERENCIA = `La sesión empieza con la referencia motora: antes del 
 
 // Lo elegido en el inicio, si sigue siendo válido. Con niños inscritos hay que elegir de forma
 // deliberada (R6): no hay ninguno preseleccionado. Sin ellos solo existe la demostración.
-export function participanteElegido(valor, padron) {
+export function participanteElegido(valor, padron, forzado = false) {
+  if (forzado) return DEMO;
   if (valor === DEMO || padron.some((n) => n.codigo === valor)) return valor;
   return padron.length ? '' : DEMO;
 }
 
-function sesionHTML(state, f, padron) {
+function sesionHTML(state, f, forzado, padron, estado) {
+  const de = DE_ESTADO[estado] ?? DE_ESTADO['Uso posterior'];
   const s = state.session;
-  const elegido = participanteElegido(f.participante, padron);
+  const elegido = participanteElegido(f.participante, padron, forzado);
   const opcionNino = (n) =>
     `<option value="${esc(n.codigo)}" ${elegido === n.codigo ? 'selected' : ''}>${esc(nombreNino(n))} · ${esc(abreviar(n.codigo))} · ${esc(n.edad_meses)} meses${CONSENTIMIENTO_NO_VIGENTE[n.consentimiento] ?? ''}</option>`;
-  const participante = `<label>Participante
+  // Las actividades de uso posterior y las de investigación no se usan con niños: solo
+  // demostración y modo experto.
+  const participante = forzado
+    ? `<label>Participante
+         <select name="participante" disabled><option value="${DEMO}" selected>Demostración (sin niño)</option></select>
+         <span class="ayuda">Las actividades ${de.grupo} solo se abren en la demostración, sin niño.</span>
+       </label>`
+    : `<label>Participante
          <select name="participante" aria-describedby="participante-ayuda participante-error">
            ${padron.length ? `<option value="" ${elegido === '' ? 'selected' : ''} disabled>Elige al niño o la demostración</option>` : ''}
            <option value="${DEMO}" ${elegido === DEMO ? 'selected' : ''}>Demostración (sin niño)</option>
@@ -150,7 +218,11 @@ function sesionHTML(state, f, padron) {
          <span class="ayuda" id="participante-ayuda">Los niños se inscriben en <a href="#ninos">Niños inscritos</a>. No se guarda su nombre ni ningún otro dato que lo identifique.</span>
          <span class="error-campo" id="participante-error"></span>
        </label>`;
-  const experto = `<label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto (solo en la demostración)
+  const experto = forzado
+    ? `<label class="casilla"><input type="checkbox" name="experto" value="1" checked disabled> Modo experto
+         <span class="ayuda">Esta actividad ${de.esta}: solo se abre en modo experto. Sus registros llevan un sesion_id que empieza con EXP-.</span>
+       </label>`
+    : `<label class="casilla"><input type="checkbox" name="experto" value="1" ${f.experto ? 'checked' : ''}> Modo experto (solo en la demostración)
          <span class="ayuda">Muestra el código de cada ítem y un botón «Siguiente» para avanzar sin esperar los tiempos. No hace la referencia motora. Sus registros llevan un sesion_id que empieza con EXP-.</span>
        </label>`;
   return `
@@ -162,7 +234,7 @@ function sesionHTML(state, f, padron) {
              <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
           : `${participante}
              ${experto}
-             <p class="ayuda" id="nota-referencia" ${f.experto ? 'hidden' : ''}>${esc(NOTA_REFERENCIA)}</p>`
+             <p class="ayuda" id="nota-referencia" ${forzado || f.experto ? 'hidden' : ''}>${esc(NOTA_REFERENCIA)}</p>`
       }
     </div>`;
 }
@@ -172,11 +244,18 @@ function sesionHTML(state, f, padron) {
 function pieDePrevia(state, ficha, banda, modalidad) {
   const item = itemDeEjemplo(state.items, ficha, banda, modalidad);
   if (!item) return 'Esta banda todavía no tiene ítems.';
+  // En ACT-05 la consigna es un sonido grabado, no la voz.
+  if (item.consigna?.tipo === 'sonido') {
+    const nombre = state.conceptos.find((c) => c.id === item.concepto)?.nombre ?? item.concepto;
+    return `Ejemplo: ítem ${item.codigo}. Suena la grabación ${item.grabacion} de «${nombre}».`;
+  }
   const voz = modalidad === 'AV' && (item.consigna?.texto || item.ensayos?.[0]?.consigna?.texto);
-  return `Ejemplo: ítem ${item.codigo}.${voz ? ` La voz dice «${voz}».` : ''}`;
+  // Algunas pantallas aclaran en qué se diferencia el bloque de este dibujo.
+  const nota = PANTALLAS[ficha.pantalla]?.notaPrevia?.(ficha, banda);
+  return `Ejemplo: ítem ${item.codigo}.${voz ? ` La voz dice «${voz}».` : ''}${nota ? ` ${nota}` : ''}`;
 }
 
-const resumenAjustes = (ficha, banda, modalidad, ensayos) => `Banda ${banda.id} · modalidad ${modalidad} · ${ensayos || '—'} ensayos`;
+const resumenAjustes = (ficha, banda, modalidad, ensayos) => `Banda ${banda.id} · modalidad ${modalidad} · ${ensayos || '—'} ${unidadDelBloque(ficha).varias}`;
 
 // ---------- Pantalla ----------
 
@@ -187,8 +266,10 @@ export function renderInicio(app, ctx, msg = '') {
   const disponibles = grupos(state.catalogo, state.fichas, state.problemas).flatMap((g) => g.actividades.map((a) => a.id));
   const actividad = disponibles.includes(f.actividad) ? f.actividad : disponibles[0];
   const ficha = state.fichas[actividad];
-  const problemas = [...(state.problemas[actividad] ?? []), ...(state.problemas.items ?? [])];
+  const deUsoPosterior = Boolean(ficha && requiereModoExperto(ficha));
+  const problemas = [...(state.problemas[actividad] ?? []), ...(state.problemas.items ?? []), ...(deUsoPosterior ? (state.problemas.posteriores ?? []) : [])];
   const lista = Boolean(ficha && !problemas.length);
+  const forzado = lista && deUsoPosterior;
   const banda0 = lista ? (ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0]) : null;
   const modalidad0 = lista ? (ficha.modalidades.includes(f.modalidad) ? f.modalidad : ficha.modalidades[0]) : null;
   const padron = ctx.padron();
@@ -213,7 +294,7 @@ export function renderInicio(app, ctx, msg = '') {
                  ${paso(2, 'grupo-bloque', 'Ajustes del bloque')}
                  ${bloqueHTML(ficha, f, ctx.volumen())}
                </div>
-               ${sesionHTML(state, f, padron)}`
+               ${sesionHTML(state, f, forzado, padron, ficha.estado)}`
             : ''
         }
         <p class="mensaje" role="alert">${esc(msg)}</p>
@@ -242,6 +323,19 @@ export function renderInicio(app, ctx, msg = '') {
       </div>
       <div class="herramientas">
         ${ctx.registroHTML()}
+        ${
+          state.pausa
+            ? `<section class="panel herramienta" aria-labelledby="pausa-titulo">
+                 <h2 id="pausa-titulo">Pausa guiada</h2>
+                 <p class="meta">${esc(EN_UNA_LINEA['ACT-17'])} No mide nada.</p>
+                 ${
+                   pausaGuiadaPermitida({ sesion: state.session })
+                     ? '<div class="acciones"><a class="boton" href="#pausa">Abrir la pausa guiada</a></div>'
+                     : `<p class="ayuda">${esc(PAUSA_SOLO_EXPERTO)}</p>`
+                 }
+               </section>`
+            : ''
+        }
       </div>
     </div>`;
 
@@ -249,10 +343,11 @@ export function renderInicio(app, ctx, msg = '') {
   const elegida = () => ficha.bandas.find((b) => b.id === form.banda.value) ?? ficha.bandas[0];
 
   // Al cambiar de actividad se conservan la modalidad, el participante y el modo experto ya elegidos.
+  // En una actividad de uso posterior esos dos controles van fijos y se conserva lo de antes.
   for (const r of form.querySelectorAll('[name=actividad]')) {
     r.onchange = () => {
       const d = Object.fromEntries(new FormData(form));
-      const libres = Boolean(form.participante);
+      const libres = Boolean(form.participante) && !forzado;
       state.form = {
         actividad: d.actividad,
         modalidad: d.modalidad ?? f.modalidad,
@@ -298,7 +393,7 @@ export function renderInicio(app, ctx, msg = '') {
   // El modo experto solo existe en la demostración, sin niño. Con modo experto no hay referencia motora.
   const casillaExperto = form.querySelector('[name=experto]');
   const sincronizarExperto = () => {
-    if (!form.participante || !casillaExperto) return;
+    if (!form.participante || !casillaExperto || forzado) return;
     casillaExperto.disabled = form.participante.value !== DEMO;
     if (casillaExperto.disabled) casillaExperto.checked = false;
     form.querySelector('#nota-referencia').hidden = casillaExperto.checked;
