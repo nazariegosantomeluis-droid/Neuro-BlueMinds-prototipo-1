@@ -1,13 +1,13 @@
-# Neuro-BlueMinds · Prototipo E13
+# AutiPal · Prototipo E13
 
 [![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
 
-Herramienta de apoyo y medición para terapeutas que trabajan con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
+**AutiPal** es la aplicación de Neuro-BlueMinds: una herramienta de apoyo y medición para el terapeuta que trabaja con niñas y niños autistas de 4 a 10 años. Registra con precisión lo que el niño hace en actividades breves de selección en una pantalla táctil.
 
 > **Prototipo para revisión de expertos. No es una herramienta diagnóstica.**
 > No es una intervención ni un instrumento de diagnóstico. No calcula puntajes, niveles ni perfiles del niño.
 
-Este prototipo sirve para que un panel de 6 a 9 expertos (terapia de lenguaje, terapia ocupacional, psicología y terapia conductual) juzgue si las actividades son relevantes y claras (validez de contenido). El motor definitivo se construirá en Flutter (entregable E17). Por eso las fichas de las actividades y el formato del registro son archivos de datos independientes del código.
+Este prototipo sirve para que un panel de 6 a 9 expertos (terapia de lenguaje, terapia ocupacional, psicología y terapia conductual) juzgue si las actividades son relevantes y claras (validez de contenido). La aplicación del estudio será esta misma web, instalable (PWA) en tabletas Android; la decisión es provisional hasta medir la latencia de cada tableta (hoja de ruta, H8.2). Las fichas de las actividades y el formato del registro son archivos de datos independientes del código.
 
 ## Actividades
 
@@ -16,6 +16,8 @@ Este prototipo sirve para que un panel de 6 a 9 expertos (terapia de lenguaje, t
 | ACT-01 | Igual a la muestra (familiarización) | 10 | B1 a B3 |
 | ACT-02 | Pictograma e imagen | 30 | B1 a B4 |
 | ACT-07 | Cambia la regla | 30 | B1 a B4 |
+
+Son las tres del estudio piloto (Catálogo de actividades, sección 5). Las demás actividades del Catálogo y la pausa guiada no forman parte de esta versión: el Catálogo las deja para después del piloto (secciones 6 y 7.1).
 
 Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El motor ejecuta la ficha: la secuencia del ensayo y el registro son iguales para todas las actividades; cada actividad solo aporta cómo se dibuja su pantalla.
 
@@ -37,7 +39,11 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 ## Uso
 
-1. **Inicio (para el adulto).** Se eligen la actividad, la modalidad, la banda inicial, el número de ensayos y el participante: un niño inscrito (ver «Niños inscritos», más abajo) o la demostración, sin niño. También se ajusta el volumen. Después se toca «Empezar».
+1. **Inicio (para el adulto).** Tiene tres pasos: la actividad; los ajustes del bloque (modalidad, banda inicial y número de ensayos, y el volumen en AV), y la sesión (el participante y el modo experto). El participante es un niño inscrito (ver «Niños inscritos», más abajo) o la demostración, sin niño; no hay ningún campo de texto. Después se toca «Empezar», en la barra de abajo, que siempre está a la vista.
+   - Solo aparecen las tres actividades del piloto, cada una en una tarjeta con un esquema de su pantalla y una línea que dice qué hace el niño.
+   - «Así lo verá el niño» dibuja en chico un ítem de ejemplo de la banda elegida.
+   - Si las opciones de la banda no caben en la pantalla a 2 cm, se avisa antes de empezar. El adulto puede volver o continuar de todos modos.
+   - Mientras la ficha de la actividad no tenga revisión clínica registrada, el inicio avisa que solo sirve para demostración y pruebas.
    - Con niños inscritos hay que elegir a uno de forma deliberada; no hay ninguno preseleccionado.
    - Con un niño, antes del primer bloque aparece «¿Es este niño?» con su ícono y su color; hay que confirmar.
    - El consentimiento se comprueba al empezar cada bloque: si no está vigente, no se inicia.
@@ -67,6 +73,8 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - Los filtros quedan en el enlace, así que una vista se puede compartir. Por ejemplo, `#galeria?actividad=ACT-02&banda=B4&todos=1` o `#galeria?actividad=ACT-07&banda=B2&pareja=1`.
 - Si [`config/enlaces.json`](config/enlaces.json) tiene el campo `formularioF3`, la galería muestra el botón «Calificar en el formulario F3», que abre ese enlace en otra pestaña. Sin el archivo (o sin el campo), no se muestra nada.
 
+**Sesiones** (`#sesiones`). Cada sesión guardada en el dispositivo es una tarjeta con su fecha, su participante (por su ícono y su código abreviado, nunca por un dato personal), la referencia motora, sus pausas y el resumen de cada bloque, con las mismas líneas descriptivas del fin de bloque.
+
 **Revisión clínica** (`#revision`). Dos clínicos califican los ítems de muestra antes del panel de expertos. Ver [Revisión clínica](#revisión-clínica).
 
 **Niños inscritos** (`#ninos`). Es el padrón local del prototipo; en el estudio lo entrega el servidor (hoja de ruta, H7.4) y el terapeuta no cambia el consentimiento. La pantalla lo dice en una línea: la tableta no guarda quién es cada niño.
@@ -80,7 +88,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 
 **Calibración** (`#calibracion`). Se hace una vez en cada dispositivo, antes de la primera sesión: se pone una regla física sobre la regla de 5 cm de la pantalla y se ajusta hasta que coincidan. Ver [Accesibilidad y seguridad sensorial](#accesibilidad-y-seguridad-sensorial).
 
-**Créditos y licencias** (`#creditos`). Contiene la atribución de ARASAAC y la licencia de cada parte del prototipo.
+**Créditos y licencias** (`#creditos`). Contiene el equipo, la marca y sus tipografías, la atribución de ARASAAC y la licencia de cada parte del prototipo.
 
 ## Revisión clínica
 
@@ -222,8 +230,15 @@ El motor ejecuta la ficha. La secuencia del ensayo y el registro no tienen códi
 
 ```
 index.html                    Página única
-src/app.js                    Inicio, sesión, fin de bloque y resumen; rutas
-src/paginas.js                Galería, calibración y créditos
+src/app.js                    Sesión, pausa, fin de bloque y resumen; rutas
+src/catalogo.js               Actividades del piloto y pantalla de cada una
+src/inicio.js                 Inicio en tres pasos
+src/previa.js                 «Así lo verá el niño»: ítem de ejemplo en chico
+src/ajuste-pantalla.js        Aviso cuando las opciones no caben a 2 cm
+src/sesiones.js               Página #sesiones
+src/resumen.js                Líneas del resumen de un bloque
+src/html.js                   Utilidades para armar HTML (escape, miniaturas)
+src/paginas.js                Encabezado, galería, calibración y créditos
 src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
@@ -234,7 +249,7 @@ src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
 src/frecuencia.js             Aviso de frecuencia de pantalla baja antes de cada bloque
 src/enlaces.js                Botón del formulario F3 en la galería
-src/styles.css                Estilos (temas claro y oscuro, unidad --cm)
+src/styles.css                Estilos: marca AutiPal en el adulto, pantalla del niño neutra, temas claro y oscuro, unidad --cm
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
@@ -255,7 +270,7 @@ tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
 tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
-assets/                       Imágenes, pictogramas y audios
+assets/                       Imágenes, pictogramas, audios, marca (assets/marca) y tipografías (assets/fonts)
 docs/                         Registro de ejemplo
 test/                         Pruebas (node --test)
 .github/workflows/            Verificación automática en GitHub Actions
@@ -496,6 +511,53 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 - **Contraste.** Los pictogramas y las figuras van sobre un fondo claro también en el tema oscuro. El azul y el amarillo de ACT-07 llevan contorno oscuro.
 - **Volumen.** Se ajusta en el inicio y en la pausa.
 
+## Marca e interfaz
+
+**AutiPal** es la aplicación de Neuro-BlueMinds. La interfaz sigue el Manual de marca de AutiPal, y la marca solo va en un tipo de pantalla:
+
+- **Pantallas del adulto** (inicio, galería, sesiones, revisión clínica, formulario F3, calibración, créditos, niños inscritos y resumen): llevan los colores, el isotipo, el logotipo y las tipografías de AutiPal. El encabezado de todas dice «Herramienta de apoyo y medición para el terapeuta» y muestra siempre el aviso «Prototipo para revisión de expertos. No es una herramienta diagnóstica.».
+- **Pantalla del niño** (la referencia motora, la sesión y la pantalla de «terminamos»): queda neutra. Fondo liso, sin logotipo, sin colores de la marca, sin texto y sin decoración. Lo único que cambió respecto a la versión anterior es el color del marco de retroalimentación.
+
+**Colores.** Todo el estilo vive en variables al inicio de [`src/styles.css`](src/styles.css), con valores para tema claro y oscuro.
+
+| Variable | Uso | Claro | Oscuro |
+|---|---|---|---|
+| `--acento` | Botones principales, enlaces, pestaña activa (Pantone 7700 C) | `#16587B` | `#8DBBD6` |
+| `--acento-texto` | Texto sobre el botón principal | `#FFFFFF` | `#0B1820` |
+| `--fondo` | Fondo de las pantallas del adulto (crema de la marca) | `#FBF5EA` | `#0E1B23` |
+| `--tarjeta` | Tarjetas y paneles | `#FFFFFF` | `#15262F` |
+| `--texto` | Texto principal | `#172A35` | `#E7EEF2` |
+| `--titulo` | Títulos | `#16587B` | `#BFDCEC` |
+| `--suave` | Texto secundario | `#4B5D68` | `#A6B7C1` |
+| `--borde-campo` | Contorno de campos y casillas (3 a 1 o más) | `#8A7E6C` | `#6A8392` |
+| `--problema` | Mensajes de error de los formularios y «Borrar registro» | `#8B2A1F` | `#F0A597` |
+| `--marca-2` | Solo decoración: franja del encabezado (Pantone 2169 C) | `#84B3CE` | `#5C93B5` |
+| `--marco` | Marco de retroalimentación en la pantalla del niño | `#1F2937` | `#F3F4F6` |
+
+- Todo texto tiene un contraste de al menos 4.5 a 1 con su fondo, en los dos temas (lo comprueba `test/estilo-autipal.test.js`).
+- Ninguna pantalla usa verde ni rojo para aciertos o errores.
+- `--fondo-nino`, `--opcion-fondo`, `--control` y `--cm` son los mismos de la versión anterior y no llevan colores de la marca.
+- El marco de retroalimentación es gris muy oscuro (casi blanco en tema oscuro) y no azul, para que no se confunda con el azul que el niño clasifica en «Cambia la regla».
+
+**Tipografías.**
+
+| Dónde | Tipografía | Si no está instalada |
+|---|---|---|
+| Títulos (`--fuente-titulos`) | Roca Two Bold | Noto Serif |
+| El nombre «AutiPal» dentro de un texto (`.nombre-marca`) | More Sugar | Noto Sans |
+| Encabezado | Logotipo oficial | — |
+| Texto, campos y botones (`--fuente-texto`) | Noto Sans | — |
+
+- **Noto Sans y Noto Serif** están en [`assets/fonts/`](assets/fonts/). Son de The Noto Project Authors, con licencia SIL Open Font License 1.1; el texto de la licencia está en [`assets/fonts/OFL.txt`](assets/fonts/OFL.txt) y cada archivo tiene su fila en `items/licencias.csv`.
+- **Roca Two y More Sugar** son las del Manual de marca. No son de distribución libre, así que **no están en el repositorio**: la hoja de estilos solo las busca con `local()`, en la computadora donde se abre la aplicación. En el prototipo se usan solo para pruebas; antes de un uso comercial hay que comprar sus licencias para web y aplicación.
+- Ninguna tipografía se carga de un servidor externo. La pantalla del niño usa la tipografía del sistema.
+
+**Logotipo.** Está en [`assets/marca/`](assets/marca/): isotipo y logotipo en versión positiva (`#7496BB`) e invertida (blanco, para el tema oscuro), `logo.png` y los íconos del navegador. Son propiedad de Neuro-BlueMinds, con todos los derechos reservados, y cada archivo tiene su fila en `items/licencias.csv` con los autores del manual. Según el manual, el logotipo no se deforma, no cambia de color, no lleva sombras ni efectos y no se pone sobre fondos que reduzcan su contraste.
+
+**Íconos.** Los íconos de las pantallas del adulto son de [Phosphor Icons](https://phosphoricons.com) (estilo regular, licencia MIT, incluida en `src/styles.css`). Se dibujan con máscaras de CSS, así que toman el color del texto en los dos temas.
+
+**Medidas del adulto.** Espaciado en pasos de 4 y 8 px (`--esp-1` a `--esp-7`); letra de 14 px para ayudas, 16 px para el texto, 20 px para subtítulos y de 26 a 32 px para el título de cada pantalla; todo lo que se toca mide al menos 44 × 44 px (`--toque`); los párrafos llegan a unos 75 caracteres por renglón (`--medida`).
+
 ## Publicación en GitHub Pages
 
 El prototipo es un sitio estático; no necesita compilación.
@@ -533,6 +595,13 @@ Notas:
 ## Autoría y licencia
 
 © 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.
+
+Equipo del prototipo:
+
+- **Luis Nazariego Santome**, fundador y CEO de Neuro-BlueMinds: Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3.
+- **José Miguel Fausto Tapia**, cofundador y co-CEO de Neuro-BlueMinds: interfaz del terapeuta y del niño, y marca AutiPal en la aplicación.
+
+La marca AutiPal (isotipo, logotipo y Manual de marca) es propiedad de Neuro-BlueMinds. Las tipografías Noto conservan su licencia SIL Open Font License 1.1.
 
 ### Pictogramas de ARASAAC
 

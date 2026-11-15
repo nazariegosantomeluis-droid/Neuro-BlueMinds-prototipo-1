@@ -5,10 +5,8 @@ import { paraExportar } from './engine/quality.js';
 import { lineasDelBloque } from './resumen.js';
 import { REF_MIN_VALIDOS } from './engine/referencia.js';
 import { nombreNino, abreviar } from './ninos.js';
-import { PANTALLAS } from './catalogo.js';
 import { esc, navHTML, tituloHTML } from './paginas.js';
 
-const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>';
 
 const fechaLocal = (iso) => {
   const d = new Date(iso);
@@ -60,9 +58,8 @@ export function bloquesDeSesion(rows) {
   return [...porBloque.entries()].sort(([a], [b]) => a - b).map(([bloque, filas]) => ({ bloque, filas }));
 }
 
-// Índice del banco por código de ensayo. Algunos ítems agrupan varios ensayos: las secuencias de
-// «Cambia la regla», los pasos de «Ordena la secuencia» y «Forma la palabra», y los programas de
-// «Elige y descubre» y «Espera la señal». Ahí el registro guarda el código de cada ensayo.
+// Índice del banco por código de ensayo. Los ítems de «Cambia la regla» agrupan los ensayos de
+// una secuencia; ahí el registro guarda el código de cada ensayo.
 export function indiceDeItems(items) {
   const indice = new Map();
   for (const it of items) {
@@ -73,24 +70,16 @@ export function indiceDeItems(items) {
 }
 
 // Lo que el resumen de un bloque necesita y el registro no guarda: en qué ensayos cambió la
-// regla (ACT-07) y las líneas propias de la actividad (ACT-14: por emoción). Se reconstruye con
-// el banco de ítems; si algún ítem ya no está en el banco, esas líneas se omiten.
+// regla (ACT-07). Se reconstruye con el banco de ítems.
 export function contextoDeBloque(filas, ficha, indice) {
   const reglas = filas.map((r) => indice.get(r.item)?.regla ?? null);
   const cambiaron = new Set(filas.filter((r, k) => k > 0 && reglas[k] && reglas[k - 1] && reglas[k] !== reglas[k - 1]));
-  const completo = filas.every((r) => indice.has(r.item));
-  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice, ficha)) || [];
-  return { cambio: (r) => cambiaron.has(r), extra };
+  return { cambio: (r) => cambiaron.has(r) };
 }
 
-// Las líneas del resumen de un bloque guardado. Una pantalla con resumen propio solo lo usa si
-// todos sus ítems siguen en el banco; si no, quedan las líneas del motor.
+// Las líneas del resumen de un bloque guardado, iguales a las del fin de bloque.
 export function lineasDeBloque(filas, ficha, indice) {
-  const mod = PANTALLAS[ficha.pantalla];
-  const completo = filas.every((r) => indice.has(r.item));
-  if (completo && mod?.resumen) return lineasDelBloque(filas, ficha, mod, indice);
-  const { cambio, extra } = contextoDeBloque(filas, ficha, indice);
-  return [...lineasDelBloque(filas, ficha, null, indice, { cambio }), ...extra];
+  return lineasDelBloque(filas, ficha, contextoDeBloque(filas, ficha, indice));
 }
 
 function bloqueHTML({ bloque, filas }, sesion, fichas, indice) {
@@ -111,11 +100,9 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
   const bloques = bloquesDeSesion(rows);
   const tipo = ETIQUETA_TIPO[tipoDeSesion(sesion.sesion_id)];
   const pausas = sesion.pausas ?? [];
-  const guiadas = pausas.filter((p) => p.pausa_guiada_ms);
   const notas = [
     lineaReferencia(sesion),
     pausas.length ? `${plural(pausas.length, 'pausa', 'pausas')} (${duracion(pausas.reduce((t, p) => t + (p.duracion_ms ?? 0), 0))})` : '',
-    guiadas.length ? `${plural(guiadas.length, 'pausa guiada', 'pausas guiadas')} (${duracion(guiadas.reduce((t, p) => t + p.pausa_guiada_ms, 0))})` : '',
     sesion.terminada_antes ? `terminó antes de tiempo${sesion.motivo_terminacion ? `: ${sesion.motivo_terminacion}` : ''}` : '',
     sesion.advertencia_frecuencia ? 'se continuó con aviso de frecuencia de pantalla' : '',
   ].filter(Boolean);
@@ -158,7 +145,6 @@ export function renderSesiones(app, ctx) {
     <div class="adulto medio">
       ${navHTML('sesiones')}
       ${tituloHTML('Sesiones', 'Lo que está guardado en este dispositivo, sesión por sesión. Nada se envía a ningún servidor.')}
-      ${AVISO}
       <div class="inicio-columnas">
         <div class="sesiones-lista">
           ${

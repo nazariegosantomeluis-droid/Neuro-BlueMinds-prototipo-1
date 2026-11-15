@@ -9,18 +9,15 @@ import { marcarFueraDeTarea, paraExportar, frecuenciaSesion } from './engine/qua
 import { lineasDelBloque } from './resumen.js';
 import { comprobarFrecuencia } from './frecuencia.js';
 import { PANTALLAS, cargarCatalogo, requiereModoExperto } from './catalogo.js';
-import { juegoDeSesion } from './activities/categorias.js';
-import { elegirPorEmocion } from './activities/emociones.js';
-import { esc, navHTML, marcaHTML, tituloHTML, chipHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
+import { esc, marcaHTML, tituloHTML, chipHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderInicio as dibujarInicio, maxEnsayos, avisoDeAjuste } from './inicio.js';
 import { renderSesiones } from './sesiones.js';
-import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
-import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
+import { NINO_KEY, NINO_COLUMNS, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
@@ -49,9 +46,8 @@ const editSesion = (id, fn) =>
 const ninos = createLog(undefined, { key: NINO_KEY, columns: NINO_COLUMNS });
 const audio = createAudio();
 const state = {
-  catalogo: [], // las 17 actividades del Catálogo, con su estado
+  catalogo: [], // las actividades del piloto (catalogo.js)
   fichas: {}, // id → ficha válida
-  pausa: null, // ficha de la pausa guiada (ACT-17), que no tiene ensayos
   problemas: {}, // id → problemas de la ficha (o del banco de ítems)
   items: [],
   conceptos: [],
@@ -115,8 +111,8 @@ const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 async function init() {
   applyCm();
   audio.setVolume(volumen() / 100);
-  const { catalogo, fichas, pausa, problemas } = await cargarCatalogo();
-  Object.assign(state, { catalogo, fichas, pausa });
+  const { catalogo, fichas, problemas } = await cargarCatalogo();
+  Object.assign(state, { catalogo, fichas });
   Object.assign(state.problemas, problemas);
   try {
     state.items = (await (await fetch('items/items.json')).json()).items;
@@ -124,12 +120,6 @@ async function init() {
     state.revision = await (await fetch('items/revision.json')).json();
   } catch {
     state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json, items/conceptos.json o items/revision.json).'];
-  }
-  // El banco de las actividades de uso posterior va aparte: si falta, el piloto sigue funcionando.
-  try {
-    state.items = [...state.items, ...(await (await fetch('items/items-posteriores.json')).json()).items];
-  } catch {
-    state.problemas.posteriores = ['No se pudo cargar el banco de las actividades de uso posterior (items/items-posteriores.json).'];
   }
   // «Saltar al contenido» lleva el foco al título de la pantalla sin cambiar la ruta.
   document.addEventListener('click', (e) => {
@@ -150,7 +140,7 @@ function enfocarTitulo() {
 }
 
 // Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #sesiones, #revision, #formulario (F3),
-// #ninos (padrón), #creditos, #calibracion y #pausa (la pausa guiada).
+// #ninos (padrón), #creditos y #calibracion.
 // Cambiar un filtro de la galería no es cambiar de pantalla: ahí el foco se queda en el filtro.
 let rutaAnterior = null;
 function route() {
@@ -160,7 +150,6 @@ function route() {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
   } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro });
-  else if (ruta === 'pausa' && state.pausa) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'ninos') renderNinos(app, { ninos });
@@ -296,23 +285,17 @@ async function preloadImages(srcs) {
 }
 
 async function start(form) {
-  const antes = state.form;
   const f = (state.form = Object.fromEntries(new FormData(form)));
   const ficha = state.fichas[f.actividad];
   const banda = ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0];
   const pantalla = PANTALLAS[ficha.pantalla];
   const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));
-  // Las actividades de uso posterior no se usan con niños: su sesión siempre es de demostración y en
-  // modo experto. Esos dos controles van desactivados y no llegan en el formulario: se conserva lo elegido.
-  const forzado = requiereModoExperto(ficha);
-  if (forzado) Object.assign(f, { experto: antes.experto, participante: antes.participante });
-  if (forzado && state.session && !state.session.experto) {
-    return renderInicio('Esta actividad solo se abre en modo experto. Termina la sesión en curso y vuelve a intentarlo.');
-  }
+  // Solo las actividades del piloto se usan con niños; cualquier otra ficha se rechaza.
+  if (requiereModoExperto(ficha)) return renderInicio('Esta actividad no forma parte del piloto.');
   // Quién participa se comprueba en cada bloque: si el consentimiento dejó de estar vigente, no se
   // inicia (Arquitectura 9.6). En una sesión en curso vale el participante con que empezó.
-  const valor = state.session ? state.session.valor : forzado ? DEMO : f.participante;
-  const p = participante(valor, state.session ? state.session.experto : forzado || f.experto === '1', ninos.rows());
+  const valor = state.session ? state.session.valor : f.participante;
+  const p = participante(valor, state.session ? state.session.experto : f.experto === '1', ninos.rows());
   if (p.error) return renderInicio(p.error);
   // R6: el terapeuta confirma el ícono y el color antes del primer bloque de una sesión con niño.
   if (!state.session && p.tipo === 'nino' && !(await confirmarNino(app, p.nino))) return renderInicio();
@@ -322,23 +305,13 @@ async function start(form) {
   const usados = (s.usados[ficha.id] ??= new Set());
   const repeat = ficha.repetirItems !== false;
   // Los ítems retirados en la revisión clínica no entran en las sesiones.
-  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
-  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
-  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
-  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
-  bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === f.modalidad);
+  const bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
   let picked;
   try {
-    if (pantalla.elegir) {
-      // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
-      // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
-      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat });
-    } else if (banda.composicion) {
+    if (banda.composicion) {
       // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
       s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
       picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
-    } else if (ficha.estratificarPor === 'emocion') {
-      picked = elegirPorEmocion(bandItems, n, rand);
     } else {
       picked = pickItems(bandItems, n, rand, { repeat, exclude: repeat ? new Set() : usados });
     }
@@ -346,11 +319,9 @@ async function start(form) {
     return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
   }
   const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
-  // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
-  const todos = pantalla.toTrials(picked, { ficha, banda, pareja, modalidad: f.modalidad });
-  const trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
+  const trials = pantalla.toTrials(picked, { ficha, banda, pareja, modalidad: f.modalidad }).slice(0, n);
   try {
-    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
+    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src)]).filter(Boolean);
     await preloadImages([PICTO_FIN, ...srcs]);
   } catch (e) {
     return renderInicio(e.message);
@@ -431,9 +402,9 @@ async function ejecutarReferencia(s, periodo) {
     view: referencia.createView(stage),
     onPause: async (aparicion) => {
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, true);
+      const { accion, motivo, nota } = await pausePanel(wrap, true);
       editSesion(s.id, (r) => {
-        r.pausas.push({ bloque: 0, ensayo: aparicion, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
+        r.pausas.push({ bloque: 0, ensayo: aparicion, duracion_ms: performance.now() - t0 });
         if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
       return accion;
@@ -464,8 +435,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   const view = pantalla.createView(stage, state.images, { ficha, banda: bandaDeFicha, modalidad });
   let ensayo = 0;
   const block = startBlock({
-    // Algunas pantallas ajustan los tiempos del bloque según la banda (ACT-09: la pausa en blanco).
-    ficha: pantalla.fichaDeBloque?.(ficha, bandaDeFicha) ?? ficha,
+    ficha,
     modalidad,
     trials,
     env,
@@ -477,10 +447,9 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap);
+      const { accion, motivo, nota } = await pausePanel(wrap);
       editSesion(s.id, (r) => {
-        // De la pausa guiada solo se registra que ocurrió y cuánto duró.
-        r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
+        r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0 });
         if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
       return accion;
@@ -518,7 +487,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
-  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio }) };
+  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, { cambio }) };
   renderFin();
 }
 
@@ -570,19 +539,9 @@ function pausePanel(wrap, enReferencia = false) {
             <button type="button" class="primario" data-r="continuar">Continuar</button>
             <button type="button" data-r="terminar">${enReferencia ? 'Terminar sesión' : 'Terminar bloque'}</button>
           </div>
-          ${state.pausa ? pausaOpcionesHTML(true) : ''}
         </div>
       </div>`;
     bindVolumen(capa);
-    // La pausa guiada corre encima del panel y, al terminar, regresa a él.
-    let guiada = 0;
-    capa.querySelector('[data-guiada]')?.addEventListener('click', async () => {
-      capa.hidden = true;
-      const { duracion_ms } = await pausaGuiada(wrap, { ...opcionesDePausa(capa), icono: ICONO_ADULTO, dosToques: twoTaps });
-      guiada += duracion_ms;
-      capa.hidden = false;
-      capa.querySelector('[data-guiada-estado]').textContent = `La pausa guiada duró ${Math.round(duracion_ms / 1000)} s.`;
-    });
     for (const b of capa.querySelectorAll('[data-r]')) {
       b.onclick = () => {
         const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
@@ -592,77 +551,11 @@ function pausePanel(wrap, enReferencia = false) {
           return;
         }
         capa.remove();
-        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota'), guiada_ms: guiada });
+        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota') });
       };
     }
     wrap.append(capa);
   });
-}
-
-// ---------- Pausa guiada (ACT-17) ----------
-
-// Duración y ritmo de la pausa. En el panel de pausa van plegadas, para no distraer.
-function pausaOpcionesHTML(plegada) {
-  const p = state.pausa;
-  const minutos = (s) => (s % 60 ? `${Math.floor(s / 60)} min ${s % 60} s` : s === 60 ? '1 minuto' : `${s / 60} minutos`);
-  const cuerpo = `
-    <p class="ayuda">La decide el terapeuta y el niño puede rechazarla. Para detenerla, toca dos veces el botón de la esquina.</p>
-    <fieldset class="chips">
-      <legend>Duración</legend>
-      ${p.duracionesS.map((s, i) => chipHTML('guiada-duracion', s, minutos(s), i === 0)).join('')}
-    </fieldset>
-    <fieldset class="chips">
-      <legend>Ritmo del globo</legend>
-      ${p.ritmos.map((r, i) => chipHTML('guiada-ritmo', r.id, `${r.nombre}: ${r.inflarMs / 1000} s y ${r.desinflarMs / 1000} s`, i === 0)).join('')}
-    </fieldset>
-    <div class="acciones"><button type="button" data-guiada>Empezar la pausa guiada</button></div>
-    <p class="meta" role="status" data-guiada-estado></p>`;
-  return plegada ? `<details class="pausa-opciones"><summary>Pausa guiada con el globo</summary>${cuerpo}</details>` : cuerpo;
-}
-
-function opcionesDePausa(root) {
-  const valor = (name) => root.querySelector(`[name=${name}]:checked`).value;
-  return { duracionS: Number(valor('guiada-duracion')), ritmo: state.pausa.ritmos.find((r) => r.id === valor('guiada-ritmo')) };
-}
-
-// Página #pausa: la pausa guiada fuera de un bloque. Solo queda en el registro si hay una sesión en curso.
-function renderPausa(msg = '') {
-  const p = state.pausa;
-  const lista = (xs) => `<ul>${xs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
-  app.innerHTML = `
-    <div class="adulto">
-      ${navHTML('pausa')}
-      ${tituloHTML('Pausa guiada', esc(p.objetivo))}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
-      <div class="panel">
-        <p>${esc(p.mecanica)}</p>
-        ${pausaOpcionesHTML(false).replace('data-guiada>', 'data-guiada class="primario">')}
-        <p class="meta">${state.session ? `Queda anotada en la sesión ${esc(state.session.id)}: solo que ocurrió y cuánto duró.` : 'Sin una sesión en curso, la pausa no se guarda en el registro.'} ${esc(msg)}</p>
-      </div>
-      <section class="panel ficha">
-        <h2>${esc(p.id)} ${esc(p.nombre)} · ${esc(p.estado)}</h2>
-        <dl>
-          <dt>Paradigma</dt><dd>${esc(p.paradigma)}</dd>
-          <dt>Evidencia</dt><dd>${esc(p.evidencia)}</dd>
-          <dt>Condiciones de uso</dt><dd>${lista(p.contraindicaciones)}</dd>
-          <dt>Lecturas no permitidas</dt><dd>${lista(p.lecturasNoPermitidas.map((l) => `«${l}»`))}</dd>
-          <dt>Registro</dt><dd>${esc(p.registro)}</dd>
-        </dl>
-        <p class="ayuda">${esc(p.notaPrototipo)}</p>
-      </section>
-    </div>`;
-  app.querySelector('[data-guiada]').onclick = async () => {
-    const opciones = opcionesDePausa(app);
-    app.innerHTML = '<div class="nino"></div>';
-    state.running = true;
-    const wake = navigator.wakeLock ? await navigator.wakeLock.request('screen').catch(() => null) : null;
-    const { duracion_ms, completa } = await pausaGuiada(app.firstElementChild, { ...opciones, icono: ICONO_ADULTO, dosToques: twoTaps });
-    state.running = false;
-    wake?.release().catch(() => {});
-    const s = state.session;
-    if (s) editSesion(s.id, (r) => r.pausas.push({ bloque: s.bloque, ensayo: null, duracion_ms, pausa_guiada_ms: duracion_ms }));
-    renderPausa(`La última pausa duró ${Math.round(duracion_ms / 1000)} s${completa ? '' : ' y se detuvo antes de tiempo'}.`);
-  };
 }
 
 // ---------- Fin de bloque ----------
@@ -686,7 +579,6 @@ function renderResumen() {
     <div class="adulto">
       ${marcaHTML()}
       ${tituloHTML('Resumen del bloque', `${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}`)}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
         <ul class="resumen">${lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
