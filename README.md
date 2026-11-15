@@ -542,6 +542,10 @@ Una fila por sesión, en este orden:
   - El registro sigue guardando una fila por paso, con su código (`ACT10-B2-03-1`).
   - La última tarjeta pasa sola a su lugar y no es un paso ni tiene fila (`ultimaTarjeta: "sola"` en la ficha). En ACT-16 eso pasa aunque sobren piezas; con `"elige"`, el niño elegiría la última entre las que quedan. Queda como decisión clínica.
   - Un bloque propone 10 secuencias; A1 necesita 20 (Modelo matemático 4.1), que se juntan con dos bloques.
+- **ACT-12: dos bloques de 40 se juntan en 80 elecciones.** El Catálogo pide 80 elecciones o más para verificar que se recuperan los parámetros del modelo de aprendizaje, y un bloque tiene como mucho 40 ensayos (Arquitectura 4.4). Por eso (`juntarBloques` de la ficha):
+  - El segundo bloque de la misma banda en la sesión elige un programa que empieza con el cofre que terminó premiando más en el primero. Así las 80 elecciones son un solo programa: en B1 y B2 el mismo cofre premia más todo el tiempo; en B3 y B4 la ventaja cambia en las elecciones 21 y 61.
+  - El resumen de cada bloque, al terminarlo y en «Sesiones», cuenta las elecciones de esa banda en la sesión y, si son menos de 80, pide otro bloque. Las omisiones y los ensayos interrumpidos no cuentan como elecciones.
+  - Este prototipo no calcula los parámetros.
 - Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.
 - Las frases de ACT-03 B3 dependen del color de cada dibujo. Si se cambia una imagen del banco, hay que revisar la lista `frases` de la ficha.
 

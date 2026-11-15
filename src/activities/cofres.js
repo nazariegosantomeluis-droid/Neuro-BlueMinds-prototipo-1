@@ -43,9 +43,38 @@ export function cofreSVG(cofre, { abierto = false, premio = false } = {}) {
 }
 
 // Un ítem es el programa de premios de un bloque completo: se elige uno al azar.
-export const elegir = (items, n, rand) => {
+// El Catálogo pide 80 elecciones o más para estimar los parámetros, y un bloque tiene 40
+// (Arquitectura 4.4: de 20 a 40 ensayos). Por eso dos bloques de la misma banda en una sesión se
+// juntan: el segundo empieza con el cofre que terminó premiando más en el anterior, y así las 80
+// elecciones forman un solo programa. En B1 y B2 el mismo cofre premia más las 80; en B3 y B4 la
+// ventaja pasa al otro cofre en la elección 21, sigue ahí al empezar el segundo bloque y vuelve
+// al primero en la 61.
+const otro = (cofre) => (cofre === 'a' ? 'b' : 'a');
+export const favorableAlFinal = (it) => (it.inversion ? otro(it.favorableInicial) : it.favorableInicial);
+
+// Programas de la banda ya usados en la sesión, en orden, a partir de las filas del registro.
+export function programasPrevios(items, previas = []) {
+  const deEnsayo = new Map(items.flatMap((it) => it.ensayos.map((e) => [e.codigo, it])));
+  const usados = [];
+  for (const r of previas) {
+    const it = deEnsayo.get(r.item);
+    if (it && usados.at(-1) !== it) usados.push(it);
+  }
+  return usados;
+}
+
+// previas: las filas de esta actividad y banda ya registradas en la sesión.
+export const elegir = (items, n, rand, { previas = [] } = {}) => {
   if (!items.length) throw new Error('Esta banda todavía no tiene programas de premios.');
-  return [items[Math.floor(rand() * items.length)]];
+  const ultimo = programasPrevios(items, previas).at(-1);
+  let candidatos = items;
+  if (ultimo) {
+    const siguen = items.filter((i) => i.favorableInicial === favorableAlFinal(ultimo));
+    const usados = programasPrevios(items, previas);
+    const nuevos = siguen.filter((i) => !usados.includes(i));
+    candidatos = nuevos.length ? nuevos : siguen;
+  }
+  return [candidatos[Math.floor(rand() * candidatos.length)]];
 };
 
 export const toTrials = (items) => items.flatMap((it) => it.ensayos.map((e) => ({ ...e })));
@@ -99,7 +128,7 @@ const veces = (n, una, varias) => (n === 1 ? `1 ${una}` : `${n} ${varias}`);
 
 // Solo cuenta: elecciones del cofre favorable antes y después del cambio, estrellas encontradas
 // y qué hizo después de encontrar la estrella o un cofre vacío.
-export function resumenExtra(rows, byCode) {
+export function resumenExtra(rows, byCode, ficha, { previas = [] } = {}) {
   const validos = rows.filter((r) => !r.interrumpido);
   const ensayo = (r) => byCode.get(r.item);
   const conEstrella = (r) => ensayo(r).opciones.find((o) => o.id === r.opcion_elegida_id)?.premio === true;
@@ -128,7 +157,22 @@ export function resumenExtra(rows, byCode) {
   }
   if (tras.estrella) lineas.push(`Después de encontrar la estrella, volvió a elegir el mismo cofre en ${tras.repitio} de ${veces(tras.estrella, 'ocasión', 'ocasiones')}.`);
   if (tras.vacio) lineas.push(`Después de un cofre vacío, cambió de cofre en ${tras.cambio} de ${veces(tras.vacio, 'ocasión', 'ocasiones')}.`);
-  lineas.push('Con menos de 80 elecciones no se estiman los parámetros del modelo de aprendizaje; este prototipo no los calcula.');
+  lineas.push(...eleccionesJuntas(rows, ficha, previas));
+  return lineas;
+}
+
+// Elecciones de la banda en la sesión, con los bloques juntos (ficha.juntarBloques).
+export function eleccionesJuntas(rows, ficha, previas = []) {
+  const minimo = ficha?.juntarBloques?.elecciones ?? 80;
+  const banda = rows[0]?.banda;
+  const antes = previas.filter((r) => r.actividad === rows[0]?.actividad && r.banda === banda);
+  const elecciones = (rs) => rs.filter((r) => !r.interrumpido && r.opcion_elegida_id).length;
+  const total = elecciones(antes) + elecciones(rows);
+  const bloques = new Set(antes.map((r) => r.bloque)).size + 1;
+  const lineas = [
+    `Elecciones de la banda ${banda} en la sesión${bloques > 1 ? `, con ${bloques} bloques juntos` : ''}: ${total}. Para estimar los parámetros del modelo de aprendizaje el Catálogo pide ${minimo} o más; este prototipo no los calcula.`,
+  ];
+  if (total < minimo) lineas.push(`Para juntar ${minimo}, haz otro bloque de esta banda en la misma sesión: empieza con el cofre que terminó premiando más.`);
   return lineas;
 }
 

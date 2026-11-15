@@ -335,7 +335,9 @@ async function start(form) {
     if (pantalla.elegir) {
       // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
       // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
-      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat });
+      // previas: lo ya registrado de esta actividad y banda en la sesión (ACT-12 junta bloques).
+      const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
+      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat, previas });
     } else if (banda.composicion) {
       // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
       s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
@@ -521,7 +523,9 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
-  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio }) };
+  const delBloque = new Set(rows);
+  const previas = deLaSesion.filter((r) => !delBloque.has(r));
+  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) };
   renderFin();
 }
 

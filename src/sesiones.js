@@ -74,31 +74,31 @@ export function indiceDeItems(items) {
 // Lo que el resumen de un bloque necesita y el registro no guarda: en qué ensayos cambió la
 // regla (ACT-07) y las líneas propias de la actividad (ACT-14: por emoción). Se reconstruye con
 // el banco de ítems; si algún ítem ya no está en el banco, esas líneas se omiten.
-export function contextoDeBloque(filas, ficha, indice) {
+export function contextoDeBloque(filas, ficha, indice, { previas = [] } = {}) {
   const reglas = filas.map((r) => indice.get(r.item)?.regla ?? null);
   const cambiaron = new Set(filas.filter((r, k) => k > 0 && reglas[k] && reglas[k - 1] && reglas[k] !== reglas[k - 1]));
   const completo = filas.every((r) => indice.has(r.item));
-  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice, ficha)) || [];
+  const extra = (completo && PANTALLAS[ficha.pantalla]?.resumenExtra?.(filas, indice, ficha, { previas })) || [];
   return { cambio: (r) => cambiaron.has(r), extra };
 }
 
 // Las líneas del resumen de un bloque guardado. Una pantalla con resumen propio solo lo usa si
 // todos sus ítems siguen en el banco; si no, quedan las líneas del motor.
-export function lineasDeBloque(filas, ficha, indice) {
+export function lineasDeBloque(filas, ficha, indice, { previas = [] } = {}) {
   const mod = PANTALLAS[ficha.pantalla];
   const completo = filas.every((r) => indice.has(r.item));
   if (completo && mod?.resumen) return lineasDelBloque(filas, ficha, mod, indice);
-  const { cambio, extra } = contextoDeBloque(filas, ficha, indice);
+  const { cambio, extra } = contextoDeBloque(filas, ficha, indice, { previas });
   return [...lineasDelBloque(filas, ficha, null, indice, { cambio }), ...extra];
 }
 
-function bloqueHTML({ bloque, filas }, sesion, fichas, indice) {
+function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = []) {
   const [r] = filas;
   const ficha = fichas[r.actividad];
   const nivel = sesion.nivel_apoyo?.find((n) => n.bloque === bloque)?.nivel;
   // Sin la ficha (por ejemplo, un registro de otra versión) solo se cuentan los ensayos.
   let lineas = [plural(filas.length, 'ensayo registrado', 'ensayos registrados')];
-  if (ficha) lineas = lineasDeBloque(filas, ficha, indice);
+  if (ficha) lineas = lineasDeBloque(filas, ficha, indice, { previas });
   return `
     <li class="sesion-bloque">
       <p class="sesion-bloque-titulo"><strong>Bloque ${bloque}</strong> · ${esc(r.actividad)} ${esc(ficha?.nombre ?? '')} · banda ${esc(r.banda)} · modalidad ${esc(r.modalidad)}${nivel ? ` · apoyo ${esc(nivel)}` : ''}</p>
@@ -135,7 +135,7 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
         bloques.length
           ? `<details class="sesion-detalle">
                <summary>Ver el resumen de ${bloques.length === 1 ? 'su bloque' : `sus ${bloques.length} bloques`}</summary>
-               <ol class="sesion-bloques">${bloques.map((b) => bloqueHTML(b, sesion, fichas, indice)).join('')}</ol>
+               <ol class="sesion-bloques">${bloques.map((b, k) => bloqueHTML(b, sesion, fichas, indice, bloques.slice(0, k).flatMap((x) => x.filas))).join('')}</ol>
                <p class="ayuda">Describe lo registrado. No es un puntaje ni una interpretación clínica.</p>
              </details>`
           : '<p class="meta">Esta sesión no tiene ensayos guardados.</p>'

@@ -88,7 +88,8 @@ test('ACT-12: el resumen cuenta antes y después del cambio, las estrellas y qu�
   assert.equal(lineas[2], `Encontró la estrella en ${estrellas} de 40 ensayos.`);
   assert.match(lineas[3], /^Después de encontrar la estrella, volvió a elegir el mismo cofre en (\d+) de \1 ocasion/);
   assert.match(lineas[4], /^Después de un cofre vacío, cambió de cofre en 0 de \d+ ocasion/);
-  assert.match(lineas.at(-1), /80 elecciones/);
+  assert.match(lineas.at(-2), /^Elecciones de la banda .* en la sesión: 40\. Para estimar los parámetros del modelo de aprendizaje el Catálogo pide 80 o más; este prototipo no los calcula\.$/);
+  assert.match(lineas.at(-1), /^Para juntar 80, haz otro bloque de esta banda en la misma sesión/);
   for (const l of lineas) assert.doesNotMatch(l, /sensible|toler|impuls/i);
 });
 
@@ -253,7 +254,7 @@ test('secuencias: el bloque se cuenta en secuencias completas y el resumen empie
   assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 1 de 2 pasos; sin respuesta en 0.');
   // App: n secuencias completas, sin recortar a mitad de una.
   const app = texto('src/app.js');
-  assert.match(app, /picked = pantalla\.elegir\(bandItems, n, rand, \{ ficha, banda, repeat \}\)/);
+  assert.match(app, /picked = pantalla\.elegir\(bandItems, n, rand, \{ ficha, banda, repeat, previas \}\)/);
   assert.match(app, /const trials = ficha\.unidadDelBloque === 'secuencia' \? todos : todos\.slice\(0, n\);/);
   assert.match(app, /bandItems = bandItems\.filter\(\(i\) => !i\.modalidad \|\| i\.modalidad === f\.modalidad\);/);
 });
