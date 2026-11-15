@@ -20,6 +20,20 @@ export function simEnv({
         const at = paint(t);
         timers.push({ at, fn: () => resolve(at) });
       }),
+    // Como frameAt del navegador: el cambio se pide para que se pinte a la hora indicada (o en
+    // cuanto se pueda, si ya pasó) y se devuelve la hora en que se pintó.
+    frameAt: (target, change) =>
+      new Promise((resolve) => {
+        const at = Math.max(t, target - (paint(target) - target));
+        timers.push({
+          at,
+          fn: () => {
+            change();
+            const pintado = paint(at);
+            timers.push({ at: pintado, fn: () => resolve(pintado) });
+          },
+        });
+      }),
     frames: { start: () => (trialStart = t), stop: () => frames(t - trialStart) },
     focus: { start() {}, stop: () => focusLost() },
     audio,

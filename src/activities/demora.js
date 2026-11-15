@@ -1,5 +1,5 @@
 // Pantalla de ACT-09 «Recuerda y encuentra»: la muestra se ve 2 s y desaparece; después de la
-// pausa en blanco de la banda aparecen las opciones. Solo dibuja; el motor registra.
+// pausa en blanco de la banda aparecen las opciones. Solo dibuja; el motor decide cuándo y registra.
 import * as seleccion from './seleccion.js';
 import { miniatura } from '../html.js';
 
@@ -9,25 +9,14 @@ export const toTrials = seleccion.toTrials;
 // muestra más la pausa de la banda. La ficha no cambia; el bloque usa esta copia.
 export const fichaDeBloque = (ficha, banda) => ({ ...ficha, consignaVMs: ficha.muestraMs + banda.demoraMs });
 
-export function createView(stage, images, { ficha }) {
+// La muestra la quita el motor con hidePrompt(), en el cuadro que llega a muestraMs (reloj del
+// motor, alineado al cuadro); el cuadro en que ya no se ve queda en t_muestra_fin.
+export function createView(stage, images) {
   const base = seleccion.createView(stage, images);
-  let reloj = null;
-  const ocultar = () => {
-    clearTimeout(reloj);
-    reloj = null;
-    stage.querySelector('.consigna')?.remove();
-  };
+  const ocultar = () => stage.querySelector('.consigna')?.remove();
   return {
     ...base,
-    clear() {
-      clearTimeout(reloj);
-      reloj = null;
-      base.clear();
-    },
-    showPrompt(consigna) {
-      base.showPrompt(consigna);
-      reloj = setTimeout(ocultar, ficha.muestraMs);
-    },
+    hidePrompt: ocultar,
     // Las opciones nunca aparecen con la muestra a la vista.
     showOptions(opciones, disposicion) {
       ocultar();

@@ -27,6 +27,9 @@ const FAIL = Symbol('fallo');
  *   env.audio.play(clave, texto) → Promise<{ tInicio, fuente, latenciaMs, fin: Promise<t>, stop() } | null>
  * view: clear(), showPrompt(consigna), showOptions(opciones, disposicion), showFeedback(posCorrecta)
  *   y, si la actividad anuncia cambios, showAnnouncement(anuncio).
+ *   Si la ficha tiene muestraMs (ACT-09, solo en V), la vista tiene hidePrompt(): el motor quita
+ *   la muestra en el cuadro que llega a muestraMs desde t_consigna_inicio y registra en
+ *   t_muestra_fin el cuadro en que ya no se ve. Sin muestraMs, t_muestra_fin queda vacío.
  *   Opcional: prepareOptions(opciones, disposicion) → Promise. Arma y decodifica las opciones
  *   durante la consigna; showOptions solo las inserta.
  * La vista llama a pointer({ t, x, y, pos }) en cada pointerdown: pos es la posición
@@ -36,6 +39,7 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
   const r = {
     t_consigna_inicio: null,
     t_consigna_fin: null,
+    t_muestra_fin: null,
     t_audio_inicio: null,
     t_audio_fin: null,
     audio_fuente: null,
@@ -120,6 +124,11 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
     // completas en el cuadro en que se insertan.
     const decoded = view.prepareOptions?.(opciones, disposicion).then(() => true, () => false);
     if (modalidad === 'AV' && (await playPrompt()) === STOP) return;
+    if (modalidad === 'V' && ficha.muestraMs != null && view.hidePrompt) {
+      const tm = await guard(env.frameAt(tc + ficha.muestraMs, () => view.hidePrompt()));
+      if (tm === STOP) return;
+      r.t_muestra_fin = tm;
+    }
     if (modalidad === 'V' || r.fallo_tecnico) {
       // En V, y si el audio falló, la consigna dura al menos consignaVMs.
       const rest = Math.max(0, tc + ficha.consignaVMs - env.now());

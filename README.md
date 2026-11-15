@@ -30,7 +30,7 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | ACT-05 | Sonido e imagen | Escucha un sonido que no es habla (un maullido, un tren) y toca lo que lo produce | Solo AV | B1 a B3 |
 | ACT-06 | Clasifica por categoría | Pone cada dibujo en la caja de su categoría (2 o 3 cajas) | V y AV | B1 a B3 |
 | ACT-08 | Busca el objetivo | Encuentra un dibujo entre 4, 8, 12 o 16 | V y AV | B1 a B4 |
-| ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | V y AV | B1 a B4 |
+| ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | Solo V | B1 a B4 |
 | ACT-10 | Ordena la secuencia | Toca en orden los momentos de una historia (V) o los dibujos que nombra una instrucción de varios pasos (AV); de 2 a 5 tarjetas | V y AV | B1 a B4 |
 | ACT-11 | Completa el patrón | Elige la figura que sigue en una serie: AB, AAB, ABC o dos reglas a la vez | V y AV | B1 a B4 |
 | ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado | V y AV | B1 a B3 |
@@ -248,7 +248,7 @@ Antes de publicar, corre también `npm run check-items`.
 
 1. `npm test`;
 2. `npm run check-items`;
-3. `node tools/build-items.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano.
+3. `node tools/build-items.mjs` y, en esta rama, `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
 
 El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
 
@@ -289,6 +289,7 @@ src/engine/ficha.js           Carga y validación de fichas
 src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 src/activities/referencia.js  Pantalla del objetivo de la referencia motora
+src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
 fichas/                       Ficha técnica de cada actividad (JSON)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
@@ -296,10 +297,14 @@ tools/build-items.mjs         Genera items/items.json y los marcadores provision
 tools/check-items.mjs         Verifica archivos y licencias del banco
 tools/descargar-pictos.mjs    Descarga los pictogramas de ARASAAC
 tools/ejemplo-registro.mjs    Genera docs/ejemplo-registro.csv
+tools/simular-piloto.mjs      Simula bloques del piloto; test/fixtures guarda lo que registraba el motor antes de la tanda 2
+tools/build-posteriores.mjs   Genera items/items-posteriores.json (actividades de uso posterior)
+tools/medir-escenas.mjs       Mide a tamaño real si las escenas de ACT-04 se distinguen
+tools/sonidos.mjs             Mide y corrige la sonoridad y el inicio de los sonidos de ACT-05
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
 tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
 assets/                       Imágenes, pictogramas, audios, marca (assets/marca) y tipografías (assets/fonts)
-docs/                         Registro de ejemplo
+docs/                         Registro de ejemplo y medidas de escenas (ACT-04) y sonidos (ACT-05)
 test/                         Pruebas (node --test)
 .github/workflows/            Verificación automática en GitHub Actions
 ```
@@ -428,6 +433,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `fuera_de_tarea` | `true` si ln(RT) está a más de 3 MAD de la mediana, según el Modelo matemático (3.2 y 3.3). Detalles abajo. |
 | `fuera_de_tarea_provisional` | `false` si `fuera_de_tarea` se calculó al cerrar la sesión; `true` si la sesión seguía abierta al exportar. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
+| `t_muestra_fin` | Solo ACT-09: cuadro en que la muestra ya no se ve. La quita el motor, no la pantalla: en cada cuadro (`requestAnimationFrame`) mira si el siguiente llega a `t_consigna_inicio` + 2 s, con medio cuadro de margen; en ese cuadro la quita y guarda el timestamp del cuadro siguiente, como `t_opciones`. La pausa en blanco real es `t_opciones − t_muestra_fin`. Vacía en las demás actividades y si se pausó mientras se veía la muestra. Va al final para que las columnas anteriores no cambien de lugar. |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 
