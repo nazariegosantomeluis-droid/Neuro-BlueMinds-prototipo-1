@@ -527,7 +527,7 @@ Una fila por sesión, en este orden:
 | ACT-12 | 24 | 6 programas de 40 ensayos por banda. En cada mitad del bloque el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
 | ACT-13 | 24 | 6 series de 30 presentaciones por banda, con la proporción de nubes de la banda. Nunca empiezan con una nube ni ponen más de 2 seguidas |
 | ACT-15 | 75 | Rimas (B1 y B2; en B2 un distractor empieza igual que la palabra, pero no rima), inicios con la misma sílaba (B3) y pares que cambian en un solo sonido, dichos iguales o distintos (B4) |
-| ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra, y nunca repite una pieza de la palabra |
+| ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra (en B3, una o dos), y nunca repite una pieza de la palabra |
 
 - Ningún ítem usa el ejemplar 3, reservado para las sondas de generalización de ACT-02, ni junta en una pantalla conceptos que se excluyen.
 - ACT-03, 05, 06, 08, 09, 10 (en AV), 15 y 16 usan los dibujos y pictogramas del banco. Las figuras de ACT-11, los rostros y pictogramas de emoción de ACT-14, las escenas de ACT-04, las historias de ACT-10, los cofres de ACT-12, el globo y la nube de ACT-13, y las figuras de «igual» y «diferente» de ACT-15 se dibujan con código.
@@ -536,6 +536,12 @@ Una fila por sesión, en este orden:
 - **Medición de las escenas.** `node tools/medir-escenas.mjs` (necesita Playwright con Chromium; no corre en la verificación de GitHub) dibuja, con la densidad de una tableta de 10 pulgadas (59 px CSS por cm), cada par de escenas que puede ir junto en un ítem: dos acciones, dos objetos de la misma acción, el niño y la niña, y dos relaciones de lugar. Mide la mayor zona en que cambian y la compara con un umbral propuesto (4 mm de lado menor y 25 mm²). Escribe [`docs/medicion-escenas.json`](docs/medicion-escenas.json) y [`docs/escenas-tamano-real.png`](docs/escenas-tamano-real.png). Es un filtro para la revisión, no un criterio clínico: «come» y «bebe», y todas las demás acciones, lo pasan a 4.5 cm.
 - **Escenas que siguen siendo ambiguas** (revisión a ojo a 4.5 cm, lista `accionesAmbiguas` de la ficha): «se peina» frente a «habla por teléfono»; «dentro» frente a «arriba» de la caja con el pato, el pollito y el zapato; «abraza al conejo» frente a «abraza al pato»; y «arriba» frente a «abajo» de la mesa con el conejo y el pato, que a ojo se distinguen pero no pasan el filtro por debajo de 6 cm. Quedan para la revisión clínica.
 - En la secuencia, las tarjetas se revuelven de modo que con 3 o más nunca quedan ya en orden.
+- **ACT-10 y ACT-16: la secuencia completa es el ensayo** (Catálogo 6.2: A1 por secuencia completa, o por palabra).
+  - El resumen del bloque empieza por las secuencias hechas completas y en orden. Las cortadas por una pausa o un salto no entran en la cuenta y se informan aparte. Los pasos van después, como detalle.
+  - Los tiempos entre toques no son tiempos de respuesta comparables (Arquitectura 4.5): el resumen no da su mediana y sus filas quedan con `fuera_de_tarea` vacío.
+  - El registro sigue guardando una fila por paso, con su código (`ACT10-B2-03-1`).
+  - La última tarjeta pasa sola a su lugar y no es un paso ni tiene fila (`ultimaTarjeta: "sola"` en la ficha). En ACT-16 eso pasa aunque sobren piezas; con `"elige"`, el niño elegiría la última entre las que quedan. Queda como decisión clínica.
+  - Un bloque propone 10 secuencias; A1 necesita 20 (Modelo matemático 4.1), que se juntan con dos bloques.
 - Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.
 - Las frases de ACT-03 B3 dependen del color de cada dibujo. Si se cambia una imagen del banco, hay que revisar la lista `frases` de la ficha.
 

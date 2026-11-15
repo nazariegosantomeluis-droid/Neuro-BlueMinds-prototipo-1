@@ -37,9 +37,12 @@ const valido = (r) => rt(r) > 0 && !r.anticipatoria && !r.interrumpido && !r.fal
 
 // rows: los ensayos de una sesión, de cualquier actividad. Devuelve, por fila, true/false,
 // o null si el ensayo no es válido o su actividad tiene menos de FUERA_MIN ensayos válidos.
-export function fueraDeTarea(rows) {
+// sinTiempos: actividades cuyos tiempos no son tiempos de respuesta comparables (respuesta
+// «secuencia», Arquitectura 4.5: los tiempos entre toques); sus filas quedan en null.
+export function fueraDeTarea(rows, { sinTiempos = [] } = {}) {
   const out = rows.map(() => null);
   for (const actividad of new Set(rows.map((r) => r.actividad))) {
+    if (sinTiempos.includes(actividad)) continue;
     const idx = rows.flatMap((r, k) => (r.actividad === actividad && valido(r) ? [k] : []));
     if (idx.length < FUERA_MIN) continue;
     const xs = idx.map((k) => Math.log(rt(rows[k])));
@@ -52,16 +55,16 @@ export function fueraDeTarea(rows) {
 
 // Marca fuera_de_tarea en los ensayos de una sesión: definitivo al cerrar la sesión
 // (provisional = false) o provisional al exportar una sesión abierta. Un valor cerrado no cambia.
-export function marcarFueraDeTarea(rows, provisional) {
-  fueraDeTarea(rows).forEach((v, k) => {
+export function marcarFueraDeTarea(rows, provisional, opciones) {
+  fueraDeTarea(rows, opciones).forEach((v, k) => {
     if (rows[k].fuera_de_tarea_provisional !== false) Object.assign(rows[k], { fuera_de_tarea: v, fuera_de_tarea_provisional: provisional });
   });
 }
 
 // Copia del registro para exportar: las sesiones abiertas llevan fuera_de_tarea provisional.
-export function paraExportar(rows) {
+export function paraExportar(rows, opciones) {
   const copia = rows.map((r) => ({ ...r }));
-  for (const id of new Set(copia.map((r) => r.sesion_id))) marcarFueraDeTarea(copia.filter((r) => r.sesion_id === id), true);
+  for (const id of new Set(copia.map((r) => r.sesion_id))) marcarFueraDeTarea(copia.filter((r) => r.sesion_id === id), true, opciones);
   return copia;
 }
 

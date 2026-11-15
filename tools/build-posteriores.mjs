@@ -544,13 +544,16 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
 
   // ---------- Secuencias por pasos (ACT-10 y ACT-16) ----------
   // tarjetas: en el orden en que se ven (revueltas); «orden» es su lugar en la secuencia, o null si
-  // sobra. Cada paso es un ensayo: el niño elige entre las tarjetas que quedan la que va en el
-  // siguiente lugar. Si al final queda una sola tarjeta de la secuencia y ninguna sobra, pasa sola
-  // a su lugar (autoColocar) y no hay ensayo.
-  const pasosDe = (cod, tarjetas, { texto, audio }) => {
+  // sobra. Cada paso es un ensayo del motor: el niño elige entre las tarjetas que quedan la que va
+  // en el siguiente lugar. La última tarjeta de la secuencia pasa sola a su lugar (autoColocar) y no
+  // es un paso: cuando no sobra ninguna no hay que elegir, y con ultimaTarjeta = 'sola' (Catálogo
+  // 6.2: A1 por secuencia completa) tampoco cuando sobran. Con ultimaTarjeta = 'elige', si sobran,
+  // el niño la elige como un paso más.
+  const pasosDe = (cod, tarjetas, { texto, audio }, ficha) => {
     const enOrden = tarjetas.filter((t) => t.orden !== null).sort((a, b) => a.orden - b.orden);
     const sobran = tarjetas.some((t) => t.orden === null);
-    const total = sobran ? enOrden.length : enOrden.length - 1;
+    const elige = sobran && ficha.ultimaTarjeta === 'elige';
+    const total = elige ? enOrden.length : enOrden.length - 1;
     return enOrden.slice(0, total).map((t, k) => ({
       codigo: `${cod}-${k + 1}`,
       paso: k + 1,
@@ -558,7 +561,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
       colocadas: enOrden.slice(0, k).map((x) => x.id),
       consigna: k === 0 ? { tipo: 'secuencia', texto, audio } : { tipo: 'secuencia', texto: '', audio: SILENCIO },
       opciones: tarjetas.filter((x) => !enOrden.slice(0, k).includes(x)).map((x) => ({ id: x.id, correcta: x === t })),
-      ...(k === total - 1 && !sobran ? { autoColocar: enOrden.at(-1).id } : {}),
+      ...(k === total - 1 && !elige ? { autoColocar: enOrden.at(-1).id } : {}),
     }));
   };
   // Revuelve las tarjetas; con 3 o más, nunca quedan ya en orden.
@@ -591,7 +594,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
               modalidad: 'V',
               historia,
               tarjetas: vistas,
-              ensayos: pasosDe(cod, vistas, { texto: '', audio: null }),
+              ensayos: pasosDe(cod, vistas, { texto: '', audio: null }, f),
               muestraExpertos: k === 0 && n <= f.muestraExpertosPorBanda * f.ordenesPorHistoria,
             },
             [],
@@ -626,7 +629,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
             modalidad: 'AV',
             consigna: { tipo: 'secuencia', texto, audio: slug(texto) },
             tarjetas: vistas,
-            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }),
+            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }, f),
             muestraExpertos: k < f.muestraExpertosPorBanda / 2,
           },
           elegidos,
@@ -687,7 +690,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
             imagen: image(c.id, ejemplar),
             palabra: w.texto,
             tarjetas: vistas,
-            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }),
+            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }, f),
             muestraExpertos: n <= f.muestraExpertosPorBanda,
           },
           [c],

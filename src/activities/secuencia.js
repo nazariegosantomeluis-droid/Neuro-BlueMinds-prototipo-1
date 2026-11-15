@@ -158,22 +158,47 @@ export function createView(stage, images) {
 
 // ---------- Resumen del bloque ----------
 
-// Además de los pasos, las secuencias completas: todos sus pasos con respuesta correcta, sin
-// pausas en medio (A1 por secuencia completa, Catálogo 6.2).
-export function resumenExtra(rows, byCode, ficha) {
-  const porSecuencia = new Map();
+// El indicador principal es la secuencia completa (Catálogo 6.2: A1 por secuencia completa, o por
+// palabra en ACT-16): todos sus pasos con respuesta correcta y sin pausas en medio. Las secuencias
+// cortadas por una pausa o un salto no entran en la cuenta y se informan aparte. Los pasos son el
+// detalle. Los tiempos entre toques no se resumen: no son tiempos de respuesta comparables
+// (Arquitectura 4.5). La última tarjeta no tiene paso (pasa sola a su lugar).
+export function porSecuencia(rows, byCode) {
+  const grupos = new Map();
   for (const r of rows) {
     const e = byCode.get(r.item);
     if (!e) continue;
-    if (!porSecuencia.has(e.secuencia)) porSecuencia.set(e.secuencia, { total: e.total, filas: [] });
-    porSecuencia.get(e.secuencia).filas.push(r);
+    if (!grupos.has(e.secuencia)) grupos.set(e.secuencia, { secuencia: e.secuencia, total: e.total, filas: [] });
+    grupos.get(e.secuencia).filas.push(r);
   }
-  const todas = [...porSecuencia.values()];
-  const completas = todas.filter((s) => s.filas.length === s.total && s.filas.every((r) => !r.interrumpido && r.acierto)).length;
-  const cortadas = todas.filter((s) => s.filas.length < s.total || s.filas.some((r) => r.interrumpido)).length;
+  return [...grupos.values()].map((g) => {
+    const cortada = g.filas.length < g.total || g.filas.some((r) => r.interrumpido);
+    return { ...g, cortada, completa: !cortada && g.filas.every((r) => r.acierto) };
+  });
+}
+
+export function resumen(rows, byCode, ficha) {
+  const secuencias = porSecuencia(rows, byCode);
+  const terminadas = secuencias.filter((s) => !s.cortada);
+  const completas = terminadas.filter((s) => s.completa).length;
   const plantilla = ficha?.resumenSecuencia ?? 'Hizo completas y en orden {completas} de {secuencias} secuencias';
-  const lineas = [`${plantilla.replace('{completas}', completas).replace('{secuencias}', todas.length)}.`];
-  if (cortadas) lineas.push(`Secuencias que no se terminaron por una pausa o un salto: ${cortadas}.`);
+  const lineas = [`${plantilla.replace('{completas}', completas).replace('{secuencias}', terminadas.length)}.`];
+  const cortadas = secuencias.length - terminadas.length;
+  if (cortadas) lineas.push(`Secuencias que no se terminaron por una pausa o un salto: ${cortadas}. No entran en la cuenta.`);
+  // Detalle: los pasos de las secuencias terminadas.
+  const pasos = terminadas.flatMap((s) => s.filas);
+  const aciertos = pasos.filter((r) => r.acierto).length;
+  const sinRespuesta = pasos.filter((r) => r.omision).length;
+  const detalle = ficha?.resumen ? ficha.resumen.replace('{aciertos}', aciertos).replace('{ensayos}', pasos.length) : `Tocó la tarjeta que seguía en ${aciertos} de ${pasos.length} pasos`;
+  lineas.push(`Detalle por pasos: ${detalle.charAt(0).toLowerCase()}${detalle.slice(1)}; sin respuesta en ${sinRespuesta}.`);
+  for (const [k, label] of [
+    ['anticipatoria', 'Pasos con toque anticipatorio (menos de 150 ms)'],
+    ['fallo_tecnico', 'Pasos con fallo técnico de audio'],
+    ['perdida_foco', 'Pasos con pérdida de foco'],
+  ]) {
+    const c = rows.filter((r) => r[k]).length;
+    if (c) lineas.push(`${label}: ${c}.`);
+  }
   return lineas;
 }
 

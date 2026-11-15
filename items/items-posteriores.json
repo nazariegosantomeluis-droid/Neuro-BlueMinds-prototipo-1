@@ -40045,7 +40045,7 @@
         {
           "codigo": "ACT16-B1-01-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40065,30 +40065,8 @@
               "id": "silaba-ga",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-01-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-ga"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-co",
-              "correcta": false
-            },
-            {
-              "id": "silaba-to",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": true,
@@ -40128,7 +40106,7 @@
         {
           "codigo": "ACT16-B1-02-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40148,30 +40126,8 @@
               "id": "silaba-che",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-02-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-pa"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-to",
-              "correcta": true
-            },
-            {
-              "id": "silaba-che",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": true,
@@ -40211,7 +40167,7 @@
         {
           "codigo": "ACT16-B1-03-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40231,30 +40187,8 @@
               "id": "silaba-bo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-03-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-va"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ca",
-              "correcta": true
-            },
-            {
-              "id": "silaba-bo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ca"
         }
       ],
       "muestraExpertos": true,
@@ -40294,7 +40228,7 @@
         {
           "codigo": "ACT16-B1-04-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40314,30 +40248,8 @@
               "id": "silaba-ves",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-04-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-ma"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-no",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ves",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-no"
         }
       ],
       "muestraExpertos": true,
@@ -40377,7 +40289,7 @@
         {
           "codigo": "ACT16-B1-05-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40397,30 +40309,8 @@
               "id": "silaba-bo",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-05-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-bo"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ca",
-              "correcta": true
-            },
-            {
-              "id": "silaba-so",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ca"
         }
       ],
       "muestraExpertos": false,
@@ -40460,7 +40350,7 @@
         {
           "codigo": "ACT16-B1-06-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40480,30 +40370,8 @@
               "id": "silaba-pe",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-06-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-pe"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-mo",
-              "correcta": false
-            },
-            {
-              "id": "silaba-lo",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-lo"
         }
       ],
       "muestraExpertos": false,
@@ -40543,7 +40411,7 @@
         {
           "codigo": "ACT16-B1-07-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40563,30 +40431,8 @@
               "id": "silaba-so",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-07-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-va"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-mo",
-              "correcta": false
-            },
-            {
-              "id": "silaba-so",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-so"
         }
       ],
       "muestraExpertos": false,
@@ -40626,7 +40472,7 @@
         {
           "codigo": "ACT16-B1-08-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40646,30 +40492,8 @@
               "id": "silaba-mo",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-08-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-mo"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-to",
-              "correcta": true
-            },
-            {
-              "id": "silaba-bar",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": false,
@@ -40709,7 +40533,7 @@
         {
           "codigo": "ACT16-B1-09-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40729,30 +40553,8 @@
               "id": "silaba-rro",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-09-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-ca"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ga",
-              "correcta": false
-            },
-            {
-              "id": "silaba-rro",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-rro"
         }
       ],
       "muestraExpertos": false,
@@ -40792,7 +40594,7 @@
         {
           "codigo": "ACT16-B1-10-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40812,30 +40614,8 @@
               "id": "silaba-lo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-10-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-le"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-che",
-              "correcta": true
-            },
-            {
-              "id": "silaba-lo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-che"
         }
       ],
       "muestraExpertos": false,
@@ -40875,7 +40655,7 @@
         {
           "codigo": "ACT16-B1-11-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40895,30 +40675,8 @@
               "id": "silaba-hue",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-11-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-hue"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-vo",
-              "correcta": true
-            },
-            {
-              "id": "silaba-bo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-vo"
         }
       ],
       "muestraExpertos": false,
@@ -40958,7 +40716,7 @@
         {
           "codigo": "ACT16-B1-12-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -40978,30 +40736,8 @@
               "id": "silaba-bar",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-12-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-bar"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ma",
-              "correcta": false
-            },
-            {
-              "id": "silaba-co",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-co"
         }
       ],
       "muestraExpertos": false,
@@ -41041,7 +40777,7 @@
         {
           "codigo": "ACT16-B1-13-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41061,30 +40797,8 @@
               "id": "silaba-da",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-13-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-pe"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-rro",
-              "correcta": true
-            },
-            {
-              "id": "silaba-da",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-rro"
         }
       ],
       "muestraExpertos": false,
@@ -41124,7 +40838,7 @@
         {
           "codigo": "ACT16-B1-14-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41144,30 +40858,8 @@
               "id": "silaba-ma",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-14-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-pla"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-to",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ma",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": false,
@@ -41207,7 +40899,7 @@
         {
           "codigo": "ACT16-B1-15-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41227,30 +40919,8 @@
               "id": "silaba-fal",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-15-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-fal"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-da",
-              "correcta": true
-            },
-            {
-              "id": "silaba-so",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-da"
         }
       ],
       "muestraExpertos": false,
@@ -41290,7 +40960,7 @@
         {
           "codigo": "ACT16-B1-16-1",
           "paso": 1,
-          "total": 2,
+          "total": 1,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41310,30 +40980,8 @@
               "id": "silaba-lo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B1-16-2",
-          "paso": 2,
-          "total": 2,
-          "colocadas": [
-            "silaba-lla"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ves",
-              "correcta": true
-            },
-            {
-              "id": "silaba-lo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ves"
         }
       ],
       "muestraExpertos": false,
@@ -41378,7 +41026,7 @@
         {
           "codigo": "ACT16-B2-01-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41407,7 +41055,7 @@
         {
           "codigo": "ACT16-B2-01-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-za"
           ],
@@ -41429,31 +41077,8 @@
               "id": "silaba-llo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-01-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-za",
-            "silaba-pa"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-to",
-              "correcta": true
-            },
-            {
-              "id": "silaba-llo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": true,
@@ -41498,7 +41123,7 @@
         {
           "codigo": "ACT16-B2-02-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41527,7 +41152,7 @@
         {
           "codigo": "ACT16-B2-02-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-co"
           ],
@@ -41549,31 +41174,8 @@
               "id": "silaba-jo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-02-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-co",
-            "silaba-ne"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-re",
-              "correcta": false
-            },
-            {
-              "id": "silaba-jo",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-jo"
         }
       ],
       "muestraExpertos": true,
@@ -41618,7 +41220,7 @@
         {
           "codigo": "ACT16-B2-03-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41647,7 +41249,7 @@
         {
           "codigo": "ACT16-B2-03-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-pa"
           ],
@@ -41669,31 +41271,8 @@
               "id": "silaba-llo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-03-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-pa",
-            "silaba-le"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ta",
-              "correcta": true
-            },
-            {
-              "id": "silaba-llo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ta"
         }
       ],
       "muestraExpertos": true,
@@ -41738,7 +41317,7 @@
         {
           "codigo": "ACT16-B2-04-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41767,7 +41346,7 @@
         {
           "codigo": "ACT16-B2-04-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-ga"
           ],
@@ -41789,31 +41368,8 @@
               "id": "silaba-ne",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-04-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-ga",
-            "silaba-lle"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ta",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ne",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ta"
         }
       ],
       "muestraExpertos": true,
@@ -41858,7 +41414,7 @@
         {
           "codigo": "ACT16-B2-05-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -41887,7 +41443,7 @@
         {
           "codigo": "ACT16-B2-05-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-cu"
           ],
@@ -41909,31 +41465,8 @@
               "id": "silaba-ra",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-05-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-cu",
-            "silaba-cha"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-plá",
-              "correcta": false
-            },
-            {
-              "id": "silaba-ra",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-ra"
         }
       ],
       "muestraExpertos": false,
@@ -41978,7 +41511,7 @@
         {
           "codigo": "ACT16-B2-06-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42007,7 +41540,7 @@
         {
           "codigo": "ACT16-B2-06-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-ca"
           ],
@@ -42029,31 +41562,8 @@
               "id": "silaba-ba",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-06-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-ca",
-            "silaba-ba"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-pa",
-              "correcta": false
-            },
-            {
-              "id": "silaba-llo",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-llo"
         }
       ],
       "muestraExpertos": false,
@@ -42098,7 +41608,7 @@
         {
           "codigo": "ACT16-B2-07-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42127,7 +41637,7 @@
         {
           "codigo": "ACT16-B2-07-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-po"
           ],
@@ -42149,31 +41659,8 @@
               "id": "silaba-lli",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-07-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-po",
-            "silaba-lli"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-lle",
-              "correcta": false
-            },
-            {
-              "id": "silaba-to",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-to"
         }
       ],
       "muestraExpertos": false,
@@ -42218,7 +41705,7 @@
         {
           "codigo": "ACT16-B2-08-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42247,7 +41734,7 @@
         {
           "codigo": "ACT16-B2-08-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-man"
           ],
@@ -42269,31 +41756,8 @@
               "id": "silaba-na",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-08-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-man",
-            "silaba-za"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-llo",
-              "correcta": false
-            },
-            {
-              "id": "silaba-na",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-na"
         }
       ],
       "muestraExpertos": false,
@@ -42338,7 +41802,7 @@
         {
           "codigo": "ACT16-B2-09-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42367,7 +41831,7 @@
         {
           "codigo": "ACT16-B2-09-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-na"
           ],
@@ -42389,31 +41853,8 @@
               "id": "silaba-ja",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-09-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-na",
-            "silaba-ran"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-le",
-              "correcta": false
-            },
-            {
-              "id": "silaba-ja",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "silaba-ja"
         }
       ],
       "muestraExpertos": false,
@@ -42458,7 +41899,7 @@
         {
           "codigo": "ACT16-B2-10-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42487,7 +41928,7 @@
         {
           "codigo": "ACT16-B2-10-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-ca"
           ],
@@ -42509,31 +41950,8 @@
               "id": "silaba-be",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-10-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-ca",
-            "silaba-be"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-za",
-              "correcta": true
-            },
-            {
-              "id": "silaba-lla",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-za"
         }
       ],
       "muestraExpertos": false,
@@ -42578,7 +41996,7 @@
         {
           "codigo": "ACT16-B2-11-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42607,7 +42025,7 @@
         {
           "codigo": "ACT16-B2-11-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-o"
           ],
@@ -42629,31 +42047,8 @@
               "id": "silaba-re",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-11-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-o",
-            "silaba-re"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ja",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ran",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ja"
         }
       ],
       "muestraExpertos": false,
@@ -42698,7 +42093,7 @@
         {
           "codigo": "ACT16-B2-12-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42727,7 +42122,7 @@
         {
           "codigo": "ACT16-B2-12-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-es"
           ],
@@ -42749,31 +42144,8 @@
               "id": "silaba-ca",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-12-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-es",
-            "silaba-co"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ba",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ca",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ba"
         }
       ],
       "muestraExpertos": false,
@@ -42818,7 +42190,7 @@
         {
           "codigo": "ACT16-B2-13-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42847,7 +42219,7 @@
         {
           "codigo": "ACT16-B2-13-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-tor"
           ],
@@ -42869,31 +42241,8 @@
               "id": "silaba-ves",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-13-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-tor",
-            "silaba-ti"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-lla",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ves",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-lla"
         }
       ],
       "muestraExpertos": false,
@@ -42938,7 +42287,7 @@
         {
           "codigo": "ACT16-B2-14-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -42967,7 +42316,7 @@
         {
           "codigo": "ACT16-B2-14-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-ves"
           ],
@@ -42989,31 +42338,8 @@
               "id": "silaba-ti",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-14-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-ves",
-            "silaba-ti"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-do",
-              "correcta": true
-            },
-            {
-              "id": "silaba-no",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-do"
         }
       ],
       "muestraExpertos": false,
@@ -43058,7 +42384,7 @@
         {
           "codigo": "ACT16-B2-15-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43087,7 +42413,7 @@
         {
           "codigo": "ACT16-B2-15-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-som"
           ],
@@ -43109,31 +42435,8 @@
               "id": "silaba-ne",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-15-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-som",
-            "silaba-bre"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-ro",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ne",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-ro"
         }
       ],
       "muestraExpertos": false,
@@ -43178,7 +42481,7 @@
         {
           "codigo": "ACT16-B2-16-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43207,7 +42510,7 @@
         {
           "codigo": "ACT16-B2-16-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "silaba-plá"
           ],
@@ -43229,31 +42532,8 @@
               "id": "silaba-ga",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B2-16-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "silaba-plá",
-            "silaba-ta"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "silaba-no",
-              "correcta": true
-            },
-            {
-              "id": "silaba-ga",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "silaba-no"
         }
       ],
       "muestraExpertos": false,
@@ -43303,7 +42583,7 @@
         {
           "codigo": "ACT16-B3-01-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43336,7 +42616,7 @@
         {
           "codigo": "ACT16-B3-01-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "letra-p"
           ],
@@ -43362,35 +42642,8 @@
               "id": "letra-n",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-01-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "letra-p",
-            "letra-a"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-b",
-              "correcta": false
-            },
-            {
-              "id": "letra-e",
-              "correcta": false
-            },
-            {
-              "id": "letra-n",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "letra-n"
         }
       ],
       "muestraExpertos": true,
@@ -43440,7 +42693,7 @@
         {
           "codigo": "ACT16-B3-02-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43473,7 +42726,7 @@
         {
           "codigo": "ACT16-B3-02-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "letra-p"
           ],
@@ -43499,35 +42752,8 @@
               "id": "letra-d",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-02-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "letra-p",
-            "letra-i"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-n",
-              "correcta": false
-            },
-            {
-              "id": "letra-e",
-              "correcta": true
-            },
-            {
-              "id": "letra-d",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "letra-e"
         }
       ],
       "muestraExpertos": true,
@@ -43577,7 +42803,7 @@
         {
           "codigo": "ACT16-B3-03-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43610,7 +42836,7 @@
         {
           "codigo": "ACT16-B3-03-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-t"
           ],
@@ -43641,7 +42867,7 @@
         {
           "codigo": "ACT16-B3-03-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-t",
             "letra-r"
@@ -43664,32 +42890,8 @@
               "id": "letra-e",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-03-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-t",
-            "letra-r",
-            "letra-e"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-n",
-              "correcta": true
-            },
-            {
-              "id": "letra-a",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "letra-n"
         }
       ],
       "muestraExpertos": true,
@@ -43739,7 +42941,7 @@
         {
           "codigo": "ACT16-B3-04-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43772,7 +42974,7 @@
         {
           "codigo": "ACT16-B3-04-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-g"
           ],
@@ -43803,7 +43005,7 @@
         {
           "codigo": "ACT16-B3-04-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-g",
             "letra-a"
@@ -43826,32 +43028,8 @@
               "id": "letra-o",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-04-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-g",
-            "letra-a",
-            "letra-t"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-e",
-              "correcta": false
-            },
-            {
-              "id": "letra-o",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "letra-o"
         }
       ],
       "muestraExpertos": true,
@@ -43901,7 +43079,7 @@
         {
           "codigo": "ACT16-B3-05-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -43934,7 +43112,7 @@
         {
           "codigo": "ACT16-B3-05-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-p"
           ],
@@ -43965,7 +43143,7 @@
         {
           "codigo": "ACT16-B3-05-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-p",
             "letra-a"
@@ -43988,32 +43166,8 @@
               "id": "letra-t",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-05-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-p",
-            "letra-a",
-            "letra-t"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-o",
-              "correcta": true
-            },
-            {
-              "id": "letra-u",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "letra-o"
         }
       ],
       "muestraExpertos": false,
@@ -44063,7 +43217,7 @@
         {
           "codigo": "ACT16-B3-06-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44096,7 +43250,7 @@
         {
           "codigo": "ACT16-B3-06-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-m"
           ],
@@ -44127,7 +43281,7 @@
         {
           "codigo": "ACT16-B3-06-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-m",
             "letra-a"
@@ -44150,32 +43304,8 @@
               "id": "letra-p",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-06-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-m",
-            "letra-a",
-            "letra-n"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-o",
-              "correcta": true
-            },
-            {
-              "id": "letra-p",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "letra-o"
         }
       ],
       "muestraExpertos": false,
@@ -44225,7 +43355,7 @@
         {
           "codigo": "ACT16-B3-07-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44258,7 +43388,7 @@
         {
           "codigo": "ACT16-B3-07-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-b"
           ],
@@ -44289,7 +43419,7 @@
         {
           "codigo": "ACT16-B3-07-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-b",
             "letra-o"
@@ -44312,32 +43442,8 @@
               "id": "letra-a",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-07-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-b",
-            "letra-o",
-            "letra-c"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-s",
-              "correcta": false
-            },
-            {
-              "id": "letra-a",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "letra-a"
         }
       ],
       "muestraExpertos": false,
@@ -44387,7 +43493,7 @@
         {
           "codigo": "ACT16-B3-08-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44420,7 +43526,7 @@
         {
           "codigo": "ACT16-B3-08-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-p"
           ],
@@ -44451,7 +43557,7 @@
         {
           "codigo": "ACT16-B3-08-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-p",
             "letra-e"
@@ -44474,32 +43580,8 @@
               "id": "letra-o",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-08-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-p",
-            "letra-e",
-            "letra-l"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-b",
-              "correcta": false
-            },
-            {
-              "id": "letra-o",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "letra-o"
         }
       ],
       "muestraExpertos": false,
@@ -44549,7 +43631,7 @@
         {
           "codigo": "ACT16-B3-09-1",
           "paso": 1,
-          "total": 4,
+          "total": 3,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44582,7 +43664,7 @@
         {
           "codigo": "ACT16-B3-09-2",
           "paso": 2,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-v"
           ],
@@ -44613,7 +43695,7 @@
         {
           "codigo": "ACT16-B3-09-3",
           "paso": 3,
-          "total": 4,
+          "total": 3,
           "colocadas": [
             "letra-v",
             "letra-a"
@@ -44636,32 +43718,8 @@
               "id": "letra-l",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B3-09-4",
-          "paso": 4,
-          "total": 4,
-          "colocadas": [
-            "letra-v",
-            "letra-a",
-            "letra-s"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "letra-o",
-              "correcta": true
-            },
-            {
-              "id": "letra-l",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "letra-o"
         }
       ],
       "muestraExpertos": false,
@@ -44706,7 +43764,7 @@
         {
           "codigo": "ACT16-B4-01-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44735,7 +43793,7 @@
         {
           "codigo": "ACT16-B4-01-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-el"
           ],
@@ -44757,31 +43815,8 @@
               "id": "palabra-rojo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-01-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-el",
-            "palabra-carro"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-roja",
-              "correcta": false
-            },
-            {
-              "id": "palabra-rojo",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "palabra-rojo"
         }
       ],
       "muestraExpertos": true,
@@ -44826,7 +43861,7 @@
         {
           "codigo": "ACT16-B4-02-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44855,7 +43890,7 @@
         {
           "codigo": "ACT16-B4-02-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-la"
           ],
@@ -44877,31 +43912,8 @@
               "id": "palabra-carreola",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-02-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-la",
-            "palabra-carreola"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-amarilla",
-              "correcta": false
-            },
-            {
-              "id": "palabra-roja",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "palabra-roja"
         }
       ],
       "muestraExpertos": true,
@@ -44946,7 +43958,7 @@
         {
           "codigo": "ACT16-B4-03-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -44975,7 +43987,7 @@
         {
           "codigo": "ACT16-B4-03-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-el"
           ],
@@ -44997,31 +44009,8 @@
               "id": "palabra-amarilla",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-03-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-el",
-            "palabra-suéter"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-rojo",
-              "correcta": true
-            },
-            {
-              "id": "palabra-amarilla",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-rojo"
         }
       ],
       "muestraExpertos": true,
@@ -45066,7 +44055,7 @@
         {
           "codigo": "ACT16-B4-04-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45095,7 +44084,7 @@
         {
           "codigo": "ACT16-B4-04-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-el"
           ],
@@ -45117,31 +44106,8 @@
               "id": "palabra-rojo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-04-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-el",
-            "palabra-conejo"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-café",
-              "correcta": true
-            },
-            {
-              "id": "palabra-rojo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-café"
         }
       ],
       "muestraExpertos": true,
@@ -45186,7 +44152,7 @@
         {
           "codigo": "ACT16-B4-05-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45215,7 +44181,7 @@
         {
           "codigo": "ACT16-B4-05-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-la"
           ],
@@ -45237,31 +44203,8 @@
               "id": "palabra-negros",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-05-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-la",
-            "palabra-paleta"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-amarilla",
-              "correcta": true
-            },
-            {
-              "id": "palabra-negros",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-amarilla"
         }
       ],
       "muestraExpertos": false,
@@ -45306,7 +44249,7 @@
         {
           "codigo": "ACT16-B4-06-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45335,7 +44278,7 @@
         {
           "codigo": "ACT16-B4-06-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-el"
           ],
@@ -45357,31 +44300,8 @@
               "id": "palabra-rojo",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-06-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-el",
-            "palabra-peine"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-negro",
-              "correcta": true
-            },
-            {
-              "id": "palabra-rojo",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-negro"
         }
       ],
       "muestraExpertos": false,
@@ -45426,7 +44346,7 @@
         {
           "codigo": "ACT16-B4-07-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45455,7 +44375,7 @@
         {
           "codigo": "ACT16-B4-07-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-la"
           ],
@@ -45477,31 +44397,8 @@
               "id": "palabra-almohada",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-07-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-la",
-            "palabra-almohada"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-café",
-              "correcta": false
-            },
-            {
-              "id": "palabra-azul",
-              "correcta": true
-            }
-          ]
+          "autoColocar": "palabra-azul"
         }
       ],
       "muestraExpertos": false,
@@ -45546,7 +44443,7 @@
         {
           "codigo": "ACT16-B4-08-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45575,7 +44472,7 @@
         {
           "codigo": "ACT16-B4-08-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-el"
           ],
@@ -45597,31 +44494,8 @@
               "id": "palabra-negro",
               "correcta": false
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-08-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-el",
-            "palabra-huevo"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-blanco",
-              "correcta": true
-            },
-            {
-              "id": "palabra-negro",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-blanco"
         }
       ],
       "muestraExpertos": false,
@@ -45666,7 +44540,7 @@
         {
           "codigo": "ACT16-B4-09-1",
           "paso": 1,
-          "total": 3,
+          "total": 2,
           "colocadas": [],
           "consigna": {
             "tipo": "secuencia",
@@ -45695,7 +44569,7 @@
         {
           "codigo": "ACT16-B4-09-2",
           "paso": 2,
-          "total": 3,
+          "total": 2,
           "colocadas": [
             "palabra-los"
           ],
@@ -45717,31 +44591,8 @@
               "id": "palabra-lentes",
               "correcta": true
             }
-          ]
-        },
-        {
-          "codigo": "ACT16-B4-09-3",
-          "paso": 3,
-          "total": 3,
-          "colocadas": [
-            "palabra-los",
-            "palabra-lentes"
           ],
-          "consigna": {
-            "tipo": "secuencia",
-            "texto": "",
-            "audio": "silencio"
-          },
-          "opciones": [
-            {
-              "id": "palabra-negros",
-              "correcta": true
-            },
-            {
-              "id": "palabra-café",
-              "correcta": false
-            }
-          ]
+          "autoColocar": "palabra-negros"
         }
       ],
       "muestraExpertos": false,

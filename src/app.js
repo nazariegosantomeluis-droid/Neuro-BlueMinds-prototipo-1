@@ -111,6 +111,9 @@ const newSession = (p, valor) => ({
 });
 const dispositivo = () => `${navigator.userAgent} | ${screen.width}x${screen.height} @${devicePixelRatio}x`;
 const volumen = () => Number(prefs.get('nbm.volumen', '80'));
+// Actividades de respuesta «secuencia» (ACT-10 y ACT-16): sus tiempos entre toques no entran en
+// «fuera de tarea» (Arquitectura 4.5).
+const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBloque === 'secuencia').map((f) => f.id);
 
 async function init() {
   applyCm();
@@ -251,8 +254,8 @@ function bindRegistro(root, rerender) {
       const tipo = b.dataset.descargar;
       const fecha = new Date().toISOString().slice(0, 10); // solo para el nombre del archivo
       let nombre;
-      if (tipo === 'json') download((nombre = `registro-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(log.rows())), 'application/json');
-      else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows())), 'text/csv;charset=utf-8');
+      if (tipo === 'json') download((nombre = `registro-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'application/json');
+      else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
       else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
@@ -274,7 +277,7 @@ function bindRegistro(root, rerender) {
 // Al cerrar la sesión, fuera_de_tarea se calcula una sola vez y queda definitivo.
 function cerrarSesion() {
   const id = state.session.id;
-  log.edit((all) => marcarFueraDeTarea(all.filter((r) => r.sesion_id === id), false));
+  log.edit((all) => marcarFueraDeTarea(all.filter((r) => r.sesion_id === id), false, { sinTiempos: sinTiempos() }));
   state.session = null;
 }
 
