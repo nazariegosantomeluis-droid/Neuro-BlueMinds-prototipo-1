@@ -552,7 +552,12 @@ No se usan fotografías inventadas ni generadas. Respeta las notas de cada conce
 
 **Sonidos de ACT-05.** Los 24 archivos `assets/audio/sonido-<concepto>-<1|2>.mp3` (el perro, el gato, la vaca, el pájaro, el tren, el avión, el helicóptero, el claxon del carro, la sirena del camión de bomberos, el cepillo de dientes, unas manos que aplauden y el agua que se sirve en un vaso) son grabaciones reales de [Freesound](https://freesound.org) reunidas en el conjunto ESC-50 (K. J. Piczak, 2015). Solo se usaron grabaciones con licencia CC0 o CC BY; cada una tiene su fila en `licencias.csv` con su autor, su licencia y su dirección en Freesound, como pide CC BY.
 
-- Se procesaron igual: 2.1 s, mono, un volumen parejo (RMS de −24 dBFS, pico de −3 dBFS como máximo), 15 ms de entrada y 250 ms de salida, para que ningún sonido empiece o termine de golpe.
+- Primero se recortaron a 2.1 s, mono, con 15 ms de entrada y 250 ms de salida. Ese paso decía dejar un volumen parejo, pero no lo dejó: la sonoridad iba de −29.2 a −20.8 LUFS, algunos picos llegaban a −1.4 dBTP, y ocho grabaciones tenían de 70 a 355 ms de ruido de fondo antes del sonido (carro-2, gato-2, mano-1, pájaro-1, perro-1, perro-2, vaca-1 y vaso-1).
+- Ahora `node tools/sonidos.mjs` los mide con ffmpeg y `node tools/sonidos.mjs --corregir` los corrigió. Se corrió una sola vez sobre las grabaciones originales:
+  - **Sonoridad:** todos quedan en −27 LUFS ± 1 (EBU R128), con pico verdadero de −3 dBTP o menos. −27 es el objetivo más alto en el que el sonido con más picos, el cepillo de dientes 2, no pasa de −3 dBTP.
+  - **Inicio:** el sonido empieza en la primera ventana de 5 ms que está a 20 dB o menos de la ventana más fuerte del archivo. Así el ruido de fondo de la grabación no cuenta como inicio. Se recorta lo que hay antes de 15 ms del inicio y se pone una entrada suave de 10 ms. Todos empiezan antes de 50 ms (de 5 a 20 ms). Si un navegador no quita el retardo del codificador MP3 (unos 26 ms), siguen por debajo de 50 ms.
+  - Duran ahora de 1.76 a 2.1 s, en MP3 mono de 44.1 kHz y 96 kbps.
+- `docs/medicion-sonidos.json` guarda la medida de cada archivo y su huella SHA-256. Las pruebas comprueban que todos cumplen y que los archivos son los medidos. Si se cambia un sonido, hay que volver a correr `node tools/sonidos.mjs`.
 - Ninguno es un sonido de error ni de premio: son el estímulo.
 - `silencio.mp3` es un archivo sin sonido. Lo usan los pasos de ACT-10 y ACT-16 después del primero, para que la instrucción no se repita en cada paso de la secuencia.
 - Las consignas habladas de ACT-04, ACT-10, ACT-15 y ACT-16 todavía usan la voz del navegador.

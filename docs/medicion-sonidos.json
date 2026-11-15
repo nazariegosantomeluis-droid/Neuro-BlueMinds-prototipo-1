@@ -1,0 +1,204 @@
+{
+  "criterio": {
+    "objetivoLufs": -27,
+    "toleranciaLu": 1,
+    "picoMaxDbtp": -3,
+    "silencioMaxMs": 50,
+    "ventanaMs": 5,
+    "bajoElMaximoDb": 20
+  },
+  "sonidos": [
+    {
+      "archivo": "assets/audio/sonido-avion-1.mp3",
+      "sha256": "b7309efad31b3160d6d9b425ec098ba93f54f9753930f3e1aeb1f7288c9fe9aa",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -16.7
+    },
+    {
+      "archivo": "assets/audio/sonido-avion-2.mp3",
+      "sha256": "f2fc13b3b8ade5dc515c77d4717b5a8640b49f68c90637f46c585de005ca49d3",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -11.7
+    },
+    {
+      "archivo": "assets/audio/sonido-camion-de-bomberos-1.mp3",
+      "sha256": "a68fc75ce2d616fc4ad2e9ae4afea49aa9e2832e9ed381eadb860dedaf9e8790",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -17.5
+    },
+    {
+      "archivo": "assets/audio/sonido-camion-de-bomberos-2.mp3",
+      "sha256": "b76f7a7342c188e85ce58f44269a0e4fc61942cad55979080736a0e53e1edfc3",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -15.7
+    },
+    {
+      "archivo": "assets/audio/sonido-carro-1.mp3",
+      "sha256": "97c0da2d893683f7a99635482ada1f05e13c0919b5e21d041d3fb2e7e41430e0",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -19.1
+    },
+    {
+      "archivo": "assets/audio/sonido-carro-2.mp3",
+      "sha256": "91e39c366c562fb90a9d2f21a33ffbd9eb11c0f7ed2202ce99d6a0a629098fd4",
+      "duracionMs": 2020,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -16
+    },
+    {
+      "archivo": "assets/audio/sonido-cepillo-de-dientes-1.mp3",
+      "sha256": "f0e116e36a406cc0394bcf9a003eccfd19f10e88a7e59cbcbc67217c7ebc6033",
+      "duracionMs": 2091,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -9.1
+    },
+    {
+      "archivo": "assets/audio/sonido-cepillo-de-dientes-2.mp3",
+      "sha256": "a8b5093266ba99806c66528ecf86f64b7aac9c1bf3d2cd5f4c71158014e1f388",
+      "duracionMs": 2100,
+      "inicioMs": 10,
+      "lufs": -27.5,
+      "picoDbtp": -3.4
+    },
+    {
+      "archivo": "assets/audio/sonido-gato-1.mp3",
+      "sha256": "1cbd67038f3be2b70b96ebed8659db30a562bec09d7aa5070d7e6672d84d203b",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -16.4
+    },
+    {
+      "archivo": "assets/audio/sonido-gato-2.mp3",
+      "sha256": "b961b78ec726dd121e44205927957f4334c48322650eea74b33ab24a35d870ca",
+      "duracionMs": 2000,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -16.9
+    },
+    {
+      "archivo": "assets/audio/sonido-helicoptero-1.mp3",
+      "sha256": "cd5c7dd7cba4f491ffe68a00b3aad3e54ec87c6e45e5f2e620243c82f951b58a",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -15
+    },
+    {
+      "archivo": "assets/audio/sonido-helicoptero-2.mp3",
+      "sha256": "9634b36467a0b7f679d5e7098565cae0ede89238d590bb6eb369fc2c952bb955",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -10.1
+    },
+    {
+      "archivo": "assets/audio/sonido-mano-1.mp3",
+      "sha256": "e584b1cf392471e040aff3e55077580fe4600edbbb1ed639fc105a1c20f8fe27",
+      "duracionMs": 2030,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -4.7
+    },
+    {
+      "archivo": "assets/audio/sonido-mano-2.mp3",
+      "sha256": "c1480cd22a361c1aae497b0763287f9814b62d027ae65ae4d1cb2367ce1e9a95",
+      "duracionMs": 2100,
+      "inicioMs": 10,
+      "lufs": -27.5,
+      "picoDbtp": -6.6
+    },
+    {
+      "archivo": "assets/audio/sonido-pajaro-1.mp3",
+      "sha256": "3da2fdf0f0d2e80366a9b0736a57cec495c784b858219e8fdef0a4e7ee2d1f9e",
+      "duracionMs": 1930,
+      "inicioMs": 20,
+      "lufs": -27.5,
+      "picoDbtp": -11.8
+    },
+    {
+      "archivo": "assets/audio/sonido-pajaro-2.mp3",
+      "sha256": "0615fc56d60f04b7a4e49ea7a7ee567022af6e34711bc0613d785d99597cb44d",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.4,
+      "picoDbtp": -13
+    },
+    {
+      "archivo": "assets/audio/sonido-perro-1.mp3",
+      "sha256": "a151ff7f16ce0fb61f5c415674de732c5a498a04d531cf36e3d451b8887783a7",
+      "duracionMs": 1960,
+      "inicioMs": 20,
+      "lufs": -27.4,
+      "picoDbtp": -18.5
+    },
+    {
+      "archivo": "assets/audio/sonido-perro-2.mp3",
+      "sha256": "d13d55cd3b981d223be02fc2581b4421c30a4612743fdd4da8e71b020b685b27",
+      "duracionMs": 1760,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -14.2
+    },
+    {
+      "archivo": "assets/audio/sonido-tren-1.mp3",
+      "sha256": "5abb4d92a461d08533770657bd6c3dbcdbe42be1f089e64ac8cb6ceef9dbcb2a",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -11
+    },
+    {
+      "archivo": "assets/audio/sonido-tren-2.mp3",
+      "sha256": "90df020c8b62c5ee93e83fff768cec6193c1306ca92cb3569d0f59a76bad5c19",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -14
+    },
+    {
+      "archivo": "assets/audio/sonido-vaca-1.mp3",
+      "sha256": "4a33b21022f426dfaca56d4cd90a998ef398f4acf8e3c0ace7fd7b20e228c74c",
+      "duracionMs": 2045,
+      "inicioMs": 15,
+      "lufs": -27.5,
+      "picoDbtp": -17.1
+    },
+    {
+      "archivo": "assets/audio/sonido-vaca-2.mp3",
+      "sha256": "f0a892f6c442583a798258378571f846e065516bf5e1b3a109a85fd6e4f98f66",
+      "duracionMs": 2100,
+      "inicioMs": 5,
+      "lufs": -27.5,
+      "picoDbtp": -14.3
+    },
+    {
+      "archivo": "assets/audio/sonido-vaso-1.mp3",
+      "sha256": "1a87d34d2be5382d57c19b5ced59e3482f644dd85fea0b489ad73ef87792f0b5",
+      "duracionMs": 1995,
+      "inicioMs": 15,
+      "lufs": -27.4,
+      "picoDbtp": -5.4
+    },
+    {
+      "archivo": "assets/audio/sonido-vaso-2.mp3",
+      "sha256": "8edd62bd8b9e0d2a0ec5c14bd75ac82bfadc2e9e3a26a4243161d8b097870b82",
+      "duracionMs": 2100,
+      "inicioMs": 15,
+      "lufs": -27.5,
+      "picoDbtp": -5.6
+    }
+  ]
+}
