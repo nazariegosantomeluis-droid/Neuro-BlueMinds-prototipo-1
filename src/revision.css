@@ -111,11 +111,12 @@
   height: 5rem;
 }
 
+/* El contorno del campo de texto se distingue del fondo (3 a 1 o más). */
 .rev textarea {
   font: inherit;
   color: var(--texto);
   background: var(--tarjeta);
-  border: 1px solid var(--borde);
+  border: 1px solid var(--borde-campo);
   border-radius: 8px;
   padding: 0.5rem;
   width: 100%;
