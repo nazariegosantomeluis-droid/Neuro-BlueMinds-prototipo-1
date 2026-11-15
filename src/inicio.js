@@ -277,7 +277,6 @@ export function renderInicio(app, ctx, msg = '') {
     <div class="adulto medio">
       ${navHTML('inicio')}
       ${tituloHTML('Preparar el bloque', 'Elige la actividad y sus ajustes.')}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="inicio-columnas${lista ? '' : ' una-columna'}">
       <form class="panel" id="inicio" novalidate>
         <div class="grupo paso" role="group" aria-labelledby="grupo-actividad">

@@ -169,7 +169,7 @@ test('ACT-06: las cajas son fijas, con dos pictogramas de su categoría, y el di
         }
         assert.ok(!emblemas.has(c.id), `${it.codigo}: «${c.id}» está dibujado en una caja`);
         for (const cat of cats) for (const id of f.emblemas[cat]) assert.ok(!c.excluir.includes(id), `${it.codigo}: «${c.id}» con el pictograma de «${id}»`);
-        assert.ok(it.consigna.src.endsWith(`/${c.id}/${it.ejemplar}.jpg`), it.codigo);
+        assert.match(it.consigna.src, new RegExp(`/${c.id}/${it.ejemplar}\\.(svg|jpg|png|webp)$`), it.codigo);
         const raro = f.pocoTipicos[c.categoria].includes(c.id);
         if (b.tipicos) assert.ok(!raro && it.ejemplar === 1, `${it.codigo}: ejemplar típico`);
         else assert.ok(raro || it.ejemplar === 2, `${it.codigo}: ejemplar poco típico`);

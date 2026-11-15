@@ -8,7 +8,6 @@ import { nombreNino, abreviar } from './ninos.js';
 import { PANTALLAS } from './catalogo.js';
 import { esc, navHTML, tituloHTML } from './paginas.js';
 
-const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>';
 
 const fechaLocal = (iso) => {
   const d = new Date(iso);
@@ -158,7 +157,6 @@ export function renderSesiones(app, ctx) {
     <div class="adulto medio">
       ${navHTML('sesiones')}
       ${tituloHTML('Sesiones', 'Lo que está guardado en este dispositivo, sesión por sesión. Nada se envía a ningún servidor.')}
-      ${AVISO}
       <div class="inicio-columnas">
         <div class="sesiones-lista">
           ${

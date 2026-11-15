@@ -21,13 +21,16 @@ const FIRMA = `
     </picture>
   </span>`;
 
-// Encabezado del adulto: isotipo, logotipo y la etiqueta del prototipo. En el inicio lleva
-// además la línea que describe la herramienta.
-export const marcaHTML = (inicio = false) => `
+// Encabezado de todas las pantallas del adulto: isotipo y logotipo de AutiPal, la etiqueta del
+// prototipo, la línea que describe la herramienta y el aviso de que no diagnostica, siempre visible.
+export const LINEA_HERRAMIENTA = 'Herramienta de apoyo y medición para el terapeuta';
+export const AVISO_PROTOTIPO = 'Prototipo para revisión de expertos. No es una herramienta diagnóstica.';
+export const marcaHTML = () => `
   <header class="marca">
     ${FIRMA}
     <span class="marca-etiqueta">Prototipo E13</span>
-    ${inicio ? '<p class="marca-linea">Herramienta de apoyo y medición para el terapeuta</p>' : ''}
+    <p class="marca-linea">${LINEA_HERRAMIENTA}</p>
+    <p class="aviso marca-aviso">${AVISO_PROTOTIPO}</p>
   </header>`;
 
 // Título de cada pantalla con una línea que dice para qué sirve. Recibe texto ya escapado.
@@ -40,14 +43,12 @@ export const tituloHTML = (titulo, subtitulo = '') => `
 // «Saltar al contenido» lleva el foco al título de la pantalla (app.js lo atiende sin cambiar la ruta).
 export const navHTML = (actual) => `
   <a class="saltar" href="#contenido">Saltar al contenido</a>
-  ${marcaHTML(actual === 'inicio')}
+  ${marcaHTML()}
   <nav class="nav" aria-label="Secciones">
     ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['sesiones', 'Sesiones'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;
-
-const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>';
 
 // ---------- Galería ----------
 
@@ -94,7 +95,6 @@ export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], re
       ${navHTML('galeria')}
       ${tituloHTML('Galería de ítems', 'Cada ítem con su código, la consigna, las opciones y la respuesta correcta marcada.')}
       <div id="enlace-f3"></div>
-      ${AVISO}
       <form class="panel filtros" id="filtros">
         <fieldset class="chips">
           <legend>${posteriores.length || enInvestigacion.length ? 'Actividades del piloto' : 'Actividad'}</legend>
@@ -355,7 +355,6 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
     <div class="adulto">
       ${navHTML('calibracion')}
       ${tituloHTML('Calibración', 'Ajusta el tamaño real de las opciones en esta pantalla. Hazlo una vez en cada tableta.')}
-      ${AVISO}
       <div class="panel">
         <p>En las tabletas, un centímetro de la pantalla no mide un centímetro real. Pon una regla física sobre la regla de abajo y ajusta hasta que las marcas de 0 y 5 cm coincidan. El ajuste se guarda solo en este dispositivo y se usa para el tamaño de las opciones.</p>
         <div class="regla" role="img" aria-label="Regla de 5 centímetros">
@@ -412,19 +411,21 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
 
 // ---------- Créditos ----------
 
-// Quién hizo el prototipo. Los dos son cofundadores de Neuro-BlueMinds. El rol es el que cada
-// persona declaró en el documento de contribuciones del proyecto, y el rol secundario, el que
-// sumó después; el aporte describe su trabajo en este repositorio.
-export const COFUNDADORES = 'Luis Nazariego Santome y José Miguel Fausto Tapia';
+// Quién hizo el prototipo. Luis Nazariego Santome es el fundador y CEO de Neuro-BlueMinds, y
+// José Miguel Fausto Tapia, cofundador y co-CEO. El rol es el que cada persona declaró en el
+// documento de contribuciones del proyecto, y el rol secundario, el que sumó después; el aporte
+// describe su trabajo en este repositorio.
+export const FUNDADOR = 'Luis Nazariego Santome';
+export const COFUNDADOR = 'José Miguel Fausto Tapia';
 export const EQUIPO = [
   {
     nombre: 'Luis Nazariego Santome',
-    rol: 'Cofundador · líder de proyecto · calidad y verificación',
+    rol: 'Fundador y CEO · líder de proyecto · calidad y verificación',
     aporte: 'Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3.',
   },
   {
     nombre: 'José Miguel Fausto Tapia',
-    rol: 'Cofundador · líder de proyecto · diseño de experiencia y accesibilidad',
+    rol: 'Cofundador y co-CEO · líder de proyecto · diseño de experiencia y accesibilidad',
     rolSecundario: 'Apoyo en el desarrollo de las actividades',
     aporte: 'Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, diseño de los dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior y de investigación.',
   },
@@ -435,10 +436,9 @@ export function renderCreditos(app, { conceptos }) {
     <div class="adulto">
       ${navHTML('creditos')}
       ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las imágenes y la aplicación.')}
-      ${AVISO}
       <section class="panel">
         <h2>Equipo</h2>
-        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds, que cofundaron ${esc(COFUNDADORES)}. Este prototipo lo hicieron:</p>
+        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds, que fundó ${esc(FUNDADOR)} (fundador y CEO) junto con ${esc(COFUNDADOR)} (cofundador y co-CEO). Este prototipo lo hicieron:</p>
         <dl class="equipo">
           ${EQUIPO.map((p) => `
           <div>
@@ -474,14 +474,12 @@ export function renderCreditos(app, { conceptos }) {
       </section>
       <section class="panel">
         <h2>Imágenes y audio</h2>
-        <p>Las imágenes de los ejemplares son dibujos originales que diseñó José Miguel Fausto Tapia para este prototipo: 134 a partir de iteraciones con la inteligencia artificial de Canva, 44 como variantes de esos dibujos, rehechas sin IA (otro color o en espejo), y 2 con código. No copian láminas de ninguna prueba, no muestran a personas reales y están pendientes de revisión clínica.</p>
-        <p>Son de uso libre: según los <a href="https://www.canva.com/policies/ai-product-terms/">Términos de productos de IA de Canva</a>, la imagen que se genera es de quien la genera y se puede usar para cualquier fin lícito, sin pagar licencia ni dar crédito a Canva. Los mismos términos piden no presentar como hecha sin IA una imagen hecha con IA; por eso aquí y en <a href="items/licencias.csv">items/licencias.csv</a> se dice cómo se hizo cada dibujo.</p>
-        <p>Las escenas de «Oración e imagen» se dibujan con código, con recortes de esos mismos dibujos. Mientras no haya archivos de voz, las consignas usan la voz del navegador.</p>
-        <p>Los sonidos de «Sonido e imagen» son grabaciones de <a href="https://freesound.org">Freesound</a> incluidas en el conjunto ESC-50 (Karol J. Piczak, 2015), con licencia CC0 1.0 o CC BY 3.0. Se recortaron y se igualó su volumen. Autor, enlace y licencia de cada uno, como los de todos los archivos, en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <p>Las imágenes de los ejemplares son marcadores provisionales. Se reemplazarán por imágenes con licencia y revisión clínica. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <p>Las escenas de «Oración e imagen» se dibujan con código, con recortes que están en <code>assets/escenas</code>. Los sonidos de «Sonido e imagen» son grabaciones de <a href="https://freesound.org">Freesound</a> incluidas en el conjunto ESC-50 (Karol J. Piczak, 2015), recortadas y con volumen normalizado; autor, enlace y licencia de cada una están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>
-        <p>© 2026 ${esc(COFUNDADORES)}, cofundadores de Neuro-BlueMinds. Todos los derechos reservados.</p>
+        <p>© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.</p>
         <p>Incluye el código, las fichas técnicas, el banco de ítems y las figuras de la actividad «Cambia la regla». No incluye los pictogramas de ARASAAC, que conservan su propia licencia.</p>
         <p>Los íconos de las pantallas del adulto son de Phosphor Icons (© 2023 Phosphor Icons), con licencia MIT.</p>
       </section>

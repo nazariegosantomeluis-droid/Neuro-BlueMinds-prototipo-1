@@ -218,7 +218,7 @@ test('ACT-16: las piezas en orden forman la palabra o la frase, y las que sobran
       if (b.unidad !== 'palabra') assert.equal(sinAcentos(it.palabra), sinAcentos(byId.get(it.concepto).nombre), it.codigo);
       assert.equal(it.tarjetas.length, b.piezas, it.codigo);
       for (const t of it.tarjetas.filter((x) => x.orden === null)) assert.ok(!piezas.includes(t.texto), `${it.codigo}: «${t.texto}» sobra`);
-      assert.ok(existe(it.imagen) && !it.imagen.endsWith('/3.jpg'), it.codigo);
+      assert.ok(existe(it.imagen) && !/\/3\.(svg|jpg|png|webp)$/.test(it.imagen), it.codigo);
     }
   }
 });

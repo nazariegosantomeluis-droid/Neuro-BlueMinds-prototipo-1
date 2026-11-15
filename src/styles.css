@@ -89,7 +89,7 @@
   /* More Sugar solo para el nombre «AutiPal» dentro de un texto, como en el manual. */
   --fuente-nombre: 'More Sugar', var(--fuente-texto);
 
-  /* Medidas de las pantallas del adulto (reglas de UI UX Pro Max): espaciado en pasos de 4 y
+  /* Medidas de las pantallas del adulto: espaciado en pasos de 4 y
      8 px, letra de 14, 16, 20 y 26 a 32 px, objetivos de toque de 44 px y renglones de unos
      75 caracteres como máximo. */
   --esp-1: 0.25rem;
@@ -320,6 +320,13 @@ body {
   flex-basis: 100%;
   margin: 0;
   color: var(--suave);
+}
+
+/* El aviso de prototipo va en el encabezado de todas las pantallas del adulto, siempre visible. */
+.adulto .marca-aviso {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 /* Título de cada pantalla con una línea que dice para qué sirve. */

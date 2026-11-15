@@ -633,7 +633,6 @@ function renderPausa(msg = '') {
     <div class="adulto">
       ${navHTML('pausa')}
       ${tituloHTML('Pausa guiada', esc(p.objetivo))}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
         <p>${esc(p.mecanica)}</p>
         ${pausaOpcionesHTML(false).replace('data-guiada>', 'data-guiada class="primario">')}
@@ -686,7 +685,6 @@ function renderResumen() {
     <div class="adulto">
       ${marcaHTML()}
       ${tituloHTML('Resumen del bloque', `${esc(ficha.id)} ${esc(ficha.nombre)} · banda ${esc(banda)} · modalidad ${esc(modalidad)} · sesión ${esc(s.id)}, bloque ${s.bloque}`)}
-      <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
       <div class="panel">
         <ul class="resumen">${lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
         <p class="ayuda">Describe lo registrado en este bloque. No es un puntaje ni una interpretación clínica.</p>
