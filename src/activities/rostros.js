@@ -189,8 +189,16 @@ export function rostroSVG(personaje, emocion, intensidad = 'alta') {
 
 // ---------- Pictogramas de las emociones ----------
 
-// Caras esquemáticas, todas iguales salvo la expresión: son las opciones de respuesta.
-const PICTOS = {
+// Estilos de los pictogramas de respuesta. Es una decisión clínica pendiente: la ficha dice
+// cuál se usa («estiloPictograma») y describe los demás («estilosPictograma»).
+// - «postura»: figura de cuerpo entero con la cabeza sin rasgos; la emoción se lee en la postura.
+//   No puede resolverse copiando la boca ni las cejas del rostro, porque la cara no tiene.
+// - «cara»: el estilo anterior, caras esquemáticas. Su boca repite la forma de la del rostro
+//   (risa, dientes, boca abierta): puede resolverse copiando la forma sin reconocer la emoción.
+export const ESTILOS_PICTOGRAMA = ['postura', 'cara'];
+
+// Caras esquemáticas, todas iguales salvo la expresión.
+const CARAS = {
   alegria: `<path d="M56 90 Q70 70 84 90 M116 90 Q130 70 144 90" fill="none" ${trazo(7)}/>
     <path d="M56 112 Q100 164 144 112 Z" fill="${BLANCO}" ${trazo(7)}/>`,
   tristeza: `<path d="M52 80 L82 66 M148 80 L118 66" fill="none" ${trazo(7)}/>
@@ -207,6 +215,34 @@ const PICTOS = {
     <ellipse cx="100" cy="144" rx="15" ry="19" fill="${BOCA}" ${trazo(6)}/>`,
 };
 
-export const pictoEmocionSVG = (emocion) =>
-  `<svg viewBox="0 0 200 200" aria-hidden="true">
-    <circle cx="100" cy="100" r="84" fill="#fff6cf" ${trazo(7)}/>${PICTOS[emocion]}</svg>`;
+// Figuras de cuerpo entero. La cabeza es la misma en las cuatro, sin ojos, cejas ni boca; solo
+// cambia dónde está. El cuerpo es un trazo grueso y el suelo, una línea.
+export const CABEZA_POSTURA = `<circle r="21" fill="#fff6cf" ${trazo(6)}/>`;
+const cabeza = (x, y) => `<g class="cabeza" transform="translate(${x} ${y})">${CABEZA_POSTURA}</g>`;
+const cuerpo = (d) => `<path d="${d}" fill="none" ${trazo(9)}/>`;
+const SUELO = `<path d="M34 186 L166 186" fill="none" stroke="#8a8f94" stroke-width="4" stroke-linecap="round"/>`;
+const POSTURAS = {
+  // Salta con los brazos arriba y abiertos, y las piernas abiertas: los pies no tocan el suelo.
+  alegria: `${SUELO}${cuerpo('M100 70 L100 124 M100 84 L54 50 M100 84 L146 50 M100 124 L76 166 M100 124 L124 166')}
+    <path d="M44 34 l-6 -8 M156 34 l6 -8 M100 16 l0 -8" fill="none" ${trazo(4)}/>${cabeza(100, 46)}`,
+  // De pie, la cabeza baja y adelante, la espalda curva y los brazos colgando.
+  tristeza: `${SUELO}${cuerpo('M96 92 Q110 114 102 140 M100 100 Q84 118 84 150 M100 100 Q118 120 120 150 M102 140 L94 184 M102 140 L112 184')}${cabeza(84, 80)}`,
+  // Firme y con las piernas abiertas, los puños en la cadera y un pie que golpea el suelo.
+  enojo: `${SUELO}${cuerpo('M100 70 L100 128 M100 84 L68 104 L88 124 M100 84 L132 104 L112 124 M100 128 L72 184 M100 128 L132 176')}
+    <g fill="${CONTORNO}"><circle cx="88" cy="124" r="7"/><circle cx="112" cy="124" r="7"/></g>
+    <path d="M140 184 l10 -6 M142 172 l12 0" fill="none" ${trazo(4)}/>${cabeza(100, 47)}`,
+  // Se echa para atrás, con las manos abiertas al frente para protegerse y una pierna atrás;
+  // las rayas de atrás indican que tiembla.
+  miedo: `${SUELO}${cuerpo('M108 132 L94 84 M98 96 L140 72 M98 96 L144 98 M108 132 L132 184 M108 132 L76 184')}
+    <g fill="#fff6cf" ${trazo(5)}><circle cx="144" cy="70" r="9"/><circle cx="148" cy="98" r="9"/></g>
+    <path d="M52 60 q-6 8 0 16 M44 56 q-8 12 0 24" fill="none" ${trazo(4)}/>${cabeza(84, 62)}`,
+};
+
+export function pictoEmocionSVG(emocion, estilo = 'postura') {
+  if (estilo === 'cara') {
+    return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="100" cy="100" r="84" fill="#fff6cf" ${trazo(7)}/>${CARAS[emocion]}</svg>`;
+  }
+  if (estilo !== 'postura') throw new Error(`Estilo de pictograma desconocido: ${estilo}`);
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">${POSTURAS[emocion]}</svg>`;
+}

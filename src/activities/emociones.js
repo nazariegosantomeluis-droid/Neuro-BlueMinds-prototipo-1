@@ -5,7 +5,8 @@ import { EMOCIONES, NOMBRE_EMOCION, PERSONAJES, pictoEmocionSVG, rostroSVG } fro
 
 export const toTrials = (items) => items.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones }));
 
-export function createView(stage) {
+export function createView(stage, images, { ficha } = {}) {
+  const estilo = ficha?.estiloPictograma;
   let grid = null;
   const el = (cls, html = '') => Object.assign(document.createElement('div'), { className: cls, innerHTML: html });
   return {
@@ -22,7 +23,7 @@ export function createView(stage) {
       grid.style.setProperty('--filas', filas);
       grid.style.setProperty('--columnas', columnas);
       opciones.forEach((o, k) => {
-        const celda = el('opcion opcion-figura', pictoEmocionSVG(o.emocion));
+        const celda = el('opcion opcion-figura', pictoEmocionSVG(o.emocion, estilo));
         celda.dataset.pos = k + 1;
         grid.append(celda);
       });
@@ -82,6 +83,6 @@ export function resumenExtra(rows, byCode) {
 
 // Para la galería y la vista previa del inicio.
 export const consignaHTML = ({ personaje, emocion, intensidad }) => `<span class="dib dib-rostro">${rostroSVG(personaje, emocion, intensidad)}</span>`;
-export const opcionHTML = (o) => `<span class="dib dib-figura">${pictoEmocionSVG(o.emocion)}</span>`;
+export const opcionHTML = (o, { ficha } = {}) => `<span class="dib dib-figura">${pictoEmocionSVG(o.emocion, ficha?.estiloPictograma)}</span>`;
 export const opcionTexto = (o) => NOMBRE_EMOCION[o.emocion];
 export const consignaTexto = (it) => `Rostro: ${PERSONAJES[it.personaje].nombre}; ${NOMBRE_EMOCION[it.emocion]}, intensidad ${it.consigna.intensidad}`;

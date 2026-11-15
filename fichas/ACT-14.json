@@ -73,6 +73,17 @@
     "mujer",
     "abuelo"
   ],
+  "estiloPictograma": "postura",
+  "estilosPictograma": [
+    {
+      "id": "postura",
+      "descripcion": "Figura de cuerpo entero con la cabeza sin rasgos: la emoción se lee en la postura (salta con los brazos arriba; cabeza baja y brazos colgando; puños en la cadera y pisotón; se echa para atrás con las manos al frente). No puede resolverse copiando la boca ni las cejas del rostro. Es la propuesta en uso."
+    },
+    {
+      "id": "cara",
+      "descripcion": "Cara esquemática con la expresión (el estilo anterior). Su boca repite la forma de la del rostro (risa, dientes, boca abierta): puede resolverse copiando la forma sin reconocer la emoción. No se recomienda."
+    }
+  ],
   "limiteRespuestaMs": 10000,
   "intervaloMs": 1000,
   "consignaVMs": 1500,
@@ -90,7 +101,7 @@
     "Algunos niños evitan los rostros: se empieza con rostros dibujados y se detiene si hay malestar.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Los rostros y los pictogramas de las emociones se dibujan con código; son una propuesta, con personajes de distinta edad, género y tono de piel. La matriz de confusión del Catálogo necesita al menos 10 presentaciones por emoción: el resumen de un bloque solo cuenta, no interpreta.",
+  "notaPrototipo": "El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, la consigna en voz, el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Los rostros y los pictogramas de las emociones se dibujan con código; son una propuesta, con personajes de distinta edad, género y tono de piel. Los pictogramas de respuesta no son caras: con caras esquemáticas el niño podía elegir copiando la forma de la boca del rostro sin reconocer la emoción. La propuesta en uso son figuras de cuerpo entero sin rasgos en la cara («estiloPictograma»: «postura»); la elección del estilo es una decisión clínica pendiente («estilosPictograma»). Falta la banda B4, la emoción a partir de una situación («bandasPendientes»). La matriz de confusión del Catálogo necesita al menos 10 presentaciones por emoción: el resumen de un bloque solo cuenta, no interpreta.",
   "pendientesClinicos": [
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
     "Aprobar los rostros dibujados con código: personajes, edades, tonos de piel e intensidades.",

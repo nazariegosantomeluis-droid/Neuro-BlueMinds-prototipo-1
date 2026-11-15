@@ -266,12 +266,14 @@ test('cada personaje tiene un rostro distinto para cada emoción e intensidad, s
   assert.ok(Object.keys(PERSONAJES).includes('abuelo') && Object.keys(PERSONAJES).includes('mujer'));
 });
 
-test('hay un pictograma distinto por emoción, sin texto', () => {
-  const pictos = EMOCIONES.map(pictoEmocionSVG);
-  assert.equal(new Set(pictos).size, EMOCIONES.length);
-  for (const svg of pictos) {
-    assert.match(svg, /^<svg [^>]*aria-hidden="true"/);
-    assert.doesNotMatch(svg, /<text|aria-label|href=|NaN|undefined/);
+test('hay un pictograma distinto por emoción, sin texto, en cada estilo', () => {
+  for (const estilo of ['postura', 'cara']) {
+    const pictos = EMOCIONES.map((e) => pictoEmocionSVG(e, estilo));
+    assert.equal(new Set(pictos).size, EMOCIONES.length, estilo);
+    for (const svg of pictos) {
+      assert.match(svg, /^<svg [^>]*aria-hidden="true"/);
+      assert.doesNotMatch(svg, /<text|aria-label|href=|NaN|undefined/);
+    }
   }
   assert.deepEqual(Object.keys(NOMBRE_EMOCION), EMOCIONES);
 });

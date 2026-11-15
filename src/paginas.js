@@ -296,7 +296,7 @@ function itemPosteriorHTML(it, { mod, ficha, nombre, todos }) {
         ${it.opciones
           .map(
             (o) => `<li class="${o.correcta ? 'correcta' : ''}">
-              <span class="item-opcion">${mod.opcionHTML(o)}</span>
+              <span class="item-opcion">${mod.opcionHTML(o, { ficha })}</span>
               <span>${esc(mod.opcionTexto?.(o) ?? nombre.get(o.concepto).nombre)}</span>
               ${o.ejemplar ? `<span class="item-ejemplar">ejemplar ${o.ejemplar}</span>` : ''}
               ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
