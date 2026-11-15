@@ -1,44 +1,189 @@
-/* Neuro-BlueMinds · Prototipo E13 */
+/* AutiPal · Prototipo E13 (Neuro-BlueMinds)
+   Dos tipos de pantalla: las del adulto llevan la marca AutiPal (colores, logotipo y
+   tipografía, según el Manual de marca); la pantalla del niño queda neutra, sin marca. */
+
+/* Tipografías. Ninguna se carga de un servidor externo. Solo se usan en las pantallas del
+   adulto (.adulto).
+   - Roca Two (títulos) y More Sugar (el nombre «AutiPal» dentro del texto) son las del Manual
+     de marca. No están en el repositorio porque no son de distribución libre: se usan si están
+     instaladas en la computadora, y el archivo único del prototipo las lleva dentro.
+   - Noto Sans (texto) y Noto Serif (títulos cuando falta Roca Two) están en assets/fonts/, con
+     licencia SIL OFL 1.1. */
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-600-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-sans-latin-700-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/noto-serif-latin-700-normal.woff2') format('woff2');
+}
+
+/* Roca Two y More Sugar: solo local(), la copia instalada en la computadora. Si no está
+   instalada, el navegador pasa a la siguiente tipografía de la lista, sin pedir archivos.
+   De Roca Two se usa solo la Bold, en títulos y lema. */
+@font-face {
+  font-family: 'Roca Two';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Roca Two Bold'), local('RocaTwo-Bold');
+}
+
+@font-face {
+  font-family: 'More Sugar';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('More Sugar'), local('More Sugar Regular'), local('MoreSugar-Regular'), local('MoreSugarRegular');
+}
 
 :root {
   /* Un centímetro físico en px. app.js lo estima al cargar y la página de Calibración lo ajusta. */
   --cm: 37.8px;
-  --fondo: #f6f6f3;
+
+  /* Pantallas del adulto: paleta AutiPal (Pantone 7700 C, 2169 C y 9224 C del manual).
+     Todo texto tiene un contraste de al menos 4.5 a 1 con su fondo. */
+  --fondo: #fbf5ea; /* crema de la marca, más claro */
   --tarjeta: #ffffff;
-  --texto: #1d2226;
-  --suave: #59626b;
-  --borde: #d5d8db;
-  --acento: #1f5fa8;
+  --texto: #172a35;
+  --titulo: #16587b; /* azul 7700 C */
+  --suave: #4b5d68;
+  --borde: #e5dbca;
+  --borde-campo: #8a7e6c; /* contorno de campos y casillas: 3 a 1 o más */
+  --acento: #16587b; /* azul 7700 C: botones principales, enlaces, pestaña activa */
+  --acento-fuerte: #0f4561;
   --acento-texto: #ffffff;
-  --aviso: #fff3d1;
-  --aviso-borde: #d9a93a;
+  --acento-suave: #e2eef5;
+  --acento-presionado: #cfe2ee;
+  /* Solo decoración (franja del encabezado, íconos): no se usa para texto ni botones. */
+  --marca-2: #84b3ce; /* azul claro 2169 C */
+  --aviso: #fcefd2;
+  --aviso-borde: #e0a526;
   --problema: #8b2a1f;
-  /* Pantalla del niño: fondo neutro, sin elementos que distraigan. */
+  --problema-suave: #f8e6e2;
+  --fuente-texto: 'Noto Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-titulos: 'Roca Two', 'Noto Serif', Georgia, 'Times New Roman', serif;
+  /* More Sugar solo para el nombre «AutiPal» dentro de un texto, como en el manual. */
+  --fuente-nombre: 'More Sugar', var(--fuente-texto);
+
+  /* Medidas de las pantallas del adulto: espaciado en pasos de 4 y
+     8 px, letra de 14, 16, 20 y 26 a 32 px, objetivos de toque de 44 px y renglones de unos
+     75 caracteres como máximo. */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --letra-chica: 0.875rem;
+  --letra-subtitulo: 1.125rem;
+  --letra-titulo-2: 1.25rem;
+  --letra-titulo-1: clamp(1.625rem, 1.35rem + 1vw, 2rem);
+  --toque: 2.75rem;
+  --medida: 60ch; /* unos 75 caracteres de texto corrido */
+  --radio: 14px;
+  --radio-control: 10px;
+  --icono-tam: 1.25rem;
+  /* Íconos de Phosphor Icons (estilo regular), https://phosphoricons.com. Su licencia:
+
+     MIT License
+
+     Copyright (c) 2023 Phosphor Icons
+
+     Permission is hereby granted, free of charge, to any person obtaining a copy
+     of this software and associated documentation files (the "Software"), to deal
+     in the Software without restriction, including without limitation the rights
+     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     copies of the Software, and to permit persons to whom the Software is
+     furnished to do so, subject to the following conditions:
+
+     The above copyright notice and this permission notice shall be included in all
+     copies or substantial portions of the Software.
+
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+     SOFTWARE. */
+  --icono-casa: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z'/%3E%3C/svg%3E");
+  --icono-galeria: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M208,32H80A16,16,0,0,0,64,48V64H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V192h16a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM80,48H208v69.38l-16.7-16.7a16,16,0,0,0-22.62,0L93.37,176H80Zm96,160H48V80H64v96a16,16,0,0,0,16,16h96Zm32-32H116l64-64,28,28v36Zm-88-64A24,24,0,1,0,96,88,24,24,0,0,0,120,112Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,120,80Z'/%3E%3C/svg%3E");
+  --icono-revision: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z'/%3E%3C/svg%3E");
+  --icono-formulario: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z'/%3E%3C/svg%3E");
+  --icono-regla: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M235.32,73.37,182.63,20.69a16,16,0,0,0-22.63,0L20.68,160a16,16,0,0,0,0,22.63l52.69,52.68a16,16,0,0,0,22.63,0L235.32,96A16,16,0,0,0,235.32,73.37ZM84.68,224,32,171.31l32-32,26.34,26.35a8,8,0,0,0,11.32-11.32L75.31,128,96,107.31l26.34,26.35a8,8,0,0,0,11.32-11.32L107.31,96,128,75.31l26.34,26.35a8,8,0,0,0,11.32-11.32L139.31,64l32-32L224,84.69Z'/%3E%3C/svg%3E");
+  --icono-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z'/%3E%3C/svg%3E");
+  --icono-aviso: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z'/%3E%3C/svg%3E");
+  --icono-empezar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z'/%3E%3C/svg%3E");
+  --icono-descargar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z'/%3E%3C/svg%3E");
+  --icono-borrar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z'/%3E%3C/svg%3E");
+  --icono-salir: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z'/%3E%3C/svg%3E");
+  --icono-otra-vez: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z'/%3E%3C/svg%3E");
+  --icono-vacio: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,16V152h-28.7A15.86,15.86,0,0,0,168,156.69L148.69,176H107.31L88,156.69A15.86,15.86,0,0,0,76.69,152H48V48Zm0,160H48V168H76.69L96,187.31A15.86,15.86,0,0,0,107.31,192h41.38A15.86,15.86,0,0,0,160,187.31L179.31,168H208v40Z'/%3E%3C/svg%3E");
+
+  /* Pantalla del niño: fondo neutro, sin elementos que distraigan y sin colores de la marca. */
   --fondo-nino: #ecebe6;
   --opcion-fondo: #ffffff;
-  --marco: #3d7fd6;
+  /* Marco de retroalimentación: gris muy oscuro, para no confundirlo con el azul de «Cambia la regla». */
+  --marco: #1f2937;
   --control: #8a8f94;
+  /* Texto y borde del modo experto en la pantalla del niño: los mismos de antes, sin la marca. */
+  --suave-nino: #59626b;
+  --borde-nino: #d5d8db;
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #17191c;
-    --tarjeta: #22252a;
-    --texto: #e9eaec;
-    --suave: #a4abb2;
-    --borde: #3a3f45;
-    --acento: #7fb0ec;
-    --acento-texto: #10161d;
-    --aviso: #3a2f12;
-    --aviso-borde: #b88a26;
+    --fondo: #0e1b23;
+    --tarjeta: #15262f;
+    --texto: #e7eef2;
+    --titulo: #bfdcec;
+    --suave: #a6b7c1;
+    --borde: #263943;
+    --borde-campo: #6a8392;
+    --acento: #8dbbd6;
+    --acento-fuerte: #a9cde3;
+    --acento-texto: #0b1820;
+    --acento-suave: #1b3746;
+    --acento-presionado: #24485c;
+    --marca-2: #5c93b5;
+    --aviso: #3a3016;
+    --aviso-borde: #c9962a;
     --problema: #f0a597;
+    --problema-suave: #3a211d;
     --fondo-nino: #1e2023;
     /* Los pictogramas tienen trazo negro: su fondo es claro también en tema oscuro. */
     --opcion-fondo: #e4e4e1;
-    --marco: #7fb0ec;
+    --marco: #f3f4f6;
     --control: #6c7278;
+    --suave-nino: #a4abb2;
+    --borde-nino: #3a3f45;
   }
 }
 
@@ -55,38 +200,177 @@ body {
 
 /* ---------- Pantallas del adulto ---------- */
 
+/* Los márgenes laterales respetan las zonas seguras de la pantalla (viewport-fit=cover). */
 .adulto {
-  max-width: 46rem;
+  max-width: 48rem; /* en un iPad vertical caben las seis pestañas en una fila */
   margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
+  padding: var(--esp-5) max(var(--esp-4), env(safe-area-inset-right, 0px)) var(--esp-7) max(var(--esp-4), env(safe-area-inset-left, 0px));
+  font-family: var(--fuente-texto);
+  line-height: 1.55;
+  touch-action: manipulation;
+}
+
+.adulto [hidden] {
+  display: none !important;
+}
+
+/* Renglones de unos 75 caracteres como máximo; sin especificidad, para que cualquier regla los ajuste. */
+:where(.adulto) :where(p:not(.aviso), ul, ol, dl, blockquote, .ayuda) {
+  max-width: var(--medida);
 }
 
 .adulto h1 {
-  font-size: 1.5rem;
-  margin: 0 0 0.75rem;
-}
-
-.adulto h1 span {
-  color: var(--suave);
-  font-weight: 500;
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-titulo-1);
+  line-height: 1.2;
+  color: var(--titulo);
+  margin: 0 0 var(--esp-5);
+  text-wrap: balance;
 }
 
 .adulto h2 {
-  font-size: 1.15rem;
-  margin: 2rem 0 0.75rem;
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-titulo-2);
+  line-height: 1.3;
+  color: var(--titulo);
+  margin: var(--esp-6) 0 var(--esp-3);
+  text-wrap: balance;
+}
+
+/* Saltar al contenido: invisible hasta que llega el foco del teclado. */
+.adulto .saltar {
+  position: absolute;
+  top: var(--esp-2);
+  left: var(--esp-4);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0 var(--esp-4);
+  border-radius: var(--radio-control);
+  background: var(--acento);
+  color: var(--acento-texto);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.adulto .saltar:focus {
+  transform: none;
+}
+
+/* Encabezado: isotipo y logotipo oficiales (positivo en claro, invertido en oscuro), sin
+   efectos ni cambios de color, con su área de protección. */
+.marca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+  margin-bottom: var(--esp-4);
+}
+
+/* Pantallas sin pestañas (resumen): la franja va bajo la marca. */
+.marca:not(:has(+ .nav)) {
+  padding-bottom: var(--esp-4);
+  border-bottom: 2px solid var(--marca-2);
+}
+
+.marca-firma {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.marca-logo,
+.marca-logotipo {
+  flex: none;
+  display: block;
+  line-height: 0;
+}
+
+/* Más específico que las imágenes de la galería y de la revisión clínica. */
+.adulto .marca img {
+  display: block;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
+.adulto .marca-logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.adulto .marca-logotipo img {
+  width: auto;
+  height: 28px;
+}
+
+.marca-etiqueta {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--suave);
+  padding: 0.125rem 0.625rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 999px;
+}
+
+.adulto .marca-linea {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--suave);
+}
+
+/* El aviso de prototipo va en el encabezado de todas las pantallas del adulto, siempre visible. */
+.adulto .marca-aviso {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* Título de cada pantalla con una línea que dice para qué sirve. */
+.titulo-pagina {
+  margin: 0 0 var(--esp-5);
+}
+
+.titulo-pagina h1 {
+  margin: 0;
+}
+
+/* El título recibe el foco al cambiar de pantalla, pero no es un control: sin contorno. */
+.adulto h1:focus {
+  outline: none;
+}
+
+.adulto .subtitulo {
+  margin: var(--esp-2) 0 0;
+  color: var(--suave);
+  font-size: var(--letra-subtitulo);
 }
 
 .aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
   background: var(--aviso);
   border-left: 4px solid var(--aviso-borde);
-  padding: 0.7rem 0.9rem;
-  border-radius: 6px;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--radio-control);
   font-weight: 600;
-  margin: 0 0 1.25rem;
+  margin: 0 0 var(--esp-5);
+}
+
+.aviso::before {
+  margin-top: 0.1rem;
+}
+
+.aviso + h2 {
+  margin-top: var(--esp-5);
 }
 
 .panel + .panel {
-  margin-top: 1rem;
+  margin-top: var(--esp-4);
 }
 
 .panel > p {
@@ -96,10 +380,36 @@ body {
 .panel {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: var(--radio);
+  padding: var(--esp-4);
   display: grid;
-  gap: 1rem;
+  gap: var(--esp-4);
+}
+
+form.panel {
+  gap: var(--esp-5);
+}
+
+@media (min-width: 600px) {
+  .panel {
+    padding: var(--esp-5);
+  }
+}
+
+/* Grupos del formulario de inicio: qué se aplica y con quién. */
+.grupo {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.grupo + .grupo {
+  padding-top: var(--esp-5);
+  border-top: 1px solid var(--borde);
+}
+
+.adulto .grupo-titulo {
+  margin: 0;
+  font-size: var(--letra-subtitulo);
 }
 
 label,
@@ -111,7 +421,7 @@ label > select,
 label > input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   display: block;
   width: 100%;
-  margin-top: 0.3rem;
+  margin-top: var(--esp-2);
 }
 
 select,
@@ -124,15 +434,62 @@ button {
 select,
 input:not([type='radio']):not([type='range']):not([type='checkbox']) {
   min-height: 2.75rem;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  background: var(--fondo);
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 8px;
+  background: var(--tarjeta);
+}
+
+/* Campos cortos: el ancho anuncia cuánto se escribe. */
+.adulto input[name='ensayos'] {
+  max-width: 10rem;
+}
+
+.adulto input[name='codigo'] {
+  max-width: 20rem;
+}
+
+.adulto input[aria-invalid='true']:not([type='checkbox'], [type='radio']) {
+  border: 2px solid var(--problema);
+}
+
+.adulto input[type='radio'],
+.adulto input[type='checkbox'],
+.adulto input[type='range'],
+.adulto progress {
+  accent-color: var(--acento);
+}
+
+.adulto input[type='radio'],
+.adulto input[type='checkbox'] {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
 }
 
 input[type='range'] {
   width: 100%;
   margin-top: 0.5rem;
+}
+
+/* El área de toque del deslizador mide 44 px de alto aunque la barra sea delgada. */
+.adulto input[type='range'] {
+  display: block;
+  height: var(--toque);
+  margin: var(--esp-1) 0 0;
+  cursor: pointer;
+}
+
+.adulto output {
+  font-weight: 400;
+  color: var(--suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.adulto :focus-visible {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
 }
 
 fieldset {
@@ -152,15 +509,38 @@ fieldset label {
   font-weight: 400;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   min-height: 2.75rem;
+}
+
+/* Casillas y botones de opción: toda la etiqueta se toca. */
+.adulto fieldset label,
+.adulto .casilla,
+.adulto label:has(> input[type='radio'], > input[type='checkbox']) {
+  cursor: pointer;
 }
 
 .ayuda {
   color: var(--suave);
-  font-size: 0.92rem;
-  margin: 0.3rem 0 0;
+  font-size: var(--letra-chica);
+  margin: var(--esp-1) 0 0;
   font-weight: 400;
+}
+
+label > .ayuda {
+  display: block;
+}
+
+.error-campo {
+  display: block;
+  margin-top: var(--esp-1);
+  color: var(--problema);
+  font-size: var(--letra-chica);
+  font-weight: 600;
+}
+
+.error-campo:empty {
+  display: none;
 }
 
 .mensaje:empty {
@@ -188,11 +568,67 @@ button {
   cursor: pointer;
 }
 
-button.primario {
+/* Botones del adulto: el principal relleno con el azul de la marca; los secundarios, con borde.
+   Al tocarlos cambian de fondo, sin mover nada de lugar. */
+.adulto button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radio-control);
+  border: 1.5px solid var(--acento);
+  color: var(--acento);
+  font-weight: 600;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.adulto button:hover:not(:disabled) {
+  background: var(--acento-suave);
+}
+
+.adulto button:active:not(:disabled) {
+  background: var(--acento-presionado);
+}
+
+button.primario,
+.adulto button.primario {
   background: var(--acento);
   color: var(--acento-texto);
   border-color: var(--acento);
   font-weight: 700;
+}
+
+.adulto button.primario {
+  min-width: 9rem;
+}
+
+.adulto button.primario:hover:not(:disabled),
+.adulto button.primario:active:not(:disabled) {
+  background: var(--acento-fuerte);
+  border-color: var(--acento-fuerte);
+}
+
+/* Acción que borra datos: aparte de las demás y con el color de los problemas. */
+.adulto button.peligro {
+  color: var(--problema);
+  border-color: var(--problema);
+}
+
+.adulto button.peligro:hover:not(:disabled),
+.adulto button.peligro:active:not(:disabled) {
+  background: var(--problema-suave);
+}
+
+.adulto button[aria-busy='true'] {
+  cursor: progress;
+}
+
+/* La acción principal del inicio: más grande, para encontrarla de un vistazo. */
+#inicio button[type='submit'] {
+  min-height: 3.25rem;
+  padding-inline: var(--esp-6);
+  font-size: 1.0625rem;
 }
 
 button:disabled {
@@ -203,11 +639,51 @@ button:disabled {
 .acciones {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.acciones-aparte {
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--borde);
+}
+
+/* Indicación junto al botón principal (por ejemplo, cómo pausar). */
+.acciones + .ayuda {
+  margin-top: calc(-1 * var(--esp-3));
+}
+
+.sesion-actual {
+  display: grid;
+  gap: var(--esp-3);
+  justify-items: start;
+}
+
+/* En pantallas angostas, los botones ocupan el ancho para tocarlos con el pulgar. */
+@media (max-width: 480px) {
+  .adulto .acciones > button {
+    flex: 1 1 auto;
+  }
+}
+
+/* Mensaje de estado del registro: sin espacio mientras está vacío. */
+.panel > .estado:empty {
+  margin-top: calc(-1 * var(--esp-4));
+}
+
+.resumen {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
 }
 
 .resumen li {
-  margin: 0.35rem 0;
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.resumen li:first-child {
+  padding-top: 0;
 }
 
 .meta {
@@ -215,41 +691,183 @@ button:disabled {
   margin: 0;
 }
 
+/* Pestañas de secciones sobre la franja azul claro de la marca. Cada una lleva su ícono; la
+   actual se marca con una barra azul, además del color y el grosor. */
 .nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
-  margin-bottom: 1rem;
+  gap: var(--esp-2);
+  margin: 0 0 var(--esp-6);
+  border-bottom: 2px solid var(--marca-2);
 }
 
 .nav a {
-  color: var(--acento);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: var(--toque);
+  padding: 0 var(--esp-2);
+  border-radius: var(--radio-control) var(--radio-control) 0 0;
+  color: var(--suave);
   font-weight: 600;
   text-decoration: none;
-  padding: 0.5rem 0;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+
+.nav a:hover {
+  background: var(--acento-suave);
+  color: var(--acento);
+}
+
+.nav a:active {
+  background: var(--acento-presionado);
 }
 
 .nav a[aria-current='page'] {
-  color: var(--texto);
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
+  color: var(--titulo);
+  font-weight: 700;
 }
 
+.nav a[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: var(--esp-2);
+  right: var(--esp-2);
+  bottom: -2px;
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: var(--acento);
+}
+
+/* Íconos dibujados con máscara: toman el color del texto en los dos temas. */
+.nav a::before,
+.aviso::before,
+.vacio-registro::before,
+.adulto :is(#inicio button[type='submit'], [data-descargar], [data-borrar], #cerrar-sesion, #cerrar, #otro)::before {
+  content: '';
+  flex: none;
+  width: var(--icono-tam);
+  height: var(--icono-tam);
+  background-color: currentColor;
+  -webkit-mask: var(--icono) center / contain no-repeat;
+  mask: var(--icono) center / contain no-repeat;
+}
+
+.nav a[href='#inicio'] { --icono: var(--icono-casa); }
+.nav a[href='#galeria'] { --icono: var(--icono-galeria); }
+.nav a[href='#revision'] { --icono: var(--icono-revision); }
+.nav a[href='#formulario'] { --icono: var(--icono-formulario); }
+.nav a[href='#calibracion'] { --icono: var(--icono-regla); }
+.nav a[href='#creditos'] { --icono: var(--icono-info); }
+.aviso { --icono: var(--icono-aviso); }
+.vacio-registro { --icono: var(--icono-vacio); }
+#inicio button[type='submit'] { --icono: var(--icono-empezar); }
+[data-descargar] { --icono: var(--icono-descargar); }
+[data-borrar] { --icono: var(--icono-borrar); }
+#cerrar-sesion,
+#cerrar { --icono: var(--icono-salir); }
+#otro { --icono: var(--icono-otra-vez); }
+
+/* En el celular, las seis secciones en dos filas de tres, con el ícono sobre el nombre. */
+@media (max-width: 480px) {
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-bottom: var(--esp-2);
+  }
+
+  .nav a {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    min-height: 3.5rem;
+    padding: var(--esp-1);
+    border-radius: var(--radio-control);
+    font-size: var(--letra-chica);
+    text-align: center;
+  }
+
+  .nav a[aria-current='page'] {
+    background: var(--acento-suave);
+  }
+
+  .nav a[aria-current='page']::after {
+    display: none;
+  }
+}
+
+.adulto a {
+  color: var(--acento);
+}
+
+/* Casilla con su texto; la ayuda va debajo, alineada con el texto. */
 .casilla {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 0.2rem 0.5rem;
+  gap: 0.2rem 0.6rem;
+  min-height: var(--toque);
 }
 
 .casilla .ayuda {
-  flex-basis: 100%;
+  grid-column: 2;
+}
+
+/* Pastillas: botones de opción con su texto visible (filtros, modalidad y nivel de apoyo). */
+.chips {
+  gap: var(--esp-2);
+}
+
+.chips legend {
+  width: 100%;
+  margin-bottom: var(--esp-2);
+}
+
+.chip {
+  position: relative;
+  min-height: 0;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--borde-campo);
+  border-radius: 999px;
+  background: var(--tarjeta);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.chip span:hover {
+  background: var(--acento-suave);
+}
+
+.chip input:checked + span {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--acento-texto);
+}
+
+.chip input:focus-visible + span {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
 }
 
 blockquote {
   margin: 0;
   padding: 0.6rem 0.9rem;
-  border-left: 4px solid var(--borde);
+  border-left: 4px solid var(--marca-2);
   background: var(--fondo);
   border-radius: 4px;
 }
@@ -261,6 +879,91 @@ blockquote {
 .columnas {
   columns: 14rem;
   margin: 0.5rem 0 0;
+}
+
+/* Secciones que se abren: 44 px de alto y una flecha que gira al abrir. */
+.adulto summary {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--toque);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--acento);
+  list-style: none;
+}
+
+.adulto summary::-webkit-details-marker {
+  display: none;
+}
+
+.adulto summary::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin: 0 0.15rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 200ms ease-out;
+}
+
+.adulto details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+/* Créditos: logotipo de la marca */
+.logotipo {
+  display: block;
+  line-height: 0;
+}
+
+.logotipo img {
+  height: 3rem;
+  width: auto;
+  display: block;
+}
+
+/* El lema va en la letra de los títulos, como en la portada del manual. */
+/* Créditos: cada persona con su rol y lo que hizo. */
+.equipo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--esp-4) var(--esp-5);
+  max-width: none;
+  margin: var(--esp-4) 0 0;
+}
+
+.equipo dt {
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-subtitulo);
+  font-weight: 700;
+  color: var(--titulo);
+}
+
+.equipo dd {
+  margin: var(--esp-1) 0 0;
+}
+
+.equipo .equipo-rol {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  color: var(--suave);
+}
+
+.lema {
+  font-family: var(--fuente-titulos);
+  font-size: var(--letra-subtitulo);
+  font-weight: 700;
+  color: var(--titulo);
+}
+
+/* El nombre «AutiPal» dentro de un texto va en More Sugar, como en el manual. Conserva el
+   color del texto: en azul y sin More Sugar parecería un enlace. */
+.nombre-marca {
+  font-family: var(--fuente-nombre);
+  font-weight: 400;
 }
 
 /* ---------- Calibración ---------- */
@@ -299,8 +1002,161 @@ blockquote {
 
 /* ---------- Galería ---------- */
 
+/* La ficha técnica se abre dentro de su tarjeta; cerrada, solo ocupa el renglón del título. */
+details.panel {
+  display: block;
+}
+
+details.panel > summary + * {
+  margin-top: var(--esp-3);
+}
+
+.ficha + .meta {
+  margin-top: var(--esp-4);
+}
+
 .adulto.ancho {
   max-width: 76rem;
+}
+
+/* Inicio: el formulario y, en pantallas anchas, el registro a su lado. */
+.adulto.medio {
+  max-width: 64rem;
+}
+
+.inicio-columnas {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.inicio-columnas .registro > h2 {
+  margin-top: 0;
+}
+
+@media (min-width: 62rem) {
+  .inicio-columnas {
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+    align-items: start;
+  }
+
+  .inicio-columnas .registro .acciones > button {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Actividades en tarjetas: se ven las tres a la vez, con lo que hace el niño en cada una.
+   Toda la tarjeta se toca; el círculo de la esquina marca la elegida. */
+#inicio .grupo {
+  container-type: inline-size;
+}
+
+.actividades {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--esp-3);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Las tres en una fila cuando caben; si no, una debajo de otra (nunca una sola abajo). */
+@container (min-width: 34rem) {
+  .actividades {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.actividades legend {
+  padding: 0;
+  margin-bottom: var(--esp-2);
+  font-weight: 600;
+}
+
+.actividad-tarjeta {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  cursor: pointer;
+}
+
+.actividad-tarjeta input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.act-cuerpo {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--esp-1);
+  width: 100%;
+  padding: var(--esp-3) calc(var(--esp-4) + 1.5rem) var(--esp-3) var(--esp-4);
+  border: 1.5px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--tarjeta);
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.act-cuerpo::after {
+  content: '';
+  position: absolute;
+  top: var(--esp-3);
+  right: var(--esp-3);
+  width: 1.125rem;
+  height: 1.125rem;
+  box-sizing: border-box;
+  border: 2px solid var(--borde-campo);
+  border-radius: 50%;
+  background: var(--tarjeta);
+}
+
+.act-codigo {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--suave);
+}
+
+.act-nombre {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.act-linea {
+  font-size: var(--letra-chica);
+  color: var(--suave);
+}
+
+.actividad-tarjeta:hover .act-cuerpo {
+  background: var(--acento-suave);
+}
+
+.actividad-tarjeta input:checked + .act-cuerpo {
+  border-color: var(--acento);
+  box-shadow: inset 0 0 0 1px var(--acento);
+  background: var(--acento-suave);
+}
+
+.actividad-tarjeta input:checked + .act-cuerpo::after {
+  border: 6px solid var(--acento);
+}
+
+.actividad-tarjeta input:focus-visible + .act-cuerpo {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* Registro sin ensayos: el estado vacío lleva su ícono. */
+.vacio-registro {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
 }
 
 .filtros {
@@ -308,17 +1164,27 @@ blockquote {
   align-items: end;
 }
 
+.filtros .chips,
+.filtros .ayuda-banda,
+.filtros .casilla {
+  grid-column: 1 / -1;
+}
+
+.filtros .ayuda-banda {
+  margin: calc(-1 * var(--esp-3)) 0 0;
+}
+
 .ficha dl {
-  margin: 0.75rem 0 0;
+  margin: var(--esp-1) 0 0;
 }
 
 .ficha dt {
   font-weight: 700;
-  margin-top: 0.6rem;
+  margin-top: var(--esp-3);
 }
 
 .ficha dd {
-  margin: 0.2rem 0 0;
+  margin: var(--esp-1) 0 0;
 }
 
 .ficha ul {
@@ -326,20 +1192,40 @@ blockquote {
   padding-left: 1.2rem;
 }
 
+.banda-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+}
+
+.banda-titulo .meta {
+  font-family: var(--fuente-texto);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.vacio {
+  color: var(--suave);
+  padding: var(--esp-4);
+  border: 1px dashed var(--borde-campo);
+  border-radius: var(--radio);
+}
+
 .galeria {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--esp-4);
+  margin-top: var(--esp-4);
 }
 
 .item {
   background: var(--tarjeta);
   border: 1px solid var(--borde);
-  border-radius: 10px;
-  padding: 0.8rem;
+  border-radius: var(--radio);
+  padding: var(--esp-4);
   display: grid;
-  gap: 0.6rem;
+  gap: var(--esp-3);
   align-content: start;
 }
 
@@ -347,14 +1233,29 @@ blockquote {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--esp-2);
+  padding-bottom: var(--esp-3);
+  border-bottom: 1px solid var(--borde);
 }
 
+/* Código del ítem: grande, con cifras de ancho fijo, para anotarlo sin error. */
+.codigo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--titulo);
+  margin-right: auto;
+}
+
+/* Etiquetas de estado: una sola línea, con texto (no solo color). */
 .etiqueta {
-  font-size: 0.8rem;
-  padding: 0.1rem 0.5rem;
+  font-size: var(--letra-chica);
+  line-height: 1.4;
+  white-space: nowrap;
+  padding: 0.125rem 0.625rem;
   border-radius: 999px;
-  border: 1px solid var(--borde);
+  border: 1px solid var(--borde-campo);
   color: var(--suave);
 }
 
@@ -362,6 +1263,7 @@ blockquote {
   border-color: var(--aviso-borde);
   background: var(--aviso);
   color: var(--texto);
+  font-weight: 600;
 }
 
 .item img {
@@ -374,7 +1276,7 @@ blockquote {
 
 .item-consigna {
   display: flex;
-  gap: 0.6rem;
+  gap: var(--esp-3);
   align-items: center;
 }
 
@@ -388,19 +1290,31 @@ blockquote {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--esp-2);
 }
 
+/* Cada opción: imagen, nombre y ejemplar en renglones separados; la correcta lleva el mismo
+   marco que ve el niño y una etiqueta con texto. */
 .item-opciones li {
   display: grid;
   justify-items: center;
-  gap: 0.2rem;
-  font-size: 0.85rem;
+  align-content: start;
+  gap: 0.125rem;
+  font-size: var(--letra-chica);
+  line-height: 1.35;
   text-align: center;
-  max-width: 6rem;
-  padding: 0.25rem;
+  width: 6.5rem;
+  padding: var(--esp-1) var(--esp-1) var(--esp-2);
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radio-control);
+}
+
+.item-opciones li img {
+  margin-bottom: var(--esp-1);
+}
+
+.item-ejemplar {
+  color: var(--suave);
 }
 
 .item-opciones li.correcta,
@@ -408,10 +1322,19 @@ blockquote {
   border-color: var(--marco);
 }
 
+.correcta-etiqueta {
+  margin-top: var(--esp-1);
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--marco);
+  color: var(--tarjeta);
+  font-weight: 700;
+}
+
 .motivos {
   margin: 0;
   padding-left: 1.2rem;
-  font-size: 0.88rem;
+  font-size: var(--letra-chica);
   color: var(--suave);
 }
 
@@ -420,20 +1343,20 @@ blockquote {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.3rem;
+  gap: var(--esp-1);
 }
 
 .secuencia li {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
+  gap: var(--esp-2);
+  font-size: var(--letra-chica);
 }
 
 .secuencia .cod {
   font-variant-numeric: tabular-nums;
   color: var(--suave);
-  width: 3rem;
+  width: 3.25rem;
 }
 
 .mini {
@@ -607,14 +1530,15 @@ blockquote {
   bottom: calc(var(--cm) * 0.3 + env(safe-area-inset-bottom, 0px));
   margin: 0;
   font: 600 0.9rem ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--suave);
+  color: var(--suave-nino);
 }
 
 .siguiente {
   position: absolute;
   right: calc(var(--cm) * 0.3);
   bottom: calc(var(--cm) * 0.3 + env(safe-area-inset-bottom, 0px));
-  color: var(--suave);
+  color: var(--suave-nino);
+  border-color: var(--borde-nino);
   background: transparent;
 }
 
@@ -654,6 +1578,479 @@ blockquote {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ==========================================================================
+   Inicio en tres pasos, vista previa, sesiones y catálogo (noviembre de 2026)
+   ========================================================================== */
+
+/* Ícono propio (no es de Phosphor): una lista de tres renglones. */
+:root {
+  --icono-sesiones: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M36 56h24v24H36zM84 60h136v16H84zM36 116h24v24H36zM84 120h136v16H84zM36 176h24v24H36zM84 180h136v16H84z'/%3E%3C/svg%3E");
+}
+
+.nav a[href='#sesiones'] { --icono: var(--icono-sesiones); }
+
+/* Con siete secciones: letra e ícono un punto más chicos y menos aire entre ellas, para que
+   sigan cabiendo en una fila en un iPad vertical. El alto para tocar no cambia. */
+@media (min-width: 481px) {
+  .nav {
+    gap: var(--esp-1);
+  }
+
+  .nav a {
+    --icono-tam: 1.125rem;
+    gap: 0.25rem;
+    padding: 0 0.3125rem;
+    font-size: 0.9375rem;
+  }
+
+  .nav a[aria-current='page']::after {
+    left: 0.3125rem;
+    right: 0.3125rem;
+  }
+}
+
+/* En el celular van cuatro por fila. */
+@media (max-width: 480px) {
+  .nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .nav a {
+    font-size: 0.8125rem;
+    line-height: 1.2;
+  }
+}
+
+/* ---------- Pasos numerados ---------- */
+
+.paso {
+  container-type: inline-size;
+}
+
+.adulto .paso-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.paso-num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--acento-texto);
+  font-family: var(--fuente-texto);
+  font-size: var(--letra-chica);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ---------- Tarjetas de actividad: esquema y estado ---------- */
+
+.actividades + .actividades {
+  margin-top: var(--esp-2);
+}
+
+.act-esquema {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: var(--esp-1);
+  color: var(--acento);
+}
+
+.act-esquema svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.actividad-tarjeta input:disabled,
+.actividad-tarjeta input:disabled + .act-cuerpo {
+  cursor: not-allowed;
+}
+
+.actividad-tarjeta input:disabled + .act-cuerpo {
+  border-style: dashed;
+  background: transparent;
+}
+
+.actividad-tarjeta input:disabled + .act-cuerpo .act-esquema {
+  color: var(--suave);
+}
+
+/* ---------- Bandas: una tarjeta por banda, con lo que cambia ---------- */
+
+.bandas {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--esp-2);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container (min-width: 34rem) {
+  .bandas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.bandas legend {
+  padding: 0;
+  margin-bottom: var(--esp-2);
+  font-weight: 600;
+}
+
+.banda-tarjeta {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.banda-tarjeta input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.banda-cuerpo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: var(--esp-3);
+  row-gap: 0.125rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--esp-3) var(--esp-4);
+  border: 1.5px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--tarjeta);
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.banda-id {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.banda-opciones {
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  color: var(--suave);
+}
+
+.banda-desc {
+  grid-column: 1 / -1;
+  font-size: var(--letra-chica);
+  color: var(--suave);
+}
+
+.banda-tarjeta:hover .banda-cuerpo {
+  background: var(--acento-suave);
+}
+
+.banda-tarjeta input:checked + .banda-cuerpo {
+  border-color: var(--acento);
+  box-shadow: inset 0 0 0 1px var(--acento);
+  background: var(--acento-suave);
+}
+
+.banda-tarjeta input:focus-visible + .banda-cuerpo {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* ---------- Barra de «Empezar»: siempre a la vista, al pie del formulario ---------- */
+
+.barra-empezar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-4);
+  margin: 0 calc(var(--esp-4) * -1) calc(var(--esp-4) * -1);
+  padding: var(--esp-3) var(--esp-4) max(var(--esp-3), env(safe-area-inset-bottom, 0px));
+  background: var(--tarjeta);
+  border-top: 1px solid var(--borde);
+  border-radius: 0 0 var(--radio) var(--radio);
+  box-shadow: 0 -8px 16px -14px rgb(0 0 0 / 0.45);
+}
+
+@media (min-width: 600px) {
+  .barra-empezar {
+    margin: 0 calc(var(--esp-5) * -1) calc(var(--esp-5) * -1);
+    padding-inline: var(--esp-5);
+  }
+}
+
+.barra-resumen {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  font-size: var(--letra-chica);
+  color: var(--suave);
+}
+
+.barra-resumen strong {
+  font-size: 1rem;
+  color: var(--texto);
+}
+
+/* Al enfocar un campo, el navegador lo deja a la vista por encima de la barra. */
+html {
+  scroll-padding-bottom: 6.5rem;
+}
+
+/* ---------- Columna lateral del inicio: la vista previa acompaña al formulario ---------- */
+
+.lateral {
+  display: grid;
+  gap: var(--esp-4);
+  align-content: start;
+}
+
+.lateral h2,
+.herramientas h2 {
+  margin: 0;
+  font-size: var(--letra-subtitulo);
+}
+
+@media (min-width: 62rem) {
+  .lateral {
+    position: sticky;
+    top: var(--esp-4);
+  }
+
+  .inicio-columnas.una-columna {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.previa-calibracion {
+  padding-top: var(--esp-3);
+  border-top: 1px solid var(--borde);
+}
+
+/* ---------- Debajo del formulario: el registro ---------- */
+
+.herramientas {
+  display: grid;
+  gap: var(--esp-5);
+  margin-top: var(--esp-5);
+  align-items: start;
+}
+
+.herramientas .panel + .panel,
+.herramientas .registro {
+  margin-top: 0;
+}
+
+/* Las descargas se reparten en columnas iguales, tantas como quepan. */
+.herramientas .registro .acciones:not(.acciones-aparte) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.5rem), 1fr));
+}
+
+@media (min-width: 48rem) {
+  .herramientas {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+}
+
+@media (min-width: 62rem) {
+  .herramientas {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+/* Aviso suave: algo que conviene saber antes de empezar, sin ser un error. */
+.nota-pantalla {
+  margin: 0 0 var(--esp-4);
+  padding: var(--esp-3) var(--esp-4);
+  max-width: none;
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--marca-2);
+  border-radius: var(--radio-control);
+  background: var(--tarjeta);
+  font-size: var(--letra-chica);
+  color: var(--texto);
+}
+
+.panel > .nota-pantalla {
+  margin: 0;
+}
+
+/* ---------- Vista previa: la pantalla del niño en chico ---------- */
+
+/* Con el formulario y la vista previa en una sola columna, el dibujo no crece más de la cuenta. */
+.previa-pantalla {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  max-width: 24rem;
+  margin-inline: auto;
+  aspect-ratio: 4 / 3;
+  padding: 5%;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--fondo-nino);
+  overflow: hidden;
+}
+
+.previa-consigna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  width: 100%;
+  height: 100%;
+}
+
+.previa-caja {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 10%;
+  background: var(--opcion-fondo);
+  overflow: hidden;
+}
+
+.previa-caja img,
+.previa-caja svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.previa-consigna .previa-caja {
+  width: 25%;
+}
+
+.previa-opciones {
+  --lado: min(84% / var(--columnas), 30% / var(--filas));
+  display: grid;
+  grid-template-columns: repeat(var(--columnas), var(--lado));
+  justify-content: center;
+  gap: 5%;
+  width: 100%;
+}
+
+/* Cambia la regla: el símbolo de la regla encima de la tarjeta. */
+.previa-regla {
+  display: block;
+  width: 9%;
+  aspect-ratio: 1;
+}
+
+.previa-regla svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.previa-cambia-regla .previa-consigna .previa-caja {
+  width: 20%;
+  padding: 2%;
+}
+
+.previa-cambia-regla .previa-opciones {
+  gap: 16%;
+}
+
+.previa-cambia-regla .previa-opciones .previa-caja {
+  border: 2px solid var(--control);
+}
+
+/* ---------- Sesiones ---------- */
+
+.sesiones-lista {
+  display: grid;
+  gap: var(--esp-4);
+  align-content: start;
+}
+
+.sesiones-lista .panel + .panel {
+  margin-top: 0;
+}
+
+.sesion-cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.sesion-cabeza h2 {
+  margin: 0;
+  font-size: var(--letra-subtitulo);
+}
+
+.sesion-cabeza .meta,
+.sesion-etiquetas {
+  margin: var(--esp-1) 0 0;
+}
+
+.sesion-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.sesion-bloques {
+  display: grid;
+  gap: var(--esp-4);
+  margin: var(--esp-3) 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.sesion-bloque-titulo {
+  margin: 0 0 var(--esp-2);
+}
+
+.panel.vacio {
+  justify-items: start;
+}
+
+/* ---------- Resumen del bloque ---------- */
+
+.no-concluir {
+  padding-top: var(--esp-3);
+  border-top: 1px solid var(--borde);
+}
+
+.no-concluir[open] > summary {
+  margin-bottom: var(--esp-3);
+}
+
+.no-concluir ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+/* El registro es una tarjeta más, con su título adentro. */
+.adulto .registro > h2 {
+  margin: 0;
+  font-size: var(--letra-subtitulo);
 }
 
 /* Estado de la revisión clínica en la galería. */

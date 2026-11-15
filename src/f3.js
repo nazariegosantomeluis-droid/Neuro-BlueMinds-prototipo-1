@@ -55,7 +55,7 @@ export function renderF3(app, { fichas, items }) {
           <dt>Mecánica</dt><dd>${esc(MECANICA[a])}</dd>
           <dt>Bandas</dt><dd>${f.bandas.map((b) => `${esc(b.id)}: ${esc(b.descripcion)}`).join('<br>')}</dd>
         </dl>
-        <p class="acciones"><a href="#galeria?actividad=${esc(a)}" target="_blank" rel="noopener">Ver sus ítems en la galería</a> · <a href="#inicio" target="_blank" rel="noopener">Probar la actividad</a></p>
+        <p class="acciones"><a href="#galeria?actividad=${esc(a)}" target="_blank" rel="noopener">Ver sus ítems en la galería</a> <a href="#inicio" target="_blank" rel="noopener">Probar la actividad</a></p>
         ${preguntas(a, f)
           .map(
             (q) => `
@@ -86,7 +86,6 @@ export function renderF3(app, { fichas, items }) {
       <div class="adulto f3">
         ${navHTML('formulario')}
         <h1>Formulario F3 · Validez de contenido</h1>
-        <p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>
         <section class="panel">
           <p>Gracias por revisar las tres actividades que usará el estudio piloto. Para cada una, lea su descripción, recórrala en el prototipo o en la galería y califíquela aquí. Toma de 45 a 60 minutos.</p>
           <p>Sus respuestas se guardan en este dispositivo mientras las llena; puede cerrar la página y volver. <strong>Al terminar, descargue el archivo y envíelo por correo a <span class="f3-correo">${CORREO}</span>.</strong> Nada se envía a ningún servidor.</p>

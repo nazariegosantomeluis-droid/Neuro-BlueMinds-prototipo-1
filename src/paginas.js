@@ -1,24 +1,62 @@
 // Páginas para el adulto y el panel de expertos: galería de ítems y créditos.
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
+import { esc } from './html.js';
 import { ETIQUETAS_REVISION, revisadaClinicamente, filtrarPorEstado, notasDe, textoFiguras } from './revision-estado.js';
 
-export const esc = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+export { esc };
 
+// Isotipo y logotipo de AutiPal: versión positiva en tema claro e invertida (blanca) en tema
+// oscuro, las versiones autorizadas por el Manual de marca. El nombre se muestra con el
+// logotipo oficial (letra More Sugar), no con texto. Solo en las pantallas del adulto.
+const FIRMA = `
+  <span class="marca-firma">
+    <picture class="marca-logo">
+      <source srcset="assets/marca/isotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+      <img src="assets/marca/isotipo.svg" alt="" width="40" height="40">
+    </picture>
+    <picture class="marca-logotipo">
+      <source srcset="assets/marca/logotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+      <img src="assets/marca/logotipo.svg" alt="AutiPal" width="101" height="28">
+    </picture>
+  </span>`;
+
+// Encabezado de todas las pantallas del adulto: isotipo y logotipo de AutiPal, la etiqueta del
+// prototipo, la línea que describe la herramienta y el aviso de que no diagnostica, siempre visible.
+export const LINEA_HERRAMIENTA = 'Herramienta de apoyo y medición para el terapeuta';
+export const AVISO_PROTOTIPO = 'Prototipo para revisión de expertos. No es una herramienta diagnóstica.';
+export const marcaHTML = () => `
+  <header class="marca">
+    ${FIRMA}
+    <span class="marca-etiqueta">Prototipo E13</span>
+    <p class="marca-linea">${LINEA_HERRAMIENTA}</p>
+    <p class="aviso marca-aviso">${AVISO_PROTOTIPO}</p>
+  </header>`;
+
+// Título de cada pantalla con una línea que dice para qué sirve. Recibe texto ya escapado.
+export const tituloHTML = (titulo, subtitulo = '') => `
+  <div class="titulo-pagina">
+    <h1>${titulo}</h1>
+    ${subtitulo ? `<p class="subtitulo">${subtitulo}</p>` : ''}
+  </div>`;
+
+// «Saltar al contenido» lleva el foco al título de la pantalla (app.js lo atiende sin cambiar la ruta).
 export const navHTML = (actual) => `
-  <nav class="nav">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería de ítems'], ['revision', 'Revisión clínica'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos y licencias']]
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  ${marcaHTML()}
+  <nav class="nav" aria-label="Secciones">
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['sesiones', 'Sesiones'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;
 
-const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>';
-
 // ---------- Galería ----------
+
+// La galería se vuelve a dibujar con cada filtro; el foco regresa al filtro que se cambió.
+let focoFiltro = null;
 
 // Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1&estado=retirado
 export function renderGaleria(app, { items, fichas, conceptos, revision }, params) {
-  const ids = Object.keys(fichas);
+  const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02 y ACT-07, sin depender del orden de carga
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];
   const ficha = fichas[actividad];
   const banda = ficha.bandas.some((b) => b.id === params.get('banda')) ? params.get('banda') : 'todas';
@@ -26,27 +64,37 @@ export function renderGaleria(app, { items, fichas, conceptos, revision }, param
   const pareja = ficha.parejas ? Number(params.get('pareja')) % ficha.parejas.length || 0 : 0;
   const nombre = new Map(conceptos.map((c) => [c.id, c]));
   const deActividad = items.filter((i) => i.actividad === actividad && (banda === 'todas' || i.banda === banda));
+  // Solo los ítems con imágenes del piloto llevan estado de revisión clínica (items/revision.json).
   const conEstado = deActividad.some((i) => i.estadoRevision);
   const estado = conEstado && params.get('estado') in ETIQUETAS_REVISION ? params.get('estado') : 'todos';
   const visibles = filtrarPorEstado(deActividad.filter((i) => todos || i.muestraExpertos), estado);
   const revisada = revisadaClinicamente(ficha);
+  // Las tarjetas se agrupan por banda, en el orden de la ficha, y dentro de cada banda por código.
+  const bandas = banda === 'todas' ? ficha.bandas : ficha.bandas.filter((b) => b.id === banda);
+  // La etiqueta «Muestra» solo distingue algo cuando se ven todos los ítems.
+  const tarjeta = (it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja], todos) : itemHTML(it, nombre, todos, revision?.items?.[it.codigo]));
+  const cuantos = (n) => (n === 1 ? '1 ítem' : `${n} ítems`);
+  const conEseEstado = estado === 'todos' ? '' : ` con estado «${ETIQUETAS_REVISION[estado].toLowerCase()}»`;
+  const bandaVacia = conEseEstado
+    ? `No hay ítems${conEseEstado} en esta banda.`
+    : 'No hay ítems de la muestra en esta banda. Marca «Mostrar todos los ítems» para ver el banco completo.';
 
   app.innerHTML = `
     <div class="adulto ancho">
       ${navHTML('galeria')}
-      <h1>Galería de ítems</h1>
+      ${tituloHTML('Galería de ítems', 'Cada ítem con su código, la consigna, las opciones y la respuesta correcta marcada.')}
       <div id="enlace-f3"></div>
-      ${AVISO}
       <form class="panel filtros" id="filtros">
-        <label>Actividad
-          <select name="actividad">${ids.map((id) => `<option value="${id}" ${id === actividad ? 'selected' : ''}>${id} · ${esc(fichas[id].nombre)}</option>`).join('')}</select>
-        </label>
-        <label>Banda
-          <select name="banda">
-            <option value="todas">Todas</option>
-            ${ficha.bandas.map((b) => `<option value="${b.id}" ${b.id === banda ? 'selected' : ''}>${b.id} · ${esc(b.descripcion)}</option>`).join('')}
-          </select>
-        </label>
+        <fieldset class="chips">
+          <legend>Actividad</legend>
+          ${ids.map((id) => chipHTML('actividad', id, `${id} · ${fichas[id].nombre}`, id === actividad)).join('')}
+        </fieldset>
+        <fieldset class="chips">
+          <legend>Banda</legend>
+          ${chipHTML('banda', 'todas', 'Todas', banda === 'todas')}
+          ${ficha.bandas.map((b) => chipHTML('banda', b.id, b.id, b.id === banda)).join('')}
+        </fieldset>
+        <p class="ayuda ayuda-banda">${banda === 'todas' ? 'Todas las bandas de la actividad, en orden.' : esc(bandas[0].descripcion)}</p>
         ${
           ficha.parejas
             ? `<label>Pareja de cajas
@@ -71,19 +119,32 @@ export function renderGaleria(app, { items, fichas, conceptos, revision }, param
         ${fichaHTML(ficha)}
       </details>
       ${ficha.parejas ? `<p class="meta">${esc(textoFiguras(revision))}</p>` : ''}
-      <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}${estado === 'todos' ? '' : ` con estado «${ETIQUETAS_REVISION[estado].toLowerCase()}»`}.</p>
-      <div class="galeria">
-        ${visibles.map((it) => (it.ensayos ? secuenciaHTML(it, ficha.parejas[pareja]) : itemHTML(it, nombre, revision?.items?.[it.codigo]))).join('')}
-      </div>
+      <p class="meta">Mostrando ${visibles.length} de ${deActividad.length} ítems${todos ? '' : ' (solo la muestra para expertos)'}${conEseEstado}.</p>
+      ${bandas
+        .map((b) => {
+          const deBanda = visibles.filter((i) => i.banda === b.id);
+          return `
+            <section>
+              <h2 class="banda-titulo">${esc(b.id)} <span class="meta">${esc(b.descripcion)} · ${cuantos(deBanda.length)}</span></h2>
+              ${deBanda.length ? `<div class="galeria">${deBanda.map(tarjeta).join('')}</div>` : `<p class="vacio">${bandaVacia}</p>`}
+            </section>`;
+        })
+        .join('')}
     </div>`;
 
   const form = app.querySelector('#filtros');
-  form.onchange = () => {
+  form.onchange = (e) => {
+    focoFiltro = e.target.name;
     const p = new URLSearchParams();
     for (const [k, v] of new FormData(form)) p.set(k, v);
     if (form.actividad.value !== actividad) p.delete('banda');
     location.hash = `#galeria?${p}`;
   };
+  if (focoFiltro) {
+    const nombreFiltro = focoFiltro;
+    focoFiltro = null;
+    (form.querySelector(`[name="${nombreFiltro}"]:checked`) ?? form.querySelector(`[name="${nombreFiltro}"]`))?.focus();
+  }
 }
 
 function fichaHTML(f) {
@@ -101,10 +162,14 @@ function fichaHTML(f) {
     </dl>`;
 }
 
-// Etiquetas del ítem: si es de la muestra, su estado de revisión clínica y, mientras no se revise,
-// si tiene puntos que los clínicos deben confirmar.
-const estadoHTML = (it) => `
-  ${it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
+// Pastilla: un botón de opción con su texto visible (filtros de la galería, modalidad y nivel de apoyo).
+export const chipHTML = (name, value, label, checked) =>
+  `<label class="chip"><input type="radio" name="${name}" value="${esc(value)}" ${checked ? 'checked' : ''}><span>${esc(label)}</span></label>`;
+
+// Etiquetas del ítem: si es de la muestra (solo distingue algo cuando se ven todos los ítems), su
+// estado de revisión clínica y, mientras no se revise, si tiene puntos que los clínicos deben confirmar.
+const estadoHTML = (it, todos) => `
+  ${todos && it.muestraExpertos ? '<span class="etiqueta">Muestra</span>' : ''}
   ${it.estadoRevision ? `<span class="etiqueta ${it.estadoRevision}">${ETIQUETAS_REVISION[it.estadoRevision]}</span>` : ''}
   ${(it.estadoRevision ?? 'sin-revisar') === 'sin-revisar' && it.revisionPendiente ? '<span class="etiqueta pendiente">Puntos por revisar</span>' : ''}`;
 
@@ -116,12 +181,12 @@ const notasClinicasHTML = (entrada) => {
 const motivosHTML = (it) =>
   it.motivosRevision.length ? `<ul class="motivos">${it.motivosRevision.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : '';
 
-function itemHTML(it, nombre, clinica) {
+function itemHTML(it, nombre, todos, clinica) {
   const c = nombre.get(it.concepto);
   const consigna = it.consigna.tipo === 'pictograma' ? 'Pictograma' : 'Muestra';
   return `
     <article class="item">
-      <header><strong>${esc(it.codigo)}</strong> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> ${estadoHTML(it, todos)}</header>
       <div class="item-consigna">
         <img src="${esc(it.consigna.src)}" alt="" loading="lazy">
         <p>${consigna}: <strong>${esc(c.articulo)} ${esc(c.nombre)}</strong>${it.mitad ? ` · mitad ${it.mitad}` : ''}<br>
@@ -133,7 +198,9 @@ function itemHTML(it, nombre, clinica) {
             const oc = nombre.get(o.concepto);
             return `<li class="${o.correcta ? 'correcta' : ''}">
               <img src="${esc(o.src)}" alt="" loading="lazy">
-              <span>${esc(oc.nombre)} · ej. ${o.ejemplar}${o.correcta ? ' · <strong>correcta</strong>' : ''}</span>
+              <span>${esc(oc.nombre)}</span>
+              <span class="item-ejemplar">ejemplar ${o.ejemplar}</span>
+              ${o.correcta ? '<strong class="correcta-etiqueta">Correcta</strong>' : ''}
             </li>`;
           })
           .join('')}
@@ -143,10 +210,10 @@ function itemHTML(it, nombre, clinica) {
     </article>`;
 }
 
-function secuenciaHTML(it, pareja) {
+function secuenciaHTML(it, pareja, todos) {
   return `
     <article class="item">
-      <header><strong>${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it)}</header>
+      <header><strong class="codigo">${esc(it.codigo)}</strong> <span class="meta">${esc(it.tipo)}</span> ${estadoHTML(it, todos)}</header>
       <ol class="secuencia">
         ${it.ensayos
           .map((e) => {
@@ -176,8 +243,7 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('calibracion')}
-      <h1>Calibración</h1>
-      ${AVISO}
+      ${tituloHTML('Calibración', 'Ajusta el tamaño real de las opciones en esta pantalla. Hazlo una vez en cada tableta.')}
       <div class="panel">
         <p>En las tabletas, un centímetro de la pantalla no mide un centímetro real. Pon una regla física sobre la regla de abajo y ajusta hasta que las marcas de 0 y 5 cm coincidan. El ajuste se guarda solo en este dispositivo y se usa para el tamaño de las opciones.</p>
         <div class="regla" role="img" aria-label="Regla de 5 centímetros">
@@ -185,8 +251,8 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
         </div>
         <label>Ajuste fino <input type="range" min="20" max="120" step="0.1" value="${px}" id="cm-ajuste"></label>
         <div class="acciones">
-          <button type="button" data-paso="-0.1">− 0.1</button>
-          <button type="button" data-paso="0.1">+ 0.1</button>
+          <button type="button" data-paso="-0.1" aria-label="Restar 0.1 px por centímetro">− 0.1</button>
+          <button type="button" data-paso="0.1" aria-label="Sumar 0.1 px por centímetro">+ 0.1</button>
         </div>
         <p class="meta" id="cm-valor"></p>
         <div class="acciones">
@@ -234,12 +300,54 @@ export function renderCalibracion(app, { estimated, saved, preview, save, reset 
 
 // ---------- Créditos ----------
 
+// Quién hizo el prototipo. Luis Nazariego Santome es el fundador y CEO de Neuro-BlueMinds, y
+// José Miguel Fausto Tapia, cofundador y co-CEO. El rol es el que cada persona declaró en el
+// documento de contribuciones del proyecto, y el rol secundario, el que sumó después; el aporte
+// describe su trabajo en este repositorio.
+export const FUNDADOR = 'Luis Nazariego Santome';
+export const COFUNDADOR = 'José Miguel Fausto Tapia';
+export const EQUIPO = [
+  {
+    nombre: 'Luis Nazariego Santome',
+    rol: 'Fundador y CEO · líder de proyecto · calidad y verificación',
+    aporte: 'Catálogo de actividades y fichas técnicas, motor de medición y registro, banco de ítems, revisión clínica y formulario F3.',
+  },
+  {
+    nombre: 'José Miguel Fausto Tapia',
+    rol: 'Cofundador y co-CEO · líder de proyecto · diseño de experiencia y accesibilidad',
+    rolSecundario: 'Apoyo en el desarrollo de las actividades',
+    aporte: 'Interfaz del terapeuta y del niño, marca AutiPal en la aplicación, diseño de los dibujos del banco de imágenes, página de producto y prototipos de las actividades de uso posterior y de investigación.',
+  },
+];
+
 export function renderCreditos(app, { conceptos }) {
   app.innerHTML = `
     <div class="adulto">
       ${navHTML('creditos')}
-      <h1>Créditos y licencias</h1>
-      ${AVISO}
+      ${tituloHTML('Créditos y licencias', 'Origen y licencia de la marca, los pictogramas, las imágenes y la aplicación.')}
+      <section class="panel">
+        <h2>Equipo</h2>
+        <p><span class="nombre-marca">AutiPal</span> es un proyecto de Neuro-BlueMinds, que fundó ${esc(FUNDADOR)} (fundador y CEO) junto con ${esc(COFUNDADOR)} (cofundador y co-CEO). Este prototipo lo hicieron:</p>
+        <dl class="equipo">
+          ${EQUIPO.map((p) => `
+          <div>
+            <dt>${esc(p.nombre)}</dt>
+            <dd class="equipo-rol">${esc(p.rol)}</dd>
+            ${p.rolSecundario ? `<dd class="equipo-rol">Rol secundario: ${esc(p.rolSecundario.charAt(0).toLowerCase() + p.rolSecundario.slice(1))}</dd>` : ''}
+            <dd>${esc(p.aporte)}</dd>
+          </div>`).join('')}
+        </dl>
+      </section>
+      <section class="panel">
+        <h2>Marca</h2>
+        <picture class="logotipo">
+          <source srcset="assets/marca/logotipo-invertido.svg" media="(prefers-color-scheme: dark)">
+          <img src="assets/marca/logotipo.svg" alt="AutiPal" width="174" height="48">
+        </picture>
+        <p class="lema">Amabilidad para cada mente</p>
+        <p><span class="nombre-marca">AutiPal</span> es la aplicación de Neuro-BlueMinds. El isotipo, el logotipo y el Manual de marca de <span class="nombre-marca">AutiPal</span> son propiedad de Neuro-BlueMinds. Todos los derechos reservados.</p>
+        <p>Las tipografías del Manual de marca son Roca Two, en los títulos, y More Sugar, en el logotipo y en el nombre <span class="nombre-marca">AutiPal</span>. En este prototipo se usan solo para pruebas y no vienen en el repositorio; antes de vender la aplicación se compran sus licencias comerciales. El texto usa Noto Sans, y Noto Serif reemplaza a Roca Two cuando no está instalada. Las dos son de The Noto Project Authors y se distribuyen bajo la licencia SIL Open Font License 1.1 (<a href="assets/fonts/OFL.txt">texto de la licencia</a>). Ninguna tipografía se carga de un servidor externo.</p>
+      </section>
       <section class="panel">
         <h2>Pictogramas</h2>
         <p>Los pictogramas son de ARASAAC y se distribuyen bajo la licencia Creative Commons BY-NC-SA, que autoriza su uso sin fines de lucro citando la fuente y el autor, y obliga a compartir las obras derivadas con la misma licencia.</p>
@@ -254,13 +362,14 @@ export function renderCreditos(app, { conceptos }) {
         </details>
       </section>
       <section class="panel">
-        <h2>Fotografías y audio</h2>
-        <p>Las imágenes de los ejemplares son marcadores provisionales. Se reemplazarán por fotografías reales con licencia libre. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
+        <h2>Imágenes y audio</h2>
+        <p>Las imágenes de los ejemplares son marcadores provisionales. Se reemplazarán por imágenes con licencia y revisión clínica. Mientras no haya archivos de audio, las consignas usan la voz del navegador. El origen y la licencia de cada archivo están en <a href="items/licencias.csv">items/licencias.csv</a>.</p>
       </section>
       <section class="panel">
         <h2>Aplicación</h2>
         <p>© 2026 Luis Nazariego Santome y equipo Neuro-BlueMinds. Todos los derechos reservados.</p>
         <p>Incluye el código, las fichas técnicas, el banco de ítems y las figuras de la actividad «Cambia la regla». No incluye los pictogramas de ARASAAC, que conservan su propia licencia.</p>
+        <p>Los íconos de las pantallas del adulto son de Phosphor Icons (© 2023 Phosphor Icons), con licencia MIT.</p>
       </section>
     </div>`;
 }

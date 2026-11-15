@@ -10,7 +10,6 @@ import {
 
 const ACTUAL = 'nbm.revision.actual';
 const clave = (iniciales) => `nbm.revision.${iniciales}`;
-const AVISO = '<p class="aviso">Prototipo para revisión de expertos. No es una herramienta diagnóstica.</p>';
 
 // localStorage puede estar bloqueado o lleno: entonces el avance solo vive en esta página.
 const almacen = {
@@ -54,7 +53,6 @@ export function renderRevision(app, { items, conceptos, fichas }) {
       <div class="adulto rev">
         ${navHTML('revision')}
         <h1>Revisión clínica de ítems</h1>
-        ${AVISO}
         <form class="panel" id="rev-entrar" novalidate>
           <p>Califica uno por uno los ${lista.length} ítems de la muestra para expertos de ACT-01 y ACT-02, las figuras de ACT-07 y tres decisiones pendientes. El avance se guarda en este dispositivo para continuar después. Nada se envía a ningún servidor.</p>
           <label>Iniciales
@@ -91,7 +89,6 @@ export function renderRevision(app, { items, conceptos, fichas }) {
     return `
       ${navHTML('revision')}
       <h1>Revisión clínica de ítems</h1>
-      ${AVISO}
       <div class="rev-revisor">
         <p class="meta">Revisor: <strong>${esc(rev.revisor.iniciales)}</strong> · ${esc(rev.revisor.profesion)}</p>
         <button type="button" id="rev-cambiar">Cambiar de revisor</button>
