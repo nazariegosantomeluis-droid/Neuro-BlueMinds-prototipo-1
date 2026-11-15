@@ -42,6 +42,7 @@
   "modalidades": [
     "AV"
   ],
+  "requiereVozGrabada": true,
   "ensayosPorBloque": 30,
   "rimas": [
     [
@@ -189,7 +190,7 @@
     "Solo con sonido; hipoacusia no corregida.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "El paradigma, la mecánica general, el criterio de las bandas (tipo de tarea y parecido entre sonidos), la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). Las palabras, las bandas, las figuras de «igual» y «diferente», el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Mientras no exista la voz grabada por una persona hablante nativa, la voz es la del navegador: en el registro queda audio_fuente = sintesis, con un inicio menos preciso. Por eso no se usan sonidos sueltos (como «/m/»), solo palabras completas. Los dibujos son los del banco (ejemplares 1 y 2).",
+  "notaPrototipo": "El paradigma, la mecánica general, el criterio de las bandas (tipo de tarea y parecido entre sonidos), la evidencia, la lectura no permitida y las contraindicaciones vienen del Catálogo de actividades (sección 6). Las palabras, las bandas, las figuras de «igual» y «diferente», el número de ensayos y los ítems son una propuesta para este prototipo y esperan revisión clínica. Requiere la voz grabada por una persona hablante nativa («requiereVozGrabada»), que todavía no existe. Con la voz del navegador la actividad solo se abre después de un aviso, para revisar la mecánica, y ningún ensayo queda como válido: los que tienen audio_fuente = sintesis quedan con fallo_tecnico = true y peso_calidad = 0, y el resumen del bloque no los cuenta. No se usan sonidos sueltos (como «/m/»), solo palabras completas. Los dibujos son los del banco (ejemplares 1 y 2).",
   "pendientesClinicos": [
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
     "Aprobar las palabras de las rimas, los inicios con la misma sílaba y los pares que cambian en un solo sonido.",

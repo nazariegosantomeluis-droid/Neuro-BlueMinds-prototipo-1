@@ -281,6 +281,7 @@ src/styles.css                Estilos: marca AutiPal en el adulto, pantalla del 
 src/engine/trial.js           Máquina de estados del ensayo y ejecución del bloque
 src/engine/clock.js           Medición del tiempo: performance.now, cuadros, foco
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
+src/voz-grabada.js            Aviso y resumen de las actividades que requieren la voz grabada (ACT-15)
 src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
 src/engine/selector.js        Selección de ítems por banda, con semilla
 src/engine/quality.js         Reglas de calidad y resumen descriptivo
@@ -425,7 +426,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `cuadros_perdidos`, `cuadros_total` | Intervalos entre cuadros mayores a 1.5 veces el periodo normal, y total de intervalos medidos. |
 | `periodo_cuadro_ms` | Mediana de los intervalos entre cuadros (`requestAnimationFrame`) durante el ensayo: unos 16.7 ms a 60 Hz y 33.3 ms a 30 Hz. |
 | `interrumpido` | `true` si el terapeuta pausó durante el ensayo. Ese ensayo no se repite. |
-| `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. |
+| `fallo_tecnico` | `true` si el audio de la consigna AV no arrancó o falló. En las actividades que requieren la voz grabada (ACT-15), también si la consigna sonó con la voz del navegador (`audio_fuente = sintesis`): ese ensayo nunca queda como válido. |
 | `tr_bruto_ms` | `t_toque − t_opciones`. |
 | `latencia_dispositivo_ms` | Latencia táctil y de pantalla de la tableta. Vacía hasta medir cada tableta. |
 | `tr_corregido_ms` | `tr_bruto_ms − latencia_dispositivo_ms`. Vacío si no hay latencia. |
@@ -543,6 +544,7 @@ Una fila por sesión, en este orden:
   - La última tarjeta pasa sola a su lugar y no es un paso ni tiene fila (`ultimaTarjeta: "sola"` en la ficha). En ACT-16 eso pasa aunque sobren piezas; con `"elige"`, el niño elegiría la última entre las que quedan. Queda como decisión clínica.
   - Un bloque propone 10 secuencias; A1 necesita 20 (Modelo matemático 4.1), que se juntan con dos bloques.
 - **ACT-14: los pictogramas de respuesta no son caras.** Con caras esquemáticas el niño podía acertar copiando la forma de la boca del rostro (risa, dientes, boca abierta) sin reconocer la emoción. La propuesta en uso son figuras de cuerpo entero con la cabeza sin rasgos, en las que la emoción se lee en la postura (`estiloPictograma: "postura"`). La ficha describe los dos estilos en `estilosPictograma`; elegir uno es una decisión clínica pendiente. Falta la banda B4, la emoción a partir de una situación, que necesita escenas de situaciones.
+- **ACT-15 requiere la voz grabada** (`requiereVozGrabada` en la ficha), que todavía no existe. Con la voz del navegador, antes del bloque aparece un aviso y el adulto decide si la abre solo para revisar la mecánica. El motor deja cada ensayo con `audio_fuente = sintesis` como fallo técnico (`fallo_tecnico = true`, `peso_calidad = 0`): nunca queda como válido, y el resumen del bloque no lo cuenta.
 - **ACT-12: dos bloques de 40 se juntan en 80 elecciones.** El Catálogo pide 80 elecciones o más para verificar que se recuperan los parámetros del modelo de aprendizaje, y un bloque tiene como mucho 40 ensayos (Arquitectura 4.4). Por eso (`juntarBloques` de la ficha):
   - El segundo bloque de la misma banda en la sesión elige un programa que empieza con el cofre que terminó premiando más en el primero. Así las 80 elecciones son un solo programa: en B1 y B2 el mismo cofre premia más todo el tiempo; en B3 y B4 la ventaja cambia en las elecciones 21 y 61.
   - El resumen de cada bloque, al terminarlo y en «Sesiones», cuenta las elecciones de esa banda en la sesión y, si son menos de 80, pide otro bloque. Las omisiones y los ensayos interrumpidos no cuentan como elecciones.

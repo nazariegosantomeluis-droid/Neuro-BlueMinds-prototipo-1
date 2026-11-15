@@ -101,6 +101,9 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
     r.audio_fin_por_tope = false;
     r.t_audio_inicio = a.tInicio;
     r.audio_fuente = a.fuente;
+    // Si la ficha requiere la voz grabada (ACT-15), un ensayo con la voz del navegador nunca
+    // queda como válido: cuenta como fallo técnico (peso_calidad = 0).
+    if (ficha.requiereVozGrabada && a.fuente === 'sintesis') r.fallo_tecnico = true;
     r.audio_latencia_ms = a.latenciaMs ?? null;
     const fin = await guard(Promise.race([a.fin.catch(() => FAIL), env.sleep(AUDIO_CAP_MS).then(() => CAP)]));
     if (fin === STOP) return STOP;

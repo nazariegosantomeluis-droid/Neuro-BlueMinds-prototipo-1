@@ -18,6 +18,7 @@ import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
+import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
@@ -363,6 +364,11 @@ async function start(form) {
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
+  // ACT-15 requiere la voz grabada: con la del navegador solo se abre después de un aviso, y sus
+  // ensayos quedan como fallo técnico (el motor nunca los deja como válidos).
+  if (f.modalidad === 'AV' && ficha.requiereVozGrabada && !(await audio.grabada(trials.map((t) => t.consigna.audio)))) {
+    if (!(await confirmarVozGrabada())) return renderInicio();
+  }
   // Si las opciones no caben a su tamaño mínimo, el adulto decide si sigue.
   const ajuste = avisoDeAjuste(ficha, banda);
   if (ajuste && !(await confirmarPantalla(ajuste))) return renderInicio();
@@ -404,6 +410,24 @@ function confirmarPantalla(mensaje) {
         <div class="acciones">
           <button type="button" class="primario" data-r="volver">Volver</button>
           <button type="button" data-r="continuar">Continuar de todos modos</button>
+        </div>
+      </div>
+    </div>`;
+  return new Promise((resolve) => {
+    for (const b of app.querySelectorAll('[data-r]')) b.onclick = () => resolve(b.dataset.r === 'continuar');
+  });
+}
+
+// Aviso antes del bloque: la actividad requiere la voz grabada y no está (ACT-15).
+function confirmarVozGrabada() {
+  app.innerHTML = `
+    <div class="adulto">
+      <h1>Requiere la voz grabada</h1>
+      <div class="panel">
+        <p class="mensaje" role="alert">${esc(AVISO_VOZ_GRABADA)}</p>
+        <div class="acciones">
+          <button type="button" class="primario" data-r="volver">Volver</button>
+          <button type="button" data-r="continuar">Abrir para revisar la mecánica</button>
         </div>
       </div>
     </div>`;

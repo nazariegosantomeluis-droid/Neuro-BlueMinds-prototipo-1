@@ -3,6 +3,8 @@
 // Solo dibuja; el motor dice la consigna y registra.
 import { miniatura } from '../html.js';
 import { BOCINA } from './sonido.js';
+import { summarize } from '../engine/quality.js';
+import { lineasSinVozGrabada } from '../voz-grabada.js';
 
 const T = '#1d2226';
 // «Igual»: dos círculos iguales. «Diferente»: un círculo y un triángulo, de otro color.
@@ -10,6 +12,13 @@ export const SIMBOLOS = {
   igual: `<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="58" cy="100" r="36" fill="#2f7fc1" stroke="${T}" stroke-width="6"/><circle cx="142" cy="100" r="36" fill="#2f7fc1" stroke="${T}" stroke-width="6"/></svg>`,
   diferente: `<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="58" cy="100" r="36" fill="#2f7fc1" stroke="${T}" stroke-width="6"/><path d="M142 62 L180 136 H104 Z" fill="#e69f00" stroke="${T}" stroke-width="6" stroke-linejoin="round"/></svg>`,
 };
+
+// Resumen del bloque: los ensayos con la voz del navegador no son válidos (la ficha requiere la
+// voz grabada) y no entran en los conteos; se dice cuántos fueron.
+export function resumen(rows, byCode, ficha) {
+  const conVoz = rows.filter((r) => r.audio_fuente !== 'sintesis');
+  return [...lineasSinVozGrabada(rows), ...(conVoz.length ? summarize(conVoz, ficha) : [])];
+}
 
 export const toTrials = (items) => items.map((it) => ({ codigo: it.codigo, consigna: it.consigna, opciones: it.opciones }));
 
@@ -71,4 +80,4 @@ export const consignaHTML = () => `<span class="dib dib-figura">${BOCINA}</span>
 export const opcionHTML = (o) => (o.simbolo ? `<span class="dib dib-figura">${SIMBOLOS[o.simbolo]}</span>` : miniatura(o.src));
 export const opcionTexto = (o) => (o.simbolo ? o.simbolo : null);
 export const consignaTexto = (it) => `Voz: «${it.consigna.texto}»`;
-export const notaPrevia = () => 'La voz es la del navegador hasta tener la voz grabada.';
+export const notaPrevia = () => 'Requiere la voz grabada. Con la voz del navegador se abre solo para revisar la mecánica y ningún ensayo queda como válido.';

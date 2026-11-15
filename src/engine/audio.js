@@ -77,6 +77,12 @@ export function createAudio({ base = 'assets/audio/' } = {}) {
     return Boolean(await voice());
   }
 
+  // ¿Están grabadas todas las consignas del bloque? Sin archivo, la voz sería la del navegador.
+  async function grabada(keys) {
+    await preload(keys);
+    return keys.length > 0 && keys.every((k) => buffers.get(k));
+  }
+
   async function play(key, texto) {
     const buffer = buffers.get(key);
     if (buffer && ctx) {
@@ -129,6 +135,7 @@ export function createAudio({ base = 'assets/audio/' } = {}) {
     unlock,
     preload,
     available,
+    grabada,
     play,
     setVolume(v) {
       volume = v;
