@@ -58,6 +58,8 @@ export function avisoDeAjuste(ficha, banda) {
     disposicion: banda.disposicion ?? `1x${banda.opciones}`,
     // La serie más larga de la banda, más el lugar vacío (ACT-11).
     lugares: banda.largos ? Math.max(...banda.largos) + 1 : 0,
+    // Las escenas de ACT-04 piden más de 2 cm para que se distinga la acción (ficha, «opcionMinCm»).
+    ...(ficha.opcionMinCm ? { opcionMin: ficha.opcionMinCm } : {}),
     anchoPx: innerWidth,
     altoPx: innerHeight,
     cmPx: cmPx(),

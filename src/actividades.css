@@ -589,9 +589,11 @@
   height: min(calc(var(--cm) * 3), 22vh);
 }
 
+/* Las escenas miden al menos 4.5 cm, el tamaño al que se revisaron (fichas/ACT-04.json,
+   «opcionMinCm»; docs/medicion-escenas.json), y crecen hasta 8 cm si la pantalla lo permite. */
 .escena-consigna {
-  width: min(calc(var(--cm) * 5.5), 40vh);
-  height: min(calc(var(--cm) * 5.5), 40vh);
+  width: clamp(calc(var(--cm) * 4.5), 100vh - var(--cm) * 7.5, calc(var(--cm) * 8));
+  height: clamp(calc(var(--cm) * 4.5), 100vh - var(--cm) * 7.5, calc(var(--cm) * 8));
 }
 
 .escena-consigna svg,
@@ -602,10 +604,14 @@
 }
 
 .opciones-escenas {
+  --separacion: calc(var(--cm) * 0.6);
   --opcion: clamp(
-    calc(var(--cm) * 2),
-    min((100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas), 100vh - var(--cm) * 7),
-    calc(var(--cm) * 5.5)
+    calc(var(--cm) * 4.5),
+    min(
+      (100vw - var(--separacion) * (var(--columnas) + 1)) / var(--columnas),
+      (100vh - var(--cm) * 4.5 - var(--separacion) * (var(--filas) + 1)) / var(--filas)
+    ),
+    calc(var(--cm) * 8)
   );
 }
 

@@ -51,6 +51,37 @@
     "AV"
   ],
   "ensayosPorBloque": 30,
+  "opcionMinCm": 4.5,
+  "accionesAmbiguas": [
+    {
+      "pares": [
+        "nina: peina / telefono",
+        "nino: peina / telefono"
+      ],
+      "motivo": "En las dos escenas la persona sostiene un objeto oscuro junto a la cabeza, del mismo lado; el peine y el teléfono se parecen a 4.5 cm."
+    },
+    {
+      "pares": [
+        "pato caja: dentro / arriba",
+        "pollito caja: dentro / arriba",
+        "zapato caja: dentro / arriba"
+      ],
+      "motivo": "En «dentro» la figura sobresale casi entera por encima del borde de la caja y parece estar encima."
+    },
+    {
+      "pares": [
+        "abraza: conejo / pato"
+      ],
+      "motivo": "Los dos animales son blancos y quedan en los brazos de la persona; solo los distinguen las orejas y el pico."
+    },
+    {
+      "pares": [
+        "conejo mesa: arriba / abajo",
+        "pato mesa: arriba / abajo"
+      ],
+      "motivo": "A ojo se distinguen, pero las figuras blancas sobre el fondo blanco de la opción solo cambian por su contorno: el filtro numérico no las separa por debajo de 6 cm."
+    }
+  ],
   "acciones": {
     "duerme": {
       "verbo": "duerme",
@@ -152,7 +183,7 @@
     "La versión hablada (AV) exige oír bien: hipoacusia no corregida.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y estructura: sujeto y verbo; sujeto, verbo y objeto; negación; relaciones espaciales), la verificación con dos opciones, la lectura no permitida y la contraindicación de la versión escrita vienen del Catálogo de actividades (sección 6). Las oraciones, las escenas, los tiempos y el número de ensayos son una propuesta y esperan revisión clínica. Las escenas se dibujan con código: un niño (pelo corto y pantalón) o una niña (coletas y falda), con cuatro tonos de piel, haciendo una acción; los objetos y los animales son recortes de los dibujos del banco (ejemplar 1) en assets/escenas. En una misma pantalla la persona se ve siempre igual. En la verificación (B5), el Catálogo propone el modelo EZ; este prototipo solo cuenta. En V la oración se lee 3 s antes de que aparezcan las escenas; en AV las escenas aparecen al terminar la voz, que es la del navegador hasta tener la voz grabada.",
+  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y estructura: sujeto y verbo; sujeto, verbo y objeto; negación; relaciones espaciales), la verificación con dos opciones, la lectura no permitida y la contraindicación de la versión escrita vienen del Catálogo de actividades (sección 6). Las oraciones, las escenas, los tiempos y el número de ensayos son una propuesta y esperan revisión clínica. Las escenas se dibujan con código: un niño (pelo corto y pantalón) o una niña (coletas y falda), con cuatro tonos de piel, haciendo una acción; los objetos y los animales son recortes de los dibujos del banco (ejemplar 1) en assets/escenas. En una misma pantalla la persona se ve siempre igual. En la verificación (B5), el Catálogo propone el modelo EZ; este prototipo solo cuenta. En V la oración se lee 3 s antes de que aparezcan las escenas; en AV las escenas aparecen al terminar la voz, que es la del navegador hasta tener la voz grabada. Las escenas miden al menos 4.5 cm y crecen hasta 8 cm si cabe; si la pantalla no las deja de 4.5 cm, el inicio avisa antes de empezar. A ese tamaño, en una tableta de 10 pulgadas, se midieron con tools/medir-escenas.mjs (docs/medicion-escenas.json) y se revisaron a ojo; «accionesAmbiguas» lista las que siguen siendo dudosas.",
   "pendientesClinicos": [
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
     "Aprobar las oraciones de cada banda: acciones, objetos, negaciones y relaciones de lugar.",

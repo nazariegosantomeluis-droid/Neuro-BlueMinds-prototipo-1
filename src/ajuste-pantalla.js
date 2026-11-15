@@ -23,6 +23,9 @@ const REPARTO = {
   // ACT-12: los dos cofres van en el centro, con 2 cm entre ellos; se pide lo mismo que si
   // ocuparan la mitad de abajo, que es más estricto.
   cofres: { zona: 'mitad', separacion: 2, proporcion: 1 },
+  // ACT-04: las escenas van en una fila debajo de la oración (o de la escena, en B5), con 0.6 cm
+  // entre ellas. Su tamaño mínimo lo fija la ficha («opcionMinCm»), no los 2 cm de una opción.
+  oracion: { zona: 'escenas', separacion: 0.6, proporcion: 1, consigna: 4 },
 };
 
 // Margen libre alrededor de las opciones cuando ya están a su tamaño mínimo.
@@ -35,23 +38,27 @@ const SERIE_MARGEN_CM = 2;
 export const anchoDeSerie = (lugares) => (lugares ? lugares * (LUGAR_MIN_CM + SERIE_SEPARACION_CM) + SERIE_MARGEN_CM : 0);
 
 // Tamaño mínimo de la ventana, en cm, para una disposición de «filas x columnas»: las opciones
-// a 2 cm, con su separación, sin salirse de la pantalla ni de su zona. «lugares» es el número de
-// lugares de la serie más larga de la banda, si la consigna es una serie.
-export function espacioMinimo(pantalla, disposicion, { lugares = 0 } = {}) {
+// a su tamaño mínimo (2 cm, o el que fije la ficha), con su separación, sin salirse de la pantalla
+// ni de su zona. «lugares» es el número de lugares de la serie más larga de la banda, si la
+// consigna es una serie.
+export function espacioMinimo(pantalla, disposicion, { lugares = 0, opcionMin = OPCION_MIN_CM } = {}) {
   const r = REPARTO[pantalla] ?? REPARTO.seleccion;
   const [filas, columnas] = disposicion.split('x').map(Number);
-  const anchoOpciones = columnas * OPCION_MIN_CM * r.proporcion + r.separacion * (columnas - 1) + MARGEN_CM;
+  const anchoOpciones = columnas * opcionMin * r.proporcion + r.separacion * (columnas - 1) + MARGEN_CM;
   const anchoSerie = anchoDeSerie(lugares);
+  const bloque = filas * opcionMin + r.separacion * (filas - 1);
   const alto =
     r.zona === 'mitad'
-      ? 2 * (filas * OPCION_MIN_CM + r.separacion * (filas - 1) + MARGEN_CM) // caben en la mitad de abajo
-      : r.objetivo + filas * OPCION_MIN_CM + r.separacion * (filas + 2);
-  return { ancho: Math.max(anchoOpciones, anchoSerie), alto, anchoOpciones, anchoSerie };
+      ? 2 * (bloque + MARGEN_CM) // caben en la mitad de abajo
+      : r.zona === 'escenas'
+        ? r.consigna + bloque + MARGEN_CM
+        : r.objetivo + filas * opcionMin + r.separacion * (filas + 2);
+  return { ancho: Math.max(anchoOpciones, anchoSerie), alto, anchoOpciones, anchoSerie, opcion: opcionMin };
 }
 
 // anchoPx y altoPx: tamaño de la ventana; cmPx: píxeles por centímetro (variable --cm).
-export function comprobarPantalla({ pantalla, disposicion, lugares = 0, anchoPx, altoPx, cmPx }) {
-  const min = espacioMinimo(pantalla, disposicion, { lugares });
+export function comprobarPantalla({ pantalla, disposicion, lugares = 0, opcionMin = OPCION_MIN_CM, anchoPx, altoPx, cmPx }) {
+  const min = espacioMinimo(pantalla, disposicion, { lugares, opcionMin });
   const ancho = anchoPx / cmPx;
   const alto = altoPx / cmPx;
   // Medio milímetro de tolerancia: la calibración redondea.
@@ -72,6 +79,6 @@ export function avisoPantalla({ girar, ancho, alto, min, lugares, falta }, opcio
   if (falta === 'serie') {
     return `${pantalla} la serie de ${lugares} lugares quedaría con figuras de menos de ${LUGAR_MIN_CM} cm: hacen falta ${cm(min.ancho)} cm de ancho. ${girar ? 'Gira la tableta.' : 'Usa una pantalla más ancha.'}`;
   }
-  const base = `${pantalla} no caben ${opciones} opciones de ${OPCION_MIN_CM} cm con su separación: hacen falta ${cm(min.ancho)} × ${cm(min.alto)} cm.`;
+  const base = `${pantalla} no caben ${opciones} opciones de ${cm(min.opcion ?? OPCION_MIN_CM)} cm con su separación: hacen falta ${cm(min.ancho)} × ${cm(min.alto)} cm.`;
   return `${base} ${girar ? 'Gira la tableta.' : 'Usa una pantalla más grande o una banda con menos opciones.'}`;
 }

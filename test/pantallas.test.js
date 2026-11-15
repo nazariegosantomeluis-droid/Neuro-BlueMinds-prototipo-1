@@ -60,7 +60,9 @@ test('RNF-04: en las pantallas nuevas cada opción mide al menos 2 cm y hay 0.5 
   // Cajas de categoría, búsqueda, cofres, estímulo de «Espera la señal», tarjetas de las
   // secuencias, escenas y palomita y tache.
   assert.equal(tamanos.length, 7);
-  for (const v of tamanos) assert.match(v, /^clamp\( ?calc\(var\(--cm\) \* 2\),/, v);
+  // Todas parten de 2 cm, salvo las escenas de ACT-04, que parten de 4.5 cm (su ficha, «opcionMinCm»).
+  for (const v of tamanos) assert.match(v, /^clamp\( ?calc\(var\(--cm\) \* (2|4\.5)\),/, v);
+  assert.equal(tamanos.filter((v) => v.startsWith('clamp( calc(var(--cm) * 4.5)')).length, 1);
   for (const [, v] of css.matchAll(/--separacion:\s*([^;]+);/g)) {
     const cm = v.trim() === 'var(--cm)' ? 1 : Number(/calc\(var\(--cm\) \* ([\d.]+)\)/.exec(v)?.[1]);
     assert.ok(cm >= 0.5, `separación de ${v}`);
@@ -102,7 +104,7 @@ test('index.html carga la hoja de las actividades nuevas después de la principa
 test('el tamaño mínimo de cada pantalla sale de las mismas medidas que la hoja de estilos', () => {
   assert.equal(OPCION_MIN_CM, 2);
   // Selección, 4 opciones en fila: 4 × 2 cm, 3 separaciones de 1 cm y medio centímetro de margen.
-  assert.deepEqual(espacioMinimo('seleccion', '1x4'), { ancho: 11.5, alto: 5, anchoOpciones: 11.5, anchoSerie: 0 });
+  assert.deepEqual(espacioMinimo('seleccion', '1x4'), { ancho: 11.5, alto: 5, anchoOpciones: 11.5, anchoSerie: 0, opcion: 2 });
   // Cajas de categoría: 1.7 veces más anchas que altas.
   assert.ok(Math.abs(espacioMinimo('categorias', '1x3').ancho - 12.7) < 1e-9);
   assert.match(css, /grid-template-columns: repeat\(var\(--columnas\), calc\(var\(--opcion\) \* 1\.7\)\)/);
