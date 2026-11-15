@@ -45,7 +45,7 @@ export const EN_UNA_LINEA = {
   'ACT-10': 'Tocar en orden los dibujos de una historia, o seguir una instrucción de varios pasos.',
   'ACT-11': 'Elegir la figura que sigue en una serie.',
   'ACT-12': 'Elegir entre dos cofres; uno tiene la estrella más veces que el otro.',
-  'ACT-13': 'Tocar el globo cuando aparece y no tocar la nube.',
+  'ACT-13': 'Tocar el pez cuando aparece y no tocar la nube.',
   'ACT-14': 'Elegir el pictograma de la emoción de un rostro dibujado.',
   'ACT-15': 'Escuchar una palabra y elegir la que rima o empieza igual.',
   'ACT-16': 'Formar una palabra tocando sus sílabas o letras en orden.',

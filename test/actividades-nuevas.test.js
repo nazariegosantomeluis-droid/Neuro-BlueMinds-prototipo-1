@@ -131,10 +131,10 @@ test('ACT-13: el resumen separa omisiones (ante el «sí») y errores de comisi�
   const f = ficha('ACT-13');
   const s = of('ACT-13', 'B1')[0];
   const byCode = new Map(s.ensayos.map((e) => [e.codigo, e]));
-  // Toca todos los globos menos el primero, y la primera nube.
+  // Toca todos los peces menos el primero, y la primera nube.
   let nubeTocada = false;
   const rows = s.ensayos.map((e, i) => {
-    if (e.tipo === 'si') return i === 0 ? fila(e.codigo) : fila(e.codigo, { pos: 1, id: 'globo', acierto: true, tr: 500 });
+    if (e.tipo === 'si') return i === 0 ? fila(e.codigo) : fila(e.codigo, { pos: 1, id: 'pez', acierto: true, tr: 500 });
     if (!nubeTocada) {
       nubeTocada = true;
       return fila(e.codigo, { pos: 1, id: 'nube', tr: 450 });
@@ -144,9 +144,9 @@ test('ACT-13: el resumen separa omisiones (ante el «sí») y errores de comisi�
   const sis = s.ensayos.filter((e) => e.tipo === 'si').length;
   const nos = s.ensayos.length - sis;
   const lineas = senal.resumen(rows, byCode, f);
-  assert.equal(lineas[0], `Ante el globo («sí»): tocó ${sis - 1} de ${sis}; sin tocar, 1 (omisiones).`);
+  assert.equal(lineas[0], `Ante el pez («sí»): tocó ${sis - 1} de ${sis}; sin tocar, 1 (omisiones).`);
   assert.equal(lineas[1], `Ante la nube («no»): no tocó ${nos - 1} de ${nos}; tocó 1 (errores de comisión).`);
-  assert.equal(lineas[2], `Mediana del tiempo de respuesta ante el globo: 0.50 s, en ${sis - 1} con respuesta (sin contar las anticipatorias).`);
+  assert.equal(lineas[2], `Mediana del tiempo de respuesta ante el pez: 0.50 s, en ${sis - 1} con respuesta (sin contar las anticipatorias).`);
   assert.match(lineas.at(-1), /Modelo matemático/);
   for (const l of lineas) assert.doesNotMatch(l, /impulsiv/i);
 });

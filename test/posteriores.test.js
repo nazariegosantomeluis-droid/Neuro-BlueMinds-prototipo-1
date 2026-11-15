@@ -82,7 +82,7 @@ test('ningún ítem usa el ejemplar 3, reservado para las sondas de generalizaci
 
 test('todas las imágenes que los ítems nombran existen, y no hay archivos nuevos sin licencia', () => {
   for (const src of new Set(items.flatMap(rutas))) assert.ok(existe(src), src);
-  // Las figuras, los rostros, los pictogramas de emoción, los cofres, el globo y la nube se dibujan
+  // Las figuras, los rostros, los pictogramas de emoción, los cofres, el pez y la nube se dibujan
   // con código: no agregan archivos. Las historias de ACT-10 en V tampoco.
   for (const it of [...of('ACT-11'), ...of('ACT-12'), ...of('ACT-13'), ...of('ACT-14'), ...of('ACT-10').filter((i) => i.modalidad === 'V')]) assert.deepEqual(rutas(it), [], it.codigo);
   // Los sonidos y el silencio de las secuencias sí son archivos, con su licencia.

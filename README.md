@@ -43,7 +43,7 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | Código | Nombre | Qué hace el niño | Modalidad | Bandas |
 |---|---|---|---|---|
 | ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, a la mitad del bloque esa ventaja pasa al otro cofre | Solo V | B1 a B4 |
-| ACT-13 | Espera la señal | Toca el globo cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
+| ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
 
 En esta rama todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
 
@@ -530,7 +530,7 @@ Una fila por sesión, en este orden:
 | ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra (en B3, una o dos), y nunca repite una pieza de la palabra |
 
 - Ningún ítem usa el ejemplar 3, reservado para las sondas de generalización de ACT-02, ni junta en una pantalla conceptos que se excluyen.
-- ACT-03, 05, 06, 08, 09, 10 (en AV), 15 y 16 usan los dibujos y pictogramas del banco. Las figuras de ACT-11, los rostros y pictogramas de emoción de ACT-14, las escenas de ACT-04, las historias de ACT-10, los cofres de ACT-12, el globo y la nube de ACT-13, y las figuras de «igual» y «diferente» de ACT-15 se dibujan con código.
+- ACT-03, 05, 06, 08, 09, 10 (en AV), 15 y 16 usan los dibujos y pictogramas del banco. Las figuras de ACT-11, los rostros y pictogramas de emoción de ACT-14, las escenas de ACT-04, las historias de ACT-10, los cofres de ACT-12, el pez y la nube de ACT-13 (no el globo de la pausa guiada), y las figuras de «igual» y «diferente» de ACT-15 se dibujan con código.
 - Las escenas de ACT-04 son personas dibujadas con código, con objetos y animales recortados de los dibujos del banco (`assets/escenas/`). Cada ítem fija el tono de piel, el pelo y la ropa de la persona, así que en sus opciones solo cambia lo que dice la oración.
 - **Tamaño de las escenas de ACT-04.** Miden al menos 4.5 cm (`opcionMinCm` de la ficha) y crecen hasta 8 cm si la pantalla lo permite. Si no caben a 4.5 cm (por ejemplo, las 4 escenas de B2 en una tableta en vertical), el inicio lo avisa antes de empezar.
 - **Medición de las escenas.** `node tools/medir-escenas.mjs` (necesita Playwright con Chromium; no corre en la verificación de GitHub) dibuja, con la densidad de una tableta de 10 pulgadas (59 px CSS por cm), cada par de escenas que puede ir junto en un ítem: dos acciones, dos objetos de la misma acción, el niño y la niña, y dos relaciones de lugar. Mide la mayor zona en que cambian y la compara con un umbral propuesto (4 mm de lado menor y 25 mm²). Escribe [`docs/medicion-escenas.json`](docs/medicion-escenas.json) y [`docs/escenas-tamano-real.png`](docs/escenas-tamano-real.png). Es un filtro para la revisión, no un criterio clínico: «come» y «bebe», y todas las demás acciones, lo pasan a 4.5 cm.

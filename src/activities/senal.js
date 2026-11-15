@@ -1,16 +1,23 @@
 // Pantalla de ACT-13 «Espera la señal» (investigación): un estímulo a la vez, en el centro. El
-// niño toca el globo («sí») y deja la nube («no») sin tocar. Antes del bloque, una pantalla sin
+// niño toca el pez («sí») y deja la nube («no») sin tocar. Antes del bloque, una pantalla sin
 // texto muestra qué se toca y qué no. Solo dibuja; el motor registra.
+// El estímulo de «sí» no es el globo de la pausa guiada (ACT-17): el niño no debe asociar la
+// pausa con una tarea en la que se toca.
 import { summarize, median } from '../engine/quality.js';
 
 const TINTA = '#1d2226';
 
+// Plural de cada estímulo, para el resumen y la galería.
+export const PLURAL = { pez: 'peces', nube: 'nubes' };
+
 export const ESTIMULOS = {
-  globo: `<svg viewBox="0 0 200 200" aria-hidden="true">
-    <path d="M100 150 C96 164 108 172 100 190" fill="none" stroke="${TINTA}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M100 18 C138 18 158 48 158 80 C158 116 128 144 100 148 C72 144 42 116 42 80 C42 48 62 18 100 18 Z" fill="#e69f00" stroke="${TINTA}" stroke-width="5"/>
-    <path d="M92 147 L100 160 L108 147 Z" fill="#e69f00" stroke="${TINTA}" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M70 52 C76 42 86 38 94 38" fill="none" stroke="#fbe3a6" stroke-width="7" stroke-linecap="round"/>
+  pez: `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <path d="M146 100 L188 62 L180 100 L188 138 Z" fill="#e69f00" stroke="${TINTA}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M78 66 C86 42 114 38 126 70 Z" fill="#f6d27a" stroke="${TINTA}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M14 100 C36 60 90 50 130 68 C142 74 152 88 154 100 C152 112 142 126 130 132 C90 150 36 140 14 100 Z" fill="#e69f00" stroke="${TINTA}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M86 100 C98 108 104 120 98 132" fill="none" stroke="${TINTA}" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="46" cy="92" r="10" fill="#ffffff" stroke="${TINTA}" stroke-width="4"/>
+    <circle cx="48" cy="92" r="4.5" fill="${TINTA}"/>
   </svg>`,
   nube: `<svg viewBox="0 0 200 200" aria-hidden="true">
     <path d="M52 140 C30 140 20 124 22 110 C24 94 38 86 52 88 C54 64 74 50 96 54 C110 36 140 36 152 58 C172 58 184 74 180 92 C192 100 192 124 178 134 C172 140 164 140 156 140 Z" fill="#a9c1d6" stroke="${TINTA}" stroke-width="5" stroke-linejoin="round"/>
@@ -52,7 +59,7 @@ export function createView(stage) {
       stage.replaceChildren();
       estimulo = null;
     },
-    // Sí: el globo con la mano que toca. No: la nube con la mano abierta.
+    // Sí: el pez con la mano que toca. No: la nube con la mano abierta.
     showAnnouncement({ si, no }) {
       stage.replaceChildren(
         el('senal-anuncio', `
@@ -80,7 +87,7 @@ export function createView(stage) {
 // ---------- Resumen del bloque ----------
 
 // Sustituye al resumen del motor: no tocar la nube es la respuesta esperada, así que «sin
-// respuesta» solo cuenta como omisión ante el globo, y tocar la nube es un error de comisión.
+// respuesta» solo cuenta como omisión ante el pez, y tocar la nube es un error de comisión.
 export function resumen(rows, byCode, ficha) {
   const validos = rows.filter((r) => !r.interrumpido);
   const de = (tipo) => validos.filter((r) => byCode.get(r.item)?.tipo === tipo);
@@ -110,7 +117,7 @@ export function galeriaHTML(it, { ficha }) {
   return `
     <div class="item-programa">
       <span class="item-estimulo dib-cofres">${ESTIMULOS[ficha.estimulos.si]}${ESTIMULOS[ficha.estimulos.no]}</span>
-      <p>${it.ensayos.length - nos} ${ficha.estimulos.si}s y ${nos} nubes, en este orden. Nunca empieza con una nube ni pone más de ${ficha.maxNoSeguidos} seguidas.</p>
+      <p>${it.ensayos.length - nos} ${PLURAL[ficha.estimulos.si]} y ${nos} ${PLURAL[ficha.estimulos.no]}, en este orden. Nunca empieza con una nube ni pone más de ${ficha.maxNoSeguidos} seguidas.</p>
     </div>
     <ol class="programa" aria-label="Orden de las presentaciones">${marcas}</ol>`;
 }

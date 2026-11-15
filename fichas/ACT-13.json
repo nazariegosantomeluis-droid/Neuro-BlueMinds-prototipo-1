@@ -6,7 +6,7 @@
   "objetivo": "Describir si el niño toca el estímulo de «sí» cuando aparece y deja sin tocar el de «no».",
   "paradigma": "Respuesta y no respuesta.",
   "evidencia": "Mixta. El Catálogo pide definir sus indicadores en el Modelo matemático y un diseño contra el efecto techo antes de usarla.",
-  "mecanica": "Antes del bloque, una pantalla muestra el globo con un dedo que toca y la nube con una mano abierta. Después aparecen uno por uno, en el centro: el niño toca el globo y deja la nube sin tocar. Cada uno se quita al tocarlo o cuando se acaba su tiempo.",
+  "mecanica": "Antes del bloque, una pantalla muestra el pez con un dedo que toca y la nube con una mano abierta. Después aparecen uno por uno, en el centro: el niño toca el pez y deja la nube sin tocar. Cada uno se quita al tocarlo o cuando se acaba su tiempo.",
   "tipoRespuesta": "seleccion_unica",
   "respuesta": "tocar_o_no_tocar",
   "pantalla": "senal",
@@ -56,7 +56,7 @@
   "muestraExpertosPorBanda": 2,
   "maxNoSeguidos": 2,
   "estimulos": {
-    "si": "globo",
+    "si": "pez",
     "no": "nube"
   },
   "limiteRespuestaMs": 2000,
@@ -64,10 +64,10 @@
   "consignaVMs": 500,
   "retroalimentacionMs": 300,
   "anuncioMs": 6000,
-  "consignaAV": "Toca el globo.",
+  "consignaAV": "Toca el pez.",
   "resumen": "Tocó el estímulo en {aciertos} de {ensayos} presentaciones",
   "lecturasPermitidas": [
-    "Tocó 20 de 21 globos y dejó sin tocar 7 de 9 nubes"
+    "Tocó 20 de 21 peces y dejó sin tocar 7 de 9 nubes"
   ],
   "lecturasNoPermitidas": [
     "Es impulsivo"
@@ -77,7 +77,7 @@
     "Necesita un diseño contra el efecto techo; las bandas de este prototipo son una propuesta.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica general, el criterio de las bandas (proporción de «no» y ritmo), la lectura no permitida y las condiciones para usarla vienen del Catálogo de actividades (sección 6). Los estímulos, las proporciones, los tiempos y los 30 ensayos por bloque son una propuesta. Cada presentación tiene un solo estímulo; el bloque nunca empieza con una nube ni pone más de dos nubes seguidas. En el registro, una nube tiene pos_correcta = 0: si no se toca queda con omision = true y es la respuesta esperada; si se toca, es un error de comisión. El resumen del bloque los cuenta así, por separado.",
+  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica general, el criterio de las bandas (proporción de «no» y ritmo), la lectura no permitida y las condiciones para usarla vienen del Catálogo de actividades (sección 6). Los estímulos, las proporciones, los tiempos y los 30 ensayos por bloque son una propuesta. El estímulo de «sí» es un pez dibujado con código; antes era un globo, que se cambió para que no se parezca al globo de la pausa guiada (ACT-17). Cada presentación tiene un solo estímulo; el bloque nunca empieza con una nube ni pone más de dos nubes seguidas. En el registro, una nube tiene pos_correcta = 0: si no se toca queda con omision = true y es la respuesta esperada; si se toca, es un error de comisión. El resumen del bloque los cuenta así, por separado.",
   "pendientesClinicos": [
     "Definir en el Modelo matemático sus indicadores: omisiones solo ante el estímulo de «sí» y errores de comisión solo ante el de «no».",
     "Aprobar un diseño contra el efecto techo; las proporciones y los ritmos de las bandas son una propuesta.",
