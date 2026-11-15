@@ -19,6 +19,7 @@ import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
+import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
@@ -506,7 +507,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap);
+      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, false, { sesion: s, ficha });
       editSesion(s.id, (r) => {
         // De la pausa guiada solo se registra que ocurrió y cuánto duró.
         r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
@@ -575,7 +576,8 @@ function twoTaps(button, action, ms = 3000) {
 }
 
 // enReferencia: la pausa llegó durante la referencia motora, antes de cualquier bloque.
-function pausePanel(wrap, enReferencia = false) {
+// La pausa guiada solo aparece en el panel si está permitida (pausa-permiso.js).
+function pausePanel(wrap, enReferencia = false, { sesion = null, ficha = null } = {}) {
   return new Promise((resolve) => {
     const capa = document.createElement('div');
     capa.className = 'capa';
@@ -601,7 +603,7 @@ function pausePanel(wrap, enReferencia = false) {
             <button type="button" class="primario" data-r="continuar">Continuar</button>
             <button type="button" data-r="terminar">${enReferencia ? 'Terminar sesión' : 'Terminar bloque'}</button>
           </div>
-          ${state.pausa ? pausaOpcionesHTML(true) : ''}
+          ${state.pausa && !enReferencia && pausaGuiadaPermitida({ sesion, ficha }) ? pausaOpcionesHTML(true) : ''}
         </div>
       </div>`;
     bindVolumen(capa);
@@ -656,9 +658,11 @@ function opcionesDePausa(root) {
   return { duracionS: Number(valor('guiada-duracion')), ritmo: state.pausa.ritmos.find((r) => r.id === valor('guiada-ritmo')) };
 }
 
-// Página #pausa: la pausa guiada fuera de un bloque. Solo queda en el registro si hay una sesión en curso.
+// Página #pausa: la pausa guiada fuera de un bloque. Solo se abre en una sesión en modo experto
+// y queda anotada en ella.
 function renderPausa(msg = '') {
   const p = state.pausa;
+  const permitida = pausaGuiadaPermitida({ sesion: state.session });
   const lista = (xs) => `<ul>${xs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
   app.innerHTML = `
     <div class="adulto">
@@ -666,8 +670,12 @@ function renderPausa(msg = '') {
       ${tituloHTML('Pausa guiada', esc(p.objetivo))}
       <div class="panel">
         <p>${esc(p.mecanica)}</p>
-        ${pausaOpcionesHTML(false).replace('data-guiada>', 'data-guiada class="primario">')}
-        <p class="meta">${state.session ? `Queda anotada en la sesión ${esc(state.session.id)}: solo que ocurrió y cuánto duró.` : 'Sin una sesión en curso, la pausa no se guarda en el registro.'} ${esc(msg)}</p>
+        ${
+          permitida
+            ? `${pausaOpcionesHTML(false).replace('data-guiada>', 'data-guiada class="primario">')}
+        <p class="meta">Queda anotada en la sesión ${esc(state.session.id)}: solo que ocurrió y cuánto duró. ${esc(msg)}</p>`
+            : `<p class="aviso" role="status">${esc(PAUSA_SOLO_EXPERTO)}</p>`
+        }
       </div>
       <section class="panel ficha">
         <h2>${esc(p.id)} ${esc(p.nombre)} · ${esc(p.estado)}</h2>
@@ -681,6 +689,7 @@ function renderPausa(msg = '') {
         <p class="ayuda">${esc(p.notaPrototipo)}</p>
       </section>
     </div>`;
+  if (!permitida) return;
   app.querySelector('[data-guiada]').onclick = async () => {
     const opciones = opcionesDePausa(app);
     app.innerHTML = '<div class="nino"></div>';
@@ -690,7 +699,7 @@ function renderPausa(msg = '') {
     state.running = false;
     wake?.release().catch(() => {});
     const s = state.session;
-    if (s) editSesion(s.id, (r) => r.pausas.push({ bloque: s.bloque, ensayo: null, duracion_ms, pausa_guiada_ms: duracion_ms }));
+    editSesion(s.id, (r) => r.pausas.push({ bloque: s.bloque, ensayo: null, duracion_ms, pausa_guiada_ms: duracion_ms }));
     renderPausa(`La última pausa duró ${Math.round(duracion_ms / 1000)} s${completa ? '' : ' y se detuvo antes de tiempo'}.`);
   };
 }

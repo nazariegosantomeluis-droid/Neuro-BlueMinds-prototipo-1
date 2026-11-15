@@ -4,6 +4,7 @@ import { esc, navHTML, tituloHTML, chipHTML } from './paginas.js';
 import { EN_UNA_LINEA, ESQUEMAS, PANTALLAS, grupos, requiereModoExperto } from './catalogo.js';
 import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
+import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { DEMO, nombreNino, abreviar } from './ninos.js';
 import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
 
@@ -327,7 +328,11 @@ export function renderInicio(app, ctx, msg = '') {
             ? `<section class="panel herramienta" aria-labelledby="pausa-titulo">
                  <h2 id="pausa-titulo">Pausa guiada</h2>
                  <p class="meta">${esc(EN_UNA_LINEA['ACT-17'])} No mide nada.</p>
-                 <div class="acciones"><a class="boton" href="#pausa">Abrir la pausa guiada</a></div>
+                 ${
+                   pausaGuiadaPermitida({ sesion: state.session })
+                     ? '<div class="acciones"><a class="boton" href="#pausa">Abrir la pausa guiada</a></div>'
+                     : `<p class="ayuda">${esc(PAUSA_SOLO_EXPERTO)}</p>`
+                 }
                </section>`
             : ''
         }
