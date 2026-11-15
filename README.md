@@ -33,10 +33,10 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | Solo V | B1 a B4 |
 | ACT-10 | Ordena la secuencia | Toca en orden los momentos de una historia (V) o los dibujos que nombra una instrucción de varios pasos (AV); de 2 a 5 tarjetas | V y AV | B1 a B4 |
 | ACT-11 | Completa el patrón | Elige la figura que sigue en una serie: AB, AAB, ABC o dos reglas a la vez | V y AV | B1 a B4 |
-| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado | V y AV | B1 a B3 |
+| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado; los pictogramas son figuras de cuerpo entero | V y AV | B1 a B3 (falta B4) |
 | ACT-15 | Sonidos de las palabras | Escucha una palabra y toca la que rima o la que empieza igual; en B4 dice si dos palabras suenan igual | Solo AV | B1 a B4 |
 | ACT-16 | Forma la palabra | Forma el nombre de un dibujo tocando sus sílabas o sus letras en orden, o una frase con sus palabras; una pieza sobra | V y AV | B1 a B4 |
-| ACT-17 | Pausa guiada | Mira un globo que se infla y se desinfla despacio. No mide nada | — | Sin bandas |
+| ACT-17 | Pausa guiada | Mira un globo que se infla y se desinfla despacio. No mide nada. Solo en una sesión en modo experto | — | Sin bandas |
 
 **En investigación, con prototipo.** El Catálogo deja dos actividades en investigación: antes de usarlas hay que definir sus indicadores en el Modelo matemático. Su prototipo sirve para que el equipo revise la mecánica. Se abren solo en modo experto, van aparte en el inicio, en un grupo plegado, y no entran en el piloto, en la revisión clínica ni en el formulario F3.
 
@@ -46,6 +46,16 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
 
 En esta rama todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
+
+Ensayos por bloque (Arquitectura 4.4: de 20 a 40, 30 por defecto). Donde la mecánica no lo permite, la ficha lo explica en `ensayosExcepcion`:
+
+| Actividades | Ensayos por bloque | Por qué |
+|---|---|---|
+| ACT-03, 04, 05, 06, 08, 09, 11, 13 y 15 | 30 | El valor por defecto. |
+| ACT-12 | 40 | Dos bloques de 40 de la misma banda se juntan en la sesión para llegar a las 80 elecciones que pide el Catálogo (`juntarBloques`). |
+| ACT-14 | 40 | 10 presentaciones por emoción en B2 y B3, el mínimo del Catálogo para la matriz de confusión. |
+| ACT-10 y ACT-16 | 10 secuencias | Un ensayo es una secuencia completa (Arquitectura 4.5); 20 secuencias serían hasta 80 toques y repetirían secuencias. A1 necesita 20: dos bloques. |
+| ACT-17 | Sin ensayos | Es una pausa sin respuesta evaluable. |
 
 Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El motor ejecuta la ficha: la secuencia del ensayo y el registro son iguales para todas las actividades; cada actividad solo aporta cómo se dibuja su pantalla.
 
