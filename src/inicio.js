@@ -4,6 +4,7 @@ import { esc, navHTML, tituloHTML, chipHTML } from './paginas.js';
 import { EN_UNA_LINEA, ESQUEMAS, PANTALLAS, grupos, requiereModoExperto } from './catalogo.js';
 import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
+import { gruposVisibles, modoExpertoActivo } from './modo-experto.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { DEMO, nombreNino, abreviar } from './ninos.js';
 import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
@@ -85,7 +86,7 @@ const NOTA_GRUPO = {
 function actividadesHTML({ state, actual }) {
   // Con una sesión normal en curso no se puede cambiar a modo experto: se termina primero.
   const sesionNormal = Boolean(state.session && !state.session.experto);
-  return grupos(state.catalogo, state.fichas, state.problemas)
+  return gruposVisibles(grupos(state.catalogo, state.fichas, state.problemas))
     .filter((g) => g.actividades.length)
     .map((g) => {
       // Las de uso posterior y las de investigación solo se abren en modo experto.
@@ -218,7 +219,10 @@ function sesionHTML(state, f, forzado, padron, estado) {
          <span class="ayuda" id="participante-ayuda">Los niños se inscriben en <a href="#ninos">Niños inscritos</a>. No se guarda su nombre ni ningún otro dato que lo identifique.</span>
          <span class="error-campo" id="participante-error"></span>
        </label>`;
-  const experto = forzado
+  // Sin el modo experto de la aplicación no hay sesiones en modo experto.
+  const experto = !modoExpertoActivo() && !forzado
+    ? ''
+    : forzado
     ? `<label class="casilla"><input type="checkbox" name="experto" value="1" checked disabled> Modo experto
          <span class="ayuda">Esta actividad ${de.esta}: solo se abre en modo experto. Sus registros llevan un sesion_id que empieza con EXP-.</span>
        </label>`
@@ -263,7 +267,7 @@ const resumenAjustes = (ficha, banda, modalidad, ensayos) => `Banda ${banda.id} 
 export function renderInicio(app, ctx, msg = '') {
   const { state } = ctx;
   const f = state.form;
-  const disponibles = grupos(state.catalogo, state.fichas, state.problemas).flatMap((g) => g.actividades.map((a) => a.id));
+  const disponibles = gruposVisibles(grupos(state.catalogo, state.fichas, state.problemas)).flatMap((g) => g.actividades.map((a) => a.id));
   const actividad = disponibles.includes(f.actividad) ? f.actividad : disponibles[0];
   const ficha = state.fichas[actividad];
   const deUsoPosterior = Boolean(ficha && requiereModoExperto(ficha));
@@ -324,7 +328,7 @@ export function renderInicio(app, ctx, msg = '') {
       <div class="herramientas">
         ${ctx.registroHTML()}
         ${
-          state.pausa
+          state.pausa && modoExpertoActivo()
             ? `<section class="panel herramienta" aria-labelledby="pausa-titulo">
                  <h2 id="pausa-titulo">Pausa guiada</h2>
                  <p class="meta">${esc(EN_UNA_LINEA['ACT-17'])} No mide nada.</p>

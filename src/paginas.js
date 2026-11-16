@@ -2,6 +2,7 @@
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
 import { PANTALLAS, esPiloto, INVESTIGACION } from './catalogo.js';
 import { esc } from './html.js';
+import { actividadesVisibles, interruptorHTML } from './modo-experto.js';
 import { ETIQUETAS_REVISION, revisadaClinicamente, filtrarPorEstado, notasDe, textoFiguras } from './revision-estado.js';
 
 export { esc };
@@ -29,6 +30,7 @@ export const marcaHTML = () => `
   <header class="marca">
     ${FIRMA}
     <span class="marca-etiqueta">Prototipo E13</span>
+    ${interruptorHTML()}
     <p class="marca-linea">${LINEA_HERRAMIENTA}</p>
     <p class="aviso marca-aviso">${AVISO_PROTOTIPO}</p>
   </header>`;
@@ -57,7 +59,8 @@ let focoFiltro = null;
 
 // Filtros en el enlace: #galeria?actividad=ACT-02&banda=B3&todos=1&pareja=1&estado=retirado
 export function renderGaleria(app, { items, fichas, conceptos, catalogo = [], revision }, params) {
-  const ids = Object.keys(fichas).sort(); // ACT-01, ACT-02…, sin depender del orden de carga
+  // ACT-01, ACT-02…, sin depender del orden de carga. Sin modo experto, solo las del piloto.
+  const ids = actividadesVisibles(Object.keys(fichas).sort());
   const posteriores = ids.filter((id) => !esPiloto(id) && !INVESTIGACION.includes(id));
   const enInvestigacion = ids.filter((id) => INVESTIGACION.includes(id));
   const actividad = ids.includes(params.get('actividad')) ? params.get('actividad') : ids.includes('ACT-02') ? 'ACT-02' : ids[0];

@@ -1,6 +1,6 @@
 # AutiPal · Prototipo E13
 
-> **Rama `actividades-posteriores`: no se une a `main` antes del piloto** (Catálogo de actividades, sección 6). Contiene las 14 actividades del Catálogo que no son del piloto, solo en modo experto, para que el equipo revise su mecánica. El piloto (ACT-01, ACT-02 y ACT-07) es idéntico al de `main`.
+> **Actividades fuera del piloto ocultas por defecto.** El repositorio tiene las 14 actividades del Catálogo que no son del piloto (sección 6), como prototipos para que el equipo revise su mecánica. Con el **modo experto** apagado, que es el valor por defecto (también en GitHub Pages), la aplicación muestra solo ACT-01, ACT-02 y ACT-07.
 
 [![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
 
@@ -45,7 +45,7 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, a la mitad del bloque esa ventaja pasa al otro cofre | Solo V | B1 a B4 |
 | ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
 
-En esta rama todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
+Todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
 
 Ensayos por bloque (Arquitectura 4.4: de 20 a 40, 30 por defecto). Donde la mecánica no lo permite, la ficha lo explica en `ensayosExcepcion`:
 
@@ -101,7 +101,11 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
-**Modo experto.** Se activa en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad. No hace la referencia motora.
+**Modo experto de la aplicación.** Es el interruptor «Modo experto» del encabezado de las pantallas del adulto (`src/modo-experto.js`). Empieza apagado y se guarda en este dispositivo (`localStorage`, clave `nbm.modoExperto`).
+- **Apagado:** el inicio, la galería, las sesiones y el formulario F3 muestran solo ACT-01, ACT-02 y ACT-07, sin los grupos «En preparación» ni «En investigación» y sin la pausa guiada; tampoco hay sesiones en modo experto. «Sesiones» oculta los bloques de las demás actividades y dice cuántos ensayos no muestra; la descarga de cada sesión y la del registro siguen completas.
+- **Encendido:** se ven todas las actividades, y en el inicio aparece la casilla de la sesión en modo experto.
+
+**Sesión en modo experto.** Con el modo experto de la aplicación encendido, se elige en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad. No hace la referencia motora.
 - Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
 - El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
 - Sus registros llevan un `sesion_id` que empieza con `EXP-`.
@@ -258,7 +262,7 @@ Antes de publicar, corre también `npm run check-items`.
 
 1. `npm test`;
 2. `npm run check-items`;
-3. `node tools/build-items.mjs` y, en esta rama, `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
+3. `node tools/build-items.mjs` y `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
 
 El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
 
@@ -293,6 +297,7 @@ src/engine/clock.js           Medición del tiempo: performance.now, cuadros, fo
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
 src/voz-grabada.js            Aviso y resumen de las actividades que requieren la voz grabada (ACT-15)
 src/pausa-permiso.js          Cuándo se puede abrir la pausa guiada (ACT-17)
+src/modo-experto.js           Modo experto de la aplicación: qué actividades se muestran
 src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
 src/engine/selector.js        Selección de ítems por banda, con semilla
 src/engine/quality.js         Reglas de calidad y resumen descriptivo
