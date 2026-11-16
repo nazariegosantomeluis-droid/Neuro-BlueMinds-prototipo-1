@@ -32,6 +32,7 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia',
     'referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques',
     'modo_fase', 'fase2_version', 'fase2_sesion', 'fase2_bloque', 'fase2_primera', 'plan_sesion',
+    'pasos_sesion',
   ]);
 });
 

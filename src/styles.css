@@ -2330,3 +2330,53 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
   margin: var(--esp-2) 0;
   padding-left: 1.4rem;
 }
+
+/* Rutinas de la sesión con un niño (Catálogo 7.1): pictogramas grandes, sin texto. */
+.rutina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--cm) * 0.4);
+  min-height: 100%;
+  padding: calc(var(--cm) * 0.6);
+  color: var(--texto);
+}
+
+.rutina-picto {
+  display: grid;
+  place-items: center;
+  width: clamp(calc(var(--cm) * 2.5), 18vw, calc(var(--cm) * 4));
+  aspect-ratio: 1;
+  padding: calc(var(--cm) * 0.3);
+  background: var(--opcion-fondo);
+  border-radius: calc(var(--cm) * 0.3);
+  color: #2b2b2b;
+}
+
+.rutina-picto svg,
+.rutina-picto img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rutina-flecha {
+  width: calc(var(--cm) * 0.9);
+  height: calc(var(--cm) * 0.9);
+}
+
+.rutina-grande {
+  width: min(calc(var(--cm) * 6), 50vh, 80vw);
+}
+
+/* Cierre: aparece una sola vez, con una transición de 300 ms (RNF-05: nada destella ni se repite).
+   Sin movimiento si el sistema pide reducirlo. */
+.rutina-aparece {
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.rutina-aparece:not(.visible) {
+  opacity: 0;
+  transform: scale(0.85);
+}

@@ -108,6 +108,14 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - **Fase 2, versión del Catálogo 5.2 (alternativa).** Un bloque de 30 ensayos en el que cada mitad de conceptos va en su modalidad, en orden al azar. Se elige en la ficha de ACT-02 (`fase2.version`). Cada sesión registra qué versión usó (`fase2_version`).
 - Todos los bloques se preparan antes de empezar: si falta una imagen o la voz, la sesión no empieza.
 
+**Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
+- **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
+- **Referencia motora**, como siempre.
+- **Actividades en orden fijo**, con una **transición de 5 s** entre ellas que muestra el esquema de la actividad que sigue.
+- **Rutina de cierre** (5 s): el pictograma de «terminar», que aparece con una transición de 300 ms. Es igual en todas las sesiones y no depende del desempeño; aparece aunque la sesión termine antes. El Catálogo pide «una animación breve»; para cumplir RNF-05 (nada destella ni se repite) es una sola transición.
+- Después del cierre, el adulto toca dos veces la esquina para ver el resumen de la sesión, bloque por bloque, con el nivel de apoyo de cada uno.
+- Los 6 s del inicio y los 5 s del cierre son una propuesta (`fichas/sesion.json`); el Catálogo solo fija la transición.
+
 **Modo experto de la aplicación.** Es el interruptor «Modo experto» del encabezado de las pantallas del adulto (`src/modo-experto.js`). Empieza apagado y se guarda en este dispositivo (`localStorage`, clave `nbm.modoExperto`).
 - **Apagado:** el inicio, la galería, las sesiones y el formulario F3 muestran solo ACT-01, ACT-02 y ACT-07, sin los grupos «En preparación» ni «En investigación» y sin la pausa guiada; tampoco hay sesiones en modo experto. «Sesiones» oculta los bloques de las demás actividades y dice cuántos ensayos no muestra; la descarga de cada sesión y la del registro siguen completas.
 - **Encendido:** se ven todas las actividades, y en el inicio aparece la casilla de la sesión en modo experto.
@@ -296,6 +304,7 @@ src/revision.css              Estilos de la revisión clínica
 src/ninos.js                  Padrón de niños: código, ícono, color, edad, consentimiento, modo de fase y banda fija
 src/fases.js                  Modos de fase, plan de la sesión con un niño, fase 2 y límite de 15 minutos
 src/plan-pantalla.js          La sesión completa que el inicio muestra para un niño
+src/rutinas.js                Rutinas de inicio y de cierre y transición entre actividades
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -512,6 +521,7 @@ Una fila por sesión, en este orden:
 | `fase2_bloque` | Solo en la fase 2: bloque del análisis, 1 (sesiones 1 a 6) o 2 (7 a 12). |
 | `fase2_primera` | Solo en la fase 2: modalidad que abrió la sesión, sorteada sin que una abra más de 2 sesiones seguidas. |
 | `plan_sesion` | Lista JSON de los bloques planeados, en orden: `actividad`, `banda`, `modalidad` (`V`, `AV` o `mixta`), `ensayos` y, en la fase 2, `mitad` o `mitades`. |
+| `pasos_sesion` | Lista JSON de los pasos de la sesión con un niño, en orden: `paso` (`rutina-inicio`, `referencia`, `bloque`, `transicion` o `rutina-cierre`), `inicio_ms` y `fin_ms` desde el inicio de la sesión y, según el paso, `bloque`, `actividad`, `modalidad` o `siguiente`. |
 
 ## Banco de ítems
 

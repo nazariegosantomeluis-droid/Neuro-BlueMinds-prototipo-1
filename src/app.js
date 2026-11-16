@@ -26,6 +26,7 @@ import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { modoDe } from './ninos.js';
+import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
@@ -464,16 +465,44 @@ async function empezarSesion(form) {
   const resultados = [];
   let terminar = false;
   let k = 0;
+  // Cada paso queda en pasos_sesion con su inicio y su fin, en ms desde el inicio de la sesión.
+  const pasos = [];
+  const marca = (tipo, extra = {}) => {
+    const p = { paso: tipo, ...extra, inicio_ms: performance.now() - s.inicioMs, fin_ms: null };
+    pasos.push(p);
+    return () => {
+      p.fin_ms = performance.now() - s.inicioMs;
+      editSesion(s.id, (r) => (r.pasos_sesion = pasos));
+    };
+  };
   for (const paso of plan) {
-    if (paso.tipo === 'referencia') {
+    if (paso.tipo === 'rutina-inicio') {
+      const fin = marca('rutina-inicio');
+      await mostrarRutina(rutinaInicioHTML(paso.actividades, PICTO_FIN), cfg.rutinaInicioMs);
+      fin();
+    } else if (paso.tipo === 'transicion') {
+      if (terminar) continue;
+      const fin = marca('transicion', { siguiente: paso.siguiente });
+      await mostrarRutina(transicionHTML(paso.siguiente), cfg.transicionMs);
+      fin();
+    } else if (paso.tipo === 'rutina-cierre') {
+      // Igual en todas las sesiones e independiente del desempeño (Catálogo 7.1).
+      const fin = marca('rutina-cierre');
+      await mostrarRutina(cierreHTML(PICTO_FIN), cfg.rutinaCierreMs);
+      fin();
+    } else if (paso.tipo === 'referencia') {
+      const fin = marca('referencia');
       s.referenciaHecha = true;
       const ref = await ejecutarReferencia(s, periodo);
+      fin();
       if (ref.terminada) terminar = true;
     } else if (paso.tipo === 'bloque') {
       const b = bloques[k++];
       if (terminar) continue;
       s.bloque++;
+      const finBloque = marca('bloque', { bloque: s.bloque, actividad: paso.actividad, modalidad: paso.modalidad });
       const r = await ejecutarBloque({ ficha: b.ficha, banda: b.banda, modalidad: paso.modalidad, trials: b.trials, s, usados: b.usados, pantalla: b.pantalla, periodo });
+      finBloque();
       if (r.error) {
         terminar = true;
         continue;
@@ -482,7 +511,23 @@ async function empezarSesion(form) {
     }
   }
   state.ultimaSesion = { s, resultados };
-  renderResumenSesion();
+  // Después del cierre, el adulto toca dos veces la esquina para ver el resumen.
+  app.innerHTML = `
+    <div class="nino">
+      ${cierreHTML(PICTO_FIN).replace(' rutina-aparece', '')}
+      <button type="button" class="esquina" id="adulto" aria-label="Resumen para el adulto: tocar dos veces">${ICONO_ADULTO}</button>
+    </div>`;
+  twoTaps(app.querySelector('#adulto'), renderResumenSesion);
+}
+
+// Pantalla del niño con una rutina o una transición, el tiempo fijado. Sin texto.
+async function mostrarRutina(html, ms) {
+  app.innerHTML = `<div class="nino">${html}</div>`;
+  state.running = true;
+  // El cierre aparece con su transición en el cuadro siguiente.
+  requestAnimationFrame(() => requestAnimationFrame(() => app.querySelector('.rutina-aparece')?.classList.add('visible')));
+  await new Promise((r) => setTimeout(r, ms));
+  state.running = false;
 }
 
 // Arma los ensayos de un bloque: elige los ítems de la banda y carga sus imágenes. Lanza un error con

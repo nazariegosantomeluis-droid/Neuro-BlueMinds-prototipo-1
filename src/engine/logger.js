@@ -32,6 +32,9 @@ export const SESION_COLUMNS = [
   // Tanda 3 (H2.3): modo de fase de la sesión y, en la fase 2, versión, número de sesión, bloque del
   // análisis y modalidad que abrió. plan_sesion: los bloques planeados, en orden.
   'modo_fase', 'fase2_version', 'fase2_sesion', 'fase2_bloque', 'fase2_primera', 'plan_sesion',
+  // Catálogo 7.1: cada paso de la sesión (rutinas, referencia, bloques y transiciones) con su inicio
+  // y su fin en ms desde el inicio de la sesión.
+  'pasos_sesion',
 ];
 
 const KEY = 'neuro-blueminds.registro';
