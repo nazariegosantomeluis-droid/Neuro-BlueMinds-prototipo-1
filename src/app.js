@@ -27,7 +27,7 @@ import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { modoDe } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
-import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado } from './fases.js';
+import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
 
@@ -475,13 +475,26 @@ async function empezarSesion(form) {
       editSesion(s.id, (r) => (r.pasos_sesion = pasos));
     };
   };
+  const omitidos = [];
   for (const paso of plan) {
+    // INV-8: al llegar a los 15 minutos de uso, no empieza otro bloque; la sesión va al cierre.
+    const decision = decidirPaso(paso, { usoMs: performance.now() - s.inicioMs, limiteMinutos: cfg.limiteMinutos, terminada: terminar });
+    if (decision !== 'ejecutar') {
+      if (paso.tipo === 'bloque') {
+        k++;
+        omitidos.push({ actividad: paso.actividad, modalidad: paso.modalidad, motivo: decision === 'limite' ? 'limite_15_min' : 'sesion_terminada' });
+      }
+      if (decision === 'limite') {
+        s.limiteAlcanzado = true;
+        editSesion(s.id, (r) => (r.limite_15_min = true));
+      }
+      continue;
+    }
     if (paso.tipo === 'rutina-inicio') {
       const fin = marca('rutina-inicio');
       if ((await mostrarRutina(rutinaInicioHTML(paso.actividades, PICTO_FIN), cfg.rutinaInicioMs, s)) === 'terminar') terminar = true;
       fin();
     } else if (paso.tipo === 'transicion') {
-      if (terminar) continue;
       const fin = marca('transicion', { siguiente: paso.siguiente });
       if ((await mostrarRutina(transicionHTML(paso.siguiente), cfg.transicionMs, s)) === 'terminar') terminar = true;
       fin();
@@ -491,7 +504,6 @@ async function empezarSesion(form) {
       await mostrarRutina(cierreHTML(PICTO_FIN), cfg.rutinaCierreMs);
       fin();
     } else if (paso.tipo === 'referencia') {
-      if (terminar) continue;
       const fin = marca('referencia');
       s.referenciaHecha = true;
       const ref = await ejecutarReferencia(s, periodo);
@@ -499,7 +511,6 @@ async function empezarSesion(form) {
       if (ref.terminada) terminar = true;
     } else if (paso.tipo === 'bloque') {
       const b = bloques[k++];
-      if (terminar) continue;
       // Si el terapeuta fijó otra banda desde el menú (fase 3 o familiarización), el bloque se arma
       // de nuevo en esa banda.
       const fijada = s.bandaFijada?.[paso.actividad];
@@ -524,6 +535,7 @@ async function empezarSesion(form) {
       if (r.terminarSesion) terminar = true;
     }
   }
+  editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
   state.ultimaSesion = { s, resultados };
   // Después del cierre, el adulto toca dos veces la esquina para ver el resumen.
   app.innerHTML = `
@@ -764,6 +776,11 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   } finally {
     state.running = false;
     wake?.release().catch(() => {});
+  }
+  // INV-8: si el bloque terminó después de los 15 minutos de uso, ya no empieza otro.
+  if (s.inicioMs !== undefined && limiteAlcanzado(s.inicioMs, performance.now(), state.sesion?.limiteMinutos ?? 15)) {
+    s.limiteAlcanzado = true;
+    editSesion(s.id, (r) => (r.limite_15_min = true));
   }
   // Fase 2: la mitad de conceptos de cada ensayo (Protocolo 3.3, Catálogo 5.2).
   if (s.modo === 'fase2' && ficha.id === state.sesion?.fase2.actividad) {

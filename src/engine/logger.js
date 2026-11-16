@@ -37,6 +37,9 @@ export const SESION_COLUMNS = [
   'pasos_sesion',
   // H2.4: cada orden del menú del terapeuta con su hora y el estado de la sesión.
   'ordenes_terapeuta',
+  // H2.5 (INV-8): si se llegó a los 15 minutos, los bloques planeados que no se hicieron y el
+  // tiempo de uso de la sesión con un niño.
+  'limite_15_min', 'bloques_omitidos', 'duracion_uso_ms',
 ];
 
 const KEY = 'neuro-blueminds.registro';

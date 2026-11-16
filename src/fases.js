@@ -87,6 +87,16 @@ export function itemsDeMitad(items, mitad) {
 // propone terminar y no empieza un bloque nuevo.
 export const limiteAlcanzado = (inicioMs, ahoraMs, minutos = 15) => ahoraMs - inicioMs >= minutos * 60_000;
 
+// Qué hacer con un paso del plan, con el tiempo de uso de la sesión en ms. La rutina de cierre
+// siempre se hace. Si la sesión se terminó desde el menú, lo demás se omite. Si ya se llegó al
+// límite, no empieza ningún bloque nuevo ni la transición a él: 'limite'.
+export function decidirPaso(paso, { usoMs, limiteMinutos = 15, terminada = false }) {
+  if (paso.tipo === 'rutina-cierre') return 'ejecutar';
+  if (terminada) return 'omitir';
+  if ((paso.tipo === 'bloque' || paso.tipo === 'transicion') && limiteAlcanzado(0, usoMs, limiteMinutos)) return 'limite';
+  return 'ejecutar';
+}
+
 // Sesiones anteriores de fase 2 del niño, en orden, a partir de sesiones.csv.
 export function historialFase2(sesiones, codigo) {
   return sesiones.filter((s) => s.codigo_nino === codigo && s.modo_fase === 'fase2' && s.fase2_primera).map((s) => s.fase2_primera);

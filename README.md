@@ -118,6 +118,11 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - El menú también tiene el volumen de la voz, una nota opcional y, solo en modo experto fuera del piloto, la pausa guiada.
 - Cada orden, incluida la de pausar al abrir el menú, queda en `ordenes_terapeuta` con su hora y el estado de la sesión.
 
+**Límite de 15 minutos (H2.5; INV-8).** El uso de la plataforma se cuenta desde que empieza la sesión (`performance.now()`).
+- Al llegar a 15 minutos no empieza ningún bloque nuevo: en la sesión con un niño se omiten los bloques que faltan, y su transición, y se pasa a la rutina de cierre; en los bloques sueltos, el inicio no deja empezar otro y el resumen no lo ofrece.
+- El bloque que ya empezó termina. El niño no ve ningún aviso; el adulto lo ve en el menú del terapeuta y en el resumen.
+- En `sesiones.csv` quedan `limite_15_min`, `bloques_omitidos` y `duracion_uso_ms`.
+
 **Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
 - **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
 - **Referencia motora**, como siempre.
@@ -534,6 +539,9 @@ Una fila por sesión, en este orden:
 | `plan_sesion` | Lista JSON de los bloques planeados, en orden: `actividad`, `banda`, `modalidad` (`V`, `AV` o `mixta`), `ensayos` y, en la fase 2, `mitad` o `mitades`. |
 | `pasos_sesion` | Lista JSON de los pasos de la sesión con un niño, en orden: `paso` (`rutina-inicio`, `referencia`, `bloque`, `transicion` o `rutina-cierre`), `inicio_ms` y `fin_ms` desde el inicio de la sesión y, según el paso, `bloque`, `actividad`, `modalidad` o `siguiente`. |
 | `ordenes_terapeuta` | Lista JSON de las órdenes del menú del terapeuta: `hora` (ISO 8601, solo para identificarla), `ms` desde el inicio de la sesión, `accion` (`pausar`, `reanudar`, `terminar_bloque`, `terminar_sesion`, `fijar_banda`, `desactivar_adaptacion`, `reactivar_adaptacion`, `anular_cambio_banda` o `episodio_desregulacion`), `detalle` (el motivo, o el cambio de banda `{actividad, de, a}`), `bloqueada` (el invariante que la bloqueó, por ejemplo `INV-7`, o vacío), y el estado en ese momento: `bloque` (0 en la referencia; vacío en las rutinas), `ensayo`, `modo`, `banda` y `adaptacion`. |
+| `limite_15_min` | `true` si la sesión llegó a los 15 minutos de uso (INV-8). |
+| `bloques_omitidos` | Lista JSON de los bloques planeados que no se hicieron, con `actividad`, `modalidad` y `motivo`: `limite_15_min` o `sesion_terminada` (desde el menú). |
+| `duracion_uso_ms` | Tiempo de uso de la sesión con un niño, de la rutina de inicio al fin de la rutina de cierre. |
 
 ## Banco de ítems
 
