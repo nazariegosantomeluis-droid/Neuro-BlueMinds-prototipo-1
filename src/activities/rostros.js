@@ -2,6 +2,10 @@
 // Todo se dibuja con código en un lienzo de 200 × 200: no hay fotografías ni personas reales.
 // Seis personajes de distinta edad, género y tono de piel; cuatro emociones en dos intensidades.
 // Son una propuesta: un clínico debe confirmar que cada expresión se reconoce sin dudar.
+// El rostro del estímulo y los pictogramas de respuesta tienen estilos claramente distintos, para
+// que la respuesta no se resuelva copiando la forma de la boca: el rostro tiene rasgos realistas
+// (piel con sombra, nariz, labios de color y contornos del tono de la piel) y el pictograma es un
+// esquema de trazos negros sobre un círculo, sin color ni relleno en la boca.
 
 const CONTORNO = '#2b2b2b';
 const BOCA = '#6e2a2a';
@@ -41,6 +45,16 @@ const EXPRESIONES = {
     baja: { cejas: { afuera: 26, adentro: 31, arco: 31 }, ojo: 1.15, iris: 0.9, boca: 'o' },
   },
 };
+
+// Mezcla dos colores #rrggbb: t = 0 da «a» y t = 1 da «b».
+function mezcla(a, b, t) {
+  const c = (h, i) => parseInt(h.slice(1 + 2 * i, 3 + 2 * i), 16);
+  return `#${[0, 1, 2].map((i) => Math.round(c(a, i) + (c(b, i) - c(a, i)) * t).toString(16).padStart(2, '0')).join('')}`;
+}
+// Contorno del rostro realista: el tono de la piel, más oscuro. Labios: la piel hacia el rojo.
+const contornoPiel = (p) => mezcla(p.piel, '#2b1a12', 0.55);
+const labio = (p) => mezcla(p.piel, '#a8323e', 0.55);
+const labioOscuro = (p) => mezcla(p.piel, '#4a1218', 0.7);
 
 const trazo = (ancho = 3) => `stroke="${CONTORNO}" stroke-width="${ancho}" stroke-linejoin="round" stroke-linecap="round"`;
 
@@ -102,15 +116,18 @@ function peloDelante(p, cabeza) {
 // lado: −1 para el ojo de la izquierda de la imagen y 1 para el de la derecha.
 function ojo(cx, cy, lado, e, p) {
   if (e.ojo === 'sonrisa') {
-    return `<path d="M${cx - 13} ${cy + 3} Q${cx} ${cy - 13} ${cx + 13} ${cy + 3}" fill="none" ${trazo(4.5)}/>`;
+    return `<path d="M${cx - 13} ${cy + 3} Q${cx} ${cy - 13} ${cx + 13} ${cy + 3}" fill="none" stroke="#1e1612" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M${cx - 10} ${cy + 6} Q${cx} ${cy + 1} ${cx + 10} ${cy + 6}" fill="none" stroke="${contornoPiel(p)}" stroke-width="1.5" stroke-linecap="round"/>`;
   }
   const rx = 12;
   const ry = 10.5 * e.ojo;
   const iris = 7 * (e.iris ?? 1);
   const yIris = cy + 1 + (e.mirada ?? 0);
-  let s = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${BLANCO}" ${trazo(2.5)}/>
+  // Ojo con el blanco, iris, pupila y brillo; contorno del tono de la piel y pestañas arriba.
+  let s = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fbfaf7" stroke="${contornoPiel(p)}" stroke-width="1.5"/>
     <circle cx="${cx}" cy="${yIris}" r="${iris}" fill="#4a3226"/><circle cx="${cx}" cy="${yIris}" r="${iris * 0.48}" fill="#16110f"/>
-    <circle cx="${cx + 2.4}" cy="${yIris - 2.6}" r="1.8" fill="${BLANCO}"/>`;
+    <circle cx="${cx + 2.4}" cy="${yIris - 2.6}" r="1.8" fill="${BLANCO}"/>
+    <path d="M${cx - rx - 1} ${cy + 1} Q${cx} ${cy - ry * 1.55} ${cx + rx + 1} ${cy + 1}" fill="none" stroke="#1e1612" stroke-width="3" stroke-linecap="round"/>`;
   if (e.parpado) {
     // El párpado tapa la parte de arriba del ojo; baja más de un lado que del otro.
     const xAdentro = cx - lado * (rx + 2);
@@ -131,31 +148,45 @@ function ceja(cx, cy, lado, e, p) {
   return `<path d="M${xAfuera} ${cy - afuera} Q${cx} ${cy - arco} ${xAdentro} ${cy - adentro}" fill="none" stroke="${p.ceja}" stroke-width="5.5" stroke-linecap="round"/>`;
 }
 
-function boca(tipo, y) {
+// Bocas con labios del color de la piel hacia el rojo, sin contorno negro.
+function boca(tipo, y, p) {
+  const L = labio(p);
+  const O = labioOscuro(p);
+  const borde = (ancho) => `stroke="${O}" stroke-width="${ancho}" stroke-linejoin="round" stroke-linecap="round"`;
+  // Boca cerrada: labio de arriba y de abajo, con la línea entre los dos.
+  const cerrada = (x1, x2, yb, curva) => `
+    <path d="M${x1} ${yb} Q100 ${yb + curva - 5} ${x2} ${yb} Q100 ${yb + curva + 9} ${x1} ${yb} Z" fill="${L}" ${borde(1.2)}/>
+    <path d="M${x1} ${yb} Q100 ${yb + curva} ${x2} ${yb}" fill="none" ${borde(2.4)}/>`;
   switch (tipo) {
     case 'risa':
-      return `<path d="M70 ${y - 5} Q100 ${y + 7} 130 ${y - 5} Q127 ${y + 22} 100 ${y + 24} Q73 ${y + 22} 70 ${y - 5} Z" fill="${BOCA}" ${trazo()}/>
-        <path d="M75 ${y - 2.5} Q100 ${y + 8} 125 ${y - 2.5} L123 ${y + 5} Q100 ${y + 14} 77 ${y + 5} Z" fill="${BLANCO}" ${trazo(1.5)}/>
+      return `<path d="M70 ${y - 5} Q100 ${y + 7} 130 ${y - 5} Q127 ${y + 22} 100 ${y + 24} Q73 ${y + 22} 70 ${y - 5} Z" fill="${BOCA}" stroke="${L}" stroke-width="4.5" stroke-linejoin="round"/>
+        <path d="M75 ${y - 2.5} Q100 ${y + 8} 125 ${y - 2.5} L123 ${y + 5} Q100 ${y + 14} 77 ${y + 5} Z" fill="${BLANCO}"/>
         <ellipse cx="100" cy="${y + 18}" rx="12" ry="4.5" fill="${LENGUA}"/>`;
     case 'sonrisa':
-      return `<path d="M80 ${y + 1} Q100 ${y + 17} 120 ${y + 1}" fill="none" ${trazo(4)}/>`;
+      return cerrada(80, 120, y + 1, 14);
     case 'puchero':
-      return `<path d="M76 ${y + 15} Q100 ${y - 9} 124 ${y + 15}" fill="none" ${trazo(4.5)}/>
-        <path d="M91 ${y + 20} Q100 ${y + 17} 109 ${y + 20}" fill="none" ${trazo(2.5)}/>`;
+      return `${cerrada(78, 122, y + 13, -16)}
+        <path d="M90 ${y + 19} Q100 ${y + 23} 110 ${y + 19}" fill="none" ${borde(1.6)}/>`;
     case 'curva-abajo':
-      return `<path d="M83 ${y + 10} Q100 ${y - 1} 117 ${y + 10}" fill="none" ${trazo(4)}/>`;
+      return cerrada(83, 117, y + 9, -9);
     case 'dientes':
-      return `<path d="M75 ${y + 16} Q72 ${y - 6} 100 ${y - 7} Q128 ${y - 6} 125 ${y + 16} Q100 ${y + 9} 75 ${y + 16} Z" fill="${BLANCO}" ${trazo()}/>
-        <path d="M76 ${y + 4} Q100 ${y + 1} 124 ${y + 4} M88 ${y - 6} L88 ${y + 12} M100 ${y - 7} L100 ${y + 11} M112 ${y - 6} L112 ${y + 12}" fill="none" ${trazo(1.6)}/>`;
+      return `<path d="M75 ${y + 16} Q72 ${y - 6} 100 ${y - 7} Q128 ${y - 6} 125 ${y + 16} Q100 ${y + 9} 75 ${y + 16} Z" fill="${BLANCO}" stroke="${L}" stroke-width="4.5" stroke-linejoin="round"/>
+        <path d="M76 ${y + 4} Q100 ${y + 1} 124 ${y + 4} M88 ${y - 6} L88 ${y + 12} M100 ${y - 7} L100 ${y + 11} M112 ${y - 6} L112 ${y + 12}" fill="none" stroke="#c9c1b8" stroke-width="1.4"/>`;
     case 'linea':
-      return `<path d="M82 ${y + 7} Q86 ${y + 3} 100 ${y + 3} Q114 ${y + 3} 118 ${y + 7}" fill="none" ${trazo(4)}/>`;
+      return cerrada(82, 118, y + 5, 0);
     case 'grito':
-      return `<ellipse cx="100" cy="${y + 7}" rx="14" ry="16" fill="${BOCA}" ${trazo()}/>
+      return `<ellipse cx="100" cy="${y + 7}" rx="14" ry="16" fill="${BOCA}" stroke="${L}" stroke-width="4.5"/>
         <path d="M90 ${y - 4} Q100 ${y - 9} 110 ${y - 4} Q100 ${y} 90 ${y - 4} Z" fill="${BLANCO}"/>`;
     default: // 'o'
-      return `<ellipse cx="100" cy="${y + 6}" rx="9" ry="8" fill="${BOCA}" ${trazo()}/>`;
+      return `<ellipse cx="100" cy="${y + 6}" rx="9" ry="8" fill="${BOCA}" stroke="${L}" stroke-width="4"/>`;
   }
 }
+
+// Nariz con sombra y fosas, del tono de la piel.
+const nariz = (y, p) => `
+    <path d="M100 ${y} q-3 13 -8 18 q8 5 16 0 q-5 -5 -8 -18" fill="${mezcla(p.piel, '#2b1a12', 0.12)}" opacity="0.8"/>
+    <path d="M93 ${y + 18} q7 4 14 0" fill="none" stroke="${contornoPiel(p)}" stroke-width="2" stroke-linecap="round"/>
+    <g fill="${mezcla(p.piel, '#2b1a12', 0.5)}"><ellipse cx="95.5" cy="${y + 17}" rx="2.2" ry="1.4"/><ellipse cx="104.5" cy="${y + 17}" rx="2.2" ry="1.4"/></g>`;
 
 // ---------- Rostro completo ----------
 
@@ -166,12 +197,18 @@ export function rostroSVG(personaje, emocion, intensidad = 'alta') {
   const yOjos = cabeza.cy + (p.infantil ? 4 : 0);
   const yBoca = cabeza.cy + (p.infantil ? 31 : 34);
   const sombra = `<ellipse cx="100" cy="${cabeza.cy + cabeza.ry - 8}" rx="${cabeza.rx - 22}" ry="5" fill="#000000" opacity="0.08"/>`;
+  // Piel con luz al centro y sombra hacia los bordes; contorno del tono de la piel, no negro.
+  const idPiel = `piel-${personaje}`;
+  const contorno = `stroke="${contornoPiel(p)}" stroke-width="2.5" stroke-linejoin="round"`;
   return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <defs><radialGradient id="${idPiel}" cx="0.45" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="${mezcla(p.piel, '#ffffff', 0.18)}"/><stop offset="0.7" stop-color="${p.piel}"/><stop offset="1" stop-color="${mezcla(p.piel, '#2b1a12', 0.22)}"/>
+    </radialGradient></defs>
     ${peloDetras(p)}
     <path d="M32 200 Q36 166 76 160 L124 160 Q164 166 168 200 Z" fill="${p.ropa}" ${trazo()}/>
-    <path d="M84 ${cabeza.cy + cabeza.ry - 16} L84 164 Q100 174 116 164 L116 ${cabeza.cy + cabeza.ry - 16} Z" fill="${p.piel}" ${trazo()}/>
+    <path d="M84 ${cabeza.cy + cabeza.ry - 16} L84 164 Q100 174 116 164 L116 ${cabeza.cy + cabeza.ry - 16} Z" fill="${mezcla(p.piel, '#2b1a12', 0.12)}" ${contorno}/>
     ${sombra}
-    <g fill="${p.piel}" ${trazo()}>
+    <g fill="url(#${idPiel})" ${contorno}>
       <ellipse cx="${100 - cabeza.rx + 1}" cy="${cabeza.cy + 4}" rx="8" ry="12"/><ellipse cx="${100 + cabeza.rx - 1}" cy="${cabeza.cy + 4}" rx="8" ry="12"/>
       <ellipse cx="100" cy="${cabeza.cy}" rx="${cabeza.rx}" ry="${cabeza.ry}"/>
     </g>
@@ -180,8 +217,8 @@ export function rostroSVG(personaje, emocion, intensidad = 'alta') {
     ${ojo(78, yOjos, -1, e, p)}${ojo(122, yOjos, 1, e, p)}
     ${ceja(78, yOjos, -1, e, p)}${ceja(122, yOjos, 1, e, p)}
     ${e.cenio ? `<path d="M96 ${yOjos - 20} L97 ${yOjos - 12} M104 ${yOjos - 20} L103 ${yOjos - 12}" fill="none" ${trazo(2)}/>` : ''}
-    <path d="M100 ${yOjos + 10} q-5 10 1 12" fill="none" ${trazo(2.5)}/>
-    ${boca(e.boca, yBoca)}
+    ${nariz(yOjos + 6, p)}
+    ${boca(e.boca, yBoca, p)}
     ${e.lagrima ? `<path d="M68 ${yOjos + 14} q-6 10 0 13 q6 -3 0 -13 Z" fill="#8ecbee" ${trazo(1.6)}/>` : ''}
     ${peloDelante(p, cabeza)}
   </svg>`;
@@ -189,30 +226,29 @@ export function rostroSVG(personaje, emocion, intensidad = 'alta') {
 
 // ---------- Pictogramas de las emociones ----------
 
-// Estilos de los pictogramas de respuesta. Es una decisión clínica pendiente: la ficha dice
-// cuál se usa («estiloPictograma») y describe los demás («estilosPictograma»).
+// Estilos de los pictogramas de respuesta. El Catálogo dice «elige el pictograma de la emoción».
+// El estilo final es una decisión clínica pendiente: la ficha dice cuál se usa
+// («estiloPictograma») y describe los demás («estilosPictograma»).
+// - «esquema»: pictograma de la emoción con rostro, de trazos negros sobre un círculo, sin color ni
+//   relleno en la boca. Es claramente distinto del rostro realista del estímulo, que tiene labios
+//   de color, dientes y lengua: no se resuelve copiando la forma de la boca.
 // - «postura»: figura de cuerpo entero con la cabeza sin rasgos; la emoción se lee en la postura.
-//   No puede resolverse copiando la boca ni las cejas del rostro, porque la cara no tiene.
-// - «cara»: el estilo anterior, caras esquemáticas. Su boca repite la forma de la del rostro
-//   (risa, dientes, boca abierta): puede resolverse copiando la forma sin reconocer la emoción.
-export const ESTILOS_PICTOGRAMA = ['postura', 'cara'];
+//   Es una alternativa: cambia lo que se mide (de la cara al cuerpo).
+export const ESTILOS_PICTOGRAMA = ['esquema', 'postura'];
 
-// Caras esquemáticas, todas iguales salvo la expresión.
-const CARAS = {
-  alegria: `<path d="M56 90 Q70 70 84 90 M116 90 Q130 70 144 90" fill="none" ${trazo(7)}/>
-    <path d="M56 112 Q100 164 144 112 Z" fill="${BLANCO}" ${trazo(7)}/>`,
-  tristeza: `<path d="M52 80 L82 66 M148 80 L118 66" fill="none" ${trazo(7)}/>
-    <circle cx="70" cy="98" r="8" fill="${CONTORNO}"/><circle cx="130" cy="98" r="8" fill="${CONTORNO}"/>
-    <path d="M64 148 Q100 114 136 148" fill="none" ${trazo(7)}/>
-    <path d="M62 112 q-8 14 0 18 q8 -4 0 -18 Z" fill="#8ecbee" ${trazo(2.5)}/>`,
-  enojo: `<path d="M50 64 L86 82 M150 64 L114 82" fill="none" ${trazo(8)}/>
-    <circle cx="72" cy="98" r="8" fill="${CONTORNO}"/><circle cx="128" cy="98" r="8" fill="${CONTORNO}"/>
-    <path d="M62 150 Q60 122 100 122 Q140 122 138 150 Q100 140 62 150 Z" fill="${BLANCO}" ${trazo(6)}/>
-    <path d="M82 124 L82 144 M100 122 L100 142 M118 124 L118 144" fill="none" ${trazo(3)}/>`,
-  miedo: `<path d="M50 64 Q68 50 86 60 M150 64 Q132 50 114 60" fill="none" ${trazo(7)}/>
-    <circle cx="70" cy="96" r="15" fill="${BLANCO}" ${trazo(5)}/><circle cx="130" cy="96" r="15" fill="${BLANCO}" ${trazo(5)}/>
-    <circle cx="70" cy="96" r="5.5" fill="${CONTORNO}"/><circle cx="130" cy="96" r="5.5" fill="${CONTORNO}"/>
-    <ellipse cx="100" cy="144" rx="15" ry="19" fill="${BOCA}" ${trazo(6)}/>`,
+// Esquemas: el mismo círculo y los mismos ojos en las cuatro; cambian las cejas y la boca, que
+// siempre es un trazo.
+const PUNTOS = `<circle cx="72" cy="96" r="8" fill="${CONTORNO}"/><circle cx="128" cy="96" r="8" fill="${CONTORNO}"/>`;
+const ESQUEMAS_EMOCION = {
+  alegria: `<path d="M56 74 Q72 64 88 74 M112 74 Q128 64 144 74" fill="none" ${trazo(6)}/>${PUNTOS}
+    <path d="M62 124 Q100 160 138 124" fill="none" ${trazo(7)}/>`,
+  tristeza: `<path d="M54 78 L86 66 M146 78 L114 66" fill="none" ${trazo(6)}/>${PUNTOS}
+    <path d="M66 148 Q100 118 134 148" fill="none" ${trazo(7)}/>`,
+  enojo: `<path d="M52 64 L88 82 M148 64 L112 82" fill="none" ${trazo(7)}/>${PUNTOS}
+    <path d="M70 140 L130 140" fill="none" ${trazo(7)}/>`,
+  miedo: `<path d="M54 64 Q70 50 88 60 M146 64 Q130 50 112 60" fill="none" ${trazo(6)}/>
+    <circle cx="72" cy="94" r="13" fill="none" ${trazo(5)}/><circle cx="128" cy="94" r="13" fill="none" ${trazo(5)}/>${PUNTOS.replace(/r="8"/g, 'r="5"')}
+    <ellipse cx="100" cy="142" rx="12" ry="16" fill="none" ${trazo(6)}/>`,
 };
 
 // Figuras de cuerpo entero. La cabeza es la misma en las cuatro, sin ojos, cejas ni boca; solo
@@ -238,10 +274,10 @@ const POSTURAS = {
     <path d="M52 60 q-6 8 0 16 M44 56 q-8 12 0 24" fill="none" ${trazo(4)}/>${cabeza(84, 62)}`,
 };
 
-export function pictoEmocionSVG(emocion, estilo = 'postura') {
-  if (estilo === 'cara') {
+export function pictoEmocionSVG(emocion, estilo = 'esquema') {
+  if (estilo === 'esquema') {
     return `<svg viewBox="0 0 200 200" aria-hidden="true">
-    <circle cx="100" cy="100" r="84" fill="#fff6cf" ${trazo(7)}/>${CARAS[emocion]}</svg>`;
+    <circle cx="100" cy="100" r="84" fill="#fff6cf" ${trazo(7)}/>${ESQUEMAS_EMOCION[emocion]}</svg>`;
   }
   if (estilo !== 'postura') throw new Error(`Estilo de pictograma desconocido: ${estilo}`);
   return `<svg viewBox="0 0 200 200" aria-hidden="true">${POSTURAS[emocion]}</svg>`;
