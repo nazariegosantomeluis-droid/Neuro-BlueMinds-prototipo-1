@@ -155,12 +155,11 @@ test('ACT-13: el resumen separa omisiones (ante el «sí») y errores de comisi�
 
 const enOrden = (it) => it.tarjetas.filter((t) => t.orden !== null).sort((a, b) => a.orden - b.orden);
 
-test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la última pasa sola y no es un paso', () => {
+test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la última pasa sola si no sobra ninguna', () => {
   for (const it of [...of('ACT-10'), ...of('ACT-16')]) {
     const orden = enOrden(it);
-    // «ultimaTarjeta»: «sola» en las dos fichas (Catálogo 6.2: A1 por secuencia completa).
-    assert.equal(ficha(it.actividad).ultimaTarjeta, 'sola');
-    assert.equal(it.ensayos.length, orden.length - 1, it.codigo);
+    const sobran = it.tarjetas.length - orden.length;
+    assert.equal(it.ensayos.length, sobran ? orden.length : orden.length - 1, it.codigo);
     it.ensayos.forEach((e, k) => {
       assert.equal(e.codigo, `${it.codigo}-${k + 1}`);
       assert.deepEqual(e.colocadas, orden.slice(0, k).map((t) => t.id));
@@ -171,8 +170,8 @@ test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la
       // La instrucción se dice una vez: los demás pasos usan el silencio.
       if (k > 0) assert.equal(e.consigna.audio, SILENCIO);
     });
-    assert.equal(it.ensayos.at(-1).autoColocar, orden.at(-1).id, it.codigo);
-    assert.ok(it.ensayos.every((e) => e.total === orden.length - 1), it.codigo);
+    if (!sobran) assert.equal(it.ensayos.at(-1).autoColocar, orden.at(-1).id, it.codigo);
+    assert.ok(it.ensayos.every((e) => e.total === it.ensayos.length), it.codigo);
     // Con 3 tarjetas o más, nunca aparecen ya en orden.
     if (it.tarjetas.length >= 3) assert.ok(it.tarjetas.some((t, i) => t.orden !== i + 1), `${it.codigo}: revueltas`);
   }
@@ -251,7 +250,7 @@ test('secuencias: el bloque se cuenta en secuencias completas y el resumen empie
   // La secuencia cortada no entra en la cuenta; los pasos son el detalle.
   assert.equal(lineas[0], 'Formó sin errores 1 de 2 palabras o frases.');
   assert.equal(lineas[1], 'Secuencias que no se terminaron por una pausa o un salto: 1. No entran en la cuenta.');
-  assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 1 de 2 pasos; sin respuesta en 0.');
+  assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 3 de 4 pasos; sin respuesta en 0.');
   // App: n secuencias completas, sin recortar a mitad de una.
   const app = texto('src/app.js');
   assert.match(app, /picked = pantalla\.elegir\(bandItems, n, rand, \{ ficha, banda, repeat, previas \}\)/);

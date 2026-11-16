@@ -11,7 +11,6 @@
   "unidadDelBloque": "secuencia",
   "pantalla": "secuencia",
   "barajarOpciones": false,
-  "ultimaTarjeta": "sola",
   "bandas": [
     {
       "id": "B1",
@@ -65,7 +64,7 @@
     "AV"
   ],
   "ensayosPorBloque": 10,
-  "ensayosExcepcion": "Un ensayo es una secuencia completa (Arquitectura 4.5; Catálogo 6.2: A1 por secuencia completa). Cada una pide de 1 a 4 toques, porque la última tarjeta pasa sola a su lugar, y la banda tiene 14 secuencias distintas en V y 10 en AV. Con 20 secuencias de 5 tarjetas serían 80 pasos, unos 8 minutos con los 6 s por ensayo que calcula el Catálogo (sección 5), y el bloque repetiría secuencias. Se proponen 10 por bloque; A1 por secuencia completa necesita 20 (Modelo matemático, 4.1), que se juntan con dos bloques.",
+  "ensayosExcepcion": "Un ensayo es una secuencia completa (Arquitectura 4.5; Catálogo 6.2: A1 por secuencia completa). Cada una pide de 1 a 4 toques, porque la última tarjeta pasa sola a su lugar (no sobra ninguna: queda una sola posible), y la banda tiene 14 secuencias distintas en V y 10 en AV. Con 20 secuencias de 5 tarjetas serían 80 pasos, unos 8 minutos con los 6 s por ensayo que calcula el Catálogo (sección 5), y el bloque repetiría secuencias. Se proponen 10 por bloque; A1 por secuencia completa necesita 20 (Modelo matemático, 4.1), que se juntan con dos bloques.",
   "ensayosMax": 20,
   "historias": [
     "planta",
@@ -105,7 +104,7 @@
   "pendientesClinicos": [
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
     "Aprobar las 7 historias dibujadas con código y sus momentos, y las instrucciones habladas de AV.",
-    "Aprobar que la última tarjeta pase sola a su lugar y no cuente como ensayo.",
+    "Aprobar que la última tarjeta pase sola a su lugar y no cuente como ensayo: en ese paso queda una sola posible.",
     "Aprobar el número de secuencias por bloque, que es una excepción al mínimo de 20 ensayos («ensayosExcepcion»).",
     "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
   ],

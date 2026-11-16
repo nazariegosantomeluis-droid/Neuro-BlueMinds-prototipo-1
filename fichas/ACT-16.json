@@ -11,7 +11,6 @@
   "unidadDelBloque": "secuencia",
   "pantalla": "secuencia",
   "barajarOpciones": false,
-  "ultimaTarjeta": "sola",
   "bandas": [
     {
       "id": "B1",
@@ -47,7 +46,7 @@
     "AV"
   ],
   "ensayosPorBloque": 10,
-  "ensayosExcepcion": "Un ensayo es una palabra o frase completa (Arquitectura 4.5; Catálogo 6.2: A1 por palabra completa). Cada una pide de 1 a 3 toques, porque la última pieza pasa sola a su lugar, y la banda tiene 16 palabras distintas en B1 y B2 y 9 en B3 y B4. Con 20 por bloque, B3 y B4 repetirían palabras en el mismo bloque. Se proponen 10 por bloque; A1 por secuencia completa necesita 20 (Modelo matemático, 4.1), que se juntan con dos bloques.",
+  "ensayosExcepcion": "Un ensayo es una palabra o frase completa (Arquitectura 4.5; Catálogo 6.2: A1 por palabra completa). Cada una pide de 2 a 4 toques: como sobran piezas, la última también se elige, y la banda tiene 16 palabras distintas en B1 y B2 y 9 en B3 y B4. Con 20 por bloque, B3 y B4 repetirían palabras en el mismo bloque. Se proponen 10 por bloque; A1 por secuencia completa necesita 20 (Modelo matemático, 4.1), que se juntan con dos bloques.",
   "ensayosMax": 20,
   "palabras": {
     "B1": [
@@ -266,11 +265,11 @@
     "Solo cuando el terapeuta fija un objetivo de lectoescritura; exige conocer las letras o las sílabas.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y unidad: sílaba, letra, palabra), la respuesta «secuencia» con A1 por palabra completa y la lectura no permitida vienen del Catálogo de actividades (sección 6). Las palabras, su división en sílabas, las piezas que sobran, los tiempos y los 6 bloques de palabras son una propuesta y esperan revisión clínica. Las palabras son los nombres de los dibujos del banco (ejemplares 1 y 2); las frases de B4 son las de «Palabra escrita e imagen» B3, con su artículo. Las letras van en minúsculas, como en «Palabra escrita e imagen»; falta decidir la letra con los clínicos. Cada paso es un ensayo del motor: el niño toca la tarjeta que sigue entre las que quedan. Al terminar el paso, la tarjeta correcta pasa a su lugar con el mismo marco de siempre, haya acertado o no, y la secuencia sigue. La última pieza de la palabra pasa sola a su lugar, como en «Ordena la secuencia», aunque sobren piezas: así no es un paso («ultimaTarjeta»: «sola»). Con «elige», el niño la elegiría entre las que quedan, como un paso más. El Catálogo (sección 6.2) pide la respuesta «secuencia» con A1 por palabra completa: el indicador principal del resumen es cuántas palabras o frases se formaron sin errores; los pasos son el detalle. Los tiempos entre toques no se resumen ni entran en «fuera de tarea» (Arquitectura 4.5: no son tiempos de respuesta comparables). En el registro, cada paso queda como una fila con su código (por ejemplo, ACT16-B2-03-1); la última pieza no tiene fila. «Número de secuencias» cuenta palabras o frases completas.",
+  "notaPrototipo": "El paradigma, la mecánica, el criterio de las bandas (longitud y unidad: sílaba, letra, palabra), la respuesta «secuencia» con A1 por palabra completa y la lectura no permitida vienen del Catálogo de actividades (sección 6). Las palabras, su división en sílabas, las piezas que sobran, los tiempos y los 6 bloques de palabras son una propuesta y esperan revisión clínica. Las palabras son los nombres de los dibujos del banco (ejemplares 1 y 2); las frases de B4 son las de «Palabra escrita e imagen» B3, con su artículo. Las letras van en minúsculas, como en «Palabra escrita e imagen»; falta decidir la letra con los clínicos. Cada paso es un ensayo del motor: el niño toca la tarjeta que sigue entre las que quedan. Al terminar el paso, la tarjeta correcta pasa a su lugar con el mismo marco de siempre, haya acertado o no, y la secuencia sigue. Un paso solo cuenta como ensayo si quedan al menos 2 piezas posibles. Como siempre sobra al menos una pieza, la última pieza de la palabra también se elige y es un ensayo; si quedara una sola, pasaría sola a su lugar, como en «Ordena la secuencia». El Catálogo (sección 6.2) pide la respuesta «secuencia» con A1 por palabra completa: el indicador principal del resumen es cuántas palabras o frases se formaron sin errores; los pasos son el detalle. Los tiempos entre toques no se resumen ni entran en «fuera de tarea» (Arquitectura 4.5: no son tiempos de respuesta comparables). En el registro, cada paso queda como una fila con su código (por ejemplo, ACT16-B2-03-1); la última pieza tiene fila porque se elige. «Número de secuencias» cuenta palabras o frases completas.",
   "pendientesClinicos": [
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",
     "Aprobar las palabras, su división en sílabas, las piezas que sobran y las frases de B4.",
-    "Decidir si la última pieza pasa sola a su lugar aunque sobren piezas («ultimaTarjeta»: «sola», como se pidió) o si el niño la elige entre las que quedan («elige»). Con «sola», en B1 solo se elige la primera sílaba.",
+    "Aprobar que la última pieza cuente como ensayo cuando quedan al menos 2 posibles (siempre sobra una pieza) y pase sola a su lugar cuando queda una.",
     "Decidir el tipo de letra.",
     "Aprobar el número de secuencias por bloque, que es una excepción al mínimo de 20 ensayos («ensayosExcepcion»).",
     "Confirmar la contraindicación «Discapacidad visual no corregida»: el Catálogo (sección 6.2) no la lista para esta actividad y se copió de «Igual a la muestra»."
