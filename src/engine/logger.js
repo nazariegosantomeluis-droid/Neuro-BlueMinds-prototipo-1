@@ -19,6 +19,8 @@ export const COLUMNS = [
   'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional', 'peso_calidad',
   // Al final, para que las columnas del piloto no cambien de lugar. Solo la llena ACT-09.
   't_muestra_fin',
+  // Tanda 3: en la fase 2, la mitad de conceptos (A o B) del ítem de ACT-02.
+  'mitad_fase2',
 ];
 
 // Una fila por sesión (sesiones.csv).
@@ -27,6 +29,9 @@ export const SESION_COLUMNS = [
   'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
   'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia',
   'referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques',
+  // Tanda 3 (H2.3): modo de fase de la sesión y, en la fase 2, versión, número de sesión, bloque del
+  // análisis y modalidad que abrió. plan_sesion: los bloques planeados, en orden.
+  'modo_fase', 'fase2_version', 'fase2_sesion', 'fase2_bloque', 'fase2_primera', 'plan_sesion',
 ];
 
 const KEY = 'neuro-blueminds.registro';

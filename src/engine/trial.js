@@ -229,7 +229,9 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
 
 /**
  * Ejecuta un bloque de ensayos y guarda un registro por ensayo.
- * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }], anuncio? }]
+ * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }], anuncio?, modalidad? }]
+ *   modalidad: la de ese ensayo, si el bloque mezcla V y AV (fase 2, versión del Catálogo 5.2);
+ *   sin ella, la del bloque.
  *   anuncio: antes de ese ensayo se muestra una pantalla breve (ficha.anuncioMs), por
  *   ejemplo el nuevo símbolo cuando cambia la regla. No produce registro.
  * base: campos de la sesión (sesion_id, bloque, codigo_nino, dispositivo, banda, version_app,
@@ -253,8 +255,9 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
   }
 
   const done = (async () => {
-    const keys = trials.map((t) => t.consigna?.audio).filter(Boolean);
-    if (modalidad === 'AV' && !(await env.audio?.available?.(keys))) throw new Error(NO_AUDIO_MSG);
+    const de = (t) => t.modalidad ?? modalidad;
+    const keys = trials.filter((t) => de(t) === 'AV').map((t) => t.consigna?.audio).filter(Boolean);
+    if (trials.some((t) => de(t) === 'AV') && !(await env.audio?.available?.(keys))) throw new Error(NO_AUDIO_MSG);
     const rows = [];
     for (let i = 0; i < trials.length; i++) {
       const t = trials[i];
@@ -267,7 +270,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
       const posCorrecta = opciones.findIndex((o) => o.correcta) + 1;
       const disposicion = banda?.disposicion ?? `1x${opciones.length}`;
       onTrial(t, i);
-      current = createTrial({ ficha, modalidad, consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState });
+      current = createTrial({ ficha, modalidad: de(t), consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState });
       const measured = await current.run();
       rows.push(
         log.add({
@@ -275,7 +278,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
           actividad: ficha.id,
           version_ficha: ficha.version,
           version_parametros: VERSION_PARAMETROS,
-          modalidad,
+          modalidad: de(t),
           ensayo: i + 1,
           item: t.codigo,
           n_opciones: opciones.length,

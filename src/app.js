@@ -25,13 +25,18 @@ import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './term
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
+import { modoDe } from './ninos.js';
+import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
 
 // Las actividades y el módulo que dibuja cada pantalla están en catalogo.js. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
 const PICTO_FIN = 'assets/picto/terminar.png';
+// INV-8 (Arquitectura 7.4): al llegar a 15 minutos de uso no empieza un bloque nuevo.
+const LIMITE_MSG = 'Se llegaron a los 15 minutos de uso de la sesión: se propone terminarla. No se puede empezar otro bloque (INV-8).';
 const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
+const MODO_NOMBRE = { familiarizacion: 'Familiarización', fase1: 'Fase 1', fase2: 'Fase 2', fase3: 'Fase 3', cierre: 'Cierre' };
 
 const ICONO_PAUSA =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
@@ -131,6 +136,12 @@ async function init() {
   } catch {
     state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json, items/conceptos.json o items/revision.json).'];
   }
+  // Estructura de la sesión con un niño (Catálogo 7.1, Arquitectura 14): sin ella solo hay bloques sueltos.
+  try {
+    state.sesion = await (await fetch('fichas/sesion.json')).json();
+  } catch {
+    state.problemas.sesion = ['No se pudo cargar la estructura de la sesión (fichas/sesion.json).'];
+  }
   // El banco de las actividades de uso posterior va aparte: si falta, el piloto sigue funcionando.
   try {
     state.items = [...state.items, ...(await (await fetch('items/items-posteriores.json')).json()).items];
@@ -177,7 +188,7 @@ function route() {
   else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
-  else if (ruta === 'ninos') renderNinos(app, { ninos });
+  else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -216,6 +227,8 @@ const renderInicio = (msg = '') =>
       bindVolumen,
       cerrarSesion,
       empezar: start,
+      empezarSesion,
+      historialFase2: (codigo) => historialFase2(sesiones.rows(), codigo),
       desbloquearAudio: () => audio.unlock(),
     },
     msg,
@@ -334,45 +347,17 @@ async function start(form) {
   if (!state.session && p.tipo === 'nino' && !(await confirmarNino(app, p.nino))) return renderInicio();
   // La sesión empieza con su primer bloque; hasta entonces no existe.
   const s = state.session ?? newSession(p, valor);
-  const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
-  const usados = (s.usados[ficha.id] ??= new Set());
-  const repeat = ficha.repetirItems !== false;
-  // Los ítems retirados en la revisión clínica no entran en las sesiones.
-  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
-  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
-  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
-  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
-  bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === f.modalidad);
-  let picked;
-  try {
-    if (pantalla.elegir) {
-      // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
-      // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
-      // previas: lo ya registrado de esta actividad y banda en la sesión (ACT-12 junta bloques).
-      const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
-      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat, previas });
-    } else if (banda.composicion) {
-      // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
-      s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
-      picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
-    } else if (ficha.estratificarPor === 'emocion') {
-      picked = elegirPorEmocion(bandItems, n, rand);
-    } else {
-      picked = pickItems(bandItems, n, rand, { repeat, exclude: repeat ? new Set() : usados });
-    }
-  } catch (e) {
-    return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
+  // INV-8: al llegar a 15 minutos de uso no empieza un bloque nuevo.
+  if (state.session && s.inicioMs !== undefined && limiteAlcanzado(s.inicioMs, performance.now(), state.sesion?.limiteMinutos ?? 15)) {
+    return renderInicio(LIMITE_MSG);
   }
-  const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
-  // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
-  const todos = pantalla.toTrials(picked, { ficha, banda, pareja, modalidad: f.modalidad });
-  const trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
+  let preparado;
   try {
-    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
-    await preloadImages([PICTO_FIN, ...srcs]);
+    preparado = await prepararBloque({ ficha, banda, modalidad: f.modalidad, n, s });
   } catch (e) {
     return renderInicio(e.message);
   }
+  const { trials, usados } = preparado;
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
@@ -388,6 +373,7 @@ async function start(form) {
   history.replaceState(null, '', '#inicio'); // al terminar el bloque se vuelve al inicio
   if (!state.session) {
     state.session = s;
+    s.inicioMs = performance.now(); // reloj del límite de 15 minutos (INV-8)
     prefs.set('nbm.sesiones', String(s.numero + 1));
     // Fecha y hora (ISO 8601 en UTC, con «Z») solo para identificar la sesión; las duraciones
     // se miden con performance.now().
@@ -409,6 +395,147 @@ async function start(form) {
   }
   s.bloque++;
   await runBlock({ ficha, banda, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
+}
+
+// ---------- Sesión con un niño (H2.3 y Catálogo 7.1) ----------
+
+// Con un niño, la sesión sigue un plan fijo según su modo de fase: referencia motora, ACT-02 y
+// ACT-07 (en la familiarización, antes ACT-01). Todos los bloques se preparan antes de empezar, para
+// que la sesión no se detenga entre uno y otro. El adulto no elige actividad, banda ni modalidad.
+async function empezarSesion(form) {
+  state.form = { ...state.form, ...Object.fromEntries(new FormData(form)) };
+  const cfg = state.sesion;
+  if (!cfg) return renderInicio(state.problemas.sesion?.[0] ?? 'Falta la estructura de la sesión.');
+  const p = participante(state.form.participante, false, ninos.rows());
+  if (p.error) return renderInicio(p.error);
+  if (p.tipo !== 'nino') return renderInicio('La sesión completa es solo con un niño inscrito.');
+  if (!(await confirmarNino(app, p.nino))) return renderInicio();
+  const modo = modoDe(p.nino);
+  const s = Object.assign(newSession(p, state.form.participante), { modo, tema: 'general' });
+  // Fase 2: número de sesión, bloque del análisis y modalidad que abre (sorteada, Protocolo 3.3).
+  let fase2 = null;
+  if (modo === 'fase2') {
+    const previas = historialFase2(sesiones.rows(), p.codigo);
+    const version = state.fichas[cfg.fase2.actividad]?.fase2?.version ?? 'protocolo';
+    const primera = primeraModalidadFase2(previas, rng(seedOf(`${s.id}:fase2`)), cfg.fase2.maxSeguidasMismaModalidad);
+    fase2 = { version, numero: previas.length + 1, primera };
+  }
+  let plan;
+  try {
+    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2 });
+  } catch (e) {
+    return renderInicio(e.message);
+  }
+  const bloques = [];
+  try {
+    for (const [k, paso] of plan.filter((x) => x.tipo === 'bloque').entries()) {
+      const ficha = state.fichas[paso.actividad];
+      const banda = ficha.bandas.find((b) => b.id === paso.banda);
+      s.bloque = k; // semilla de cada bloque, como en los bloques sueltos
+      const preparado = await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayos, s, mitad: paso.mitad ?? null, mitades: paso.mitades ?? null });
+      bloques.push({ paso, ficha, banda, ...preparado });
+    }
+  } catch (e) {
+    return renderInicio(e.message);
+  } finally {
+    s.bloque = 0;
+  }
+  const conAudio = bloques.flatMap((b) => b.trials.filter((t) => (t.modalidad ?? b.paso.modalidad) === 'AV').map((t) => t.consigna.audio));
+  if (conAudio.length && !(await audio.available(conAudio))) return renderInicio(NO_AUDIO_MSG);
+  for (const b of bloques) {
+    const ajuste = avisoDeAjuste(b.ficha, b.banda);
+    if (ajuste && !(await confirmarPantalla(ajuste))) return renderInicio();
+  }
+  const { periodo, advertencia } = await comprobarFrecuencia(app);
+  history.replaceState(null, '', '#inicio');
+  state.session = s;
+  s.inicioMs = performance.now();
+  prefs.set('nbm.sesiones', String(s.numero + 1));
+  sesiones.add({
+    sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
+    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: Boolean(advertencia),
+    modo_fase: modo,
+    fase2_version: fase2?.version ?? null,
+    fase2_sesion: fase2?.numero ?? null,
+    fase2_bloque: fase2 ? bloqueFase2(fase2.numero, cfg.fase2.sesionesPorBloque) : null,
+    fase2_primera: fase2?.primera ?? null,
+    plan_sesion: bloques.map(({ paso }) => ({ actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) })),
+  });
+  const resultados = [];
+  let terminar = false;
+  let k = 0;
+  for (const paso of plan) {
+    if (paso.tipo === 'referencia') {
+      s.referenciaHecha = true;
+      const ref = await ejecutarReferencia(s, periodo);
+      if (ref.terminada) terminar = true;
+    } else if (paso.tipo === 'bloque') {
+      const b = bloques[k++];
+      if (terminar) continue;
+      s.bloque++;
+      const r = await ejecutarBloque({ ficha: b.ficha, banda: b.banda, modalidad: paso.modalidad, trials: b.trials, s, usados: b.usados, pantalla: b.pantalla, periodo });
+      if (r.error) {
+        terminar = true;
+        continue;
+      }
+      resultados.push(r.last);
+    }
+  }
+  state.ultimaSesion = { s, resultados };
+  renderResumenSesion();
+}
+
+// Arma los ensayos de un bloque: elige los ítems de la banda y carga sus imágenes. Lanza un error con
+// un mensaje para el adulto si no se puede. mitad: en la fase 2, solo los conceptos de esa mitad.
+// mitades: en la versión del Catálogo 5.2, la mitad de cada modalidad ({ V: 'A', AV: 'B' }): la
+// mitad de los ensayos va en V y la otra en AV, en orden al azar.
+async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mitades = null }) {
+  const pantalla = PANTALLAS[ficha.pantalla];
+  const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
+  const usados = (s.usados[ficha.id] ??= new Set());
+  const repeat = ficha.repetirItems !== false;
+  // Los ítems retirados en la revisión clínica no entran en las sesiones.
+  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
+  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
+  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
+  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
+  if (modalidad !== 'mixta') bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === modalidad);
+  const elegir = (deItems, cuantos) => {
+    try {
+      if (pantalla.elegir) {
+        // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
+        // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
+        // previas: lo ya registrado de esta actividad y banda en la sesión (ACT-12 junta bloques).
+        const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
+        return pantalla.elegir(deItems, cuantos, rand, { ficha, banda, repeat, previas });
+      }
+      if (banda.composicion) {
+        // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
+        s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
+        return pickComposed(deItems, banda.composicion, s.orden[ficha.id], rand);
+      }
+      if (ficha.estratificarPor === 'emocion') return elegirPorEmocion(deItems, cuantos, rand);
+      return pickItems(deItems, cuantos, rand, { repeat, exclude: repeat ? new Set() : usados });
+    } catch (e) {
+      throw new Error(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
+    }
+  };
+  const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
+  let trials;
+  if (mitades) {
+    // Fase 2, versión del Catálogo 5.2: cada modalidad con su mitad de conceptos, mezcladas al azar.
+    const mitadN = Math.floor(n / 2);
+    const de = (m, cuantos) =>
+      pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitades[m]), cuantos), { ficha, banda, pareja, modalidad: m }).map((t) => ({ ...t, modalidad: m }));
+    trials = shuffle([...de('V', mitadN), ...de('AV', n - mitadN)], rand);
+  } else {
+    // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
+    const todos = pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitad), n), { ficha, banda, pareja, modalidad });
+    trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
+  }
+  const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
+  await preloadImages([PICTO_FIN, ...srcs]);
+  return { trials, usados, pantalla };
 }
 
 // Aviso antes del bloque: las opciones no caben en esta pantalla a su tamaño mínimo.
@@ -496,7 +623,17 @@ async function ejecutarReferencia(s, periodo) {
   }
 }
 
-async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usados, pantalla, periodo }) {
+// Bloque suelto (demostración y modo experto): al terminar, el fin de bloque y su resumen.
+async function runBlock(opciones) {
+  const r = await ejecutarBloque(opciones);
+  if (r.error) return renderInicio(r.error);
+  state.last = r.last;
+  renderFin();
+}
+
+// Ejecuta un bloque y devuelve { rows, last } o { error }. extra: campos del registro que dependen
+// de la sesión con niño (por ejemplo, la mitad de conceptos de la fase 2).
+async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s, usados, pantalla, periodo }) {
   const banda = bandaDeFicha.id;
   const { wrap, stage } = montarNino({ experto: s.experto });
   state.running = true;
@@ -513,7 +650,8 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
     view,
     log,
     // latencia_dispositivo_ms queda vacía hasta medir cada tableta.
-    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP, modo_fase: 'prototipo', tema_imagenes: 'general' },
+    // modo_fase: el del niño en las sesiones con niño; «prototipo» en las de demostración y modo experto.
+    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP, modo_fase: s.modo ?? 'prototipo', tema_imagenes: s.tema ?? 'general' },
     rand: rng(seedOf(`${s.id}:${s.bloque}:posiciones`)),
     onPause: async () => {
       view.clear();
@@ -548,10 +686,16 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   try {
     rows = await block.done;
   } catch (e) {
-    return renderInicio(e.message);
+    return { error: e.message };
   } finally {
     state.running = false;
     wake?.release().catch(() => {});
+  }
+  // Fase 2: la mitad de conceptos de cada ensayo (Protocolo 3.3, Catálogo 5.2).
+  if (s.modo === 'fase2' && ficha.id === state.sesion?.fase2.actividad) {
+    const mitad = new Map(state.items.filter((i) => i.actividad === ficha.id).map((i) => [i.codigo, i.mitad]));
+    const delBloque = new Set(rows);
+    log.edit((all) => all.filter((r) => delBloque.has(r)).forEach((r) => (r.mitad_fase2 = mitad.get(r.item) ?? null)));
   }
   const deLaSesion = log.rows().filter((r) => r.sesion_id === s.id);
   editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
@@ -561,8 +705,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
   const delBloque = new Set(rows);
   const previas = deLaSesion.filter((r) => !delBloque.has(r));
-  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) };
-  renderFin();
+  return { rows, last: { rows, ficha, banda, modalidad, bloque: s.bloque, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) } };
 }
 
 // Control del adulto en una esquina: el primer toque lo arma y el segundo, antes de 3 s, lo ejecuta.
@@ -725,6 +868,43 @@ function renderFin() {
       <button type="button" class="esquina" id="adulto" aria-label="Resumen para el adulto: tocar dos veces">${ICONO_ADULTO}</button>
     </div>`;
   twoTaps(app.querySelector('#adulto'), renderResumen);
+}
+
+// Resumen de la sesión con un niño: cada bloque con su resumen y su nivel de apoyo.
+function renderResumenSesion() {
+  const { s, resultados } = state.ultimaSesion;
+  const fila = () => sesiones.rows().find((r) => r.sesion_id === s.id);
+  const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  app.innerHTML = `
+    <div class="adulto">
+      ${marcaHTML()}
+      ${tituloHTML('Resumen de la sesión', `Sesión ${esc(s.id)} · ${esc(MODO_NOMBRE[s.modo] ?? s.modo)}`)}
+      ${resultados
+        .map(
+          (b) => `
+        <section class="panel">
+          <h2>Bloque ${b.bloque}: ${esc(b.ficha.id)} ${esc(b.ficha.nombre)} · banda ${esc(b.banda)} · ${esc(b.modalidad === 'mixta' ? 'V y AV' : b.modalidad)}</h2>
+          <ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+          <fieldset class="chips">
+            <legend>Nivel de apoyo en este bloque</legend>
+            ${NIVELES_APOYO.map((n) => chipHTML(`apoyo-${b.bloque}`, n, mayuscula(n), fila()?.nivel_apoyo.find((x) => x.bloque === b.bloque)?.nivel === n)).join('')}
+          </fieldset>
+        </section>`,
+        )
+        .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
+      <div class="panel">
+        <p class="ayuda">Describe lo registrado. No es un puntaje ni una interpretación clínica.</p>
+        <div class="acciones"><button type="button" class="primario" id="cerrar">Terminar sesión</button></div>
+      </div>
+    </div>`;
+  for (const r of app.querySelectorAll('[name^=apoyo-]')) {
+    const bloque = Number(r.name.slice(6));
+    r.onchange = () => editSesion(s.id, (x) => (x.nivel_apoyo = [...x.nivel_apoyo.filter((n) => n.bloque !== bloque), { bloque, nivel: r.value }]));
+  }
+  app.querySelector('#cerrar').onclick = () => {
+    cerrarSesion();
+    renderInicio();
+  };
 }
 
 function renderResumen() {

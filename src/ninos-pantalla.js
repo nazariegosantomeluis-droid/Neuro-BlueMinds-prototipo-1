@@ -2,7 +2,12 @@
 // La lógica está en ninos.js; aquí solo se dibuja. No hay ningún campo de texto: el padrón no puede
 // recibir un nombre ni otro dato que identifique al niño.
 import { esc, navHTML } from './paginas.js';
-import { COLORES, EDAD_MIN, EDAD_MAX, abreviar, nombreNino, crearNino, cambiarConsentimiento } from './ninos.js';
+import { COLORES, EDAD_MIN, EDAD_MAX, MODOS_FASE, abreviar, nombreNino, crearNino, cambiarConsentimiento, modoDe, cambiarModo, fijarBanda } from './ninos.js';
+
+// Nombre de cada modo de fase (Arquitectura 14).
+export const NOMBRE_MODO = { familiarizacion: 'Familiarización', fase1: 'Fase 1', fase2: 'Fase 2', fase3: 'Fase 3', cierre: 'Cierre' };
+// Actividades con banda fija por niño: las del piloto después de la familiarización.
+export const CON_BANDA = ['ACT-02', 'ACT-07'];
 
 export const LINEA_SIN_IDENTIDAD =
   'Esta tableta no guarda quién es cada niño: el investigador lleva la relación entre el código y el niño fuera de la aplicación (Arquitectura 9.1).';
@@ -41,7 +46,23 @@ export function inscripcionHTML() {
 
 const ETIQUETA_CONSENTIMIENTO = { vigente: 'Vigente', suspendido: 'Suspendido', retirado: 'Retirado' };
 
-function filaHTML(n) {
+// Modo de fase y banda fija de cada actividad: los fija el investigador responsable.
+function faseHTML(n, fichas) {
+  const modo = modoDe(n);
+  const bandas = CON_BANDA.filter((id) => fichas[id])
+    .map((id) => {
+      const actual = n.bandas?.[id] ?? fichas[id].bandas[0].id;
+      return `<label>${esc(id)}
+        <select data-banda="${esc(id)}" data-codigo="${esc(n.codigo)}">${fichas[id].bandas.map((b) => `<option ${b.id === actual ? 'selected' : ''}>${esc(b.id)}</option>`).join('')}</select></label>`;
+    })
+    .join('');
+  return `
+    <label>Modo de fase
+      <select data-modo data-codigo="${esc(n.codigo)}">${MODOS_FASE.map((m) => `<option value="${m}" ${m === modo ? 'selected' : ''}>${esc(NOMBRE_MODO[m])}</option>`).join('')}</select></label>
+    <details class="nino-bandas"><summary>Banda fija</summary><div class="nino-bandas-campos">${bandas}</div></details>`;
+}
+
+function filaHTML(n, fichas) {
   const acciones =
     n.consentimiento === 'vigente'
       ? `<button type="button" data-cambiar="suspendido" data-codigo="${esc(n.codigo)}">Suspender</button>
@@ -58,11 +79,15 @@ function filaHTML(n) {
       <td>${esc(n.edad_meses)} meses</td>
       <td>${n.video ? 'Sí' : 'No'}</td>
       <td>${esc(ETIQUETA_CONSENTIMIENTO[n.consentimiento] ?? n.consentimiento)}</td>
+      <td class="nino-fase">${faseHTML(n, fichas)}</td>
       <td><div class="acciones">${acciones}</div></td>
     </tr>`;
 }
 
-export function renderNinos(app, { ninos }) {
+export const AVISO_FASE =
+  'El modo de fase y la banda fija de cada niño los fija el investigador responsable (Arquitectura 14). En el estudio vienen del servidor; en este prototipo se fijan aquí. La banda fija se usa en las fases 1, 2, 3 y en el cierre; la familiarización usa siempre la banda mínima.';
+
+export function renderNinos(app, { ninos, fichas = {} }) {
   let msg = '';
   let exito = false; // el aviso de éxito no usa el estilo rojo de los errores
   const dibujar = () => {
@@ -77,8 +102,9 @@ export function renderNinos(app, { ninos }) {
         ${
           filas.length
             ? `<div class="panel"><table class="nino-tabla">
-                <thead><tr><th>Ícono</th><th>Código</th><th>Edad</th><th>Video</th><th>Consentimiento</th><th></th></tr></thead>
-                <tbody>${filas.map(filaHTML).join('')}</tbody></table></div>`
+                <thead><tr><th>Ícono</th><th>Código</th><th>Edad</th><th>Video</th><th>Consentimiento</th><th>Fase</th><th></th></tr></thead>
+                <tbody>${filas.map((n) => filaHTML(n, fichas)).join('')}</tbody></table>
+                <p class="ayuda">${esc(AVISO_FASE)}</p></div>`
             : '<p class="meta">Todavía no hay niños inscritos. Sin ellos solo se puede usar la demostración.</p>'
         }
         <section><h2>Inscribir un niño</h2>${inscripcionHTML()}</section>
@@ -101,6 +127,27 @@ export function renderNinos(app, { ninos }) {
       }
       dibujar();
     };
+    const editar = (codigo, fn) =>
+      ninos.edit((rows) => {
+        const r = rows.find((x) => x.codigo === codigo);
+        if (r) fn(r);
+      });
+    for (const s of app.querySelectorAll('[data-modo]')) {
+      s.onchange = () => {
+        editar(s.dataset.codigo, (r) => (r.modo_fase = cambiarModo(s.value)));
+        msg = `Modo de fase: ${NOMBRE_MODO[s.value]}.`;
+        exito = true;
+        dibujar();
+      };
+    }
+    for (const s of app.querySelectorAll('[data-banda]')) {
+      s.onchange = () => {
+        editar(s.dataset.codigo, (r) => (r.bandas = fijarBanda(r.bandas, fichas[s.dataset.banda], s.value)));
+        msg = `Banda fija de ${s.dataset.banda}: ${s.value}.`;
+        exito = true;
+        dibujar();
+      };
+    }
     for (const b of app.querySelectorAll('[data-cambiar]')) {
       b.onclick = () => {
         const nuevo = b.dataset.cambiar;

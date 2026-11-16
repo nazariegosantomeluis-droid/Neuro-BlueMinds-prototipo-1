@@ -101,6 +101,13 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
+**Sesión con un niño (H2.3).** Con un niño inscrito, el inicio no pide actividad, banda ni modalidad: muestra la **sesión completa** que corresponde a su modo de fase y el botón «Empezar la sesión». La estructura está en [`fichas/sesion.json`](fichas/sesion.json) y la lógica, en `src/fases.js`.
+- **Modo de fase.** Cada niño tiene uno: familiarización, fase 1, fase 2, fase 3 o cierre (Arquitectura 14). Lo fija el investigador responsable en «Niños inscritos», junto con la banda fija de ACT-02 y ACT-07. En el estudio vendrán del servidor (decisión D6 pendiente). Un niño nuevo empieza en la familiarización.
+- **Plan.** Rutina de inicio, referencia motora, ACT-02 y después ACT-07 (en la familiarización, antes ACT-01 con 10 ensayos), y rutina de cierre. En la familiarización la banda es la mínima; en las fases 1, 2 y 3 y en el cierre, la fija del niño (o la mínima si no tiene). Fuera de la fase 2 la modalidad es AV, la presentación multimodal (pendiente de confirmar en `fichas/sesion.json`).
+- **Fase 2, versión del Protocolo 3.3 (la que se usa).** ACT-02 se hace en dos bloques de 15 ensayos, uno en V y otro en AV, en la misma banda. La modalidad que abre se sortea en cada sesión, sin que una abra más de 2 sesiones seguidas. En las sesiones 1 a 6 los conceptos de la mitad A van en V y los de la B en AV; en las 7 a 12 se invierte. Los bloques de 15 son una excepción documentada al mínimo de 20 ensayos por bloque (Arquitectura 4.1).
+- **Fase 2, versión del Catálogo 5.2 (alternativa).** Un bloque de 30 ensayos en el que cada mitad de conceptos va en su modalidad, en orden al azar. Se elige en la ficha de ACT-02 (`fase2.version`). Cada sesión registra qué versión usó (`fase2_version`).
+- Todos los bloques se preparan antes de empezar: si falta una imagen o la voz, la sesión no empieza.
+
 **Modo experto de la aplicación.** Es el interruptor «Modo experto» del encabezado de las pantallas del adulto (`src/modo-experto.js`). Empieza apagado y se guarda en este dispositivo (`localStorage`, clave `nbm.modoExperto`).
 - **Apagado:** el inicio, la galería, las sesiones y el formulario F3 muestran solo ACT-01, ACT-02 y ACT-07, sin los grupos «En preparación» ni «En investigación» y sin la pausa guiada; tampoco hay sesiones en modo experto. «Sesiones» oculta los bloques de las demás actividades y dice cuántos ensayos no muestra; la descarga de cada sesión y la del registro siguen completas.
 - **Encendido:** se ven todas las actividades, y en el inicio aparece la casilla de la sesión en modo experto.
@@ -124,6 +131,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - El código tiene 128 bits (32 caracteres hexadecimales) y se muestra abreviado (por ejemplo, `7F3A-91C2`). El código completo está en cada fila, para que el investigador lo anote fuera de la aplicación; el registro guarda siempre el completo.
 - El ícono es una forma (círculo, cuadrado, triángulo, estrella, rombo, corazón, luna o hexágono) con un color de una paleta apta para daltonismo. Mientras haya formas sin usar no se repite ninguna, así que la forma identifica al niño aunque no se distinga el color.
 - El consentimiento es `vigente`, `suspendido` o `retirado`. Un niño nuevo queda vigente. Suspendido puede volver a vigente; retirado no se revierte en la tableta. Solo con consentimiento vigente se puede iniciar una sesión.
+- El modo de fase y la banda fija de ACT-02 y ACT-07 se eligen en cada fila; los fija el investigador responsable (Arquitectura 14). Ver «Sesión con un niño».
 - El padrón se guarda en el navegador del dispositivo y no se borra con «Borrar registro».
 - Las sesiones empiezan con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto).
 - No incluye todavía lo que decide la familia al retirar el consentimiento (conservar o eliminar los datos): necesita el servidor.
@@ -285,7 +293,9 @@ src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
 src/revision.css              Estilos de la revisión clínica
-src/ninos.js                  Padrón de niños: código, ícono, color, edad y consentimiento
+src/ninos.js                  Padrón de niños: código, ícono, color, edad, consentimiento, modo de fase y banda fija
+src/fases.js                  Modos de fase, plan de la sesión con un niño, fase 2 y límite de 15 minutos
+src/plan-pantalla.js          La sesión completa que el inicio muestra para un niño
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -307,7 +317,7 @@ src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 src/activities/referencia.js  Pantalla del objetivo de la referencia motora
 src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
-fichas/                       Ficha técnica de cada actividad (JSON)
+fichas/                       Ficha técnica de cada actividad (JSON) y estructura de la sesión (sesion.json)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
@@ -419,7 +429,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos) y los de la referencia motora (6 a 8 apariciones, esperas de 800 a 1,500 ms, permanencia de 5 s —valor de planeación, por confirmar con los clínicos—, anticipatoria de 150 ms y mínimo de 5 toques válidos). Vale `0.3.0`. |
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
-| `modo_fase` | Por ahora siempre `prototipo`. |
+| `modo_fase` | En la sesión con un niño, su modo de fase: `familiarizacion`, `fase1`, `fase2`, `fase3` o `cierre` (Arquitectura 14). En los bloques sueltos de la demostración y del modo experto, `prototipo`. |
 | `tema_imagenes` | Por ahora siempre `general`. |
 | `n_opciones` | Número de opciones. |
 | `disposicion` | Filas x columnas de las opciones: `1x2`, `1x3`, `1x4` o `2x2`. |
@@ -451,6 +461,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `fuera_de_tarea_provisional` | `false` si `fuera_de_tarea` se calculó al cerrar la sesión; `true` si la sesión seguía abierta al exportar. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
 | `t_muestra_fin` | Solo ACT-09: cuadro en que la muestra ya no se ve. La quita el motor, no la pantalla: en cada cuadro (`requestAnimationFrame`) mira si el siguiente llega a `t_consigna_inicio` + 2 s, con medio cuadro de margen; en ese cuadro la quita y guarda el timestamp del cuadro siguiente, como `t_opciones`. La pausa en blanco real es `t_opciones − t_muestra_fin`. Vacía en las demás actividades y si se pausó mientras se veía la muestra. Va al final para que las columnas anteriores no cambien de lugar. |
+| `mitad_fase2` | Solo en la fase 2, en ACT-02: la mitad de conceptos del ítem (`A` o `B`). En las sesiones 1 a 6 la mitad A va en V y la B en AV; en las 7 a 12, al revés. Vacía en lo demás. |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 
@@ -495,6 +506,12 @@ Una fila por sesión, en este orden:
 | `referencia_motora_n` | Toques válidos: con tiempo, sin anticipar y sin pausa. El mínimo para tener referencia es 5. |
 | `referencia_motora_anticipados` | Toques de menos de 150 ms desde la aparición (mismo umbral de respuesta anticipatoria del Modelo matemático 3.3). Se registran y se cuentan aparte; no entran en la mediana ni en el mínimo. |
 | `referencia_motora_toques` | Lista JSON de las 6 a 8 apariciones: `aparicion`, `pos` (celda, por filas), `tr_ms` (vacío si no hubo toque), `x`, `y` (del toque), `anticipatorio`, `omision`, `interrumpida` (pausa) y `fuera`, los toques fuera del objetivo, con `t_ms` respecto de la aparición (o del inicio de la espera si `antes` es verdadero), `x` e `y`. |
+| `modo_fase` | Modo de fase de la sesión con un niño (el de su padrón). Vacío en los bloques sueltos de la demostración y del modo experto. |
+| `fase2_version` | Solo en la fase 2: `protocolo` (dos bloques de 15, uno por modalidad) o `catalogo` (un bloque de 30 con V y AV mezclados), según la ficha de ACT-02. |
+| `fase2_sesion` | Solo en la fase 2: número de la sesión de fase 2 del niño (1 a 12), contado con las sesiones anteriores de este dispositivo. |
+| `fase2_bloque` | Solo en la fase 2: bloque del análisis, 1 (sesiones 1 a 6) o 2 (7 a 12). |
+| `fase2_primera` | Solo en la fase 2: modalidad que abrió la sesión, sorteada sin que una abra más de 2 sesiones seguidas. |
+| `plan_sesion` | Lista JSON de los bloques planeados, en orden: `actividad`, `banda`, `modalidad` (`V`, `AV` o `mixta`), `ensayos` y, en la fase 2, `mitad` o `mitades`. |
 
 ## Banco de ítems
 

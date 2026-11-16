@@ -256,9 +256,9 @@ test('secuencias: el bloque se cuenta en secuencias completas y el resumen empie
   assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 3 de 4 pasos; sin respuesta en 0.');
   // App: n secuencias completas, sin recortar a mitad de una.
   const app = texto('src/app.js');
-  assert.match(app, /picked = pantalla\.elegir\(bandItems, n, rand, \{ ficha, banda, repeat, previas \}\)/);
-  assert.match(app, /const trials = ficha\.unidadDelBloque === 'secuencia' \? todos : todos\.slice\(0, n\);/);
-  assert.match(app, /bandItems = bandItems\.filter\(\(i\) => !i\.modalidad \|\| i\.modalidad === f\.modalidad\);/);
+  assert.match(app, /return pantalla\.elegir\(deItems, cuantos, rand, \{ ficha, banda, repeat, previas \}\);/);
+  assert.match(app, /trials = ficha\.unidadDelBloque === 'secuencia' \? todos : todos\.slice\(0, n\);/);
+  assert.match(app, /bandItems = bandItems\.filter\(\(i\) => !i\.modalidad \|\| i\.modalidad === modalidad\);/);
 });
 
 // ---------- ACT-04: oración e imagen ----------

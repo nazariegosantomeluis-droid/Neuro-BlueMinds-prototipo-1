@@ -2310,3 +2310,23 @@ html {
   color: var(--problema);
   text-decoration: line-through;
 }
+
+/* Inicio con un niño inscrito: la sesión completa sigue su plan, así que la actividad, los ajustes
+   del bloque y la vista previa no aplican. */
+form.sesion-nino [aria-labelledby='grupo-actividad'],
+form.sesion-nino [aria-labelledby='grupo-bloque'],
+.inicio-columnas.sesion-nino .lateral {
+  display: none;
+}
+
+.plan-nino {
+  padding: var(--esp-3);
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio-control);
+  background: var(--acento-suave);
+}
+
+.plan-pasos {
+  margin: var(--esp-2) 0;
+  padding-left: 1.4rem;
+}

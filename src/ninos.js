@@ -10,7 +10,11 @@
 // consentimiento (Arquitectura 9.6, hoja de ruta H7.4).
 
 export const NINO_KEY = 'neuro-blueminds.ninos';
-export const NINO_COLUMNS = ['codigo', 'icono', 'color', 'edad_meses', 'consentimiento', 'video'];
+// modo_fase y bandas (tanda 3, H2.3): el modo de fase del niño y la banda fija de cada actividad,
+// que fija el investigador responsable (Arquitectura 14). Tampoco identifican al niño.
+export const NINO_COLUMNS = ['codigo', 'icono', 'color', 'edad_meses', 'consentimiento', 'video', 'modo_fase', 'bandas'];
+export const MODOS_FASE = ['familiarizacion', 'fase1', 'fase2', 'fase3', 'cierre'];
+export const MODO_INICIAL = 'familiarizacion';
 
 export const CONSENTIMIENTOS = ['vigente', 'suspendido', 'retirado'];
 // 4 a 10 años al incluirlo (Protocolo 4.2): de 48 a 131 meses.
@@ -94,7 +98,21 @@ export function crearNino(datos, existentes = [], getRandomValues) {
     codigo = null;
   }
   if (!codigo) throw new Error('No se pudo generar un código único.');
-  return { codigo, ...asignarIconoColor(codigo, existentes), edad_meses, consentimiento: 'vigente', video };
+  return { codigo, ...asignarIconoColor(codigo, existentes), edad_meses, consentimiento: 'vigente', video, modo_fase: MODO_INICIAL, bandas: {} };
+}
+
+// Modo de fase del niño. Los niños inscritos antes de la tanda 3 no lo tienen: empiezan en la
+// familiarización.
+export const modoDe = (nino) => (MODOS_FASE.includes(nino?.modo_fase) ? nino.modo_fase : MODO_INICIAL);
+export function cambiarModo(nuevo) {
+  if (!MODOS_FASE.includes(nuevo)) throw new Error(`Modo de fase desconocido: ${nuevo}.`);
+  return nuevo;
+}
+
+// Banda fija de una actividad para el niño. Solo acepta una banda de la ficha.
+export function fijarBanda(bandas, ficha, banda) {
+  if (!ficha.bandas.some((b) => b.id === banda)) throw new Error(`La banda ${banda} no existe en ${ficha.id}.`);
+  return { ...(bandas ?? {}), [ficha.id]: banda };
 }
 
 // Un consentimiento retirado no se revierte en la tableta: solo el servidor (H7.4). Suspendido
