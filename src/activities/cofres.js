@@ -45,12 +45,15 @@ export function cofreSVG(cofre, { abierto = false, premio = false } = {}) {
 // Un ítem es el programa de premios de un bloque completo: se elige uno al azar.
 // El Catálogo pide 80 elecciones o más para estimar los parámetros, y un bloque tiene 40
 // (Arquitectura 4.4: de 20 a 40 ensayos). Por eso dos bloques de la misma banda en una sesión se
-// juntan: el segundo empieza con el cofre que terminó premiando más en el anterior, y así las 80
-// elecciones forman un solo programa. En B1 y B2 el mismo cofre premia más las 80; en B3 y B4 la
-// ventaja pasa al otro cofre en la elección 21, sigue ahí al empezar el segundo bloque y vuelve
-// al primero en la 61.
+// juntan en un solo programa de 80 elecciones. En B1 y B2 el segundo bloque sigue con el cofre que
+// terminó premiando más. En B3 y B4 la ventaja pasa al otro cofre una sola vez, en la elección
+// «inversionEnEleccion» de la ficha (41 por defecto): cada programa dice qué parte del programa
+// de 80 es («parte») y si el cambio cae dentro del bloque («inversion») o al empezarlo
+// («cambiaAlEmpezar»).
 const otro = (cofre) => (cofre === 'a' ? 'b' : 'a');
 export const favorableAlFinal = (it) => (it.inversion ? otro(it.favorableInicial) : it.favorableInicial);
+// Cofre que debe premiar más al empezar el programa que sigue a «anterior».
+const inicialTras = (siguiente, anterior) => (siguiente.cambiaAlEmpezar ? otro(favorableAlFinal(anterior)) : favorableAlFinal(anterior));
 
 // Programas de la banda ya usados en la sesión, en orden, a partir de las filas del registro.
 export function programasPrevios(items, previas = []) {
@@ -66,11 +69,15 @@ export function programasPrevios(items, previas = []) {
 // previas: las filas de esta actividad y banda ya registradas en la sesión.
 export const elegir = (items, n, rand, { previas = [] } = {}) => {
   if (!items.length) throw new Error('Esta banda todavía no tiene programas de premios.');
-  const ultimo = programasPrevios(items, previas).at(-1);
-  let candidatos = items;
-  if (ultimo) {
-    const siguen = items.filter((i) => i.favorableInicial === favorableAlFinal(ultimo));
-    const usados = programasPrevios(items, previas);
+  const usados = programasPrevios(items, previas);
+  const ultimo = usados.at(-1);
+  // Las bandas con inversión tienen programas para cada parte del programa de 80: el primer
+  // bloque de la sesión usa la parte 1, el segundo la 2, y así.
+  const partes = Math.max(1, ...items.map((i) => i.parte ?? 1));
+  const parte = (usados.length % partes) + 1;
+  let candidatos = items.filter((i) => (i.parte ?? 1) === parte);
+  if (ultimo && (partes === 1 || parte > 1)) {
+    const siguen = candidatos.filter((i) => i.favorableInicial === inicialTras(i, ultimo));
     const nuevos = siguen.filter((i) => !usados.includes(i));
     candidatos = nuevos.length ? nuevos : siguen;
   }
@@ -137,8 +144,13 @@ export function resumenExtra(rows, byCode, ficha, { previas = [] } = {}) {
   if (fase2.length) {
     const fase1 = validos.filter((r) => ensayo(r).fase === 1);
     const favorables = (rs) => rs.filter((r) => r.acierto).length;
-    lineas.push(`Antes del cambio: eligió el cofre que más premiaba en ${favorables(fase1)} de ${fase1.length} ensayos.`);
-    lineas.push(`Después del cambio (desde el ensayo ${ensayo(fase2[0]).n}): eligió el nuevo cofre que más premiaba en ${favorables(fase2)} de ${fase2.length} ensayos.`);
+    if (fase1.length) lineas.push(`Antes del cambio: eligió el cofre que más premiaba en ${favorables(fase1)} de ${fase1.length} ensayos.`);
+    const desde = ensayo(fase2[0]);
+    lineas.push(
+      fase1.length
+        ? `Después del cambio (desde el ensayo ${desde.n}, elección ${desde.eleccion} del programa de 80): eligió el nuevo cofre que más premiaba en ${favorables(fase2)} de ${fase2.length} ensayos.`
+        : `Todo el bloque es después del cambio de ventaja (desde la elección ${desde.eleccion} del programa de 80): eligió el nuevo cofre que más premiaba en ${favorables(fase2)} de ${fase2.length} ensayos.`,
+    );
   }
   const respondidos = validos.filter((r) => r.opcion_elegida_id);
   lineas.push(`Encontró la estrella en ${respondidos.filter(conEstrella).length} de ${validos.length} ensayos.`);

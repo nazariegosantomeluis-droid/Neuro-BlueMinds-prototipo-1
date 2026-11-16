@@ -42,22 +42,53 @@ test('el segundo bloque de la banda sigue con el cofre que terminó premiando m�
       const [primero] = cofres.elegir(programas, 40, rng(semilla));
       const [segundo] = cofres.elegir(programas, 40, rng(semilla + 100), { previas: filasDe(primero, 1) });
       assert.notEqual(segundo, primero, `${b}: no repite el programa`);
-      assert.equal(favorable(segundo.ensayos[0]), favorable(primero.ensayos.at(-1)), `${b}, semilla ${semilla}`);
-      const ochenta = [...primero.ensayos, ...segundo.ensayos].map(favorable);
-      const cambios = ochenta.flatMap((c, k) => (k > 0 && c !== ochenta[k - 1] ? [k + 1] : []));
-      // B1 y B2 sin cambio; B3 y B4 cambian en las elecciones 21 y 61.
-      assert.deepEqual(cambios, primero.inversion ? [21, 61] : [], `${b}, semilla ${semilla}`);
+      const ochenta = [...primero.ensayos, ...segundo.ensayos];
+      const favorables = ochenta.map(favorable);
+      const cambios = favorables.flatMap((c, k) => (k > 0 && c !== favorables[k - 1] ? [k + 1] : []));
+      // B1 y B2 sin cambio; B3 y B4 con una sola inversión, en la elección de la ficha (41).
+      const inversion = ficha.bandas.find((x) => x.id === b).inversion;
+      assert.deepEqual(cambios, inversion ? [ficha.juntarBloques.inversionEnEleccion] : [], `${b}, semilla ${semilla}`);
+      if (inversion) {
+        assert.deepEqual([primero.parte, segundo.parte], [1, 2]);
+        assert.deepEqual(ochenta.map((e) => e.eleccion), Array.from({ length: 80 }, (_, k) => k + 1), `${b}: elecciones 1 a 80`);
+      }
+      // La fase de cada ensayo dice si va antes o después del cambio.
+      ochenta.forEach((e, k) => assert.equal(e.fase, inversion && k + 1 >= 41 ? 2 : 1, `${b} elección ${k + 1}`));
     }
   }
 });
 
-test('sin bloques anteriores, la elección del programa es la de antes', () => {
-  const programas = deBanda('B3');
+test('la inversión de B3 y B4 es una sola, en la elección 41, y queda como pendiente para el Modelo', () => {
+  assert.equal(ficha.juntarBloques.inversionEnEleccion, 41);
+  assert.match(ficha.juntarBloques.motivo, /«la ventaja se invierte» sin decir cuántas veces: se invierte una sola vez, en la elección «inversionEnEleccion» \(41/);
+  assert.ok(ficha.pendientesClinicos.some((p) => p.startsWith('Confirmar en el Modelo matemático, cuando defina α_RL, cuántas inversiones') && p.includes('«inversionEnEleccion»')));
+  for (const b of ficha.bandas.filter((x) => x.inversion)) assert.match(b.descripcion, /una vez, en la elección 41/, b.id);
+  assert.doesNotMatch(JSON.stringify(ficha), /21 y 61/);
+});
+
+test('el lugar de la inversión se configura en la ficha', async () => {
+  const { buildPosteriores, loadInputs } = await import('../tools/build-posteriores.mjs');
+  const entradas = loadInputs();
+  for (const cambio of [21, 41, 61]) {
+    const f12 = { ...entradas.fichas['ACT-12'], juntarBloques: { ...ficha.juntarBloques, inversionEnEleccion: cambio } };
+    const banco = buildPosteriores({ ...entradas, fichas: { ...entradas.fichas, 'ACT-12': f12 } });
+    const b3 = banco.filter((i) => i.actividad === 'ACT-12' && i.banda === 'B3');
+    const [primero] = cofres.elegir(b3, 40, rng(5));
+    const [segundo] = cofres.elegir(b3, 40, rng(6), { previas: filasDe(primero, 1) });
+    const favorables = [...primero.ensayos, ...segundo.ensayos].map(favorable);
+    const cambios = favorables.flatMap((c, k) => (k > 0 && c !== favorables[k - 1] ? [k + 1] : []));
+    assert.deepEqual(cambios, [cambio], `inversión en ${cambio}`);
+  }
+});
+
+test('sin bloques anteriores, se elige al azar entre los programas del primer bloque', () => {
+  const programas = deBanda('B3').filter((p) => p.parte === 1);
+  assert.equal(programas.length, ficha.programasPorBanda);
   for (let semilla = 1; semilla <= 20; semilla++) {
     const r = rng(semilla);
     const esperado = programas[Math.floor(rng(semilla)() * programas.length)];
-    assert.equal(cofres.elegir(programas, 40, r)[0], esperado);
-    assert.equal(cofres.elegir(programas, 40, rng(semilla), { previas: [] })[0], esperado);
+    assert.equal(cofres.elegir(deBanda('B3'), 40, r)[0], esperado);
+    assert.equal(cofres.elegir(deBanda('B3'), 40, rng(semilla), { previas: [] })[0], esperado);
   }
 });
 

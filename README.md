@@ -42,7 +42,7 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 
 | Código | Nombre | Qué hace el niño | Modalidad | Bandas |
 |---|---|---|---|---|
-| ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, a la mitad del bloque esa ventaja pasa al otro cofre | Solo V | B1 a B4 |
+| ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, en las 80 elecciones de dos bloques esa ventaja pasa al otro cofre una vez, en la elección 41 | Solo V | B1 a B4 |
 | ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
 
 Todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
@@ -528,7 +528,7 @@ Una fila por sesión, en este orden:
 
 ### Banco de las actividades de uso posterior
 
-[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 817 ítems, todos con `revisionPendiente`. En ACT-10 y ACT-16 un ítem es una secuencia completa, con sus pasos; en ACT-12 y ACT-13, el programa o la serie de un bloque, con sus ensayos.
+[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 829 ítems, todos con `revisionPendiente`. En ACT-10 y ACT-16 un ítem es una secuencia completa, con sus pasos; en ACT-12 y ACT-13, el programa o la serie de un bloque, con sus ensayos.
 
 | Actividad | Ítems | Cómo se arman |
 |---|---|---|
@@ -541,7 +541,7 @@ Una fila por sesión, en este orden:
 | ACT-04 | 88 | Escenas de una niña o un niño que duerme, come, bebe, corre, salta, se peina, barre, habla por teléfono o abraza a un animal, y de un animal u objeto dentro, arriba, abajo o al lado de una caja o una mesa. En B2 cada distractor cambia una sola parte de la oración: la persona, la acción o el objeto. En B5, la mitad de las oraciones dicen lo que muestra la escena |
 | ACT-05 | 66 | Un ítem por grabación (12 sonidos, 2 grabaciones de cada uno) y banda. Los distractores también tienen sonido: de otro grupo en B1 y B2, del mismo grupo en B3 (todos animales o todos vehículos) |
 | ACT-10 | 96 | V: 7 historias de 5 momentos (la planta que crece, la manzana que se come, el sándwich, el pollito, la vela, el vaso que se llena y el helado), cada una en 2 órdenes revueltos. AV: 10 instrucciones por banda con dibujos del banco de categorías distintas |
-| ACT-12 | 24 | 6 programas de 40 ensayos por banda. En cada mitad del bloque el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
+| ACT-12 | 36 | 6 programas de 40 ensayos por banda; en B3 y B4, 6 para el primer bloque y 6 para el segundo. Antes y después del cambio de ventaja el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
 | ACT-13 | 24 | 6 series de 30 presentaciones por banda, con la proporción de nubes de la banda. Nunca empiezan con una nube ni ponen más de 2 seguidas |
 | ACT-15 | 75 | Rimas (B1 y B2; en B2 un distractor empieza igual que la palabra, pero no rima), inicios con la misma sílaba (B3) y pares que cambian en un solo sonido, dichos iguales o distintos (B4) |
 | ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra (en B3, una o dos), y nunca repite una pieza de la palabra |
@@ -563,7 +563,7 @@ Una fila por sesión, en este orden:
 - **ACT-17, la pausa guiada, solo se abre en una sesión en modo experto**, y nunca durante una sesión del piloto ni en un bloque de una actividad del piloto (`src/pausa-permiso.js`). No aparece en el panel de pausa de las sesiones con niños ni en la referencia motora; la página «Pausa guiada» y el inicio solo la ofrecen con una sesión en modo experto en curso, y queda anotada en esa sesión.
 - **ACT-15 requiere la voz grabada** (`requiereVozGrabada` en la ficha), que todavía no existe. Con la voz del navegador, antes del bloque aparece un aviso y el adulto decide si la abre solo para revisar la mecánica. El motor deja cada ensayo con `audio_fuente = sintesis` como fallo técnico (`fallo_tecnico = true`, `peso_calidad = 0`): nunca queda como válido, y el resumen del bloque no lo cuenta.
 - **ACT-12: dos bloques de 40 se juntan en 80 elecciones.** El Catálogo pide 80 elecciones o más para verificar que se recuperan los parámetros del modelo de aprendizaje, y un bloque tiene como mucho 40 ensayos (Arquitectura 4.4). Por eso (`juntarBloques` de la ficha):
-  - El segundo bloque de la misma banda en la sesión elige un programa que empieza con el cofre que terminó premiando más en el primero. Así las 80 elecciones son un solo programa: en B1 y B2 el mismo cofre premia más todo el tiempo; en B3 y B4 la ventaja cambia en las elecciones 21 y 61.
+  - El segundo bloque de la misma banda en la sesión sigue el mismo programa de 80 elecciones. En B1 y B2 el mismo cofre premia más todo el tiempo. En B3 y B4, el Catálogo dice que «la ventaja se invierte» sin decir cuántas veces: se invierte una sola vez, en la elección 41 (al empezar el segundo bloque). El lugar se configura en la ficha (`juntarBloques.inversionEnEleccion`) y queda como pendiente para que lo confirme el Modelo matemático cuando defina α_RL. Cada ensayo del banco lleva su número de elección (`eleccion`) y su fase (1 antes del cambio, 2 después).
   - El resumen de cada bloque, al terminarlo y en «Sesiones», cuenta las elecciones de esa banda en la sesión y, si son menos de 80, pide otro bloque. Las omisiones y los ensayos interrumpidos no cuentan como elecciones.
   - Este prototipo no calcula los parámetros.
 - Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.

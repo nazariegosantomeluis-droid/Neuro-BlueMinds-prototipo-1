@@ -36,11 +36,14 @@ test('ACT-12: en cada ensayo la estrella está en un solo cofre, y el favorable 
   const f = ficha('ACT-12');
   for (const b of f.bandas) {
     const programas = of('ACT-12', b.id);
-    assert.equal(programas.length, f.programasPorBanda, b.id);
+    // Con inversión, programas para el primer y el segundo bloque del programa de 80.
+    assert.equal(programas.length, f.programasPorBanda * (b.inversion ? f.juntarBloques.bloques : 1), b.id);
     for (const p of programas) {
       assert.equal(p.ensayos.length, b.ensayosMax, p.codigo);
-      assert.equal(p.inversion, b.inversion ? b.ensayosMax / 2 + 1 : null, p.codigo);
-      for (const fase of b.inversion ? [1, 2] : [1]) {
+      // Con la inversión en la elección 41, cae al empezar el segundo bloque, no dentro de uno.
+      assert.equal(p.inversion, null, p.codigo);
+      assert.equal(p.cambiaAlEmpezar, Boolean(b.inversion && p.parte === 2), p.codigo);
+      for (const fase of [...new Set(p.ensayos.map((e) => e.fase))]) {
         const es = p.ensayos.filter((e) => e.fase === fase);
         const favorable = es[0].opciones.find((o) => o.correcta).cofre;
         assert.ok(es.every((e) => e.opciones.filter((o) => o.correcta).length === 1 && e.opciones.find((o) => o.correcta).cofre === favorable), `${p.codigo}: un favorable por fase`);
@@ -50,10 +53,8 @@ test('ACT-12: en cada ensayo la estrella está en un solo cofre, y el favorable 
         let racha = 0;
         for (const e of es) assert.ok((racha = e.opciones.find((o) => o.correcta).premio ? 0 : racha + 1) <= f.maxEnganososSeguidos, p.codigo);
       }
-      if (b.inversion) {
-        const [a, z] = [p.ensayos[0], p.ensayos.at(-1)].map((e) => e.opciones.find((o) => o.correcta).cofre);
-        assert.notEqual(a, z, `${p.codigo}: la ventaja cambia de cofre`);
-      }
+      // Dentro de un bloque, el cofre favorable no cambia.
+      assert.equal(new Set(p.ensayos.map((e) => e.opciones.find((o) => o.correcta).cofre)).size, 1, p.codigo);
     }
   }
 });
@@ -73,7 +74,8 @@ test('ACT-12: un bloque es un programa completo; el cofre elegido se abre, y el 
 });
 
 test('ACT-12: el resumen cuenta antes y después del cambio, las estrellas y qué hizo después de cada una', () => {
-  const p = of('ACT-12', 'B3')[0];
+  // Segundo bloque de B3: todo después del cambio de ventaja (elección 41).
+  const p = of('ACT-12', 'B3').find((x) => x.parte === 2);
   const byCode = new Map(p.ensayos.map((e) => [e.codigo, e]));
   // Siempre el mismo cofre: «a».
   const rows = p.ensayos.map((e) => {
@@ -81,13 +83,14 @@ test('ACT-12: el resumen cuenta antes y después del cambio, las estrellas y qu�
     return fila(e.codigo, { pos: 1, id: o.id, acierto: o.correcta, tr: 800 });
   });
   const lineas = cofres.resumenExtra(rows, byCode);
-  const favorablesAntes = p.ensayos.filter((e) => e.fase === 1 && e.opciones.find((o) => o.cofre === 'a').correcta).length;
-  assert.match(lineas[0], new RegExp(`^Antes del cambio: eligió el cofre que más premiaba en ${favorablesAntes} de 20 ensayos\\.$`));
-  assert.match(lineas[1], new RegExp(`^Después del cambio \\(desde el ensayo 21\\): eligió el nuevo cofre que más premiaba en ${20 - favorablesAntes} de 20 ensayos\\.$`));
+  const favorables = p.ensayos.filter((e) => e.opciones.find((o) => o.cofre === 'a').correcta).length;
+  lineas.unshift('');
+  assert.equal(lineas[1], `Todo el bloque es después del cambio de ventaja (desde la elección 41 del programa de 80): eligió el nuevo cofre que más premiaba en ${favorables} de 40 ensayos.`);
+  lineas.shift();
   const estrellas = p.ensayos.filter((e) => e.opciones.find((o) => o.cofre === 'a').premio).length;
-  assert.equal(lineas[2], `Encontró la estrella en ${estrellas} de 40 ensayos.`);
-  assert.match(lineas[3], /^Después de encontrar la estrella, volvió a elegir el mismo cofre en (\d+) de \1 ocasion/);
-  assert.match(lineas[4], /^Después de un cofre vacío, cambió de cofre en 0 de \d+ ocasion/);
+  assert.equal(lineas[1], `Encontró la estrella en ${estrellas} de 40 ensayos.`);
+  assert.match(lineas[2], /^Después de encontrar la estrella, volvió a elegir el mismo cofre en (\d+) de \1 ocasion/);
+  assert.match(lineas[3], /^Después de un cofre vacío, cambió de cofre en 0 de \d+ ocasion/);
   assert.match(lineas.at(-2), /^Elecciones de la banda .* en la sesión: 40\. Para estimar los parámetros del modelo de aprendizaje el Catálogo pide 80 o más; este prototipo no los calcula\.$/);
   assert.match(lineas.at(-1), /^Para juntar 80, haz otro bloque de esta banda en la misma sesión/);
   for (const l of lineas) assert.doesNotMatch(l, /sensible|toler|impuls/i);
