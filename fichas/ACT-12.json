@@ -6,7 +6,7 @@
   "objetivo": "Describir cómo el niño elige entre dos cofres cuando uno tiene la estrella más veces que el otro, y qué hace cuando esa ventaja pasa al otro cofre.",
   "paradigma": "Aprendizaje probabilístico por recompensa.",
   "evidencia": "Moderada en adultos: las medidas conductuales y computacionales de una tarea de aprendizaje probabilístico con inversión son suficientemente confiables (Waltmann et al., 2022). Sin datos en niños con autismo.",
-  "mecanica": "Aparecen dos cofres, siempre en el mismo lugar: uno azul con candado redondo y uno naranja con candado cuadrado. El niño toca uno; ese cofre se abre y muestra una estrella o nada. Uno de los dos tiene la estrella más veces que el otro. En las bandas B3 y B4, a la mitad del bloque, el otro cofre pasa a ser el que más premia, sin aviso.",
+  "mecanica": "Aparecen dos cofres, siempre en el mismo lugar: uno azul con candado redondo y uno naranja con candado cuadrado. El niño toca uno; ese cofre se abre y muestra una estrella o nada. Uno de los dos tiene la estrella más veces que el otro. En las bandas B3 y B4, en el programa de 80 elecciones (dos bloques), el otro cofre pasa a ser el que más premia una sola vez, en la elección 41, sin aviso.",
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "cofres",
   "barajarOpciones": false,
