@@ -21,7 +21,7 @@ import { renderF3 } from './f3.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { CLAVE_MODO_EXPERTO, fijarModoExperto, leerModoExperto, modoExpertoActivo } from './modo-experto.js';
-import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
+import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-terapeuta.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
@@ -478,12 +478,12 @@ async function empezarSesion(form) {
   for (const paso of plan) {
     if (paso.tipo === 'rutina-inicio') {
       const fin = marca('rutina-inicio');
-      await mostrarRutina(rutinaInicioHTML(paso.actividades, PICTO_FIN), cfg.rutinaInicioMs);
+      if ((await mostrarRutina(rutinaInicioHTML(paso.actividades, PICTO_FIN), cfg.rutinaInicioMs, s)) === 'terminar') terminar = true;
       fin();
     } else if (paso.tipo === 'transicion') {
       if (terminar) continue;
       const fin = marca('transicion', { siguiente: paso.siguiente });
-      await mostrarRutina(transicionHTML(paso.siguiente), cfg.transicionMs);
+      if ((await mostrarRutina(transicionHTML(paso.siguiente), cfg.transicionMs, s)) === 'terminar') terminar = true;
       fin();
     } else if (paso.tipo === 'rutina-cierre') {
       // Igual en todas las sesiones e independiente del desempeño (Catálogo 7.1).
@@ -491,6 +491,7 @@ async function empezarSesion(form) {
       await mostrarRutina(cierreHTML(PICTO_FIN), cfg.rutinaCierreMs);
       fin();
     } else if (paso.tipo === 'referencia') {
+      if (terminar) continue;
       const fin = marca('referencia');
       s.referenciaHecha = true;
       const ref = await ejecutarReferencia(s, periodo);
@@ -499,8 +500,20 @@ async function empezarSesion(form) {
     } else if (paso.tipo === 'bloque') {
       const b = bloques[k++];
       if (terminar) continue;
+      // Si el terapeuta fijó otra banda desde el menú (fase 3 o familiarización), el bloque se arma
+      // de nuevo en esa banda.
+      const fijada = s.bandaFijada?.[paso.actividad];
+      if (fijada && fijada !== b.banda.id) {
+        try {
+          const banda = b.ficha.bandas.find((x) => x.id === fijada);
+          Object.assign(b, { banda, ...(await prepararBloque({ ficha: b.ficha, banda, modalidad: paso.modalidad, n: paso.ensayos, s, mitad: paso.mitad ?? null, mitades: paso.mitades ?? null })) });
+        } catch {
+          // Sin ítems en esa banda: el bloque sigue en la planeada.
+        }
+      }
       s.bloque++;
-      const finBloque = marca('bloque', { bloque: s.bloque, actividad: paso.actividad, modalidad: paso.modalidad });
+      s.bandaActual = b.banda.id;
+      const finBloque = marca('bloque', { bloque: s.bloque, actividad: paso.actividad, modalidad: paso.modalidad, banda: b.banda.id });
       const r = await ejecutarBloque({ ficha: b.ficha, banda: b.banda, modalidad: paso.modalidad, trials: b.trials, s, usados: b.usados, pantalla: b.pantalla, periodo });
       finBloque();
       if (r.error) {
@@ -508,6 +521,7 @@ async function empezarSesion(form) {
         continue;
       }
       resultados.push(r.last);
+      if (r.terminarSesion) terminar = true;
     }
   }
   state.ultimaSesion = { s, resultados };
@@ -521,13 +535,25 @@ async function empezarSesion(form) {
 }
 
 // Pantalla del niño con una rutina o una transición, el tiempo fijado. Sin texto.
-async function mostrarRutina(html, ms) {
-  app.innerHTML = `<div class="nino">${html}</div>`;
+// Con s, la esquina abre el menú del terapeuta; si se abre, la rutina espera a que se cierre.
+// Devuelve 'terminar' si desde el menú se terminó la sesión.
+async function mostrarRutina(html, ms, s = null) {
+  app.innerHTML = `<div class="nino">${html}${s ? `<button type="button" class="esquina" id="pausa" aria-label="Menú del terapeuta: mantener pulsado">${ICONO_PAUSA}</button>` : ''}</div>`;
+  const wrap = app.firstElementChild;
   state.running = true;
   // El cierre aparece con su transición en el cuadro siguiente.
   requestAnimationFrame(() => requestAnimationFrame(() => app.querySelector('.rutina-aparece')?.classList.add('visible')));
+  let menu = null;
+  if (s) mantenerPulsado(wrap.querySelector('#pausa'), () => (menu ??= abrirMenu(wrap, { s, enRutina: true })));
   await new Promise((r) => setTimeout(r, ms));
+  const res = menu ? await menu : null;
   state.running = false;
+  if (res?.accion === 'terminar') {
+    s.terminarSesion = true;
+    editSesion(s.id, (r) => Object.assign(r, { terminada_antes: true, motivo_terminacion: res.motivo || null, nota_terminacion: res.nota || null }));
+    return 'terminar';
+  }
+  return 'continuar';
 }
 
 // Arma los ensayos de un bloque: elige los ítems de la banda y carga sus imágenes. Lanza un error con
@@ -626,7 +652,7 @@ function montarNino({ experto = false, claseStage = '' } = {}) {
   app.innerHTML = `
     <div class="nino">
       <div class="stage ${claseStage}" id="stage"></div>
-      <button type="button" class="esquina" id="pausa" aria-label="Pausa: tocar dos veces">${ICONO_PAUSA}</button>
+      <button type="button" class="esquina" id="pausa" aria-label="Menú del terapeuta: mantener pulsado">${ICONO_PAUSA}</button>
       ${experto ? '<p class="codigo-item" id="codigo-item"></p><button type="button" class="siguiente" id="siguiente">Siguiente</button>' : ''}
     </div>`;
   const wrap = app.firstElementChild;
@@ -644,11 +670,12 @@ async function ejecutarReferencia(s, periodo) {
     view: referencia.createView(stage),
     onPause: async (aparicion) => {
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, true);
+      const { accion, motivo, nota, guiada_ms } = await abrirMenu(wrap, { s, enReferencia: true, ensayo: aparicion });
       editSesion(s.id, (r) => {
         r.pausas.push({ bloque: 0, ensayo: aparicion, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
         if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
+      if (accion === 'terminar') s.terminarSesion = true;
       return accion;
     },
   });
@@ -657,7 +684,7 @@ async function ejecutarReferencia(s, periodo) {
     const objetivo = e.target.closest('[data-pos]');
     ref.pointer({ t: eventTime(e), x: Math.round(e.clientX), y: Math.round(e.clientY), pos: objetivo ? Number(objetivo.dataset.pos) : null });
   });
-  twoTaps(wrap.querySelector('#pausa'), () => ref.pause());
+  mantenerPulsado(wrap.querySelector('#pausa'), () => ref.pause());
   try {
     const { terminada, ...resumen } = await ref.done;
     editSesion(s.id, (r) => Object.assign(r, resumen));
@@ -674,6 +701,7 @@ async function runBlock(opciones) {
   if (r.error) return renderInicio(r.error);
   state.last = r.last;
   renderFin();
+  // Si desde el menú se terminó la sesión, el resumen ya no ofrece otro bloque.
 }
 
 // Ejecuta un bloque y devuelve { rows, last } o { error }. extra: campos del registro que dependen
@@ -701,7 +729,8 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, false, { sesion: s, ficha });
+      const { accion, alcance, motivo, nota, guiada_ms } = await abrirMenu(wrap, { s, ficha, ensayo });
+      if (accion === 'terminar' && alcance === 'sesion') s.terminarSesion = true;
       editSesion(s.id, (r) => {
         // De la pausa guiada solo se registra que ocurrió y cuánto duró.
         r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
@@ -725,7 +754,7 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
     const opcion = e.target.closest('[data-pos]');
     block.pointer({ t: eventTime(e), x: Math.round(e.clientX), y: Math.round(e.clientY), pos: opcion ? Number(opcion.dataset.pos) : null });
   });
-  twoTaps(wrap.querySelector('#pausa'), () => block.pause());
+  mantenerPulsado(wrap.querySelector('#pausa'), () => block.pause());
 
   let rows;
   try {
@@ -750,7 +779,7 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
   const delBloque = new Set(rows);
   const previas = deLaSesion.filter((r) => !delBloque.has(r));
-  return { rows, last: { rows, ficha, banda, modalidad, bloque: s.bloque, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) } };
+  return { rows, terminarSesion: Boolean(s.terminarSesion), last: { rows, ficha, banda, modalidad, bloque: s.bloque, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) } };
 }
 
 // Control del adulto en una esquina: el primer toque lo arma y el segundo, antes de 3 s, lo ejecuta.
@@ -774,39 +803,63 @@ function twoTaps(button, action, ms = 3000) {
   });
 }
 
+// Menú del terapeuta (H2.4): se abre con una pulsación prolongada en la esquina y pausa la sesión.
 // enReferencia: la pausa llegó durante la referencia motora, antes de cualquier bloque.
-// La pausa guiada solo aparece en el panel si está permitida (pausa-permiso.js).
-function pausePanel(wrap, enReferencia = false, { sesion = null, ficha = null } = {}) {
+// ficha: la del bloque en curso (para fijar su banda); sin ella, el menú no ofrece la banda.
+// Devuelve { accion: 'continuar' | 'terminar', alcance: 'bloque' | 'sesion', motivo, nota, guiada_ms }.
+function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = false, ensayo = null }) {
   return new Promise((resolve) => {
+    const cfg = state.sesion;
+    const bandaActual = ficha ? (s.bandaFijada?.[ficha.id] ?? s.bandaActual ?? null) : null;
+    const menu = crearMenu({ modo: s.modo ?? null, config: cfg, actividad: ficha?.id, banda: bandaActual, adaptacion: s.adaptacion ?? Boolean(cfg?.modos?.[s.modo]?.adaptacion), cambios: s.cambiosBanda ?? [] });
+    const usoMs = s.inicioMs !== undefined ? performance.now() - s.inicioMs : null;
+    // Cada orden queda en ordenes_terapeuta con su hora y el estado de la sesión en ese momento.
+    const registrar = (orden) =>
+      editSesion(s.id, (r) => {
+        r.ordenes_terapeuta = [
+          ...(r.ordenes_terapeuta ?? []),
+          ordenRegistro(orden, {
+            hora: new Date().toISOString(),
+            ms: s.inicioMs !== undefined ? performance.now() - s.inicioMs : null,
+            bloque: enReferencia ? 0 : enRutina ? null : s.bloque,
+            ensayo,
+            modo: s.modo ?? null,
+            banda: menu.estado.banda,
+            adaptacion: menu.estado.adaptacion,
+          }),
+        ];
+      });
+    registrar({ accion: 'pausar' });
+    const minutos = (ms) => `${Math.floor(ms / 60000)} min ${String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')} s`;
+    const limite = usoMs !== null && limiteAlcanzado(0, usoMs, cfg?.limiteMinutos ?? 15);
+    if (limite) s.limiteAlcanzado = true;
     const capa = document.createElement('div');
     capa.className = 'capa';
     capa.innerHTML = `
       <div class="adulto">
-        ${tituloHTML('Sesión en pausa', enReferencia ? 'La aparición del objetivo en curso se descartó y no se repetirá.' : 'El ensayo en curso quedó registrado como interrumpido y no se repetirá.')}
+        ${tituloHTML('Menú del terapeuta', 'La sesión está en pausa.')}
         <div class="panel">
+          ${menuHTML({
+            donde: enReferencia ? 'referencia' : enRutina ? 'rutina' : 'bloque',
+            bandas: ficha && !enReferencia ? ficha.bandas.map((b) => b.id) : [],
+            banda: menu.estado.banda,
+            adaptacion: menu.estado.adaptacion,
+            hayCambios: menu.estado.cambios.length > 0,
+            uso: usoMs !== null ? minutos(usoMs) : '',
+            aviso: limite ? LIMITE_MSG : '',
+          })}
           <label for="volumen-pausa">Volumen de la voz <output data-volumen-valor>${volumen()} %</output>
             <input type="range" id="volumen-pausa" min="0" max="100" value="${volumen()}" data-volumen>
-          </label>
-          <label>Motivo (obligatorio si terminas ${enReferencia ? 'la sesión' : 'el bloque'})
-            <select name="motivo">
-              <option value="">—</option>
-              ${MOTIVOS_TERMINACION.map((m) => `<option>${esc(m)}</option>`).join('')}
-            </select>
           </label>
           <label>Nota (opcional)
             <input name="nota" maxlength="80" autocomplete="off">
             <span class="ayuda">Sin nombres ni datos personales.</span>
           </label>
-          <p class="mensaje" role="alert"></p>
-          <div class="acciones">
-            <button type="button" class="primario" data-r="continuar">Continuar</button>
-            <button type="button" data-r="terminar">${enReferencia ? 'Terminar sesión' : 'Terminar bloque'}</button>
-          </div>
-          ${state.pausa && !enReferencia && pausaGuiadaPermitida({ sesion, ficha }) ? pausaOpcionesHTML(true) : ''}
+          ${state.pausa && !enReferencia && pausaGuiadaPermitida({ sesion: s, ficha }) ? pausaOpcionesHTML(true) : ''}
         </div>
       </div>`;
     bindVolumen(capa);
-    // La pausa guiada corre encima del panel y, al terminar, regresa a él.
+    // La pausa guiada corre encima del menú y, al terminar, regresa a él.
     let guiada = 0;
     capa.querySelector('[data-guiada]')?.addEventListener('click', async () => {
       capa.hidden = true;
@@ -815,18 +868,29 @@ function pausePanel(wrap, enReferencia = false, { sesion = null, ficha = null } 
       capa.hidden = false;
       capa.querySelector('[data-guiada-estado]').textContent = `La pausa guiada duró ${Math.round(duracion_ms / 1000)} s.`;
     });
-    for (const b of capa.querySelectorAll('[data-r]')) {
-      b.onclick = () => {
-        const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
-        if (faltaMotivo(b.dataset.r, valor('motivo'))) {
-          capa.querySelector('.mensaje').textContent = MOTIVO_OBLIGATORIO_MSG;
-          capa.querySelector('[name=motivo]').focus();
-          return;
-        }
+    const mensaje = capa.querySelector('[data-menu-mensaje]');
+    const atender = (res) => {
+      if (res.orden) registrar(res.orden);
+      // Lo que el menú cambió queda en la sesión: banda fijada, pila de cambios y adaptación.
+      s.adaptacion = menu.estado.adaptacion;
+      s.cambiosBanda = menu.estado.cambios;
+      if (ficha && menu.estado.banda && menu.estado.banda !== bandaActual) {
+        s.bandaFijada = { ...(s.bandaFijada ?? {}), [ficha.id]: menu.estado.banda };
+        state.form.banda = menu.estado.banda; // el siguiente bloque suelto empieza en esa banda
+      }
+      const anular = capa.querySelector('[data-menu=anular]');
+      if (anular) anular.disabled = menu.estado.cambios.length === 0;
+      const adaptacion = capa.querySelector('[data-menu=adaptacion]');
+      if (adaptacion) adaptacion.textContent = menu.estado.adaptacion ? 'Desactivar la adaptación' : 'Reactivar la adaptación';
+      mensaje.textContent = res.mensaje ?? '';
+      if (res.cerrar) {
         capa.remove();
-        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota'), guiada_ms: guiada });
-      };
-    }
+        resolve({ ...res.cerrar, nota: capa.querySelector('[name=nota]').value.trim(), guiada_ms: guiada });
+      }
+    };
+    for (const b of capa.querySelectorAll('[data-menu]')) b.onclick = () => atender(menu.tocar(b.dataset.menu));
+    for (const r of capa.querySelectorAll('[name=menu-motivo]')) r.onchange = () => atender(menu.tocar('motivo', r.value));
+    for (const r of capa.querySelectorAll('[name=menu-banda]')) r.onchange = () => atender(menu.tocar('banda', r.value));
     wrap.append(capa);
   });
 }
@@ -973,7 +1037,7 @@ function renderResumen() {
           ${NIVELES_APOYO.map((n) => chipHTML('apoyo', n, mayuscula(n), nivel === n)).join('')}
         </fieldset>
         <div class="acciones">
-          <button type="button" class="primario" id="otro">Otro bloque</button>
+          ${s.terminarSesion || s.limiteAlcanzado ? '' : '<button type="button" class="primario" id="otro">Otro bloque</button>'}
           <button type="button" id="cerrar">Terminar sesión</button>
         </div>
       </div>
@@ -985,7 +1049,8 @@ function renderResumen() {
         fila.nivel_apoyo = [...fila.nivel_apoyo.filter((n) => n.bloque !== s.bloque), { bloque: s.bloque, nivel: r.value }];
       });
   }
-  app.querySelector('#otro').onclick = () => renderInicio();
+  if (s.terminarSesion || s.limiteAlcanzado) app.querySelector('.panel .acciones').insertAdjacentHTML('beforebegin', `<p class="aviso">${esc(s.terminarSesion ? 'La sesión se terminó desde el menú del terapeuta.' : LIMITE_MSG)}</p>`);
+  app.querySelector('#otro')?.addEventListener('click', () => renderInicio());
   app.querySelector('#cerrar').onclick = () => {
     cerrarSesion();
     renderInicio();

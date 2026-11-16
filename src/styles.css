@@ -2380,3 +2380,13 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
   opacity: 0;
   transform: scale(0.85);
 }
+
+/* Menú del terapeuta: la esquina se marca mientras se mantiene pulsada. */
+.esquina.pulsando {
+  opacity: 1;
+  box-shadow: 0 0 0 3px var(--control);
+}
+
+.menu-terapeuta .chips {
+  margin-top: var(--esp-3);
+}

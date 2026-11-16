@@ -34,8 +34,8 @@ test('la transición muestra solo el pictograma de la actividad que sigue, y el 
 test('los tiempos vienen de fichas/sesion.json: la transición dura 5 s', () => {
   assert.equal(config.transicionMs, 5000);
   const app = leer('src/app.js');
-  assert.match(app, /await mostrarRutina\(rutinaInicioHTML\(paso\.actividades, PICTO_FIN\), cfg\.rutinaInicioMs\);/);
-  assert.match(app, /await mostrarRutina\(transicionHTML\(paso\.siguiente\), cfg\.transicionMs\);/);
+  assert.match(app, /await mostrarRutina\(rutinaInicioHTML\(paso\.actividades, PICTO_FIN\), cfg\.rutinaInicioMs, s\)/);
+  assert.match(app, /await mostrarRutina\(transicionHTML\(paso\.siguiente\), cfg\.transicionMs, s\)/);
   assert.match(app, /await mostrarRutina\(cierreHTML\(PICTO_FIN\), cfg\.rutinaCierreMs\);/);
   // El cierre se muestra aunque la sesión termine antes: no depende del desempeño.
   assert.match(app, /\} else if \(paso\.tipo === 'rutina-cierre'\) \{\n\s+\/\/ Igual en todas las sesiones/);

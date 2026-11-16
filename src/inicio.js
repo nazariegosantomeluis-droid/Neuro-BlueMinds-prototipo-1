@@ -304,7 +304,7 @@ export function renderInicio(app, ctx, msg = '') {
             : ''
         }
         <p class="mensaje" role="alert">${esc(msg)}</p>
-        ${lista ? '<p class="ayuda">Durante el bloque, para pausar o terminar, toca dos veces el botón de la esquina superior derecha.</p>' : ''}
+        ${lista ? '<p class="ayuda">Durante la sesión, para pausar o terminar, mantén pulsado casi un segundo el botón de la esquina superior derecha: se abre el menú del terapeuta.</p>' : ''}
         <div class="barra-empezar">
           <p class="barra-resumen">
             <strong>${lista ? `${esc(ficha.id)} · ${esc(ficha.nombre)}` : 'Elige una actividad'}</strong>

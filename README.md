@@ -93,9 +93,8 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
    - La pausa del terapeuta funciona igual: descarta la aparición en curso, que no se repite. Si se termina desde ahí, la sesión termina sin bloques.
 3. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
-   - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
+   - El botón del terapeuta está en la esquina superior derecha. **Se mantiene pulsado 0.8 s** y abre el **menú del terapeuta** (H2.4), que pausa la sesión. Ver «Menú del terapeuta», más abajo.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
-   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se elige el motivo de una lista y se puede agregar una nota breve (sin nombres ni datos personales).
 4. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
 5. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
 
@@ -107,6 +106,17 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - **Fase 2, versión del Protocolo 3.3 (la que se usa).** ACT-02 se hace en dos bloques de 15 ensayos, uno en V y otro en AV, en la misma banda. La modalidad que abre se sortea en cada sesión, sin que una abra más de 2 sesiones seguidas. En las sesiones 1 a 6 los conceptos de la mitad A van en V y los de la B en AV; en las 7 a 12 se invierte. Los bloques de 15 son una excepción documentada al mínimo de 20 ensayos por bloque (Arquitectura 4.1).
 - **Fase 2, versión del Catálogo 5.2 (alternativa).** Un bloque de 30 ensayos en el que cada mitad de conceptos va en su modalidad, en orden al azar. Se elige en la ficha de ACT-02 (`fase2.version`). Cada sesión registra qué versión usó (`fase2_version`).
 - Todos los bloques se preparan antes de empezar: si falta una imagen o la voz, la sesión no empieza.
+
+**Menú del terapeuta (H2.4; Arquitectura 8.1).** Se abre manteniendo pulsado 0.8 s el botón de la esquina, en los bloques, en la referencia motora y en las rutinas (`src/menu-terapeuta.js`). Abrirlo pausa la sesión. Cada acción toma uno o dos toques:
+- **Reanudar** (1 toque).
+- **Terminar el bloque** o **terminar la sesión** (2 toques): primero el motivo, de la lista, y después el botón. Sin motivo no se termina. Con «Terminar la sesión», la sesión con un niño salta a la rutina de cierre; en un bloque suelto, el resumen ya no ofrece otro bloque. Fuera de un bloque solo está «Terminar la sesión».
+- **Fijar la banda** (1 toque): se usa desde el bloque siguiente de esa actividad; en la sesión con un niño, el bloque se arma de nuevo en esa banda.
+- **Desactivar o reactivar la adaptación** (1 toque). La adaptación todavía no existe (H4): por ahora la orden solo queda registrada.
+- **Anular el último cambio de banda** (1 toque).
+- **Marcar un episodio de desregulación** (1 toque): registra la hora (Protocolo 8.4). Al cerrar la sesión, el terapeuta los confirma (H2.6).
+- En la familiarización, la fase 3 y los bloques sueltos se puede fijar la banda. En las fases 1 y 2 y en el cierre la dificultad es fija: la orden de cambiar la banda o la adaptación no se ejecuta y queda registrada como bloqueada por INV-7 (Arquitectura 7.4).
+- El menú también tiene el volumen de la voz, una nota opcional y, solo en modo experto fuera del piloto, la pausa guiada.
+- Cada orden, incluida la de pausar al abrir el menú, queda en `ordenes_terapeuta` con su hora y el estado de la sesión.
 
 **Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
 - **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
@@ -305,6 +315,7 @@ src/ninos.js                  Padrón de niños: código, ícono, color, edad, c
 src/fases.js                  Modos de fase, plan de la sesión con un niño, fase 2 y límite de 15 minutos
 src/plan-pantalla.js          La sesión completa que el inicio muestra para un niño
 src/rutinas.js                Rutinas de inicio y de cierre y transición entre actividades
+src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -504,8 +515,8 @@ Una fila por sesión, en este orden:
 | `inicio`, `fin` | Fecha y hora en ISO 8601, en UTC y con «Z» (por ejemplo, `2026-10-30T02:30:04.785Z`), del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
 | `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
 | `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. `bloque` 0 es la referencia motora, y entonces `ensayo` es el número de aparición del objetivo. |
-| `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
-| `motivo_terminacion` | Motivo elegido al terminar el bloque: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
+| `terminada_antes` | `true` si el adulto terminó un bloque o la sesión desde el menú del terapeuta. |
+| `motivo_terminacion` | Motivo elegido al terminar el bloque o la sesión: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
 | `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
 | `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque: `ninguno`, `verbal`, `gestual` o `físico`. |
 | `frecuencia_hz` | Frecuencia de la pantalla: 1000 / mediana de `periodo_cuadro_ms` de la sesión, redondeada. |
@@ -522,6 +533,7 @@ Una fila por sesión, en este orden:
 | `fase2_primera` | Solo en la fase 2: modalidad que abrió la sesión, sorteada sin que una abra más de 2 sesiones seguidas. |
 | `plan_sesion` | Lista JSON de los bloques planeados, en orden: `actividad`, `banda`, `modalidad` (`V`, `AV` o `mixta`), `ensayos` y, en la fase 2, `mitad` o `mitades`. |
 | `pasos_sesion` | Lista JSON de los pasos de la sesión con un niño, en orden: `paso` (`rutina-inicio`, `referencia`, `bloque`, `transicion` o `rutina-cierre`), `inicio_ms` y `fin_ms` desde el inicio de la sesión y, según el paso, `bloque`, `actividad`, `modalidad` o `siguiente`. |
+| `ordenes_terapeuta` | Lista JSON de las órdenes del menú del terapeuta: `hora` (ISO 8601, solo para identificarla), `ms` desde el inicio de la sesión, `accion` (`pausar`, `reanudar`, `terminar_bloque`, `terminar_sesion`, `fijar_banda`, `desactivar_adaptacion`, `reactivar_adaptacion`, `anular_cambio_banda` o `episodio_desregulacion`), `detalle` (el motivo, o el cambio de banda `{actividad, de, a}`), `bloqueada` (el invariante que la bloqueó, por ejemplo `INV-7`, o vacío), y el estado en ese momento: `bloque` (0 en la referencia; vacío en las rutinas), `ensayo`, `modo`, `banda` y `adaptacion`. |
 
 ## Banco de ítems
 

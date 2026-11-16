@@ -35,6 +35,8 @@ export const SESION_COLUMNS = [
   // Catálogo 7.1: cada paso de la sesión (rutinas, referencia, bloques y transiciones) con su inicio
   // y su fin en ms desde el inicio de la sesión.
   'pasos_sesion',
+  // H2.4: cada orden del menú del terapeuta con su hora y el estado de la sesión.
+  'ordenes_terapeuta',
 ];
 
 const KEY = 'neuro-blueminds.registro';
