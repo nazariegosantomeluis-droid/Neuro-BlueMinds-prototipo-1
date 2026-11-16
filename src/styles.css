@@ -316,6 +316,25 @@ body {
   border-radius: 999px;
 }
 
+/* Interruptor del modo experto, junto a la etiqueta del prototipo. */
+.modo-experto {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--toque);
+  margin-left: auto;
+  font-size: var(--letra-chica);
+  font-weight: 600;
+  color: var(--suave);
+  cursor: pointer;
+}
+
+.modo-experto input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--acento);
+}
+
 .adulto .marca-linea {
   flex-basis: 100%;
   margin: 0;

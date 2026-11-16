@@ -53,7 +53,7 @@ test('los créditos describen las imágenes como marcadores provisionales mientr
   const paginas = leer('src/paginas.js');
   assert.match(paginas, /Las imágenes de los ejemplares son marcadores provisionales\./);
   assert.doesNotMatch(paginas, /Canva|inteligencia artificial/);
-  // En esta rama, los sonidos de ACT-05 sí se acreditan a Freesound y ESC-50.
+  // Los sonidos de ACT-05 sí se acreditan a Freesound y ESC-50.
   assert.match(paginas, /Freesound/);
   assert.match(paginas, /ESC-50/);
 });

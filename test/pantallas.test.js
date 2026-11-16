@@ -253,7 +253,9 @@ test('cada personaje tiene un rostro distinto para cada emoción e intensidad, s
         // Como las imágenes del piloto (alt vacío): el dibujo es el estímulo y no se describe,
         // y menos con el nombre de la emoción, que es la respuesta.
         assert.match(svg, /^<svg [^>]*aria-hidden="true"/, `${p} ${e}`);
-        assert.doesNotMatch(svg, /<text|aria-label|href=|url\(|NaN|undefined/, `${p} ${e} ${intensidad}`);
+        // Sin archivos: la única referencia es al degradado de la piel, dentro del mismo dibujo.
+        assert.doesNotMatch(svg.replaceAll(`url(#piel-${p})`, ''), /<text|aria-label|href=|url\(|NaN|undefined/, `${p} ${e} ${intensidad}`);
+        assert.match(svg, new RegExp(`<radialGradient id="piel-${p}"`));
         dibujos.add(svg);
       }
     }
@@ -267,7 +269,7 @@ test('cada personaje tiene un rostro distinto para cada emoción e intensidad, s
 });
 
 test('hay un pictograma distinto por emoción, sin texto, en cada estilo', () => {
-  for (const estilo of ['postura', 'cara']) {
+  for (const estilo of ['esquema', 'postura']) {
     const pictos = EMOCIONES.map((e) => pictoEmocionSVG(e, estilo));
     assert.equal(new Set(pictos).size, EMOCIONES.length, estilo);
     for (const svg of pictos) {

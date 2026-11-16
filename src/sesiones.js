@@ -1,5 +1,6 @@
 // Página «Sesiones»: las sesiones guardadas en este dispositivo, con el resumen de cada bloque
 // y la descarga de cada sesión. Solo lee el registro; no cambia nada de lo medido.
+import { filasVisibles } from './modo-experto.js';
 import { toCSV, download } from './engine/logger.js';
 import { paraExportar } from './engine/quality.js';
 import { lineasDelBloque } from './resumen.js';
@@ -152,6 +153,11 @@ export function renderSesiones(app, ctx) {
   const todas = [...sesiones.rows()].reverse(); // la más reciente primero
   const ensayos = log.rows();
   const deSesion = (id) => ensayos.filter((r) => r.sesion_id === id);
+  // Sin modo experto, solo los bloques de las actividades del piloto. La descarga de cada
+  // sesión sigue completa: nada se pierde del registro.
+  const visibles = (id) => filasVisibles(deSesion(id));
+  const ocultas = ensayos.length - filasVisibles(ensayos).length;
+  const conBloques = todas.filter((s) => !deSesion(s.sesion_id).length || visibles(s.sesion_id).length);
   const indice = indiceDeItems(state.items);
   app.innerHTML = `
     <div class="adulto medio">
@@ -159,9 +165,10 @@ export function renderSesiones(app, ctx) {
       ${tituloHTML('Sesiones', 'Lo que está guardado en este dispositivo, sesión por sesión. Nada se envía a ningún servidor.')}
       <div class="inicio-columnas">
         <div class="sesiones-lista">
+          ${ocultas ? `<p class="meta">Hay ${ocultas} ensayos de actividades fuera del piloto. Se ven con el modo experto encendido.</p>` : ''}
           ${
-            todas.length
-              ? todas.map((s) => sesionHTML(s, deSesion(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron)).join('')
+            conBloques.length
+              ? conBloques.map((s) => sesionHTML(s, visibles(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron)).join('')
               : `<div class="panel vacio">
                    <p><strong>Todavía no hay sesiones guardadas.</strong></p>
                    <p>Aquí aparecerá cada sesión con el resumen de sus bloques, en cuanto termines el primero.</p>

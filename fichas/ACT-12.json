@@ -36,7 +36,7 @@
       "probabilidad": 0.8,
       "inversion": true,
       "ensayosMax": 40,
-      "descripcion": "8 de cada 10 veces, y a la mitad del bloque la ventaja pasa al otro cofre."
+      "descripcion": "8 de cada 10 veces. En el programa de 80 elecciones (dos bloques) la ventaja pasa al otro cofre una vez, en la elección 41."
     },
     {
       "id": "B4",
@@ -45,7 +45,7 @@
       "probabilidad": 0.7,
       "inversion": true,
       "ensayosMax": 40,
-      "descripcion": "7 de cada 10 veces, y a la mitad del bloque la ventaja pasa al otro cofre."
+      "descripcion": "7 de cada 10 veces. En el programa de 80 elecciones (dos bloques) la ventaja pasa al otro cofre una vez, en la elección 41."
     }
   ],
   "modalidades": [
@@ -55,7 +55,8 @@
   "juntarBloques": {
     "elecciones": 80,
     "bloques": 2,
-    "motivo": "El Catálogo (sección 6.2) pide 80 elecciones o más para verificar que se recuperan los parámetros, y un bloque tiene de 20 a 40 ensayos (Arquitectura 4.4). Se juntan dos bloques de 40 de la misma banda en la misma sesión: el segundo empieza con el cofre que terminó premiando más en el primero, así las 80 elecciones forman un solo programa. En B1 y B2 el mismo cofre premia más las 80 elecciones; en B3 y B4 la ventaja cambia en las elecciones 21 y 61. El resumen del bloque cuenta las elecciones de la banda en la sesión."
+    "inversionEnEleccion": 41,
+    "motivo": "El Catálogo (sección 6.2) pide 80 elecciones o más para verificar que se recuperan los parámetros, y un bloque tiene de 20 a 40 ensayos (Arquitectura 4.4). Se juntan dos bloques de 40 de la misma banda en la misma sesión, y las 80 elecciones forman un solo programa. En B1 y B2 el mismo cofre premia más las 80 elecciones. En B3 y B4, el Catálogo dice que «la ventaja se invierte» sin decir cuántas veces: se invierte una sola vez, en la elección «inversionEnEleccion» (41: al empezar el segundo bloque). El resumen del bloque cuenta las elecciones de la banda en la sesión."
   },
   "programasPorBanda": 6,
   "muestraExpertosPorBanda": 2,
@@ -83,11 +84,12 @@
     "Antes de estimar los parámetros del modelo de aprendizaje (α_RL, β e ICU) hay que verificar que se recuperan con 80 elecciones o más. Este prototipo no los calcula.",
     "Discapacidad visual no corregida."
   ],
-  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y la contraindicación de la frustración vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, los 40 ensayos por bloque, los cofres, la estrella y los programas de premios son una propuesta para este prototipo. En cada ensayo la estrella está en un solo cofre; en cada mitad del bloque, el cofre que más premia la tiene en la proporción exacta de la banda, y nunca hay más de 2 ensayos seguidos en que la tenga el otro. Para llegar a las 80 elecciones que pide el Catálogo se juntan dos bloques de la misma banda en la sesión («juntarBloques»). En el registro, «acierto» es elegir el cofre que más premiaba en ese momento; si hubo estrella se sabe con el código del ensayo y el banco.",
+  "notaPrototipo": "Estado de investigación en el Catálogo: este prototipo solo sirve para que el equipo revise la mecánica. No se usa con niños, no entra en el piloto ni en el formulario F3, y solo se abre en modo experto. El paradigma, la mecánica, las bandas, la evidencia, la lectura no permitida y la contraindicación de la frustración vienen del Catálogo de actividades (sección 6). El objetivo, la lectura permitida, los 40 ensayos por bloque, los cofres, la estrella y los programas de premios son una propuesta para este prototipo. En cada ensayo la estrella está en un solo cofre; antes y después del cambio de ventaja, el cofre que más premia la tiene en la proporción exacta de la banda, y nunca hay más de 2 ensayos seguidos en que la tenga el otro. En B3 y B4 la ventaja se invierte una sola vez, en la elección 41 de las 80 («inversionEnEleccion»), así que cada una tiene programas para el primer y para el segundo bloque. Para llegar a las 80 elecciones que pide el Catálogo se juntan dos bloques de la misma banda en la sesión («juntarBloques»). En el registro, «acierto» es elegir el cofre que más premiaba en ese momento; si hubo estrella se sabe con el código del ensayo y el banco.",
   "pendientesClinicos": [
     "Definir en el Modelo matemático los indicadores de esta actividad (A1 como elección de la opción favorable; A10 no aplica).",
     "Verificar por simulación que los parámetros del aprendizaje por refuerzo (α_RL, β e ICU) se recuperan con 80 elecciones o más.",
-    "Aprobar que se junten dos bloques de 40 de la misma banda en la sesión para llegar a 80 elecciones («juntarBloques»), con el descanso entre bloques que fije el clínico, y que en B3 y B4 el programa de 80 tenga dos cambios de ventaja (elecciones 21 y 61).",
+    "Aprobar que se junten dos bloques de 40 de la misma banda en la sesión para llegar a 80 elecciones («juntarBloques»), con el descanso entre bloques que fije el clínico.",
+    "Confirmar en el Modelo matemático, cuando defina α_RL, cuántas inversiones de la ventaja tienen las bandas altas y en qué elección. El Catálogo dice «en bandas altas la ventaja se invierte» sin decir cuántas veces; el prototipo usa una sola, en la elección 41 de las 80 («inversionEnEleccion»).",
     "Fijar cómo se vigila la frustración y cuándo se detiene el bloque.",
     "Aprobar los cofres, la estrella y las probabilidades de cada banda.",
     "Aprobar el objetivo y las lecturas permitidas, que son una propuesta del prototipo.",

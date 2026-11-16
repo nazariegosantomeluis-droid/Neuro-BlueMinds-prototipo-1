@@ -1,6 +1,6 @@
 # AutiPal · Prototipo E13
 
-> **Rama `actividades-posteriores`: no se une a `main` antes del piloto** (Catálogo de actividades, sección 6). Contiene las 14 actividades del Catálogo que no son del piloto, solo en modo experto, para que el equipo revise su mecánica. El piloto (ACT-01, ACT-02 y ACT-07) es idéntico al de `main`.
+> **Actividades fuera del piloto ocultas por defecto.** El repositorio tiene las 14 actividades del Catálogo que no son del piloto (sección 6), como prototipos para que el equipo revise su mecánica. Con el **modo experto** apagado, que es el valor por defecto (también en GitHub Pages), la aplicación muestra solo ACT-01, ACT-02 y ACT-07.
 
 [![Verificación](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml/badge.svg)](https://github.com/nazariegosantomeluis-droid/Neuro-BlueMinds-prototipo-1/actions/workflows/verificacion.yml)
 
@@ -33,7 +33,7 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 | ACT-09 | Recuerda y encuentra | Ve un dibujo 2 s y lo encuentra después de una pausa de 0, 2, 5 o 10 s | Solo V | B1 a B4 |
 | ACT-10 | Ordena la secuencia | Toca en orden los momentos de una historia (V) o los dibujos que nombra una instrucción de varios pasos (AV); de 2 a 5 tarjetas | V y AV | B1 a B4 |
 | ACT-11 | Completa el patrón | Elige la figura que sigue en una serie: AB, AAB, ABC o dos reglas a la vez | V y AV | B1 a B4 |
-| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado; los pictogramas son figuras de cuerpo entero | V y AV | B1 a B3 (falta B4) |
+| ACT-14 | Reconoce la emoción | Elige el pictograma de la emoción de un rostro dibujado con rasgos realistas; los pictogramas son esquemas de trazos | V y AV | B1 a B3 (falta B4) |
 | ACT-15 | Sonidos de las palabras | Escucha una palabra y toca la que rima o la que empieza igual; en B4 dice si dos palabras suenan igual | Solo AV | B1 a B4 |
 | ACT-16 | Forma la palabra | Forma el nombre de un dibujo tocando sus sílabas o sus letras en orden, o una frase con sus palabras; una pieza sobra | V y AV | B1 a B4 |
 | ACT-17 | Pausa guiada | Mira un globo que se infla y se desinfla despacio. No mide nada. Solo en una sesión en modo experto | — | Sin bandas |
@@ -42,10 +42,10 @@ Son las tres del estudio piloto (Catálogo de actividades, sección 5) y las ún
 
 | Código | Nombre | Qué hace el niño | Modalidad | Bandas |
 |---|---|---|---|---|
-| ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, a la mitad del bloque esa ventaja pasa al otro cofre | Solo V | B1 a B4 |
+| ACT-12 | Elige y descubre | Elige entre dos cofres; uno tiene la estrella más veces que el otro (9, 8 o 7 de cada 10). En B3 y B4, en las 80 elecciones de dos bloques esa ventaja pasa al otro cofre una vez, en la elección 41 | Solo V | B1 a B4 |
 | ACT-13 | Espera la señal | Toca el pez cuando aparece y deja sin tocar la nube. Las bandas cambian la proporción de nubes (de 5 a 2 de cada 10) y el ritmo | Solo V | B1 a B4 |
 
-En esta rama todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
+Todo el contenido clínico de las 14 actividades (oraciones, palabras, rimas, historias, emociones, ejemplares poco típicos, objetivos y contraindicaciones propias) es una **propuesta**: cada ficha lo dice en `notaPrototipo` y lista en `pendientesClinicos` las decisiones que faltan. Todas tienen `revisionClinica` vacío, se abren solo en modo experto y no entran en la revisión clínica ni en el formulario F3.
 
 Ensayos por bloque (Arquitectura 4.4: de 20 a 40, 30 por defecto). Donde la mecánica no lo permite, la ficha lo explica en `ensayosExcepcion`:
 
@@ -101,7 +101,11 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
 
-**Modo experto.** Se activa en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad. No hace la referencia motora.
+**Modo experto de la aplicación.** Es el interruptor «Modo experto» del encabezado de las pantallas del adulto (`src/modo-experto.js`). Empieza apagado y se guarda en este dispositivo (`localStorage`, clave `nbm.modoExperto`).
+- **Apagado:** el inicio, la galería, las sesiones y el formulario F3 muestran solo ACT-01, ACT-02 y ACT-07, sin los grupos «En preparación» ni «En investigación» y sin la pausa guiada; tampoco hay sesiones en modo experto. «Sesiones» oculta los bloques de las demás actividades y dice cuántos ensayos no muestra; la descarga de cada sesión y la del registro siguen completas.
+- **Encendido:** se ven todas las actividades, y en el inicio aparece la casilla de la sesión en modo experto.
+
+**Sesión en modo experto.** Con el modo experto de la aplicación encendido, se elige en el inicio, antes de empezar la sesión, y solo con la demostración (sin niño). Permite elegir cualquier actividad, banda y modalidad. No hace la referencia motora.
 - Durante el ensayo muestra el código del ítem en la esquina inferior izquierda.
 - El botón «Siguiente» pasa al ítem siguiente sin esperar los tiempos; el ensayo en curso queda como interrumpido.
 - Sus registros llevan un `sesion_id` que empieza con `EXP-`.
@@ -258,7 +262,7 @@ Antes de publicar, corre también `npm run check-items`.
 
 1. `npm test`;
 2. `npm run check-items`;
-3. `node tools/build-items.mjs` y, en esta rama, `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
+3. `node tools/build-items.mjs` y `node tools/build-posteriores.mjs`, y falla si cambia algún archivo de `items/` o `assets/`: así detecta un banco desactualizado o editado a mano, el del piloto o el de las actividades posteriores.
 
 El resultado aparece en la pestaña Actions y en cada pull request. Para que GitHub no permita unir a `main` un cambio con la verificación fallida, el dueño del repositorio activa una regla en Settings → Rules → Rulesets (rama `main`, «Require status checks to pass», con las dos verificaciones de Node).
 
@@ -293,6 +297,7 @@ src/engine/clock.js           Medición del tiempo: performance.now, cuadros, fo
 src/engine/audio.js           Audio de las consignas: Web Audio y voz del navegador
 src/voz-grabada.js            Aviso y resumen de las actividades que requieren la voz grabada (ACT-15)
 src/pausa-permiso.js          Cuándo se puede abrir la pausa guiada (ACT-17)
+src/modo-experto.js           Modo experto de la aplicación: qué actividades se muestran
 src/engine/logger.js          Registro por ensayo; almacenamiento local; CSV y JSON
 src/engine/selector.js        Selección de ítems por banda, con semilla
 src/engine/quality.js         Reglas de calidad y resumen descriptivo
@@ -523,7 +528,7 @@ Una fila por sesión, en este orden:
 
 ### Banco de las actividades de uso posterior
 
-[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 817 ítems, todos con `revisionPendiente`. En ACT-10 y ACT-16 un ítem es una secuencia completa, con sus pasos; en ACT-12 y ACT-13, el programa o la serie de un bloque, con sus ensayos.
+[`items/items-posteriores.json`](items/items-posteriores.json) va aparte del banco del piloto, que no cambia. Se genera con `npm run build-posteriores` a partir de `conceptos.json` y de las fichas nuevas, con semillas fijas: 829 ítems, todos con `revisionPendiente`. En ACT-10 y ACT-16 un ítem es una secuencia completa, con sus pasos; en ACT-12 y ACT-13, el programa o la serie de un bloque, con sus ensayos.
 
 | Actividad | Ítems | Cómo se arman |
 |---|---|---|
@@ -536,7 +541,7 @@ Una fila por sesión, en este orden:
 | ACT-04 | 88 | Escenas de una niña o un niño que duerme, come, bebe, corre, salta, se peina, barre, habla por teléfono o abraza a un animal, y de un animal u objeto dentro, arriba, abajo o al lado de una caja o una mesa. En B2 cada distractor cambia una sola parte de la oración: la persona, la acción o el objeto. En B5, la mitad de las oraciones dicen lo que muestra la escena |
 | ACT-05 | 66 | Un ítem por grabación (12 sonidos, 2 grabaciones de cada uno) y banda. Los distractores también tienen sonido: de otro grupo en B1 y B2, del mismo grupo en B3 (todos animales o todos vehículos) |
 | ACT-10 | 96 | V: 7 historias de 5 momentos (la planta que crece, la manzana que se come, el sándwich, el pollito, la vela, el vaso que se llena y el helado), cada una en 2 órdenes revueltos. AV: 10 instrucciones por banda con dibujos del banco de categorías distintas |
-| ACT-12 | 24 | 6 programas de 40 ensayos por banda. En cada mitad del bloque el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
+| ACT-12 | 36 | 6 programas de 40 ensayos por banda; en B3 y B4, 6 para el primer bloque y 6 para el segundo. Antes y después del cambio de ventaja el cofre favorable tiene la estrella en la proporción exacta de la banda, nunca más de 2 ensayos seguidos en el otro, y el cofre que empieza premiando alterna entre programas |
 | ACT-13 | 24 | 6 series de 30 presentaciones por banda, con la proporción de nubes de la banda. Nunca empiezan con una nube ni ponen más de 2 seguidas |
 | ACT-15 | 75 | Rimas (B1 y B2; en B2 un distractor empieza igual que la palabra, pero no rima), inicios con la misma sílaba (B3) y pares que cambian en un solo sonido, dichos iguales o distintos (B4) |
 | ACT-16 | 50 | Palabras de 2 y 3 sílabas (B1 y B2), de 3 o 4 letras (B3) y las frases de objeto y color de ACT-03 (B4). Una pieza sobra (en B3, una o dos), y nunca repite una pieza de la palabra |
@@ -552,13 +557,13 @@ Una fila por sesión, en este orden:
   - El resumen del bloque empieza por las secuencias hechas completas y en orden. Las cortadas por una pausa o un salto no entran en la cuenta y se informan aparte. Los pasos van después, como detalle.
   - Los tiempos entre toques no son tiempos de respuesta comparables (Arquitectura 4.5): el resumen no da su mediana y sus filas quedan con `fuera_de_tarea` vacío.
   - El registro sigue guardando una fila por paso, con su código (`ACT10-B2-03-1`).
-  - La última tarjeta pasa sola a su lugar y no es un paso ni tiene fila (`ultimaTarjeta: "sola"` en la ficha). En ACT-16 eso pasa aunque sobren piezas; con `"elige"`, el niño elegiría la última entre las que quedan. Queda como decisión clínica.
+  - Un paso solo es ensayo si quedan al menos 2 tarjetas posibles. En ACT-10 no sobra ninguna: la última pasa sola a su lugar y no tiene fila. En ACT-16 siempre sobra una pieza, así que la última también se elige y es un ensayo.
   - Un bloque propone 10 secuencias; A1 necesita 20 (Modelo matemático 4.1), que se juntan con dos bloques.
-- **ACT-14: los pictogramas de respuesta no son caras.** Con caras esquemáticas el niño podía acertar copiando la forma de la boca del rostro (risa, dientes, boca abierta) sin reconocer la emoción. La propuesta en uso son figuras de cuerpo entero con la cabeza sin rasgos, en las que la emoción se lee en la postura (`estiloPictograma: "postura"`). La ficha describe los dos estilos en `estilosPictograma`; elegir uno es una decisión clínica pendiente. Falta la banda B4, la emoción a partir de una situación, que necesita escenas de situaciones.
+- **ACT-14: rostro realista frente a pictograma esquemático.** El Catálogo dice «elige el pictograma de la emoción», así que las opciones son pictogramas con rostro. Para que no se resuelvan copiando la forma de la boca, el estímulo y las opciones tienen estilos claramente distintos: el rostro tiene rasgos realistas (piel con sombra, nariz, labios de color, dientes y lengua) y el pictograma es un esquema de trazos negros sobre un círculo, sin color ni relleno en la boca (`estiloPictograma: "esquema"`). Las figuras de cuerpo entero quedan como alternativa (`"postura"`) en `estilosPictograma`; el estilo final es una decisión clínica pendiente. Falta la banda B4, la emoción a partir de una situación, que necesita escenas de situaciones.
 - **ACT-17, la pausa guiada, solo se abre en una sesión en modo experto**, y nunca durante una sesión del piloto ni en un bloque de una actividad del piloto (`src/pausa-permiso.js`). No aparece en el panel de pausa de las sesiones con niños ni en la referencia motora; la página «Pausa guiada» y el inicio solo la ofrecen con una sesión en modo experto en curso, y queda anotada en esa sesión.
 - **ACT-15 requiere la voz grabada** (`requiereVozGrabada` en la ficha), que todavía no existe. Con la voz del navegador, antes del bloque aparece un aviso y el adulto decide si la abre solo para revisar la mecánica. El motor deja cada ensayo con `audio_fuente = sintesis` como fallo técnico (`fallo_tecnico = true`, `peso_calidad = 0`): nunca queda como válido, y el resumen del bloque no lo cuenta.
 - **ACT-12: dos bloques de 40 se juntan en 80 elecciones.** El Catálogo pide 80 elecciones o más para verificar que se recuperan los parámetros del modelo de aprendizaje, y un bloque tiene como mucho 40 ensayos (Arquitectura 4.4). Por eso (`juntarBloques` de la ficha):
-  - El segundo bloque de la misma banda en la sesión elige un programa que empieza con el cofre que terminó premiando más en el primero. Así las 80 elecciones son un solo programa: en B1 y B2 el mismo cofre premia más todo el tiempo; en B3 y B4 la ventaja cambia en las elecciones 21 y 61.
+  - El segundo bloque de la misma banda en la sesión sigue el mismo programa de 80 elecciones. En B1 y B2 el mismo cofre premia más todo el tiempo. En B3 y B4, el Catálogo dice que «la ventaja se invierte» sin decir cuántas veces: se invierte una sola vez, en la elección 41 (al empezar el segundo bloque). El lugar se configura en la ficha (`juntarBloques.inversionEnEleccion`) y queda como pendiente para que lo confirme el Modelo matemático cuando defina α_RL. Cada ensayo del banco lleva su número de elección (`eleccion`) y su fase (1 antes del cambio, 2 después).
   - El resumen de cada bloque, al terminarlo y en «Sesiones», cuenta las elecciones de esa banda en la sesión y, si son menos de 80, pide otro bloque. Las omisiones y los ensayos interrumpidos no cuentan como elecciones.
   - Este prototipo no calcula los parámetros.
 - Los rostros de ACT-14 son dibujos, como pide el Catálogo para empezar: 6 personajes de distinta edad, género y tono de piel, con 4 emociones (alegría, tristeza, enojo y miedo) en 2 intensidades.

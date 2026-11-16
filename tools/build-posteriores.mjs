@@ -545,15 +545,14 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
   // ---------- Secuencias por pasos (ACT-10 y ACT-16) ----------
   // tarjetas: en el orden en que se ven (revueltas); «orden» es su lugar en la secuencia, o null si
   // sobra. Cada paso es un ensayo del motor: el niño elige entre las tarjetas que quedan la que va
-  // en el siguiente lugar. La última tarjeta de la secuencia pasa sola a su lugar (autoColocar) y no
-  // es un paso: cuando no sobra ninguna no hay que elegir, y con ultimaTarjeta = 'sola' (Catálogo
-  // 6.2: A1 por secuencia completa) tampoco cuando sobran. Con ultimaTarjeta = 'elige', si sobran,
-  // el niño la elige como un paso más.
-  const pasosDe = (cod, tarjetas, { texto, audio }, ficha) => {
+  // en el siguiente lugar. Un paso solo es ensayo si quedan al menos 2 tarjetas posibles: si queda
+  // una sola (la última, cuando no sobra ninguna), no hay que elegir y pasa sola a su lugar
+  // (autoColocar), sin fila en el registro. Si sobran piezas, la última también se elige.
+  const pasosDe = (cod, tarjetas, { texto, audio }) => {
     const enOrden = tarjetas.filter((t) => t.orden !== null).sort((a, b) => a.orden - b.orden);
-    const sobran = tarjetas.some((t) => t.orden === null);
-    const elige = sobran && ficha.ultimaTarjeta === 'elige';
-    const total = elige ? enOrden.length : enOrden.length - 1;
+    // En el paso k quedan tarjetas.length − k tarjetas.
+    const total = enOrden.filter((_, k) => tarjetas.length - k >= 2).length;
+    const sola = total < enOrden.length;
     return enOrden.slice(0, total).map((t, k) => ({
       codigo: `${cod}-${k + 1}`,
       paso: k + 1,
@@ -561,7 +560,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
       colocadas: enOrden.slice(0, k).map((x) => x.id),
       consigna: k === 0 ? { tipo: 'secuencia', texto, audio } : { tipo: 'secuencia', texto: '', audio: SILENCIO },
       opciones: tarjetas.filter((x) => !enOrden.slice(0, k).includes(x)).map((x) => ({ id: x.id, correcta: x === t })),
-      ...(k === total - 1 && !elige ? { autoColocar: enOrden.at(-1).id } : {}),
+      ...(k === total - 1 && sola ? { autoColocar: enOrden.at(-1).id } : {}),
     }));
   };
   // Revuelve las tarjetas; con 3 o más, nunca quedan ya en orden.
@@ -594,7 +593,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
               modalidad: 'V',
               historia,
               tarjetas: vistas,
-              ensayos: pasosDe(cod, vistas, { texto: '', audio: null }, f),
+              ensayos: pasosDe(cod, vistas, { texto: '', audio: null }),
               muestraExpertos: k === 0 && n <= f.muestraExpertosPorBanda * f.ordenesPorHistoria,
             },
             [],
@@ -629,7 +628,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
             modalidad: 'AV',
             consigna: { tipo: 'secuencia', texto, audio: slug(texto) },
             tarjetas: vistas,
-            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }, f),
+            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }),
             muestraExpertos: k < f.muestraExpertosPorBanda / 2,
           },
           elegidos,
@@ -690,7 +689,7 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
             imagen: image(c.id, ejemplar),
             palabra: w.texto,
             tarjetas: vistas,
-            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }, f),
+            ensayos: pasosDe(cod, vistas, { texto, audio: slug(texto) }),
             muestraExpertos: n <= f.muestraExpertosPorBanda,
           },
           [c],
@@ -707,10 +706,13 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
   }
 
   // ---------- ACT-12: elige y descubre (investigación) ----------
-  // Cada ítem es un programa de premios para un bloque completo. En cada ensayo la estrella está
-  // en un solo cofre. En cada mitad del bloque (o en el bloque entero, si la banda no tiene
-  // inversión), el cofre que más premia la tiene en la proporción exacta de la banda, y nunca hay
-  // más de «maxEnganososSeguidos» ensayos seguidos en que la tenga el otro.
+  // Cada ítem es un programa de premios para un bloque completo. Dos bloques de la misma banda se
+  // juntan en un programa de 80 elecciones («juntarBloques»). En las bandas con inversión, la
+  // ventaja pasa al otro cofre una sola vez, en la elección «inversionEnEleccion» de las 80; cada
+  // banda con inversión tiene programas para cada parte (primer y segundo bloque). En cada ensayo la
+  // estrella está en un solo cofre. Antes y después del cambio, el cofre que más premia la tiene en
+  // la proporción exacta de la banda, y nunca hay más de «maxEnganososSeguidos» ensayos seguidos en
+  // que la tenga el otro.
   {
     const f = fichas['ACT-12'];
     const rand = rng(seedOf('ACT-12'));
@@ -723,40 +725,51 @@ export function buildPosteriores({ conceptos, categorias, fichas, image = imageP
       }
       throw new Error(`ACT-12: no hay reparto de ${k} en ${n} sin rachas largas.`);
     };
+    const { bloques, inversionEnEleccion: cambio } = f.juntarBloques;
+    const otro = { a: 'b', b: 'a' };
     for (const banda of f.bandas) {
       const total = banda.ensayosMax;
-      const mitad = banda.inversion ? total / 2 : total;
-      for (let k = 1; k <= f.programasPorBanda; k++) {
-        const cod = codigo(f, banda, k);
-        // El cofre que empieza premiando alterna entre programas.
-        const inicial = k % 2 ? 'a' : 'b';
-        const otro = { a: 'b', b: 'a' };
-        const fases = banda.inversion ? [mitad, total - mitad] : [total];
-        const ensayos = fases.flatMap((n, i) => {
-          const favorable = i === 0 ? inicial : otro[inicial];
-          return reparto(n, Math.round(n * banda.probabilidad)).map((gana) => ({ fase: i + 1, favorable, conEstrella: gana ? favorable : otro[favorable] }));
-        });
-        push(
-          {
-            codigo: cod,
-            actividad: f.id,
-            banda: banda.id,
-            tipo: 'programa',
-            probabilidad: banda.probabilidad,
-            favorableInicial: inicial,
-            inversion: banda.inversion ? mitad + 1 : null,
-            ensayos: ensayos.map((e, i) => ({
-              codigo: codigoDe(cod, i + 1),
-              n: i + 1,
-              fase: e.fase,
-              consigna: { tipo: 'cofres' },
-              opciones: ['a', 'b'].map((c) => ({ id: `cofre-${c}`, cofre: c, correcta: c === e.favorable, premio: c === e.conEstrella })),
-            })),
-            muestraExpertos: k <= f.muestraExpertosPorBanda,
-          },
-          [],
-          ['Confirmar con los clínicos la proporción de premios, el largo del bloque y cómo se vigila la frustración.'],
-        );
+      const partes = banda.inversion ? bloques : 1;
+      for (let parte = 1; parte <= partes; parte++) {
+        const antes = (parte - 1) * total; // elecciones de las partes anteriores
+        // Lugar del cambio dentro de este bloque (1 a total), si cae en él después del primer ensayo.
+        const local = banda.inversion && cambio > antes + 1 && cambio <= antes + total ? cambio - antes : null;
+        const cambiaAlEmpezar = Boolean(banda.inversion && parte > 1 && cambio === antes + 1);
+        for (let k = 1; k <= f.programasPorBanda; k++) {
+          const cod = codigo(f, banda, (parte - 1) * f.programasPorBanda + k);
+          // El cofre que empieza premiando alterna entre programas.
+          const inicial = k % 2 ? 'a' : 'b';
+          const tramos = local ? [local - 1, total - local + 1] : [total];
+          const ensayos = tramos.flatMap((n, i) => {
+            const favorable = i === 0 ? inicial : otro[inicial];
+            return reparto(n, Math.round(n * banda.probabilidad)).map((gana) => ({ favorable, conEstrella: gana ? favorable : otro[favorable] }));
+          });
+          push(
+            {
+              codigo: cod,
+              actividad: f.id,
+              banda: banda.id,
+              tipo: 'programa',
+              probabilidad: banda.probabilidad,
+              parte: banda.inversion ? parte : null,
+              favorableInicial: inicial,
+              inversion: local,
+              cambiaAlEmpezar,
+              ensayos: ensayos.map((e, i) => ({
+                codigo: codigoDe(cod, i + 1),
+                n: i + 1,
+                // Elección dentro del programa de 80 y fase: 1 antes del cambio de ventaja, 2 después.
+                eleccion: antes + i + 1,
+                fase: banda.inversion && antes + i + 1 >= cambio ? 2 : 1,
+                consigna: { tipo: 'cofres' },
+                opciones: ['a', 'b'].map((c) => ({ id: `cofre-${c}`, cofre: c, correcta: c === e.favorable, premio: c === e.conEstrella })),
+              })),
+              muestraExpertos: k <= f.muestraExpertosPorBanda,
+            },
+            [],
+            ['Confirmar con los clínicos la proporción de premios, el largo del bloque y cómo se vigila la frustración.'],
+          );
+        }
       }
     }
   }

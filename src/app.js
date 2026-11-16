@@ -20,6 +20,7 @@ import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
+import { CLAVE_MODO_EXPERTO, fijarModoExperto, leerModoExperto, modoExpertoActivo } from './modo-experto.js';
 import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
@@ -142,6 +143,14 @@ async function init() {
     e.preventDefault();
     enfocarTitulo();
   });
+  // Modo experto de la aplicación: apagado por defecto; el interruptor está en el encabezado.
+  fijarModoExperto(leerModoExperto(prefs));
+  document.addEventListener('change', (e) => {
+    if (!e.target.matches?.('[data-modo-experto]')) return;
+    fijarModoExperto(e.target.checked);
+    prefs.set(CLAVE_MODO_EXPERTO, e.target.checked ? '1' : '0');
+    route();
+  });
   addEventListener('hashchange', route);
   route();
 }
@@ -165,7 +174,7 @@ function route() {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
   } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro });
-  else if (ruta === 'pausa' && state.pausa) renderPausa();
+  else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'ninos') renderNinos(app, { ninos });
@@ -304,6 +313,8 @@ async function start(form) {
   const antes = state.form;
   const f = (state.form = Object.fromEntries(new FormData(form)));
   const ficha = state.fichas[f.actividad];
+  // Sin el modo experto de la aplicación, solo las actividades del piloto.
+  if (!modoExpertoActivo() && requiereModoExperto(ficha)) return renderInicio('Esta actividad solo se abre con el modo experto encendido.');
   const banda = ficha.bandas.find((b) => b.id === f.banda) ?? ficha.bandas[0];
   const pantalla = PANTALLAS[ficha.pantalla];
   const n = Math.min(maxEnsayos(ficha, banda), Math.max(1, Math.floor(Number(f.ensayos)) || ficha.ensayosPorBloque));

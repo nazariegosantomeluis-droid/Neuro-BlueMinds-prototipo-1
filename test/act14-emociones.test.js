@@ -1,6 +1,7 @@
-// ACT-14 «Reconoce la emoción» (tanda 2): las opciones de respuesta no se pueden resolver
-// copiando la forma de la boca del rostro. El estilo de los pictogramas queda como decisión
-// clínica pendiente, y falta la banda de la emoción a partir de una situación.
+// ACT-14 «Reconoce la emoción» (tandas 2 y 2b): las opciones son pictogramas de la emoción con
+// rostro, como dice el Catálogo, pero en un estilo claramente distinto del estímulo (rostro con
+// rasgos realistas frente a un esquema de trazos), para que no se resuelva copiando la boca. Las
+// figuras de postura quedan como alternativa y el estilo final, como pendiente clínico.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -10,40 +11,66 @@ import { opcionHTML } from '../src/activities/emociones.js';
 const leer = (ruta) => readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8');
 const ficha = JSON.parse(leer('fichas/ACT-14.json'));
 
-// Lo que dibuja la boca de los rostros: su color y los dientes o la lengua.
-const BOCA_DEL_ROSTRO = /#6e2a2a|#e0807e/i;
+// Colores de un SVG (fill y stroke), sin «none» ni las referencias a degradados.
+const colores = (svg) => new Set([...svg.matchAll(/(?:fill|stroke|stop-color)="(#[0-9a-f]{6})"/gi)].map((m) => m[1].toLowerCase()));
+const NEGRO = '#2b2b2b';
+const FONDO = '#fff6cf';
 
-test('la ficha propone estilos de pictograma y deja la elección como pendiente clínico', () => {
+test('la ficha usa el esquema, deja la postura como alternativa y el estilo final como pendiente', () => {
   assert.deepEqual(ficha.estilosPictograma.map((e) => e.id), ESTILOS_PICTOGRAMA);
-  assert.ok(ESTILOS_PICTOGRAMA.includes(ficha.estiloPictograma));
-  assert.equal(ficha.estiloPictograma, 'postura');
+  assert.deepEqual(ESTILOS_PICTOGRAMA, ['esquema', 'postura']);
+  assert.equal(ficha.estiloPictograma, 'esquema');
   for (const e of ficha.estilosPictograma) assert.ok(e.descripcion.endsWith('.'), e.id);
-  assert.match(ficha.estilosPictograma.find((e) => e.id === 'cara').descripcion, /copiando la forma/);
-  assert.ok(ficha.pendientesClinicos.some((p) => p.includes('«estilosPictograma»') && p.includes('copiando la forma de la boca')));
-  assert.match(ficha.notaPrototipo, /«estiloPictograma»: «postura»/);
+  assert.match(ficha.estilosPictograma[0].descripcion, /«elige el pictograma de la emoción»/);
+  assert.match(ficha.estilosPictograma[1].descripcion, /alternativa.*cambia lo que se mide/);
+  assert.ok(ficha.pendientesClinicos.some((p) => p.startsWith('Elegir el estilo final de los pictogramas de respuesta («estilosPictograma»)')));
+  assert.match(ficha.notaPrototipo, /«estiloPictograma»: «esquema»/);
+  assert.match(ficha.notaPrototipo, /alternativa \(«postura»\)/);
 });
 
-test('con el estilo en uso, los pictogramas no tienen cara que copiar', () => {
-  const pictos = EMOCIONES.map((e) => pictoEmocionSVG(e, ficha.estiloPictograma));
-  for (const svg of pictos) {
-    assert.doesNotMatch(svg, BOCA_DEL_ROSTRO, 'sin la boca de los rostros');
-    assert.doesNotMatch(svg, /<ellipse/, 'sin ojos ni bocas ovaladas');
-    // Una sola cabeza, siempre la misma y sin rasgos: solo un círculo.
-    const cabezas = [...svg.matchAll(/<g class="cabeza" transform="[^"]+">([\s\S]*?)<\/g>/g)].map((m) => m[1]);
-    assert.deepEqual(cabezas, [CABEZA_POSTURA]);
-    assert.match(CABEZA_POSTURA, /^<circle r="21" [^>]*\/>$/);
+test('el pictograma es un esquema de trazos negros, sin color ni relleno en la boca', () => {
+  for (const e of EMOCIONES) {
+    const svg = pictoEmocionSVG(e, 'esquema');
+    assert.deepEqual([...colores(svg)].sort(), [NEGRO, FONDO].sort(), e);
+    // La boca es el último trazo: sin relleno.
+    const ultimo = svg.match(/<(path|ellipse)[^>]*\/>\s*<\/svg>$/)[0];
+    assert.match(ultimo, /fill="none"/, `${e}: boca sin relleno`);
   }
-  // Las bocas de los rostros sí tienen esas marcas, y las caras esquemáticas también las repetían.
-  for (const p of Object.keys(PERSONAJES)) assert.match(rostroSVG(p, 'miedo', 'alta'), BOCA_DEL_ROSTRO);
-  assert.match(pictoEmocionSVG('miedo', 'cara'), BOCA_DEL_ROSTRO);
+  assert.equal(new Set(EMOCIONES.map((e) => pictoEmocionSVG(e, 'esquema'))).size, 4);
 });
 
-test('la pantalla y la galería usan el estilo de la ficha', () => {
-  assert.equal(opcionHTML({ emocion: 'enojo' }, { ficha }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'postura')}</span>`);
-  assert.equal(opcionHTML({ emocion: 'enojo' }, { ficha: { ...ficha, estiloPictograma: 'cara' } }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'cara')}</span>`);
-  // Sin ficha, nunca las caras.
-  assert.equal(opcionHTML({ emocion: 'enojo' }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'postura')}</span>`);
-  assert.throws(() => pictoEmocionSVG('alegria', 'otro'), /Estilo de pictograma desconocido/);
+test('el rostro del estímulo es realista: piel con sombra, nariz y labios de color, sin trazos negros en la boca', () => {
+  for (const [id, p] of Object.entries(PERSONAJES)) {
+    for (const e of EMOCIONES) {
+      for (const intensidad of ['alta', 'baja']) {
+        const svg = rostroSVG(id, e, intensidad);
+        assert.match(svg, /<radialGradient id="piel-/, `${id} ${e}: piel con sombra`);
+        assert.match(svg, /fill="url\(#piel-/, id);
+        // Colores propios del rostro que el pictograma nunca usa.
+        const propios = [...colores(svg)].filter((c) => c !== NEGRO && c !== FONDO);
+        assert.ok(propios.length >= 6, `${id} ${e}`);
+        assert.ok(propios.includes(p.piel.toLowerCase()), id);
+      }
+    }
+  }
+  // La boca del rostro nunca es un trazo negro: va en el color de los labios.
+  const bocaNegra = new RegExp(`stroke="${NEGRO}"[^>]*/>\\s*(<path[^>]*/>\\s*)?\\$\\{`);
+  assert.doesNotMatch(leer('src/activities/rostros.js').slice(0, leer('src/activities/rostros.js').indexOf('// Nariz')), bocaNegra);
+  const fuente = leer('src/activities/rostros.js');
+  const boca = fuente.slice(fuente.indexOf('function boca('), fuente.indexOf('// Nariz'));
+  assert.doesNotMatch(boca, /\$\{trazo\(/, 'la boca del rostro no usa el trazo negro');
+});
+
+test('la pantalla y la galería usan el estilo de la ficha, y la postura sigue disponible', () => {
+  assert.equal(opcionHTML({ emocion: 'enojo' }, { ficha }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'esquema')}</span>`);
+  assert.equal(opcionHTML({ emocion: 'enojo' }, { ficha: { ...ficha, estiloPictograma: 'postura' } }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'postura')}</span>`);
+  assert.equal(opcionHTML({ emocion: 'enojo' }), `<span class="dib dib-figura">${pictoEmocionSVG('enojo', 'esquema')}</span>`);
+  assert.throws(() => pictoEmocionSVG('alegria', 'cara'), /Estilo de pictograma desconocido/);
+  // Postura: una sola cabeza sin rasgos.
+  for (const e of EMOCIONES) {
+    const cabezas = [...pictoEmocionSVG(e, 'postura').matchAll(/<g class="cabeza" transform="[^"]+">([\s\S]*?)<\/g>/g)].map((m) => m[1]);
+    assert.deepEqual(cabezas, [CABEZA_POSTURA]);
+  }
   const vista = leer('src/activities/emociones.js');
   assert.match(vista, /const estilo = ficha\?\.estiloPictograma;/);
   assert.match(vista, /pictoEmocionSVG\(o\.emocion, estilo\)/);

@@ -1,5 +1,6 @@
 // ACT-10 «Ordena la secuencia» y ACT-16 «Forma la palabra» (tanda 2): el indicador principal es
-// la secuencia completa (Catálogo 6.2); los pasos son el detalle; la última tarjeta no es un paso,
+// la secuencia completa (Catálogo 6.2); los pasos son el detalle; un paso solo es ensayo si hay al
+// menos 2 piezas posibles,
 // y los tiempos entre toques no entran en los resúmenes ni en «fuera de tarea» (Arquitectura 4.5).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -40,20 +41,30 @@ test('el resumen empieza por las secuencias completas y deja los pasos como deta
   // ACT-16 usa su propia plantilla, por palabras.
   const l16 = lineasDeBloque(bloque('ACT-16', 'B2', 2, () => null), ficha('ACT-16'), indice);
   assert.equal(l16[0], 'Formó sin errores 2 de 2 palabras o frases.');
-  assert.equal(l16[1], 'Detalle por pasos: tocó la pieza que seguía en 4 de 4 pasos; sin respuesta en 0.');
+  assert.equal(l16[1], 'Detalle por pasos: tocó la pieza que seguía en 6 de 6 pasos; sin respuesta en 0.');
 });
 
-test('la última tarjeta pasa sola a su lugar: no tiene paso ni fila en el registro', () => {
+test('un paso es ensayo solo con 2 piezas posibles o más; si queda una, pasa sola y no tiene fila', () => {
   for (const id of ['ACT-10', 'ACT-16']) {
-    assert.equal(ficha(id).ultimaTarjeta, 'sola', id);
+    assert.equal('ultimaTarjeta' in ficha(id), false, `${id}: ya no hay opción`);
     for (const it of items.filter((i) => i.actividad === id)) {
       const lugares = it.tarjetas.filter((t) => t.orden !== null).length;
-      assert.equal(it.ensayos.length, lugares - 1, it.codigo);
       const ultima = it.tarjetas.find((t) => t.orden === lugares);
-      assert.equal(it.ensayos.at(-1).autoColocar, ultima.id, it.codigo);
-      assert.ok(it.ensayos.every((e) => e.opciones.every((o) => !o.correcta || o.id !== ultima.id)), `${it.codigo}: nunca se pide la última`);
+      // Cada paso tiene al menos 2 piezas posibles.
+      for (const e of it.ensayos) assert.ok(e.opciones.length >= 2, e.codigo);
+      if (it.tarjetas.length === lugares) {
+        // No sobra ninguna (ACT-10): en el último lugar queda una sola; pasa sola.
+        assert.equal(it.ensayos.length, lugares - 1, it.codigo);
+        assert.equal(it.ensayos.at(-1).autoColocar, ultima.id, it.codigo);
+      } else {
+        // Sobran piezas (ACT-16): la última también se elige y es ensayo.
+        assert.equal(it.ensayos.length, lugares, it.codigo);
+        assert.equal(it.ensayos.at(-1).opciones.find((o) => o.correcta).id, ultima.id, it.codigo);
+        assert.ok(it.ensayos.every((e) => !e.autoColocar), it.codigo);
+      }
     }
   }
+  assert.ok(items.filter((i) => i.actividad === 'ACT-16').every((i) => i.tarjetas.length > i.tarjetas.filter((t) => t.orden !== null).length), 'en ACT-16 siempre sobra una pieza');
   // La pantalla coloca la última al terminar el paso anterior, sin marco.
   assert.match(leer('src/activities/secuencia.js'), /if \(actual\?\.autoColocar\) colocar\(actual\.autoColocar, false\);/);
 });
@@ -62,11 +73,14 @@ test('las fichas dicen por qué el bloque cuenta secuencias y qué falta decidir
   for (const id of ['ACT-10', 'ACT-16']) {
     const f = ficha(id);
     assert.match(f.ensayosExcepcion, /Catálogo 6\.2: A1 por (secuencia|palabra) completa/, id);
-    assert.match(f.ensayosExcepcion, /la última (tarjeta|pieza) pasa sola a su lugar/, id);
     assert.match(f.notaPrototipo, /indicador principal/, id);
-    assert.match(f.notaPrototipo, /no tiene fila/, id);
   }
-  assert.ok(ficha('ACT-16').pendientesClinicos.some((p) => p.includes('«ultimaTarjeta»')));
+  assert.match(ficha('ACT-10').ensayosExcepcion, /la última tarjeta pasa sola a su lugar \(no sobra ninguna: queda una sola posible\)/);
+  assert.match(ficha('ACT-10').notaPrototipo, /la última tarjeta no tiene fila/);
+  assert.match(ficha('ACT-16').ensayosExcepcion, /de 2 a 4 toques: como sobran piezas, la última también se elige/);
+  assert.match(ficha('ACT-16').notaPrototipo, /Un paso solo cuenta como ensayo si quedan al menos 2 piezas posibles/);
+  assert.ok(ficha('ACT-16').pendientesClinicos.some((p) => p.startsWith('Aprobar que la última pieza cuente como ensayo cuando quedan al menos 2 posibles')));
+  for (const id of ['ACT-10', 'ACT-16']) assert.ok(ficha(id).pendientesClinicos.every((p) => !p.includes('ultimaTarjeta')), id);
 });
 
 test('los pasos de una secuencia no entran en «fuera de tarea»; las demás actividades, igual que antes', () => {

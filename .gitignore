@@ -1,6 +1,3 @@
-CLAUDE.md
-CLAUDE.local.md
-.claude/
 # Revisiones clínicas descargadas: no se suben al repositorio.
 revision-clinica-*.csv
 revision-consolidada.csv

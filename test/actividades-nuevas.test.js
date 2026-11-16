@@ -36,11 +36,14 @@ test('ACT-12: en cada ensayo la estrella está en un solo cofre, y el favorable 
   const f = ficha('ACT-12');
   for (const b of f.bandas) {
     const programas = of('ACT-12', b.id);
-    assert.equal(programas.length, f.programasPorBanda, b.id);
+    // Con inversión, programas para el primer y el segundo bloque del programa de 80.
+    assert.equal(programas.length, f.programasPorBanda * (b.inversion ? f.juntarBloques.bloques : 1), b.id);
     for (const p of programas) {
       assert.equal(p.ensayos.length, b.ensayosMax, p.codigo);
-      assert.equal(p.inversion, b.inversion ? b.ensayosMax / 2 + 1 : null, p.codigo);
-      for (const fase of b.inversion ? [1, 2] : [1]) {
+      // Con la inversión en la elección 41, cae al empezar el segundo bloque, no dentro de uno.
+      assert.equal(p.inversion, null, p.codigo);
+      assert.equal(p.cambiaAlEmpezar, Boolean(b.inversion && p.parte === 2), p.codigo);
+      for (const fase of [...new Set(p.ensayos.map((e) => e.fase))]) {
         const es = p.ensayos.filter((e) => e.fase === fase);
         const favorable = es[0].opciones.find((o) => o.correcta).cofre;
         assert.ok(es.every((e) => e.opciones.filter((o) => o.correcta).length === 1 && e.opciones.find((o) => o.correcta).cofre === favorable), `${p.codigo}: un favorable por fase`);
@@ -50,10 +53,8 @@ test('ACT-12: en cada ensayo la estrella está en un solo cofre, y el favorable 
         let racha = 0;
         for (const e of es) assert.ok((racha = e.opciones.find((o) => o.correcta).premio ? 0 : racha + 1) <= f.maxEnganososSeguidos, p.codigo);
       }
-      if (b.inversion) {
-        const [a, z] = [p.ensayos[0], p.ensayos.at(-1)].map((e) => e.opciones.find((o) => o.correcta).cofre);
-        assert.notEqual(a, z, `${p.codigo}: la ventaja cambia de cofre`);
-      }
+      // Dentro de un bloque, el cofre favorable no cambia.
+      assert.equal(new Set(p.ensayos.map((e) => e.opciones.find((o) => o.correcta).cofre)).size, 1, p.codigo);
     }
   }
 });
@@ -73,7 +74,8 @@ test('ACT-12: un bloque es un programa completo; el cofre elegido se abre, y el 
 });
 
 test('ACT-12: el resumen cuenta antes y después del cambio, las estrellas y qué hizo después de cada una', () => {
-  const p = of('ACT-12', 'B3')[0];
+  // Segundo bloque de B3: todo después del cambio de ventaja (elección 41).
+  const p = of('ACT-12', 'B3').find((x) => x.parte === 2);
   const byCode = new Map(p.ensayos.map((e) => [e.codigo, e]));
   // Siempre el mismo cofre: «a».
   const rows = p.ensayos.map((e) => {
@@ -81,13 +83,14 @@ test('ACT-12: el resumen cuenta antes y después del cambio, las estrellas y qu�
     return fila(e.codigo, { pos: 1, id: o.id, acierto: o.correcta, tr: 800 });
   });
   const lineas = cofres.resumenExtra(rows, byCode);
-  const favorablesAntes = p.ensayos.filter((e) => e.fase === 1 && e.opciones.find((o) => o.cofre === 'a').correcta).length;
-  assert.match(lineas[0], new RegExp(`^Antes del cambio: eligió el cofre que más premiaba en ${favorablesAntes} de 20 ensayos\\.$`));
-  assert.match(lineas[1], new RegExp(`^Después del cambio \\(desde el ensayo 21\\): eligió el nuevo cofre que más premiaba en ${20 - favorablesAntes} de 20 ensayos\\.$`));
+  const favorables = p.ensayos.filter((e) => e.opciones.find((o) => o.cofre === 'a').correcta).length;
+  lineas.unshift('');
+  assert.equal(lineas[1], `Todo el bloque es después del cambio de ventaja (desde la elección 41 del programa de 80): eligió el nuevo cofre que más premiaba en ${favorables} de 40 ensayos.`);
+  lineas.shift();
   const estrellas = p.ensayos.filter((e) => e.opciones.find((o) => o.cofre === 'a').premio).length;
-  assert.equal(lineas[2], `Encontró la estrella en ${estrellas} de 40 ensayos.`);
-  assert.match(lineas[3], /^Después de encontrar la estrella, volvió a elegir el mismo cofre en (\d+) de \1 ocasion/);
-  assert.match(lineas[4], /^Después de un cofre vacío, cambió de cofre en 0 de \d+ ocasion/);
+  assert.equal(lineas[1], `Encontró la estrella en ${estrellas} de 40 ensayos.`);
+  assert.match(lineas[2], /^Después de encontrar la estrella, volvió a elegir el mismo cofre en (\d+) de \1 ocasion/);
+  assert.match(lineas[3], /^Después de un cofre vacío, cambió de cofre en 0 de \d+ ocasion/);
   assert.match(lineas.at(-2), /^Elecciones de la banda .* en la sesión: 40\. Para estimar los parámetros del modelo de aprendizaje el Catálogo pide 80 o más; este prototipo no los calcula\.$/);
   assert.match(lineas.at(-1), /^Para juntar 80, haz otro bloque de esta banda en la misma sesión/);
   for (const l of lineas) assert.doesNotMatch(l, /sensible|toler|impuls/i);
@@ -155,12 +158,11 @@ test('ACT-13: el resumen separa omisiones (ante el «sí») y errores de comisi�
 
 const enOrden = (it) => it.tarjetas.filter((t) => t.orden !== null).sort((a, b) => a.orden - b.orden);
 
-test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la última pasa sola y no es un paso', () => {
+test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la última pasa sola si no sobra ninguna', () => {
   for (const it of [...of('ACT-10'), ...of('ACT-16')]) {
     const orden = enOrden(it);
-    // «ultimaTarjeta»: «sola» en las dos fichas (Catálogo 6.2: A1 por secuencia completa).
-    assert.equal(ficha(it.actividad).ultimaTarjeta, 'sola');
-    assert.equal(it.ensayos.length, orden.length - 1, it.codigo);
+    const sobran = it.tarjetas.length - orden.length;
+    assert.equal(it.ensayos.length, sobran ? orden.length : orden.length - 1, it.codigo);
     it.ensayos.forEach((e, k) => {
       assert.equal(e.codigo, `${it.codigo}-${k + 1}`);
       assert.deepEqual(e.colocadas, orden.slice(0, k).map((t) => t.id));
@@ -171,8 +173,8 @@ test('secuencias: cada paso pide la tarjeta que sigue entre las que quedan, y la
       // La instrucción se dice una vez: los demás pasos usan el silencio.
       if (k > 0) assert.equal(e.consigna.audio, SILENCIO);
     });
-    assert.equal(it.ensayos.at(-1).autoColocar, orden.at(-1).id, it.codigo);
-    assert.ok(it.ensayos.every((e) => e.total === orden.length - 1), it.codigo);
+    if (!sobran) assert.equal(it.ensayos.at(-1).autoColocar, orden.at(-1).id, it.codigo);
+    assert.ok(it.ensayos.every((e) => e.total === it.ensayos.length), it.codigo);
     // Con 3 tarjetas o más, nunca aparecen ya en orden.
     if (it.tarjetas.length >= 3) assert.ok(it.tarjetas.some((t, i) => t.orden !== i + 1), `${it.codigo}: revueltas`);
   }
@@ -251,7 +253,7 @@ test('secuencias: el bloque se cuenta en secuencias completas y el resumen empie
   // La secuencia cortada no entra en la cuenta; los pasos son el detalle.
   assert.equal(lineas[0], 'Formó sin errores 1 de 2 palabras o frases.');
   assert.equal(lineas[1], 'Secuencias que no se terminaron por una pausa o un salto: 1. No entran en la cuenta.');
-  assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 1 de 2 pasos; sin respuesta en 0.');
+  assert.equal(lineas[2], 'Detalle por pasos: tocó la pieza que seguía en 3 de 4 pasos; sin respuesta en 0.');
   // App: n secuencias completas, sin recortar a mitad de una.
   const app = texto('src/app.js');
   assert.match(app, /picked = pantalla\.elegir\(bandItems, n, rand, \{ ficha, banda, repeat, previas \}\)/);
