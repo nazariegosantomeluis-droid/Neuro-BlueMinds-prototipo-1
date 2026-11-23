@@ -24,7 +24,7 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     // Tanda 2: al final, para que las columnas anteriores no cambien de lugar.
     't_muestra_fin',
     // Tanda 3: la mitad de conceptos de la fase 2.
-    'mitad_fase2',
+    'mitad_fase2', 'sonda', 'reaparicion',
   ]);
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',
@@ -35,7 +35,7 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'pasos_sesion', 'ordenes_terapeuta', 'limite_15_min', 'bloques_omitidos', 'duracion_uso_ms',
     'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
     'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
-    'tema_imagenes',
+    'tema_imagenes', 'banda_inicial_fase1',
   ]);
 });
 

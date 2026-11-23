@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.3.0",
   "descripcion": "Estructura fija de la sesión con un niño (Catálogo de actividades 7.1; Arquitectura y software 4.1, 7.4 y 14; Protocolo de validación 3.3). Lo que no dicen los documentos es una propuesta del prototipo y está en «pendientes».",
   "rutinaInicioMs": 6000,
   "transicionMs": 5000,
@@ -10,6 +10,8 @@
       "nombre": "Familiarización",
       "actividades": ["ACT-01", "ACT-02", "ACT-07"],
       "dificultad": "minima",
+      "probarBandas": ["ACT-02", "ACT-07"],
+      "fijaBandaInicial": ["ACT-02", "ACT-07"],
       "adaptacion": false,
       "panel": "resumen",
       "analiza": false
@@ -60,11 +62,18 @@
     "sesionesPorBloque": 6,
     "maxSeguidasMismaModalidad": 2
   },
+  "presentacionDistribuida": {
+    "actividades": ["ACT-02"],
+    "demorasSesiones": [1, 3, 7],
+    "activaEnModos": ["fase3"],
+    "nota": "Catálogo 7.2: cuando un concepto alcanza el dominio, reaparece después de 1, 3 y 7 sesiones; su precisión en esas reapariciones es IRet. En el piloto está desactivada hasta la fase 3. Solo cuentan los dominios alcanzados en una sesión en que estaba activa; las sesiones se cuentan entre las del niño con la actividad."
+  },
   "pendientes": [
     "Confirmar las actividades de la familiarización: ACT-01 (10 ensayos) y después ACT-02 y ACT-07 en la banda mínima.",
     "Confirmar la modalidad de ACT-01, ACT-02 y ACT-07 fuera de la fase 2. Se propone AV: el Protocolo (2.3, sobre H4) dice que la plataforma mantiene la presentación multimodal por defecto si H4 se refuta.",
     "Confirmar la duración de la rutina de inicio (6 s) y de la de cierre (5 s); el Catálogo solo fija la transición de 5 s.",
     "Alinear el Catálogo 5.2 con el Protocolo 3.3 en la fase 2 (dos bloques de 15, uno por modalidad).",
+    "Confirmar que en la familiarización el terapeuta puede probar otras bandas de ACT-02 y ACT-07 para elegir la banda inicial de la fase 1: el Protocolo 3.1 dice que la dificultad de la familiarización es fija y mínima, y el 3.2 que con ella se elige el nivel inicial.",
     "Describir cada valor de la valoración de participación de 1 a 5: la Arquitectura 8.4 fija la escala y el Protocolo (5.4 y 6.1) la pide en cada sesión, pero ninguno de los dos describe qué significa cada valor."
   ]
 }

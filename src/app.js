@@ -25,9 +25,13 @@ import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-tera
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
-import { modoDe } from './ninos.js';
+import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
+import { leerBandasPrueba } from './plan-pantalla.js';
+import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conceptoDeFila, codigoBase } from './sondas.js';
+import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
+import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
@@ -129,6 +133,12 @@ const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBl
 async function init() {
   applyCm();
   audio.setVolume(volumen() / 100);
+  // Versión y commit publicados: en el pie de las pantallas del adulto y en los CSV del F3 y de
+  // la revisión clínica. El pie no se ve en la pantalla del niño (styles.css).
+  cargarVersion().then((v) => {
+    const pie = document.getElementById('pie-version');
+    if (pie) pie.textContent = textoVersion(v);
+  });
   const { catalogo, fichas, pausa, problemas } = await cargarCatalogo();
   Object.assign(state, { catalogo, fichas, pausa });
   Object.assign(state.problemas, problemas);
@@ -431,7 +441,7 @@ async function empezarSesion(form) {
   }
   let plan;
   try {
-    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2 });
+    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2, bandasPrueba: leerBandasPrueba(state.form) });
   } catch (e) {
     return renderInicio(e.message);
   }
@@ -626,11 +636,43 @@ async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mit
     const todos = pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitad), n), { ficha, banda, pareja, modalidad });
     trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
   }
+  // Sondas de generalización y presentación distribuida (Catálogo 7.2 y 7.3): solo en los modos
+  // de fase que dicen la ficha y fichas/sesion.json (en el piloto, la fase 3).
+  if (!mitades) trials = conMecanismos(trials, { ficha, s, rand, deConcepto: (c) => {
+    const it = bandItems.find((i) => i.concepto === c);
+    return it ? pantalla.toTrials([it], { ficha, banda, pareja, modalidad })[0] : null;
+  } });
   // El tema de la sesión solo cambia las imágenes (Arquitectura 4.8).
   trials = aplicarTema(trials, temaPorId(state.temas, s.tema));
   const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
   await preloadImages([PICTO_FIN, ...srcs]);
   return { trials, usados, pantalla };
+}
+
+// Sondas y reapariciones del bloque, a partir de la historia del niño en esta actividad (sesiones
+// anteriores en este dispositivo). Sin modo de fase o fuera de los modos activos, no cambia nada.
+function conMecanismos(trials, { ficha, s, rand, deConcepto }) {
+  const cfgS = ficha.sondas;
+  const cfgD = state.sesion?.presentacionDistribuida;
+  const sondas = Boolean(s.modo && cfgS?.desdeModos?.includes(s.modo));
+  const distribuida = Boolean(s.modo && cfgD?.activaEnModos?.includes(s.modo) && cfgD.actividades?.includes(ficha.id));
+  if (!sondas && !distribuida) return trials;
+  const porCodigo = new Map(state.items.map((i) => [i.codigo, i]));
+  const conceptoFila = conceptoDeFila(porCodigo);
+  const conceptoEnsayo = (t) => porCodigo.get(codigoBase(t.codigo))?.concepto ?? null;
+  const historia = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+  const alcanzados = unidadesDominadas(historia, { unidad: (r) => conceptoFila(r) ?? r.item, criterio: criterioDe(ficha) });
+  let out = trials;
+  if (distribuida) {
+    const hoy = reaparicionesDeHoy({ alcanzados, sesiones: sesionesEnOrden(historia), demoras: cfgD.demorasSesiones, activaEnModos: cfgD.activaEnModos });
+    out = conReapariciones(out, hoy, { deConcepto, concepto: conceptoEnsayo, rand });
+  }
+  if (sondas) {
+    const sondeados = new Set(historia.filter((r) => r.sonda).map(conceptoFila));
+    const candidatos = shuffle([...alcanzados.keys()].filter((c) => !sondeados.has(c)), rand);
+    out = conSondas(out, candidatos, { cada: cfgS.cadaEnsayos, ejemplar: cfgS.ejemplar, deConcepto, concepto: conceptoEnsayo, rand });
+  }
+  return out;
 }
 
 // Aviso antes del bloque: las opciones no caben en esta pantalla a su tamaño mínimo.
@@ -1025,6 +1067,13 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
   const marcados = episodiosMarcados(f.ordenes_terapeuta ?? []);
   const actividades = [...new Set((f.plan_sesion ?? []).map((b) => b.actividad))];
   const bandas = [...new Set(actividades.flatMap((a) => state.fichas[a]?.bandas.map((b) => b.id) ?? []))];
+  // Familiarización (Protocolo 3.2): al cerrar se fija la banda inicial de la fase 1. Se propone la
+  // ya fijada en el padrón o, si no hay, la última que se probó en la sesión.
+  const nino = ninos.rows().find((n) => n.codigo === f.codigo_nino);
+  const probadas = Object.fromEntries(log.rows().filter((r) => r.sesion_id === id).map((r) => [r.actividad, r.banda]));
+  const bandaInicial = (state.sesion?.modos?.[modo]?.fijaBandaInicial ?? [])
+    .filter((a) => state.fichas[a])
+    .map((a) => ({ id: a, nombre: state.fichas[a].nombre, bandas: state.fichas[a].bandas.map((b) => b.id), actual: f.banda_inicial_fase1?.[a] ?? nino?.bandas?.[a] ?? probadas[a] ?? null }));
   // Sin los resultados en memoria (desde «Sesiones»), los bloques salen del registro de ensayos.
   const bloques =
     resultados ??
@@ -1051,7 +1100,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
       ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
-      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {} })}
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial })}
     </div>`;
   for (const r of app.querySelectorAll('[name^=apoyo-]')) {
     const bloque = Number(r.name.slice(6));
@@ -1071,15 +1120,22 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
     else renderInicio();
   };
   const guardar = (completos) => {
-    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3 });
+    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3, bandaInicial });
     if (completos) {
-      const f = faltantes(reg, { fase3 });
+      const f = faltantes(reg, { fase3, bandaInicial });
       if (f.length) {
         msg.textContent = f.join(' ');
         return;
       }
     }
     editSesion(id, (x) => Object.assign(x, filaRegistros(reg, { completos, hora: new Date().toISOString() })));
+    // La banda inicial elegida queda en el padrón: es la banda fija de la fase 1 y del cierre.
+    const elegidas = Object.entries(reg.banda_inicial_fase1 ?? {}).filter(([, b]) => b);
+    if (elegidas.length)
+      ninos.edit((rows) => {
+        const n = rows.find((x) => x.codigo === f.codigo_nino);
+        if (n) for (const [a, b] of elegidas) n.bandas = fijarBanda(n.bandas, state.fichas[a], b);
+      });
     salir();
   };
   form.onsubmit = (e) => {

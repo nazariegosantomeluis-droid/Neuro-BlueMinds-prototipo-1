@@ -1,0 +1,82 @@
+{
+  "ACT-01.json": {
+    "version": "0.1.0",
+    "huella": "3786c30e0aff63f7d1c75ba342eb8b1b101978a422c356838698ea91b862d3e7"
+  },
+  "ACT-02.json": {
+    "version": "0.3.0",
+    "huella": "7929eef69c773f2b95991a8558aa51ae3968ebc1efb4d776f9c1520f0d4e5a2f"
+  },
+  "ACT-03.json": {
+    "version": "0.2.0",
+    "huella": "63b80d6e0fb6f261462c010367dff71342ff4dc13aa4936bd81c4e8e749de3d5"
+  },
+  "ACT-04.json": {
+    "version": "0.2.0",
+    "huella": "c2cb84296f525758e83540534ce98d3f733181782efdbd587639ff97b440cbc4"
+  },
+  "ACT-05.json": {
+    "version": "0.2.0",
+    "huella": "64224b34c6468892a034a446ee5d3377296cd32dd682a436c943e86bb5ef0393"
+  },
+  "ACT-06.json": {
+    "version": "0.2.0",
+    "huella": "2652a7a47123ada473c4ed7ac02f02974cb46c28f2fa3dd9454b552d218b2f7a"
+  },
+  "ACT-07.json": {
+    "version": "0.1.1",
+    "huella": "b6a325c6d0b027ef8180470c39c0dba400387dfb199cfb422aa163dadb9f392d"
+  },
+  "ACT-08.json": {
+    "version": "0.2.0",
+    "huella": "61dff49a7876b91fcc9e11983943c3648cb694b3afb29ebc3bd71678ca78f852"
+  },
+  "ACT-09.json": {
+    "version": "0.2.0",
+    "huella": "a91ea4c83663f51a242b5d06009be7223de5468c6e135c733a11a45cf8f07f9f"
+  },
+  "ACT-10.json": {
+    "version": "0.2.0",
+    "huella": "7525a149d354bfa1c73e1f2d801591d3d5191f4f90cef5a2c937254365a78ad4"
+  },
+  "ACT-11.json": {
+    "version": "0.2.0",
+    "huella": "ed1a3acd4d492ecdc50c394f278a5ba9aea908aafae98eb940b6a27a3a24718a"
+  },
+  "ACT-12.json": {
+    "version": "0.2.0",
+    "huella": "61fdf26c66e9cb96520ed9f2ffcc4336aa833f0623c8c655a583439001e56a6e"
+  },
+  "ACT-13.json": {
+    "version": "0.2.0",
+    "huella": "3165ade6235fd70fbcfeea87e2aae6c46fcd8da1265d31b92eb4a3b2557b380c"
+  },
+  "ACT-14.json": {
+    "version": "0.2.0",
+    "huella": "442d07058f03bb603ab67685b9d819a9540f705f25bb938bcdd5a4cc59cd610a"
+  },
+  "ACT-15.json": {
+    "version": "0.2.0",
+    "huella": "ae1a55ffa81c349acf52bede237e2f06c6d66ad300575213bdfac31b481fcfd7"
+  },
+  "ACT-16.json": {
+    "version": "0.2.0",
+    "huella": "b058d657061a2d8256893d4a5ed6d7919d0f3af4cbb157b4f7e4cec3d93b3bab"
+  },
+  "ACT-17.json": {
+    "version": "0.2.0",
+    "huella": "09aba54908a6d4d1554cbba8ebec7194911e388d616ee1199f6d1ad32282cf84"
+  },
+  "catalogo.json": {
+    "version": "0.1.0",
+    "huella": "58f549dc6e46c51d87787e8195617652f8ac858d6c24ddde512d9343703a6a5f"
+  },
+  "sesion.json": {
+    "version": "0.3.0",
+    "huella": "2e4264b33d68d569e9ee2552905065ec88ab3d31276eda487720f04ea50c6de3"
+  },
+  "temas.json": {
+    "version": "0.1.0",
+    "huella": "60d1355a6256b18488ca55fc86ef751970ed92ee9e0c62487ba2f3cce91c9581"
+  }
+}

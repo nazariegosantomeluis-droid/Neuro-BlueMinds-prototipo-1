@@ -30,13 +30,19 @@ export const mitadDeModalidad = (modalidad, bloque) => (['A', 'B'].find((m) => m
 
 // ---------- Banda ----------
 
-// Banda de cada actividad según el modo: en la familiarización, la mínima; en los modos con
-// dificultad fija y en la fase 3, la que el investigador fijó para el niño (o la mínima si no hay).
-export function bandaDelModo(modo, ficha, bandasNino = {}, config) {
+// Banda de cada actividad según el modo: en la familiarización, la mínima, salvo que el terapeuta
+// elija probar otra en una actividad de «probarBandas» (para fijar la banda inicial de la fase 1,
+// Protocolo 3.2); en los modos con dificultad fija y en la fase 3, la que se fijó para el niño (o la
+// mínima si no hay).
+export function bandaDelModo(modo, ficha, bandasNino = {}, config, bandasPrueba = {}) {
   const minima = ficha.bandas[0].id;
-  if (config.modos[modo].dificultad === 'minima') return minima;
+  const existe = (b) => ficha.bandas.some((x) => x.id === b);
+  if (config.modos[modo].dificultad === 'minima') {
+    const prueba = bandasPrueba[ficha.id];
+    return (config.modos[modo].probarBandas ?? []).includes(ficha.id) && existe(prueba) ? prueba : minima;
+  }
   const fijada = bandasNino[ficha.id];
-  return ficha.bandas.some((b) => b.id === fijada) ? fijada : minima;
+  return existe(fijada) ? fijada : minima;
 }
 
 // ---------- Plan de la sesión ----------
@@ -44,14 +50,15 @@ export function bandaDelModo(modo, ficha, bandasNino = {}, config) {
 // Pasos de la sesión, en orden. Cada bloque dice actividad, banda, modalidad y número de ensayos;
 // en la fase 2 también la mitad de conceptos (o, en la versión del Catálogo, una por modalidad).
 // fase2: { version, numero (1 a 12), primera ('V' o 'AV') }; solo en el modo fase2.
-export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = null }) {
+// bandasPrueba: en la familiarización, la banda que el terapeuta eligió probar en cada actividad.
+export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = null, bandasPrueba = {} }) {
   const m = config.modos[modo];
   if (!m) throw new Error(`Modo de fase desconocido: ${modo}.`);
   const bloques = [];
   for (const id of m.actividades) {
     const ficha = fichas[id];
     if (!ficha) throw new Error(`Falta la ficha de ${id}.`);
-    const banda = bandaDelModo(modo, ficha, bandasNino, config);
+    const banda = bandaDelModo(modo, ficha, bandasNino, config, bandasPrueba);
     const base = { actividad: id, banda };
     if (modo === 'fase2' && id === config.fase2.actividad) {
       const bloque = bloqueFase2(fase2.numero, config.fase2.sesionesPorBloque);

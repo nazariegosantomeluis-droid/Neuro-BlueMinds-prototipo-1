@@ -52,7 +52,7 @@ export const SI_NO = ['no', 'sí', 'no sé'];
 
 export const F3_COLUMNS = [
   'experto', 'disciplina', 'anios', 'ambito', 'ciudad', 'participa_piloto', 'familiar_piloto',
-  'consentimiento', 'agradecimientos', 'fecha_utc', 'version_app',
+  'consentimiento', 'agradecimientos', 'fecha_utc', 'version_app', 'commit',
   'tipo', 'actividad', 'dimension', 'banda', 'valor', 'item', 'problema', 'comentario',
 ];
 
@@ -114,7 +114,7 @@ export function faltantes(resp, fichas) {
 export const normalizarCodigo = (s) => String(s).toUpperCase().replace(/\s+/g, '');
 
 // CSV largo: una fila por calificación, ítem señalado o comentario. Los datos del experto se repiten en cada fila.
-export function f3CSV(resp, fichas, { fecha, version }) {
+export function f3CSV(resp, fichas, { fecha, version, commit = null }) {
   const p = resp.perfil;
   const base = {
     experto: p.nombre.trim(),
@@ -128,6 +128,7 @@ export function f3CSV(resp, fichas, { fecha, version }) {
     agradecimientos: p.agradecimientos ? 'sí' : 'no',
     fecha_utc: fecha,
     version_app: version,
+    commit: commit ?? '',
   };
   const filas = [];
   for (const a of ACTIVIDADES_F3) {
