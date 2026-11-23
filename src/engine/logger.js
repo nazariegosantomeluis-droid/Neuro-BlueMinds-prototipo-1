@@ -51,8 +51,9 @@ export const SESION_COLUMNS = [
   'tema_imagenes',
   // Tanda 4: en la familiarización, la banda inicial de la fase 1 que el terapeuta fijó al cerrar.
   'banda_inicial_fase1',
-  // Tanda 5: versión de los indicadores con que se calcula la sesión (Arquitectura 6.2).
-  'version_indicadores',
+  // Tanda 5: versión de los indicadores con que se calcula la sesión (Arquitectura 6.2) y propuestas
+  // de la regla de adaptación en la fase 3 (H4.1 y H4.2; ninguna se ejecuta hasta H4.3).
+  'version_indicadores', 'adaptacion_propuestas',
 ];
 
 const KEY = 'neuro-blueminds.registro';

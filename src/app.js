@@ -33,6 +33,7 @@ import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conce
 import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
 import { VERSION_INDICADORES } from './indicadores/parametros.js';
 import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
+import { proponer, lineaBaseRegulacion, MOTIVO_NO_EJECUTADA } from './adaptacion.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
@@ -851,6 +852,20 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   }
   const deLaSesion = log.rows().filter((r) => r.sesion_id === s.id);
   editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
+  // Regla de adaptación (H4.1 y H4.2): en los modos adaptativos (fase 3), propone por ventanas de
+  // 10 ensayos válidos y deja cada propuesta en el registro. No cambia la banda: eso lo decidirá la
+  // envolvente de seguridad (H4.3).
+  if (state.sesion?.modos?.[s.modo]?.adaptacion) {
+    const historial = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+    s.estadoAdaptacion ??= { sinSubir: false };
+    const ordenes = (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
+    const propuestas = proponer(rows, { bandas: ficha.bandas.map((b) => b.id), estado: s.estadoAdaptacion, base: lineaBaseRegulacion(historial), ordenes }).map((p) => ({
+      ...p,
+      adaptacion_activa: s.adaptacion ?? true,
+      motivo_no_ejecutada: MOTIVO_NO_EJECUTADA,
+    }));
+    editSesion(s.id, (r) => (r.adaptacion_propuestas = [...(r.adaptacion_propuestas ?? []), ...propuestas]));
+  }
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.

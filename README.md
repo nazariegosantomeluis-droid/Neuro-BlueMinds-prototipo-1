@@ -343,6 +343,7 @@ src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, accion
 src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
 src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
 src/sondas.js                 Sondas de generalización y presentación distribuida; IG e IRet
+src/adaptacion.js             Regla de adaptación (propone) y señal de regulación
 src/version.js                Versión y commit publicados (pie del adulto y CSV de expertos)
 src/indicadores/              Indicadores del núcleo: parámetros, estadística, A1 a A10 y dominio
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
@@ -582,6 +583,7 @@ Una fila por sesión, en este orden:
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 | `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta fijó al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
 | `version_indicadores` | Versión de los indicadores con que se calcula la sesión (`VERSION_INDICADORES`, Arquitectura 6.2). |
+| `adaptacion_propuestas` | Solo en los modos adaptativos (fase 3): lista JSON de propuestas de la regla de adaptación, una por ventana de 10 ensayos válidos: `bloque`, `actividad`, `ventana`, `ensayos` (primero y último), `precision`, `omisiones`, `prematuras`, `senal` (`omisiones`, `prematuras`, `terapeuta` o vacío), `criterio_senal`, `accion` (`subir`, `mantener`, `bajar` o `pausa_y_bajar`), `motivo`, `regla`, `banda_actual`, `banda_propuesta`, `ejecutada` (siempre `false` hasta H4.3), `motivo_no_ejecutada`, `adaptacion_activa` y `version_regla`. |
 
 ## Indicadores del núcleo (H3)
 
@@ -630,6 +632,15 @@ Las sesiones de demostración y del modo experto no tienen historia de un niño:
 - Mediana: rangos l y u = n − l + 1, con l el mayor entero tal que P(B ≤ l − 1) ≤ 0.025, B ~ Bin(n, 1/2). Con menos de 6 datos no hay intervalo.
 - Theil-Sen: C = z·√Var(S), Var(S) = [n(n − 1)(2n + 5) − Σ g(g − 1)(2g + 5)]/18, con g el tamaño de cada grupo de valores de y empatados; límites en las posiciones (N − C)/2 y (N + C)/2 + 1 de las N pendientes ordenadas, interpolando y acotando a [1, N].
 - Bootstrap: 2,000 remuestras, percentiles con cuantil tipo 1 (el ⌈p·B⌉-ésimo valor ordenado; en R, `quantile(x, p, type = 1)`). Generador: mulberry32 (`src/engine/selector.js`, `rng`) sembrado con FNV-1a de 32 bits del texto `sesion_id:actividad:indicador` (`seedOf`). Cada remuestra toma, para cada grupo y cada posición, el índice ⌊u · n⌋. En A7, los grupos son primero los aciertos tras error y después los aciertos tras acierto.
+
+## Regla de adaptación y señal de regulación (H4.1 y H4.2)
+
+`src/adaptacion.js`, con los parámetros en `src/indicadores/parametros.js` (Modelo 9.1 y 9.2; Arquitectura 7.2 y 7.3). Solo corre en los modos con `adaptacion: true` en `fichas/sesion.json` (la fase 3), al terminar cada bloque.
+
+- **Ventanas:** de 10 ensayos válidos (sin interrupción técnica), seguidas; la última incompleta no cuenta.
+- **Regla (C8):** precisión mayor de 0.85 en dos ventanas consecutivas → subir una banda; entre 0.70 y 0.85 → mantener; menor de 0.70 en una ventana → bajar una banda. Después de proponer un cambio, la cuenta de ventanas empieza de nuevo. En la banda más alta o más baja se propone mantener, con el motivo.
+- **Señal de regulación:** con línea base, la proporción de omisiones o de respuestas prematuras de la ventana supera el percentil 90 (tipo 7) de esa proporción en las ventanas de la línea base del niño. La línea base son las primeras 5 sesiones de la fase 1 con calidad de 0.80 o más en la actividad (decisión D3). Sin línea base: 3 o más omisiones, o 3 o más prematuras, en la ventana. En cualquier caso, también es señal un episodio de desregulación marcado o terminar el bloque o la sesión por «Desregulación o malestar del niño». Con señal, la regla propone ofrecer pausa y bajar una banda, y no subir en el resto de la sesión.
+- **La regla solo propone.** Según Arquitectura 7.1, una propuesta se ejecuta solo si la envolvente de seguridad (C9, H4.3) la permite. Mientras la envolvente no exista, ninguna cambia la banda. Cada propuesta queda en `adaptacion_propuestas` de `sesiones.csv` con la ventana, los valores que la activaron, la regla, las bandas actual y propuesta, `ejecutada: false` y el motivo. Los parámetros no cambian durante la sesión (Modelo 9.3).
 
 ## Banco de ítems
 
