@@ -1,6 +1,6 @@
 {
   "id": "ACT-02",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "nombre": "Pictograma e imagen",
   "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
   "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
@@ -75,6 +75,9 @@
   "contraindicaciones": [
     "Discapacidad visual o auditiva no corregida.",
     "Con hipersensibilidad auditiva, la modalidad AV se usa a volumen bajo; si el niño no la tolera, se usa solo V y el niño no entra en el análisis de H4."
+  ],
+  "pendientesClinicos": [
+    "Regla para elegir, en la sesión de familiarización, la banda inicial de la fase 1 (Protocolo 3.2: «un nivel inicial elegido para cada niño con la sesión de familiarización», sin decir cómo). Mientras se decide, el terapeuta prueba bandas y fija la banda al cerrar la sesión; queda en el padrón y en banda_inicial_fase1."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }

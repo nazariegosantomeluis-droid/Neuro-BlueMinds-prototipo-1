@@ -46,6 +46,8 @@ export const SESION_COLUMNS = [
   'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
   // H2.7: tema de imágenes de la sesión (también en cada ensayo).
   'tema_imagenes',
+  // Tanda 4: en la familiarización, la banda inicial de la fase 1 que el terapeuta fijó al cerrar.
+  'banda_inicial_fase1',
 ];
 
 const KEY = 'neuro-blueminds.registro';

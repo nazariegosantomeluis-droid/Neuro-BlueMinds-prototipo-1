@@ -25,9 +25,10 @@ import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-tera
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
-import { modoDe } from './ninos.js';
+import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
+import { leerBandasPrueba } from './plan-pantalla.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
@@ -431,7 +432,7 @@ async function empezarSesion(form) {
   }
   let plan;
   try {
-    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2 });
+    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2, bandasPrueba: leerBandasPrueba(state.form) });
   } catch (e) {
     return renderInicio(e.message);
   }
@@ -1025,6 +1026,13 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
   const marcados = episodiosMarcados(f.ordenes_terapeuta ?? []);
   const actividades = [...new Set((f.plan_sesion ?? []).map((b) => b.actividad))];
   const bandas = [...new Set(actividades.flatMap((a) => state.fichas[a]?.bandas.map((b) => b.id) ?? []))];
+  // Familiarización (Protocolo 3.2): al cerrar se fija la banda inicial de la fase 1. Se propone la
+  // ya fijada en el padrón o, si no hay, la última que se probó en la sesión.
+  const nino = ninos.rows().find((n) => n.codigo === f.codigo_nino);
+  const probadas = Object.fromEntries(log.rows().filter((r) => r.sesion_id === id).map((r) => [r.actividad, r.banda]));
+  const bandaInicial = (state.sesion?.modos?.[modo]?.fijaBandaInicial ?? [])
+    .filter((a) => state.fichas[a])
+    .map((a) => ({ id: a, nombre: state.fichas[a].nombre, bandas: state.fichas[a].bandas.map((b) => b.id), actual: f.banda_inicial_fase1?.[a] ?? nino?.bandas?.[a] ?? probadas[a] ?? null }));
   // Sin los resultados en memoria (desde «Sesiones»), los bloques salen del registro de ensayos.
   const bloques =
     resultados ??
@@ -1051,7 +1059,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
       ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
-      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {} })}
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial })}
     </div>`;
   for (const r of app.querySelectorAll('[name^=apoyo-]')) {
     const bloque = Number(r.name.slice(6));
@@ -1071,15 +1079,22 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
     else renderInicio();
   };
   const guardar = (completos) => {
-    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3 });
+    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3, bandaInicial });
     if (completos) {
-      const f = faltantes(reg, { fase3 });
+      const f = faltantes(reg, { fase3, bandaInicial });
       if (f.length) {
         msg.textContent = f.join(' ');
         return;
       }
     }
     editSesion(id, (x) => Object.assign(x, filaRegistros(reg, { completos, hora: new Date().toISOString() })));
+    // La banda inicial elegida queda en el padrón: es la banda fija de la fase 1 y del cierre.
+    const elegidas = Object.entries(reg.banda_inicial_fase1 ?? {}).filter(([, b]) => b);
+    if (elegidas.length)
+      ninos.edit((rows) => {
+        const n = rows.find((x) => x.codigo === f.codigo_nino);
+        if (n) for (const [a, b] of elegidas) n.bandas = fijarBanda(n.bandas, state.fichas[a], b);
+      });
     salir();
   };
   form.onsubmit = (e) => {

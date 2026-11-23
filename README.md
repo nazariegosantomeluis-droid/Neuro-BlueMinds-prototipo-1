@@ -102,6 +102,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 
 **Sesión con un niño (H2.3).** Con un niño inscrito, el inicio no pide actividad, banda ni modalidad: muestra la **sesión completa** que corresponde a su modo de fase y el botón «Empezar la sesión». La estructura está en [`fichas/sesion.json`](fichas/sesion.json) y la lógica, en `src/fases.js`.
 - **Modo de fase.** Cada niño tiene uno: familiarización, fase 1, fase 2, fase 3 o cierre (Arquitectura 14). Lo fija el investigador responsable en «Niños inscritos», junto con la banda fija de ACT-02 y ACT-07. En el estudio vendrán del servidor (decisión D6 pendiente). Un niño nuevo empieza en la familiarización.
+- **Familiarización y banda inicial (Protocolo 3.2).** La familiarización empieza en la banda mínima. En el inicio, el terapeuta puede elegir otra banda para probar en ACT-02 y ACT-07 (`probarBandas` en `fichas/sesion.json`), y en el menú también puede cambiarla para el bloque siguiente. Al cerrar, los registros del terapeuta piden la banda inicial de la fase 1 de cada actividad: queda en el padrón (la banda fija del niño) y en `banda_inicial_fase1`. La regla para elegirla está en `pendientesClinicos` de ACT-02 y ACT-07. El Protocolo 3.1 dice «fija, mínima» para la familiarización: probar otra banda es una excepción pedida para poder elegir la banda inicial.
 - **Plan.** Rutina de inicio, referencia motora, ACT-02 y después ACT-07 (en la familiarización, antes ACT-01 con 10 ensayos), y rutina de cierre. En la familiarización la banda es la mínima; en las fases 1, 2 y 3 y en el cierre, la fija del niño (o la mínima si no tiene). Fuera de la fase 2 la modalidad es AV, la presentación multimodal (pendiente de confirmar en `fichas/sesion.json`).
 - **Fase 2, versión del Protocolo 3.3 (la que se usa).** ACT-02 se hace en dos bloques de 15 ensayos, uno en V y otro en AV, en la misma banda. La modalidad que abre se sortea en cada sesión, sin que una abra más de 2 sesiones seguidas. En las sesiones 1 a 6 los conceptos de la mitad A van en V y los de la B en AV; en las 7 a 12 se invierte. Los bloques de 15 son una excepción documentada al mínimo de 20 ensayos por bloque (Arquitectura 4.1).
 - **Fase 2, versión del Catálogo 5.2 (alternativa).** Un bloque de 30 ensayos en el que cada mitad de conceptos va en su modalidad, en orden al azar. Se elige en la ficha de ACT-02 (`fase2.version`). Cada sesión registra qué versión usó (`fase2_version`).
@@ -565,6 +566,7 @@ Una fila por sesión, en este orden:
 | `registros_completos` | En la sesión con un niño: `false` desde que empieza hasta que se guardan los registros completos; `true` después. Vacío en las demostraciones y el modo experto. |
 | `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
+| `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta fijó al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
 
 ## Banco de ítems
 

@@ -2454,3 +2454,15 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
 .registros-terapeuta .evento-adverso label > :is(input, select) {
   max-width: none;
 }
+
+/* Familiarización: bandas para probar y banda inicial de la fase 1 (Protocolo 3.2). */
+.probar-bandas,
+.banda-inicial {
+  margin-top: 0.75rem;
+  gap: 0.25rem 1.5rem;
+}
+
+.probar-bandas select,
+.registros-terapeuta .banda-inicial select {
+  min-width: 6rem;
+}

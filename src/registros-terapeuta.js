@@ -31,7 +31,9 @@ export const episodiosMarcados = (ordenes = []) => ordenes.filter((o) => o.accio
 
 // datos: lo leído del formulario, ya como objeto plano (app.js lo arma desde FormData).
 // Devuelve el registro listo para sesiones.csv.
-export function leerRegistros(datos, { marcados = [], fase3 = false }) {
+// bandaInicial: en la familiarización, las actividades cuya banda inicial de la fase 1 se fija al
+// cerrar (Protocolo 3.2), cada una con { id, bandas }.
+export function leerRegistros(datos, { marcados = [], fase3 = false, bandaInicial = [] }) {
   const num = (v) => (v === '' || v === undefined || v === null ? null : Number(v));
   const texto = (v) => String(v ?? '').trim().slice(0, TEXTO_MAX);
   const eventos = (datos.eventos ?? []).map((e) => ({
@@ -52,11 +54,12 @@ export function leerRegistros(datos, { marcados = [], fase3 = false }) {
     consulto_panel: fase3 ? (datos.consulto_panel === 'si' ? true : datos.consulto_panel === 'no' ? false : null) : null,
     decision_informada: fase3 ? (datos.decision === 'si' ? true : datos.decision === 'no' ? false : null) : null,
     tipo_decision: fase3 && datos.decision === 'si' ? datos.tipo_decision || null : null,
+    banda_inicial_fase1: bandaInicial.length ? Object.fromEntries(bandaInicial.map(({ id }) => [id, datos.banda_inicial?.[id] || null])) : null,
   };
 }
 
 // Lo que falta para que los registros estén completos.
-export function faltantes(reg, { fase3 = false }) {
+export function faltantes(reg, { fase3 = false, bandaInicial = [] }) {
   const f = [];
   if (!PARTICIPACION.includes(reg.participacion)) f.push('Elige la valoración de participación, de 1 a 5.');
   if (!Number.isInteger(reg.episodios_no_marcados) || reg.episodios_no_marcados < 0) f.push('Los episodios no marcados deben ser un número entero (0 o más).');
@@ -67,6 +70,9 @@ export function faltantes(reg, { fase3 = false }) {
     if (!(e.relacion in RELACIONES)) f.push(`Evento adverso ${n}: elige la relación con la plataforma.`);
     if (!e.hora) f.push(`Evento adverso ${n}: anota la hora.`);
   });
+  for (const { id, bandas } of bandaInicial) {
+    if (!bandas.includes(reg.banda_inicial_fase1?.[id])) f.push(`Elige la banda inicial de ${id} para la fase 1.`);
+  }
   if (fase3) {
     if (reg.consulto_panel === null) f.push('Indica si consultaste el panel.');
     if (reg.decision_informada === null) f.push('Indica si la información contribuyó a alguna decisión.');
@@ -97,11 +103,25 @@ export function eventoHTML(i, { actividades = [], bandas = [], e = {} } = {}) {
 }
 
 // Formulario completo. previo: lo ya guardado de la sesión (para completarlo después).
-export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {} }) {
+export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {}, bandaInicial = [] }) {
   const hora = (iso) => (iso ? new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '');
   const confirmado = (i) => previo.episodios_confirmados?.[i]?.confirmado;
   return `
     <form class="panel registros-terapeuta" id="registros" novalidate>
+      ${
+        bandaInicial.length
+          ? `<fieldset class="banda-inicial">
+               <legend>Banda inicial para la fase 1</legend>
+               ${bandaInicial
+                 .map(
+                   ({ id, nombre, bandas: bs, actual }) =>
+                     `<label>${esc(id)} ${esc(nombre ?? '')} <select name="banda-inicial-${esc(id)}">${opcion('', '—', actual ?? '')}${bs.map((b) => opcion(b, b, actual)).join('')}</select></label>`,
+                 )
+                 .join('')}
+               <p class="ayuda">Queda en el padrón del niño y se usa en todas sus sesiones de la fase 1 y del cierre (Protocolo 3.2). La regla para elegirla está pendiente de decisión clínica (pendientesClinicos de cada ficha).</p>
+             </fieldset>`
+          : ''
+      }
       <fieldset class="chips">
         <legend>Valoración de participación</legend>
         ${PARTICIPACION.map((n) => radio('participacion', n, String(n), previo.participacion)).join('')}
@@ -170,5 +190,6 @@ export function datosDelFormulario(form) {
     consulto_panel: fd.get('consulto_panel') ?? '',
     decision: fd.get('decision') ?? '',
     tipo_decision: fd.get('tipo_decision') ?? '',
+    banda_inicial: Object.fromEntries([...fd.entries()].filter(([k]) => k.startsWith('banda-inicial-')).map(([k, v]) => [k.slice(14), v])),
   };
 }
