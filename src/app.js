@@ -31,6 +31,8 @@ import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
 import { leerBandasPrueba } from './plan-pantalla.js';
 import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conceptoDeFila, codigoBase } from './sondas.js';
 import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
+import { VERSION_INDICADORES } from './indicadores/parametros.js';
+import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
@@ -281,6 +283,7 @@ function registroHTML({ enlaceSesiones = true } = {}) {
         <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
         <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
         <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
+        <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores (CSV)</button>
       </div>
       <p class="meta estado" role="status"></p>
       ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
@@ -299,7 +302,11 @@ function bindRegistro(root, rerender) {
       let nombre;
       if (tipo === 'json') download((nombre = `registro-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'application/json');
       else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
-      else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
+      else if (tipo === 'indicadores') {
+        // Se calculan al descargar, desde el registro (con fuera_de_tarea provisional en una sesión abierta).
+        const filas = calcularIndicadores(paraExportar(log.rows(), { sinTiempos: sinTiempos() }), sesiones.rows(), { fichas: state.fichas, items: state.items });
+        download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(filas), 'text/csv;charset=utf-8');
+      } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
   }
@@ -398,7 +405,7 @@ async function start(form) {
     // se miden con performance.now().
     sesiones.add({
       sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
-      ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: false,
+      ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], version_indicadores: VERSION_INDICADORES, advertencia_frecuencia: false,
     });
   }
   if (advertencia) editSesion(s.id, (r) => (r.advertencia_frecuencia = true));
@@ -472,7 +479,7 @@ async function empezarSesion(form) {
   prefs.set('nbm.sesiones', String(s.numero + 1));
   sesiones.add({
     sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
-    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: Boolean(advertencia),
+    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], version_indicadores: VERSION_INDICADORES, advertencia_frecuencia: Boolean(advertencia),
     modo_fase: modo,
     fase2_version: fase2?.version ?? null,
     fase2_sesion: fase2?.numero ?? null,

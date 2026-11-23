@@ -581,10 +581,11 @@ Una fila por sesión, en este orden:
 | `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 | `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta fijó al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
+| `version_indicadores` | Versión de los indicadores con que se calcula la sesión (`VERSION_INDICADORES`, Arquitectura 6.2). |
 
 ## Indicadores del núcleo (H3)
 
-Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad al cerrar cada bloque y la sesión, y A9 al cerrar la sesión acumulando las sesiones previas del niño. Todavía no se muestran a nadie: el panel es H5. La exportación `indicadores.csv` y los vectores de prueba para R son H3.6.
+Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad, A9 acumulando las sesiones previas del niño, y A11 y A12 sobre sus actividades y sesiones. Todavía no se muestran a nadie: el panel es H5. «Descargar indicadores (CSV)», en el panel del registro, los calcula desde el registro por ensayo y `sesiones.csv`.
 
 - **Parámetros** (`src/indicadores/parametros.js`). Todos los umbrales, mínimos de datos y constantes, cada uno con la sección del Modelo matemático o la decisión de la que sale. El código de los indicadores no tiene números propios; una prueba lo revisa. Cada indicador tiene su versión de definición (`VERSIONES`, Arquitectura 6.2).
 - **Resultado.** Cada indicador da `{ id, nombre, valor, ic, n, disponible, motivo, version }`. Si no cumple su mínimo de datos (Modelo 4.1) o la calidad media de la sesión es menor de 0.80 (Modelo 3.4 y 7.2), queda `disponible: false`, sin valor ni intervalo, y `motivo` dice por qué (por ejemplo, «19 ensayos; el mínimo es 20»).
@@ -602,8 +603,27 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 | A8 IRPE | Aciertos en el ensayo siguiente a un error / errores | Wilson | 10 errores |
 | A9 DOM | Unidades que alcanzan el criterio en la sesión por cada 100 presentaciones | — | El criterio |
 | A10 TEP | Repetir la misma opción incorrecta que en la presentación anterior del mismo ítem (aunque sea de otra sesión) tras un error con retroalimentación correctiva / esas presentaciones | Wilson | 10 oportunidades |
+| A11 IPF | Actividades (bloques) completadas / iniciadas, en todas las sesiones del niño hasta la de hoy. Un bloque se completa si no se terminó desde el menú | Wilson | 5 actividades |
+| A12 IA | Sesiones terminadas desde el menú («Terminar la sesión») / sesiones del niño. El límite de 15 minutos no cuenta | Wilson | 5 sesiones |
 
 **Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e presentaciones sin acierto de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones cuentan como presentaciones sin acierto (parámetro, pendiente de confirmar).
+
+**indicadores.csv (H3.6).** Una fila por sesión, actividad e indicador:
+
+| Columna | Contenido |
+|---|---|
+| `sesion_id`, `codigo_nino`, `modo_fase` | La sesión. |
+| `actividad` | La actividad; vacía en A11 y A12, que son de la sesión. |
+| `indicador`, `nombre` | `A1` a `A12` y su nombre. |
+| `valor`, `ic_inferior`, `ic_superior`, `n` | Valor, intervalo de 95 % y número de datos con que se calculó (ensayos, válidos, errores, oportunidades, actividades o sesiones, según el indicador). Valor e intervalo vacíos si no está disponible. A9 no tiene intervalo. |
+| `disponible`, `motivo` | Si cumple el mínimo de datos y la calidad de 0.80; si no, por qué. |
+| `calidad_sesion` | Media de `peso_calidad` de la sesión, sin los ensayos pausados. |
+| `version_definicion`, `version_indicadores` | Versión de la definición del indicador y del conjunto (Arquitectura 6.2). |
+| `detalle` | JSON con datos de apoyo: aciertos y azar (A1), minutos (A6), aciertos tras error y tras acierto (A7), unidades dominadas en la sesión y en total, θ* y confianza (A9), etc. |
+
+Las sesiones de demostración y del modo experto no tienen historia de un niño: su A9 y su A10 solo miran la propia sesión y no tienen A11 ni A12. Los indicadores del nivel B (μ, σ, τ, EZ, α, λ, IG, IRet, ICS, ICM) no van en este archivo: Arquitectura 6.1 los deja al entorno de análisis, que los calcula con las columnas del registro por ensayo (`sonda` y `reaparicion` para IG e IRet; `modalidad` y `mitad_fase2` para ICM; el ítem de ACT-07 para ICS).
+
+**Vectores de prueba (H3.6).** `test/vectores/indicadores.json` trae seis casos (una sesión típica de ACT-02 y ACT-07, una sesión larga con A3, A6, A7 y A8 disponibles, pocos ensayos, calidad baja, seis sesiones de un niño para A9 a A12 y una demostración), cada uno con sus entradas (las columnas del registro y de `sesiones.csv` que usan los indicadores) y sus salidas (las filas de `indicadores.csv`), además de los parámetros, las versiones y el generador con una comprobación (semilla y primeros cinco números). Lo genera `node tools/vectores-indicadores.mjs`; la prueba falla si el archivo no coincide con lo que dan las funciones, y reimplementa el generador con enteros grandes para comprobar que su descripción basta. Criterio de comparación con R (Arquitectura 6.3): 1 ms en latencias y exacto en proporciones.
 
 **Reproducir los intervalos en otro programa (R, H3.7).**
 - Wilson: z = 1.959963984540054; límites recortados a [0, 1].
