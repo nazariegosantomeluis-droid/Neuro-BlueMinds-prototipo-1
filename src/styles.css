@@ -2397,31 +2397,48 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
   margin-top: 1.5rem;
 }
 
-.registros-terapeuta fieldset + fieldset {
-  margin-top: 1rem;
+.registros-terapeuta fieldset:not(.chips) {
+  display: block;
 }
 
-.registros-terapeuta label {
+.registros-terapeuta fieldset + fieldset {
+  margin-top: 1.25rem;
+}
+
+.registros-terapeuta label:not(.chip, .casilla) {
   display: block;
   margin-block: 0.5rem;
+  min-height: 0;
 }
 
-.registros-terapeuta label.chip {
-  display: inline-flex;
-  margin-block: 0.25rem;
-}
-
-.registros-terapeuta input:not([type='radio'], [type='checkbox']),
-.registros-terapeuta select {
+.registros-terapeuta label:not(.chip, .casilla) > :is(input, select) {
   display: block;
   width: 100%;
   max-width: 36rem;
   margin-top: 0.25rem;
 }
 
-.evento-adverso {
+.registros-terapeuta .casilla {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+
+.registros-terapeuta fieldset.evento-adverso {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 0 1rem;
   border: 1px solid var(--borde-campo);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   margin-block: 0.75rem;
+}
+
+.evento-adverso label:has([name^='ev-descripcion'], [name^='ev-medidas'], [name^='ev-gravedad'], [name^='ev-relacion']) {
+  grid-column: 1 / -1;
+}
+
+.registros-terapeuta .evento-adverso label > :is(input, select) {
+  max-width: none;
 }
