@@ -334,6 +334,8 @@ src/rutinas.js                Rutinas de inicio y de cierre y transición entre 
 src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
 src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
 src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
+src/version.js                Versión y commit publicados (pie del adulto y CSV de expertos)
+src/indicadores/              Indicadores del núcleo: parámetros, estadística, A1 a A10 y dominio
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -568,6 +570,35 @@ Una fila por sesión, en este orden:
 | `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 | `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta fijó al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
+
+## Indicadores del núcleo (H3)
+
+Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad al cerrar cada bloque y la sesión, y A9 al cerrar la sesión acumulando las sesiones previas del niño. Todavía no se muestran a nadie: el panel es H5. La exportación `indicadores.csv` y los vectores de prueba para R son H3.6.
+
+- **Parámetros** (`src/indicadores/parametros.js`). Todos los umbrales, mínimos de datos y constantes, cada uno con la sección del Modelo matemático o la decisión de la que sale. El código de los indicadores no tiene números propios; una prueba lo revisa. Cada indicador tiene su versión de definición (`VERSIONES`, Arquitectura 6.2).
+- **Resultado.** Cada indicador da `{ id, nombre, valor, ic, n, disponible, motivo, version }`. Si no cumple su mínimo de datos (Modelo 4.1) o la calidad media de la sesión es menor de 0.80 (Modelo 3.4 y 7.2), queda `disponible: false`, sin valor ni intervalo, y `motivo` dice por qué (por ejemplo, «19 ensayos; el mínimo es 20»).
+- **Ensayos que entran.** Se excluyen de todos los indicadores los ensayos con interrupción técnica (Modelo 3.3; Arquitectura 5.2): pausa, pérdida de foco, cualquier cuadro perdido o fallo técnico. Las sondas de generalización tampoco entran (parámetro `sondasEnIndicadoresDeSesion`). Para la latencia, además, se excluyen las omisiones, las anticipatorias y las fuera de tarea; el tiempo es `tr_corregido_ms` si existe y si no `tr_bruto_ms`. La calidad de la sesión es la media de `peso_calidad` de sus ensayos, sin los interrumpidos por la pausa.
+
+| Indicador | Cálculo | Intervalo (decisión D2) | Mínimo |
+|---|---|---|---|
+| A1 PA | (p − azar)/(1 − azar), azar = 1/G (con G distinto entre ensayos, la media de 1/G) | Wilson sobre p, transformado | 20 ensayos |
+| A2 LPR | exp(mediana de ln RT), en ms | Estadísticos de orden sobre ln RT | 20 válidos |
+| A3 IVI | 1.4826 · mediana \|ln RT − mediana\| | Bootstrap | 30 válidos |
+| A4 IRP | Anticipatorias / ensayos | Wilson | 20 ensayos |
+| A5 IOM | Omisiones / ensayos | Wilson | 20 ensayos |
+| A6 IFC | Pendiente de Theil-Sen de ln RT sobre el tiempo, en ln(ms) por minuto desde el primer ensayo de la actividad; solo con la banda constante | Tau de Kendall (Sen, 1968) | 30 válidos en 5 min |
+| A7 PES | Mediana del RT de aciertos tras error − la de aciertos tras acierto, en el mismo bloque; error = respuesta incorrecta | Bootstrap estratificado | 10 de cada tipo |
+| A8 IRPE | Aciertos en el ensayo siguiente a un error / errores | Wilson | 10 errores |
+| A9 DOM | Unidades que alcanzan el criterio en la sesión por cada 100 presentaciones | — | El criterio |
+| A10 TEP | Repetir la misma opción incorrecta que en la presentación anterior del mismo ítem (aunque sea de otra sesión) tras un error con retroalimentación correctiva / esas presentaciones | Wilson | 10 oportunidades |
+
+**Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e presentaciones sin acierto de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones cuentan como presentaciones sin acierto (parámetro, pendiente de confirmar).
+
+**Reproducir los intervalos en otro programa (R, H3.7).**
+- Wilson: z = 1.959963984540054; límites recortados a [0, 1].
+- Mediana: rangos l y u = n − l + 1, con l el mayor entero tal que P(B ≤ l − 1) ≤ 0.025, B ~ Bin(n, 1/2). Con menos de 6 datos no hay intervalo.
+- Theil-Sen: C = z·√Var(S), Var(S) = [n(n − 1)(2n + 5) − Σ g(g − 1)(2g + 5)]/18, con g el tamaño de cada grupo de valores de y empatados; límites en las posiciones (N − C)/2 y (N + C)/2 + 1 de las N pendientes ordenadas, interpolando y acotando a [1, N].
+- Bootstrap: 2,000 remuestras, percentiles con cuantil tipo 1 (el ⌈p·B⌉-ésimo valor ordenado; en R, `quantile(x, p, type = 1)`). Generador: mulberry32 (`src/engine/selector.js`, `rng`) sembrado con FNV-1a de 32 bits del texto `sesion_id:actividad:indicador` (`seedOf`). Cada remuestra toma, para cada grupo y cada posición, el índice ⌊u · n⌋. En A7, los grupos son primero los aciertos tras error y después los aciertos tras acierto.
 
 ## Banco de ítems
 
