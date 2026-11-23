@@ -130,6 +130,8 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - **Solo en la fase 3** (Protocolo 6.6): si consultó el panel, si la información contribuyó a alguna decisión y de qué tipo.
 - «Guardar y terminar» pide lo que falte. «Completar después» guarda lo que haya y deja la sesión **incompleta**: en «Sesiones» aparece con la etiqueta «Incompleta» y el botón «Completar los registros». Las demostraciones y los bloques del modo experto no piden registros.
 
+**Tema de imágenes (H2.7; Arquitectura 4.8).** En la sesión con un niño, el inicio tiene el selector «Tema de imágenes» (`src/temas.js`). Un tema solo reemplaza la ruta de cada imagen del banco por la de su tema: los ítems, el número y el orden de las opciones, la respuesta correcta y la banda no cambian (lo comprueba `test/temas.test.js` con ensayos reales de ACT-01 y ACT-02; ACT-07 dibuja sus tarjetas y ningún tema la cambia). Los temas están en [`fichas/temas.json`](fichas/temas.json). Por ahora solo existe `general`: los temas por intereses esperan las imágenes del banco. El tema queda en `tema_imagenes` de cada ensayo y de la sesión.
+
 **Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
 - **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
 - **Referencia motora**, como siempre.
@@ -329,6 +331,7 @@ src/plan-pantalla.js          La sesión completa que el inicio muestra para un 
 src/rutinas.js                Rutinas de inicio y de cierre y transición entre actividades
 src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
 src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
+src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -350,7 +353,7 @@ src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 src/activities/referencia.js  Pantalla del objetivo de la referencia motora
 src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
-fichas/                       Ficha técnica de cada actividad (JSON) y estructura de la sesión (sesion.json)
+fichas/                       Ficha técnica de cada actividad (JSON), estructura de la sesión (sesion.json) y temas de imágenes (temas.json)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
@@ -463,7 +466,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
 | `modo_fase` | En la sesión con un niño, su modo de fase: `familiarizacion`, `fase1`, `fase2`, `fase3` o `cierre` (Arquitectura 14). En los bloques sueltos de la demostración y del modo experto, `prototipo`. |
-| `tema_imagenes` | Por ahora siempre `general`. |
+| `tema_imagenes` | Tema de imágenes de la sesión (H2.7; `fichas/temas.json`). Por ahora solo existe `general`, el banco sin cambios; también en los bloques sueltos. |
 | `n_opciones` | Número de opciones. |
 | `disposicion` | Filas x columnas de las opciones: `1x2`, `1x3`, `1x4` o `2x2`. |
 | `pos_correcta` | Posición de la opción correcta. |
@@ -559,6 +562,7 @@ Una fila por sesión, en este orden:
 | `tipo_decision` | Solo en la fase 3 y con decisión: `ajustar el objetivo`, `cambiar el material`, `cambiar el nivel de apoyo`, `cambiar la duración de la actividad`, `comentar con la familia` u `otra`. |
 | `registros_completos` | En la sesión con un niño: `false` desde que empieza hasta que se guardan los registros completos; `true` después. Vacío en las demostraciones y el modo experto. |
 | `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
+| `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 
 ## Banco de ítems
 

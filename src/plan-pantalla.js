@@ -1,6 +1,7 @@
 // Lo que el inicio muestra cuando el participante es un niño inscrito: la sesión completa que
 // corresponde a su modo de fase (fases.js). El adulto no elige actividad, banda ni modalidad.
 import { esc } from './html.js';
+import { selectorTemaHTML, TEMA_GENERAL } from './temas.js';
 import { planDeSesion, bloqueFase2 } from './fases.js';
 import { modoDe } from './ninos.js';
 
@@ -8,7 +9,7 @@ export const NOMBRE_MODO = { familiarizacion: 'Familiarización', fase1: 'Fase 1
 const MODALIDAD = { V: 'visual (V)', AV: 'con voz (AV)', mixta: 'V y AV mezcladas' };
 
 // historial: modalidades que abrieron las sesiones de fase 2 anteriores del niño.
-export function planNinoHTML({ nino, config, fichas, historial = [] }) {
+export function planNinoHTML({ nino, config, fichas, historial = [], temas = null, tema = TEMA_GENERAL }) {
   const modo = modoDe(nino);
   const fase2 = modo === 'fase2' ? { version: fichas[config.fase2.actividad]?.fase2?.version ?? 'protocolo', numero: historial.length + 1, primera: 'V' } : null;
   let plan;
@@ -34,6 +35,7 @@ export function planNinoHTML({ nino, config, fichas, historial = [] }) {
         <li>Rutina de cierre y registros del terapeuta</li>
       </ol>
       ${notaFase2}
+      ${selectorTemaHTML(temas, tema, esc)}
       <p class="ayuda">El modo de fase y la banda los fija el investigador en <a href="#ninos">Niños inscritos</a>. Entre actividades hay una transición de ${config.transicionMs / 1000} s; a los ${config.limiteMinutos} minutos no empieza otro bloque.</p>
     </div>`;
 }

@@ -27,6 +27,7 @@ import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { modoDe } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
+import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
@@ -143,6 +144,12 @@ async function init() {
     state.sesion = await (await fetch('fichas/sesion.json')).json();
   } catch {
     state.problemas.sesion = ['No se pudo cargar la estructura de la sesión (fichas/sesion.json).'];
+  }
+  // Temas de imágenes (Arquitectura 4.8): sin el archivo, todas las sesiones usan «general».
+  try {
+    state.temas = await (await fetch('fichas/temas.json')).json();
+  } catch {
+    state.temas = null;
   }
   // El banco de las actividades de uso posterior va aparte: si falta, el piloto sigue funcionando.
   try {
@@ -413,7 +420,7 @@ async function empezarSesion(form) {
   if (p.tipo !== 'nino') return renderInicio('La sesión completa es solo con un niño inscrito.');
   if (!(await confirmarNino(app, p.nino))) return renderInicio();
   const modo = modoDe(p.nino);
-  const s = Object.assign(newSession(p, state.form.participante), { modo, tema: 'general' });
+  const s = Object.assign(newSession(p, state.form.participante), { modo, tema: temaPorId(state.temas, state.form.tema)?.id ?? TEMA_GENERAL });
   // Fase 2: número de sesión, bloque del análisis y modalidad que abre (sorteada, Protocolo 3.3).
   let fase2 = null;
   if (modo === 'fase2') {
@@ -462,6 +469,7 @@ async function empezarSesion(form) {
     fase2_bloque: fase2 ? bloqueFase2(fase2.numero, cfg.fase2.sesionesPorBloque) : null,
     fase2_primera: fase2?.primera ?? null,
     registros_completos: false,
+    tema_imagenes: s.tema,
     plan_sesion: bloques.map(({ paso }) => ({ actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) })),
   });
   const resultados = [];
@@ -618,6 +626,8 @@ async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mit
     const todos = pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitad), n), { ficha, banda, pareja, modalidad });
     trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
   }
+  // El tema de la sesión solo cambia las imágenes (Arquitectura 4.8).
+  trials = aplicarTema(trials, temaPorId(state.temas, s.tema));
   const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
   await preloadImages([PICTO_FIN, ...srcs]);
   return { trials, usados, pantalla };

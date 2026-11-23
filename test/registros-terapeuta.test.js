@@ -87,7 +87,7 @@ test('todo va al registro y «Sesiones» ofrece completar las incompletas', () =
     assert.ok(SESION_COLUMNS.includes(c), c);
   }
   const app = leer('src/app.js');
-  assert.match(app, /registros_completos: false,\n\s+plan_sesion/, 'la sesión con un niño nace incompleta');
+  assert.match(app, /registros_completos: false,\n/, 'la sesión con un niño nace incompleta');
   assert.match(app, /editSesion\(id, \(x\) => Object\.assign\(x, filaRegistros\(reg, \{ completos, hora: new Date\(\)\.toISOString\(\) \}\)\)\);/);
   assert.match(app, /completarRegistros: \(id\) => renderRegistros\(id, \{ volver: 'sesiones' \}\)/);
   const sesiones = leer('src/sesiones.js');

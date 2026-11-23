@@ -44,6 +44,8 @@ export const SESION_COLUMNS = [
   // niño queda incompleta (registros_completos false) hasta que se guardan.
   'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
   'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
+  // H2.7: tema de imágenes de la sesión (también en cada ensayo).
+  'tema_imagenes',
 ];
 
 const KEY = 'neuro-blueminds.registro';

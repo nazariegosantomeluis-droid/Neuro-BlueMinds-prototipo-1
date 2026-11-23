@@ -413,7 +413,7 @@ export function renderInicio(app, ctx, msg = '') {
     form.classList.toggle('sesion-nino', Boolean(nino));
     app.querySelector('.inicio-columnas')?.classList.toggle('sesion-nino', Boolean(nino));
     planNino.hidden = !nino;
-    planNino.innerHTML = nino ? planNinoHTML({ nino, config: state.sesion, fichas: state.fichas, historial: ctx.historialFase2(nino.codigo) }) : '';
+    planNino.innerHTML = nino ? planNinoHTML({ nino, config: state.sesion, fichas: state.fichas, historial: ctx.historialFase2(nino.codigo), temas: state.temas, tema: state.form?.tema }) : '';
     const boton = form.querySelector('[type=submit]');
     boton.textContent = nino ? 'Empezar la sesión' : 'Empezar';
     form.querySelector('.barra-resumen strong').textContent = nino ? 'Sesión completa con el niño' : `${ficha.id} · ${ficha.nombre}`;
