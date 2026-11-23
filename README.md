@@ -131,6 +131,14 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - **Solo en la fase 3** (Protocolo 6.6): si consultó el panel, si la información contribuyó a alguna decisión y de qué tipo.
 - «Guardar y terminar» pide lo que falte. «Completar después» guarda lo que haya y deja la sesión **incompleta**: en «Sesiones» aparece con la etiqueta «Incompleta» y el botón «Completar los registros». Las demostraciones y los bloques del modo experto no piden registros.
 
+**Sondas de generalización y presentación distribuida (Catálogo 5.2, 7.2 y 7.3).** Solo en ACT-02 y, en el piloto, solo en la fase 3 (`src/sondas.js`; `sondas` en la ficha de ACT-02 y `presentacionDistribuida` en `fichas/sesion.json`).
+- El dominio se cuenta por concepto (`dominio.unidad` en la ficha), con el criterio de A9 y las sesiones anteriores del niño en este dispositivo.
+- **Sondas:** en cada tramo de 10 ensayos, uno al azar se cambia por una sonda: el ítem de un concepto ya dominado, en la banda del bloque, con su tercer ejemplar como opción correcta. Cada concepto se sondea una sola vez, porque el ejemplar 3 deja de ser nuevo. La retroalimentación de la sonda no marca ninguna opción y dura lo mismo.
+- **Presentación distribuida:** un concepto que alcanzó el dominio en una sesión de la fase 3 vuelve a aparecer 1, 3 y 7 sesiones después (contadas entre las sesiones del niño con ACT-02). Si ya estaba en el bloque solo se marca; si no, reemplaza un ensayo.
+- El bloque sigue con 30 ensayos. Las sondas no entran en A1 a A10 ni en el dominio (parámetro `sondasEnIndicadoresDeSesion`, pendiente de confirmar).
+- **IG** (precisión en sondas / precisión en práctica de las mismas bandas) e **IRet** (precisión en las reapariciones, por demora) son indicadores del nivel B: se calculan con `indiceGeneralizacion` y `retencion` para exportarlos y no se muestran.
+- En una sesión cada concepto aparece una sola vez (Catálogo 5.2), así que el máximo de presentaciones por sesión de Arquitectura 4.7 es 1 y el dominio se acumula entre sesiones.
+
 **Tema de imágenes (H2.7; Arquitectura 4.8).** En la sesión con un niño, el inicio tiene el selector «Tema de imágenes» (`src/temas.js`). Un tema solo reemplaza la ruta de cada imagen del banco por la de su tema: los ítems, el número y el orden de las opciones, la respuesta correcta y la banda no cambian (lo comprueba `test/temas.test.js` con ensayos reales de ACT-01 y ACT-02; ACT-07 dibuja sus tarjetas y ningún tema la cambia). Los temas están en [`fichas/temas.json`](fichas/temas.json). Por ahora solo existe `general`: los temas por intereses esperan las imágenes del banco. El tema queda en `tema_imagenes` de cada ensayo y de la sesión.
 
 **Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
@@ -334,6 +342,7 @@ src/rutinas.js                Rutinas de inicio y de cierre y transición entre 
 src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
 src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
 src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
+src/sondas.js                 Sondas de generalización y presentación distribuida; IG e IRet
 src/version.js                Versión y commit publicados (pie del adulto y CSV de expertos)
 src/indicadores/              Indicadores del núcleo: parámetros, estadística, A1 a A10 y dominio
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
@@ -504,6 +513,8 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
 | `t_muestra_fin` | Solo ACT-09: cuadro en que la muestra ya no se ve. La quita el motor, no la pantalla: en cada cuadro (`requestAnimationFrame`) mira si el siguiente llega a `t_consigna_inicio` + 2 s, con medio cuadro de margen; en ese cuadro la quita y guarda el timestamp del cuadro siguiente, como `t_opciones`. La pausa en blanco real es `t_opciones − t_muestra_fin`. Vacía en las demás actividades y si se pausó mientras se veía la muestra. Va al final para que las columnas anteriores no cambien de lugar. |
 | `mitad_fase2` | Solo en la fase 2, en ACT-02: la mitad de conceptos del ítem (`A` o `B`). En las sesiones 1 a 6 la mitad A va en V y la B en AV; en las 7 a 12, al revés. Vacía en lo demás. |
+| `sonda` | `true` si el ensayo es una sonda de generalización (Catálogo 7.3): la opción correcta es el ejemplar reservado de un concepto dominado y la retroalimentación no señala ninguna opción. Su `item` es el del ítem de práctica con `-S3` al final. |
+| `reaparicion` | 1, 3 o 7 si el ensayo es una reaparición de la presentación distribuida (Catálogo 7.2): ese concepto alcanzó el dominio hace ese número de sesiones. Vacía en lo demás. |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 

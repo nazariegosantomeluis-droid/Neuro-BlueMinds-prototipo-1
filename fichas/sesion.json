@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.3.0",
   "descripcion": "Estructura fija de la sesión con un niño (Catálogo de actividades 7.1; Arquitectura y software 4.1, 7.4 y 14; Protocolo de validación 3.3). Lo que no dicen los documentos es una propuesta del prototipo y está en «pendientes».",
   "rutinaInicioMs": 6000,
   "transicionMs": 5000,
@@ -61,6 +61,12 @@
     "sesiones": 12,
     "sesionesPorBloque": 6,
     "maxSeguidasMismaModalidad": 2
+  },
+  "presentacionDistribuida": {
+    "actividades": ["ACT-02"],
+    "demorasSesiones": [1, 3, 7],
+    "activaEnModos": ["fase3"],
+    "nota": "Catálogo 7.2: cuando un concepto alcanza el dominio, reaparece después de 1, 3 y 7 sesiones; su precisión en esas reapariciones es IRet. En el piloto está desactivada hasta la fase 3. Solo cuentan los dominios alcanzados en una sesión en que estaba activa; las sesiones se cuentan entre las del niño con la actividad."
   },
   "pendientes": [
     "Confirmar las actividades de la familiarización: ACT-01 (10 ensayos) y después ACT-02 y ACT-07 en la banda mínima.",

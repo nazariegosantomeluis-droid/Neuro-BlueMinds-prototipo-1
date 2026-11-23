@@ -24,7 +24,7 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     // Tanda 2: al final, para que las columnas anteriores no cambien de lugar.
     't_muestra_fin',
     // Tanda 3: la mitad de conceptos de la fase 2.
-    'mitad_fase2',
+    'mitad_fase2', 'sonda', 'reaparicion',
   ]);
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',

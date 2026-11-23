@@ -29,6 +29,8 @@ import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
 import { leerBandasPrueba } from './plan-pantalla.js';
+import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conceptoDeFila, codigoBase } from './sondas.js';
+import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
@@ -634,11 +636,43 @@ async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mit
     const todos = pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitad), n), { ficha, banda, pareja, modalidad });
     trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
   }
+  // Sondas de generalización y presentación distribuida (Catálogo 7.2 y 7.3): solo en los modos
+  // de fase que dicen la ficha y fichas/sesion.json (en el piloto, la fase 3).
+  if (!mitades) trials = conMecanismos(trials, { ficha, s, rand, deConcepto: (c) => {
+    const it = bandItems.find((i) => i.concepto === c);
+    return it ? pantalla.toTrials([it], { ficha, banda, pareja, modalidad })[0] : null;
+  } });
   // El tema de la sesión solo cambia las imágenes (Arquitectura 4.8).
   trials = aplicarTema(trials, temaPorId(state.temas, s.tema));
   const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
   await preloadImages([PICTO_FIN, ...srcs]);
   return { trials, usados, pantalla };
+}
+
+// Sondas y reapariciones del bloque, a partir de la historia del niño en esta actividad (sesiones
+// anteriores en este dispositivo). Sin modo de fase o fuera de los modos activos, no cambia nada.
+function conMecanismos(trials, { ficha, s, rand, deConcepto }) {
+  const cfgS = ficha.sondas;
+  const cfgD = state.sesion?.presentacionDistribuida;
+  const sondas = Boolean(s.modo && cfgS?.desdeModos?.includes(s.modo));
+  const distribuida = Boolean(s.modo && cfgD?.activaEnModos?.includes(s.modo) && cfgD.actividades?.includes(ficha.id));
+  if (!sondas && !distribuida) return trials;
+  const porCodigo = new Map(state.items.map((i) => [i.codigo, i]));
+  const conceptoFila = conceptoDeFila(porCodigo);
+  const conceptoEnsayo = (t) => porCodigo.get(codigoBase(t.codigo))?.concepto ?? null;
+  const historia = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+  const alcanzados = unidadesDominadas(historia, { unidad: (r) => conceptoFila(r) ?? r.item, criterio: criterioDe(ficha) });
+  let out = trials;
+  if (distribuida) {
+    const hoy = reaparicionesDeHoy({ alcanzados, sesiones: sesionesEnOrden(historia), demoras: cfgD.demorasSesiones, activaEnModos: cfgD.activaEnModos });
+    out = conReapariciones(out, hoy, { deConcepto, concepto: conceptoEnsayo, rand });
+  }
+  if (sondas) {
+    const sondeados = new Set(historia.filter((r) => r.sonda).map(conceptoFila));
+    const candidatos = shuffle([...alcanzados.keys()].filter((c) => !sondeados.has(c)), rand);
+    out = conSondas(out, candidatos, { cada: cfgS.cadaEnsayos, ejemplar: cfgS.ejemplar, deConcepto, concepto: conceptoEnsayo, rand });
+  }
+  return out;
 }
 
 // Aviso antes del bloque: las opciones no caben en esta pantalla a su tamaño mínimo.

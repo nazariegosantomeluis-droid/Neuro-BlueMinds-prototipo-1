@@ -4,8 +4,8 @@
     "huella": "3786c30e0aff63f7d1c75ba342eb8b1b101978a422c356838698ea91b862d3e7"
   },
   "ACT-02.json": {
-    "version": "0.2.1",
-    "huella": "a61acb74ff611af0ba1d7be13fbac2ff752d988dd6a383ed745d3bf626d6f620"
+    "version": "0.3.0",
+    "huella": "7929eef69c773f2b95991a8558aa51ae3968ebc1efb4d776f9c1520f0d4e5a2f"
   },
   "ACT-03.json": {
     "version": "0.2.0",
@@ -72,8 +72,8 @@
     "huella": "58f549dc6e46c51d87787e8195617652f8ac858d6c24ddde512d9343703a6a5f"
   },
   "sesion.json": {
-    "version": "0.2.1",
-    "huella": "e0d247899d6a4bc8a5e38268aeed3b1cdc66dc175570164db669f842bb250ace"
+    "version": "0.3.0",
+    "huella": "2e4264b33d68d569e9ee2552905065ec88ab3d31276eda487720f04ea50c6de3"
   },
   "temas.json": {
     "version": "0.1.0",

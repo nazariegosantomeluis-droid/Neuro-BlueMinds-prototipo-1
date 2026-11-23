@@ -35,7 +35,9 @@ const FAIL = Symbol('fallo');
  * La vista llama a pointer({ t, x, y, pos }) en cada pointerdown: pos es la posición
  * de la opción tocada (por filas, desde 1), o null si el toque cayó fuera de las opciones.
  */
-export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta, disposicion, env, view, onState = () => {} }) {
+// sinCorreccion: ensayo de sonda (Catálogo 7.3): la retroalimentación es neutra y no señala la
+// opción correcta; dura lo mismo. La vista recibe showFeedback(null).
+export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta, disposicion, env, view, onState = () => {}, sinCorreccion = false }) {
   const r = {
     t_consigna_inicio: null,
     t_consigna_fin: null,
@@ -161,9 +163,10 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
     if (resp) setResponse();
     else r.omision = true;
 
-    // Acierto, error u omisión: siempre se señala la opción correcta, de la misma forma.
+    // Acierto, error u omisión: siempre se señala la opción correcta, de la misma forma; en una
+    // sonda no se señala ninguna.
     enter('retroalimentacion');
-    view.showFeedback(posCorrecta);
+    view.showFeedback(sinCorreccion ? null : posCorrecta);
     const tf = await guard(env.nextPaint());
     if (tf === STOP) return;
     r.t_retro_inicio = tf;
@@ -229,7 +232,9 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
 
 /**
  * Ejecuta un bloque de ensayos y guarda un registro por ensayo.
- * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }], anuncio?, modalidad? }]
+ * trials: [{ codigo, consigna, opciones: [{ id, correcta, ... }], anuncio?, modalidad?, sonda?, reaparicion? }]
+ *   sonda: ensayo de sonda de generalización, sin corrección (Catálogo 7.3); reaparicion: 1, 3 o 7
+ *   si es una reaparición de la presentación distribuida (Catálogo 7.2). Las dos van al registro.
  *   modalidad: la de ese ensayo, si el bloque mezcla V y AV (fase 2, versión del Catálogo 5.2);
  *   sin ella, la del bloque.
  *   anuncio: antes de ese ensayo se muestra una pantalla breve (ficha.anuncioMs), por
@@ -270,7 +275,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
       const posCorrecta = opciones.findIndex((o) => o.correcta) + 1;
       const disposicion = banda?.disposicion ?? `1x${opciones.length}`;
       onTrial(t, i);
-      current = createTrial({ ficha, modalidad: de(t), consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState });
+      current = createTrial({ ficha, modalidad: de(t), consigna: t.consigna, opciones, posCorrecta, disposicion, env, view, onState, sinCorreccion: Boolean(t.sonda) });
       const measured = await current.run();
       rows.push(
         log.add({
@@ -287,6 +292,8 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
           pos_distractores: opciones.flatMap((o, k) => (o.correcta ? [] : [{ id: o.id, pos: k + 1 }])),
           ...measured,
           tr_corregido_ms: measured.tr_bruto_ms !== null && latencia !== null ? measured.tr_bruto_ms - latencia : null,
+          sonda: Boolean(t.sonda),
+          reaparicion: t.reaparicion ?? null,
         }),
       );
       // El ensayo pausado no se repite: al continuar sigue el siguiente.

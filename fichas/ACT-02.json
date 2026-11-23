@@ -1,6 +1,6 @@
 {
   "id": "ACT-02",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "nombre": "Pictograma e imagen",
   "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
   "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
@@ -53,6 +53,17 @@
   "muestraExpertosPorBanda": 10,
   "ejemplaresPractica": [1, 2],
   "ejemplarGeneralizacion": 3,
+  "dominio": {
+    "unidad": "concepto",
+    "nota": "El criterio de dominio (Modelo 4.3) se aplica por concepto: «Alcanzó el criterio de dominio en 4 conceptos nuevos» (lecturas permitidas) y las sondas usan el ejemplar reservado de un concepto dominado. θ* y la confianza son los de src/indicadores/parametros.js (decisión D5) mientras esta ficha no diga otros (thetaEstrella, confianza). En una sesión cada concepto aparece una vez (Catálogo 5.2, «Ensayos»): el máximo de presentaciones por sesión de Arquitectura 4.7 es 1 y el dominio se acumula entre sesiones."
+  },
+  "sondas": {
+    "desdeModos": ["fase3"],
+    "cadaEnsayos": 10,
+    "ejemplar": 3,
+    "retroalimentacion": "sin_marco",
+    "nota": "Catálogo 5.2 (fila «Sondas de generalización») y 7.3: desde la fase 3, 1 de cada 10 ensayos presenta el tercer ejemplar, no usado antes, de un concepto ya dominado, con retroalimentación neutra sin corrección. La sonda reemplaza un ensayo del tramo; el bloque sigue con 30 ensayos."
+  },
   "limiteRespuestaMs": 10000,
   "intervaloMs": 1000,
   "consignaVMs": 1500,
@@ -77,6 +88,8 @@
     "Con hipersensibilidad auditiva, la modalidad AV se usa a volumen bajo; si el niño no la tolera, se usa solo V y el niño no entra en el análisis de H4."
   ],
   "pendientesClinicos": [
+    "Retroalimentación «neutra sin corrección» de las sondas (Catálogo 7.3): el prototipo no marca ninguna opción y la pantalla queda igual el mismo tiempo que la retroalimentación habitual. Confirmar que así se ve.",
+    "Si las sondas cuentan en los indicadores de la sesión (A1 a A10): el prototipo las deja fuera para que la sesión sea comparable con las que no tienen sondas (parámetro sondasEnIndicadoresDeSesion).",
     "Regla para elegir, en la sesión de familiarización, la banda inicial de la fase 1 (Protocolo 3.2: «un nivel inicial elegido para cada niño con la sesión de familiarización», sin decir cómo). Mientras se decide, el terapeuta prueba bandas y fija la banda al cerrar la sesión; queda en el padrón y en banda_inicial_fase1."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }

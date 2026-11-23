@@ -21,6 +21,9 @@ export const COLUMNS = [
   't_muestra_fin',
   // Tanda 3: en la fase 2, la mitad de conceptos (A o B) del ítem de ACT-02.
   'mitad_fase2',
+  // Tanda 4: sonda de generalización (Catálogo 7.3) y reaparición de la presentación distribuida
+  // (1, 3 o 7 sesiones después del dominio; Catálogo 7.2).
+  'sonda', 'reaparicion',
 ];
 
 // Una fila por sesión (sesiones.csv).
