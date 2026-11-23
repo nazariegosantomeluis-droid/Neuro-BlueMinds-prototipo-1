@@ -29,6 +29,7 @@ import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
 import { leerBandasPrueba } from './plan-pantalla.js';
+import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
@@ -130,6 +131,12 @@ const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBl
 async function init() {
   applyCm();
   audio.setVolume(volumen() / 100);
+  // Versión y commit publicados: en el pie de las pantallas del adulto y en los CSV del F3 y de
+  // la revisión clínica. El pie no se ve en la pantalla del niño (styles.css).
+  cargarVersion().then((v) => {
+    const pie = document.getElementById('pie-version');
+    if (pie) pie.textContent = textoVersion(v);
+  });
   const { catalogo, fichas, pausa, problemas } = await cargarCatalogo();
   Object.assign(state, { catalogo, fichas, pausa });
   Object.assign(state.problemas, problemas);

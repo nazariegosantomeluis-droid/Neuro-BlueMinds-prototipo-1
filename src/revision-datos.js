@@ -22,7 +22,7 @@ export const DECISIONES = [
   { clave: 'tortilla', item: 'DECISION-tortilla', concepto: 'tortilla', pregunta: 'El pictograma de «tortilla»', opciones: ['sirve', 'no sirve'] },
 ];
 export const REVISION_COLUMNS = [
-  'revisor_iniciales', 'revisor_profesion', 'fecha_utc', 'version_app',
+  'revisor_iniciales', 'revisor_profesion', 'fecha_utc', 'version_app', 'commit',
   'item', 'actividad', 'banda', 'concepto', 'estado', 'problemas', 'comentario',
 ];
 
@@ -53,8 +53,8 @@ export const faltantes = (rev, lista) => ({
   decisiones: DECISIONES.filter((d) => !d.opciones.includes(rev.decisiones[d.clave])),
 });
 
-export function revisionCSV(rev, lista, { fecha, version }) {
-  const base = { revisor_iniciales: rev.revisor.iniciales, revisor_profesion: rev.revisor.profesion, fecha_utc: fecha, version_app: version };
+export function revisionCSV(rev, lista, { fecha, version, commit = null }) {
+  const base = { revisor_iniciales: rev.revisor.iniciales, revisor_profesion: rev.revisor.profesion, fecha_utc: fecha, version_app: version, commit: commit ?? '' };
   const calif = (codigo) => {
     const c = rev.calificaciones[codigo] ?? {};
     // Los tipos de problema solo cuentan si el estado es Corregir o Retirar.

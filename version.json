@@ -1,0 +1,5 @@
+---
+# GitHub Pages pasa este archivo por Jekyll y escribe aquí el commit publicado (src/version.js).
+# En una copia local queda sin llenar y la aplicación muestra «copia local».
+---
+{"commit": "{{ site.github.build_revision }}"}

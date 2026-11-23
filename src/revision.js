@@ -3,6 +3,7 @@
 import { esc, navHTML } from './paginas.js';
 import { figuraSVG, simboloSVG, nombreFigura } from './activities/cambia-regla.js';
 import { download, VERSION_APP } from './engine/logger.js';
+import { versionActual } from './version.js';
 import {
   PROFESIONES, ESTADOS, PROBLEMAS, DECISIONES, FIGURAS, CAMBIAR_SHORT,
   itemsDeRevision, normalizarIniciales, nuevaRevision, calificado, faltantes, revisionCSV, nombreArchivo,
@@ -272,7 +273,7 @@ export function renderRevision(app, { items, conceptos, fichas }) {
       }
       msg.textContent = '';
       const fecha = new Date().toISOString();
-      download(nombreArchivo(rev.revisor.iniciales, fecha), revisionCSV(rev, lista, { fecha, version: VERSION_APP }), 'text/csv;charset=utf-8');
+      download(nombreArchivo(rev.revisor.iniciales, fecha), revisionCSV(rev, lista, { fecha, version: VERSION_APP, commit: versionActual().commit }), 'text/csv;charset=utf-8');
     };
   }
 }

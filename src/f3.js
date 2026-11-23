@@ -3,6 +3,7 @@
 // coordinador. tools/unir-f3.mjs une los archivos y calcula los índices.
 import { esc, navHTML } from './paginas.js';
 import { download, VERSION_APP } from './engine/logger.js';
+import { versionActual } from './version.js';
 import {
   ACTIVIDADES_F3, MECANICA, GENERALES, ESCALA, DISCIPLINAS, ANIOS, AMBITOS, SI_NO, PROBLEMAS,
   nuevaRespuesta, preguntas, faltantes, f3CSV, nombreArchivoF3, normalizarCodigo,
@@ -203,7 +204,7 @@ export function renderF3(app, { fichas, items }) {
       }
       msg.textContent = '';
       const fecha = new Date().toISOString();
-      return { fecha, csv: f3CSV(resp, fichas, { fecha, version: VERSION_APP }) };
+      return { fecha, csv: f3CSV(resp, fichas, { fecha, version: VERSION_APP, commit: versionActual().commit }) };
     };
     app.querySelector('#f3-descargar').onclick = () => {
       const r = exportar();

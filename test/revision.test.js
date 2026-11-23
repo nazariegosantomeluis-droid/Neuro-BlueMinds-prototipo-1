@@ -40,7 +40,7 @@ test('exportación: columnas, una fila por ítem y las filas finales en orden', 
     [FIGURAS]: { estado: 'Retirar', problemas: [PROBLEMAS[5]] },
   }, { short: CAMBIAR_SHORT, shortCual: 'bermuda' });
   rev.comentarioGeneral = 'Sin más.';
-  const csv = revisionCSV(rev, lista, { fecha: FECHA, version: '0.1.0' });
+  const csv = revisionCSV(rev, lista, { fecha: FECHA, version: '0.1.0', commit: 'be17d42d65c24d2fefc053466080d9ccc640b952' });
   assert.ok(csv.startsWith('﻿'));
   assert.equal(csv.slice(1).split('\r\n')[0], REVISION_COLUMNS.join(','));
   const filas = leerCSV(csv);
@@ -48,7 +48,7 @@ test('exportación: columnas, una fila por ítem y las filas finales en orden', 
   assert.deepEqual(filas.slice(70).map((f) => f.item), ['DECISION-camion', 'DECISION-short', 'DECISION-tortilla', FIGURAS, 'COMENTARIO-GENERAL']);
   const [primera, segunda] = filas;
   assert.deepEqual(primera, {
-    revisor_iniciales: 'LNS', revisor_profesion: 'terapia de lenguaje', fecha_utc: FECHA, version_app: '0.1.0',
+    revisor_iniciales: 'LNS', revisor_profesion: 'terapia de lenguaje', fecha_utc: FECHA, version_app: '0.1.0', commit: 'be17d42d65c24d2fefc053466080d9ccc640b952',
     item: lista[0].codigo, actividad: 'ACT-01', banda: lista[0].banda, concepto: lista[0].concepto,
     estado: 'Corregir', problemas: `${PROBLEMAS[0]};${PROBLEMAS[1]}`, comentario: 'El "gato", y el perro',
   });

@@ -202,6 +202,7 @@ Columnas del CSV:
 | `revisor_iniciales`, `revisor_profesion` | El revisor. |
 | `fecha_utc` | Momento de la descarga, en ISO 8601 UTC con «Z». |
 | `version_app` | Versión de la aplicación. |
+| `commit` | Commit publicado que vio el revisor; vacío en una copia local. |
 | `item`, `actividad`, `banda`, `concepto` | El ítem. |
 | `estado` | `Aprobado`, `Corregir` o `Retirar`. |
 | `problemas` | Tipos de problema separados por «;». Vacío si el estado es Aprobado. |
@@ -753,6 +754,7 @@ Notas:
 - Todas las rutas son relativas, así que el sitio funciona dentro de la subcarpeta del repositorio.
 - El registro se guarda en el navegador de cada dispositivo. Descárgalo antes de borrar los datos del navegador.
 - Después de publicar cambios, el navegador puede mostrar la versión anterior por unos minutos. Recarga la página sin caché para ver la nueva.
+- **Versión publicada.** El pie de cada pantalla del adulto dice «AutiPal 0.1.0 · commit abc1234»: la versión (`VERSION_APP`) y el commit publicado. GitHub Pages pasa `version.json` por Jekyll, que escribe ahí el commit (`site.github.build_revision`); por eso el repositorio no tiene `.nojekyll`. En una copia local el archivo queda sin llenar y el pie dice «copia local, sin commit publicado». Los CSV del formulario F3 y de la revisión clínica llevan `version_app` y `commit` en cada fila, para saber qué versión vio cada experto (`src/version.js`). La pantalla del niño no muestra el pie.
 
 ## Pendientes
 
