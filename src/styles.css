@@ -2363,8 +2363,20 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
 }
 
 .rutina-flecha {
+  flex: none;
   width: calc(var(--cm) * 0.9);
   height: calc(var(--cm) * 0.9);
+}
+
+/* La rutina de inicio va en una sola fila: en vertical los pictogramas se achican en lugar de
+   pasar a otra línea, para que la secuencia se lea de izquierda a derecha. */
+.rutina-inicio {
+  flex-wrap: nowrap;
+}
+
+.rutina-inicio .rutina-picto {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .rutina-grande {
