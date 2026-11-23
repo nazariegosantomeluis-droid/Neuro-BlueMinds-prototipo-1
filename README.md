@@ -431,6 +431,8 @@ Campos opcionales que usa el motor:
 
 Los textos clínicos (objetivo, paradigma, fases, lecturas y contraindicaciones) se copian tal cual del Catálogo de actividades (sección 5). `revisionClinica` queda vacío hasta la revisión clínica, y solo lo cambia `tools/aplicar-revision.mjs`.
 
+**Versión de cada ficha.** Cualquier cambio de contenido de una ficha (`fichas/*.json`) crea una versión nueva (Arquitectura 6.2), porque cada ensayo guarda `version_ficha`. `fichas/huellas.json` anota la versión y el SHA-256 del contenido de cada ficha, con las claves ordenadas y sin `version` ni `revisionClinica`. La prueba `test/huellas-fichas.test.js` falla si el contenido cambió y la versión no. Al cambiar una ficha: sube su `version` y corre `node tools/huellas-fichas.mjs`; la herramienta no anota una ficha que cambió sin subir de versión. ACT-02 pasó a 0.2.0 por el campo `fase2` de la tanda 3.
+
 ### Registro
 
 Hay dos archivos de exportación:
