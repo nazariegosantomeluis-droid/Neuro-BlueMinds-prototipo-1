@@ -123,6 +123,13 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - El bloque que ya empezó termina. El niño no ve ningún aviso; el adulto lo ve en el menú del terapeuta y en el resumen.
 - En `sesiones.csv` quedan `limite_15_min`, `bloques_omitidos` y `duracion_uso_ms`.
 
+**Registros del terapeuta al cerrar (H2.6; Arquitectura 8.4).** Después de la rutina de cierre, el adulto toca dos veces la esquina y ve, en una sola pantalla, el resumen de cada bloque con su nivel de apoyo y los registros del terapeuta (`src/registros-terapeuta.js`). Los campos son los del Protocolo de validación (5.4 y 8):
+- **Valoración de participación**, de 1 a 5. Los documentos todavía no describen cada valor (pendiente en `fichas/sesion.json`).
+- **Episodios de desregulación** (Protocolo 8.4): cada episodio marcado con el menú del terapeuta se confirma o no; los que no se marcaron durante la sesión se cuentan aparte.
+- **Eventos adversos** (Protocolo 8.1 y 8.2): uno por uno, con hora, qué pasó (sin nombres ni datos personales), actividad en curso, banda, duración, medidas tomadas, gravedad (leve, moderado o grave) y relación con la plataforma (no relacionado, improbable, posible o probable).
+- **Solo en la fase 3** (Protocolo 6.6): si consultó el panel, si la información contribuyó a alguna decisión y de qué tipo.
+- «Guardar y terminar» pide lo que falte. «Completar después» guarda lo que haya y deja la sesión **incompleta**: en «Sesiones» aparece con la etiqueta «Incompleta» y el botón «Completar los registros». Las demostraciones y los bloques del modo experto no piden registros.
+
 **Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
 - **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
 - **Referencia motora**, como siempre.
@@ -321,6 +328,7 @@ src/fases.js                  Modos de fase, plan de la sesión con un niño, fa
 src/plan-pantalla.js          La sesión completa que el inicio muestra para un niño
 src/rutinas.js                Rutinas de inicio y de cierre y transición entre actividades
 src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
+src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -523,7 +531,7 @@ Una fila por sesión, en este orden:
 | `terminada_antes` | `true` si el adulto terminó un bloque o la sesión desde el menú del terapeuta. |
 | `motivo_terminacion` | Motivo elegido al terminar el bloque o la sesión: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
 | `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
-| `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque: `ninguno`, `verbal`, `gestual` o `físico`. |
+| `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque (en la sesión con un niño, en la pantalla de registros): `ninguno`, `verbal`, `gestual` o `físico`. |
 | `frecuencia_hz` | Frecuencia de la pantalla: 1000 / mediana de `periodo_cuadro_ms` de la sesión, redondeada. |
 | `proporcion_periodo_lento` | Proporción de ensayos con `periodo_cuadro_ms` mayor de 20 ms. |
 | `advertencia_frecuencia` | `true` si el adulto continuó después del aviso de frecuencia baja. |
@@ -542,6 +550,15 @@ Una fila por sesión, en este orden:
 | `limite_15_min` | `true` si la sesión llegó a los 15 minutos de uso (INV-8). |
 | `bloques_omitidos` | Lista JSON de los bloques planeados que no se hicieron, con `actividad`, `modalidad` y `motivo`: `limite_15_min` o `sesion_terminada` (desde el menú). |
 | `duracion_uso_ms` | Tiempo de uso de la sesión con un niño, de la rutina de inicio al fin de la rutina de cierre. |
+| `participacion` | Valoración de participación del terapeuta, de 1 a 5 (H2.6). Vacía hasta registrarla. |
+| `episodios_confirmados` | Lista JSON de los episodios marcados con el menú: `hora`, `ms`, `bloque`, `ensayo` y `confirmado` (`true` si el terapeuta lo confirmó al cerrar). |
+| `episodios_no_marcados` | Episodios de desregulación que el terapeuta no marcó durante la sesión (0 o más). |
+| `eventos_adversos` | Lista JSON de eventos: `hora` (HH:MM), `descripcion` (hasta 120 caracteres, sin datos personales), `actividad` (o `fuera` si ocurrió en las 24 horas siguientes), `banda`, `duracion_min`, `medidas`, `gravedad` (`leve`, `moderado` o `grave`) y `relacion` (`no_relacionado`, `improbable`, `posible` o `probable`). |
+| `consulto_panel` | Solo en la fase 3: `true` o `false`. |
+| `decision_informada` | Solo en la fase 3: `true` si la información del panel contribuyó a alguna decisión. |
+| `tipo_decision` | Solo en la fase 3 y con decisión: `ajustar el objetivo`, `cambiar el material`, `cambiar el nivel de apoyo`, `cambiar la duración de la actividad`, `comentar con la familia` u `otra`. |
+| `registros_completos` | En la sesión con un niño: `false` desde que empieza hasta que se guardan los registros completos; `true` después. Vacío en las demostraciones y el modo experto. |
+| `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
 
 ## Banco de ítems
 
@@ -740,7 +757,6 @@ Notas:
   - el color típico de ACT-01 B1;
   - los conceptos `short` y `camión`.
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
-- **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
 - **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.

@@ -40,6 +40,10 @@ export const SESION_COLUMNS = [
   // H2.5 (INV-8): si se llegó a los 15 minutos, los bloques planeados que no se hicieron y el
   // tiempo de uso de la sesión con un niño.
   'limite_15_min', 'bloques_omitidos', 'duracion_uso_ms',
+  // H2.6: registros del terapeuta al cerrar (Arquitectura 8.4; Protocolo 5.4 y 8). La sesión con un
+  // niño queda incompleta (registros_completos false) hasta que se guardan.
+  'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
+  'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
 ];
 
 const KEY = 'neuro-blueminds.registro';

@@ -27,6 +27,7 @@ import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { modoDe } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
+import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
@@ -185,7 +186,7 @@ function route() {
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
-  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro });
+  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro, completarRegistros: (id) => renderRegistros(id, { volver: 'sesiones' }) });
   else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
@@ -460,6 +461,7 @@ async function empezarSesion(form) {
     fase2_sesion: fase2?.numero ?? null,
     fase2_bloque: fase2 ? bloqueFase2(fase2.numero, cfg.fase2.sesionesPorBloque) : null,
     fase2_primera: fase2?.primera ?? null,
+    registros_completos: false,
     plan_sesion: bloques.map(({ paso }) => ({ actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) })),
   });
   const resultados = [];
@@ -996,21 +998,40 @@ function renderFin() {
   twoTaps(app.querySelector('#adulto'), renderResumen);
 }
 
-// Resumen de la sesión con un niño: cada bloque con su resumen y su nivel de apoyo.
+// Cierre de la sesión con un niño (H2.6): cada bloque con su resumen y su nivel de apoyo, y los
+// registros del terapeuta en la misma pantalla. También se abre desde «Sesiones» para completar
+// los registros de una sesión que quedó incompleta (entonces sin el resumen de cada bloque).
 function renderResumenSesion() {
   const { s, resultados } = state.ultimaSesion;
-  const fila = () => sesiones.rows().find((r) => r.sesion_id === s.id);
+  renderRegistros(s.id, { resultados, modo: s.modo });
+}
+
+function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio' } = {}) {
+  const fila = () => sesiones.rows().find((r) => r.sesion_id === id);
+  const f = fila();
+  if (!f) return renderInicio('La sesión ya no está en el registro de este dispositivo.');
+  modo = modo ?? f.modo_fase;
+  const fase3 = Boolean(state.sesion?.modos?.[modo]?.registroDecisiones);
+  const marcados = episodiosMarcados(f.ordenes_terapeuta ?? []);
+  const actividades = [...new Set((f.plan_sesion ?? []).map((b) => b.actividad))];
+  const bandas = [...new Set(actividades.flatMap((a) => state.fichas[a]?.bandas.map((b) => b.id) ?? []))];
+  // Sin los resultados en memoria (desde «Sesiones»), los bloques salen del registro de ensayos.
+  const bloques =
+    resultados ??
+    [...new Map(log.rows().filter((r) => r.sesion_id === id).map((r) => [r.bloque, r])).values()].map((r) => ({
+      bloque: r.bloque, ficha: state.fichas[r.actividad] ?? { id: r.actividad, nombre: '' }, banda: r.banda, modalidad: r.modalidad, lineas: [],
+    }));
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
   app.innerHTML = `
     <div class="adulto">
       ${marcaHTML()}
-      ${tituloHTML('Resumen de la sesión', `Sesión ${esc(s.id)} · ${esc(MODO_NOMBRE[s.modo] ?? s.modo)}`)}
-      ${resultados
+      ${tituloHTML(resultados ? 'Resumen de la sesión' : 'Registros de la sesión', `Sesión ${esc(id)} · ${esc(MODO_NOMBRE[modo] ?? modo ?? '')}`)}
+      ${bloques
         .map(
           (b) => `
         <section class="panel">
           <h2>Bloque ${b.bloque}: ${esc(b.ficha.id)} ${esc(b.ficha.nombre)} · banda ${esc(b.banda)} · ${esc(b.modalidad === 'mixta' ? 'V y AV' : b.modalidad)}</h2>
-          <ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+          ${b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
           <fieldset class="chips">
             <legend>Nivel de apoyo en este bloque</legend>
             ${NIVELES_APOYO.map((n) => chipHTML(`apoyo-${b.bloque}`, n, mayuscula(n), fila()?.nivel_apoyo.find((x) => x.bloque === b.bloque)?.nivel === n)).join('')}
@@ -1018,19 +1039,44 @@ function renderResumenSesion() {
         </section>`,
         )
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
-      <div class="panel">
-        <p class="ayuda">Describe lo registrado. No es un puntaje ni una interpretación clínica.</p>
-        <div class="acciones"><button type="button" class="primario" id="cerrar">Terminar sesión</button></div>
-      </div>
+      ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      <h2 class="registros-titulo">Registros del terapeuta</h2>
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {} })}
     </div>`;
   for (const r of app.querySelectorAll('[name^=apoyo-]')) {
     const bloque = Number(r.name.slice(6));
-    r.onchange = () => editSesion(s.id, (x) => (x.nivel_apoyo = [...x.nivel_apoyo.filter((n) => n.bloque !== bloque), { bloque, nivel: r.value }]));
+    r.onchange = () => editSesion(id, (x) => (x.nivel_apoyo = [...x.nivel_apoyo.filter((n) => n.bloque !== bloque), { bloque, nivel: r.value }]));
   }
-  app.querySelector('#cerrar').onclick = () => {
-    cerrarSesion();
-    renderInicio();
+  const form = app.querySelector('#registros');
+  const msg = form.querySelector('#registros-msg');
+  form.querySelector('#agregar-evento').onclick = () => {
+    const n = form.querySelectorAll('[data-evento]').length;
+    form.querySelector('#eventos').insertAdjacentHTML('beforeend', eventoHTML(n, { actividades, bandas }));
+    form.querySelector(`[name="ev-hora-${n}"]`).focus();
   };
+  // Al salir se cierra la sesión (si era la de esta pantalla) y fuera_de_tarea queda definitivo.
+  const salir = () => {
+    if (state.session?.id === id) cerrarSesion();
+    if (volver === 'sesiones') route();
+    else renderInicio();
+  };
+  const guardar = (completos) => {
+    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3 });
+    if (completos) {
+      const f = faltantes(reg, { fase3 });
+      if (f.length) {
+        msg.textContent = f.join(' ');
+        return;
+      }
+    }
+    editSesion(id, (x) => Object.assign(x, filaRegistros(reg, { completos, hora: new Date().toISOString() })));
+    salir();
+  };
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    guardar(true);
+  };
+  form.querySelector('#despues').onclick = () => guardar(false);
 }
 
 function renderResumen() {

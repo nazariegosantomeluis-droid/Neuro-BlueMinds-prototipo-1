@@ -1278,7 +1278,8 @@ details.panel > summary + * {
   color: var(--suave);
 }
 
-.etiqueta.pendiente {
+.etiqueta.pendiente,
+.etiqueta.incompleta {
   border-color: var(--aviso-borde);
   background: var(--aviso);
   color: var(--texto);
@@ -2389,4 +2390,38 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
 
 .menu-terapeuta .chips {
   margin-top: var(--esp-3);
+}
+
+/* Registros del terapeuta al cerrar la sesión (H2.6). */
+.registros-titulo {
+  margin-top: 1.5rem;
+}
+
+.registros-terapeuta fieldset + fieldset {
+  margin-top: 1rem;
+}
+
+.registros-terapeuta label {
+  display: block;
+  margin-block: 0.5rem;
+}
+
+.registros-terapeuta label.chip {
+  display: inline-flex;
+  margin-block: 0.25rem;
+}
+
+.registros-terapeuta input:not([type='radio'], [type='checkbox']),
+.registros-terapeuta select {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  margin-top: 0.25rem;
+}
+
+.evento-adverso {
+  border: 1px solid var(--borde-campo);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-block: 0.75rem;
 }
