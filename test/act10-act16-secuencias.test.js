@@ -102,7 +102,7 @@ test('los pasos de una secuencia no entran en «fuera de tarea»; las demás act
   // La aplicación pasa las actividades de respuesta «secuencia» al cerrar y al exportar.
   const app = leer('src/app.js');
   assert.match(app, /const sinTiempos = \(\) => Object\.values\(state\.fichas\)\.filter\(\(f\) => f\.unidadDelBloque === 'secuencia'\)/);
-  assert.equal(app.match(/\{ sinTiempos: sinTiempos\(\) \}/g).length, 3);
+  assert.equal(app.match(/\{ sinTiempos: sinTiempos\(\) \}/g).length, 4, 'al cerrar, al exportar CSV y JSON, y al calcular indicadores.csv');
 });
 
 test('el resumen por secuencia no depende del orden de las filas en el registro', () => {

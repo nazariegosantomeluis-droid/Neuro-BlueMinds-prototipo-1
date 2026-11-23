@@ -21,7 +21,7 @@ test('cada parámetro dice de qué sección sale', () => {
 
 test('valores del Modelo 4.1 y de las decisiones D2 y D5', () => {
   const m = Object.fromEntries(Object.entries(PARAMETROS.minimos).map(([k, v]) => [k, v.valor]));
-  assert.deepEqual(m, { A1: 20, A2: 20, A3: 30, A4: 20, A5: 20, A6: 30, A7: 10, A8: 10, A10: 10 });
+  assert.deepEqual(m, { A1: 20, A2: 20, A3: 30, A4: 20, A5: 20, A6: 30, A7: 10, A8: 10, A10: 10, A11: 5, A12: 5 });
   assert.equal(PARAMETROS.calidadMinima.valor, 0.8);
   assert.equal(PARAMETROS.a6MinutosMinimos.valor, 5);
   assert.equal(PARAMETROS.dominio.thetaEstrella, 0.7);

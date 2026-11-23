@@ -31,6 +31,9 @@ import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
 import { leerBandasPrueba } from './plan-pantalla.js';
 import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conceptoDeFila, codigoBase } from './sondas.js';
 import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
+import { VERSION_INDICADORES } from './indicadores/parametros.js';
+import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
+import { proponer, lineaBaseRegulacion, MOTIVO_NO_EJECUTADA } from './adaptacion.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
@@ -281,6 +284,7 @@ function registroHTML({ enlaceSesiones = true } = {}) {
         <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
         <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
         <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
+        <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores (CSV)</button>
       </div>
       <p class="meta estado" role="status"></p>
       ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
@@ -299,7 +303,11 @@ function bindRegistro(root, rerender) {
       let nombre;
       if (tipo === 'json') download((nombre = `registro-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'application/json');
       else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
-      else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
+      else if (tipo === 'indicadores') {
+        // Se calculan al descargar, desde el registro (con fuera_de_tarea provisional en una sesión abierta).
+        const filas = calcularIndicadores(paraExportar(log.rows(), { sinTiempos: sinTiempos() }), sesiones.rows(), { fichas: state.fichas, items: state.items });
+        download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(filas), 'text/csv;charset=utf-8');
+      } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
   }
@@ -398,7 +406,7 @@ async function start(form) {
     // se miden con performance.now().
     sesiones.add({
       sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
-      ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: false,
+      ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], version_indicadores: VERSION_INDICADORES, advertencia_frecuencia: false,
     });
   }
   if (advertencia) editSesion(s.id, (r) => (r.advertencia_frecuencia = true));
@@ -472,7 +480,7 @@ async function empezarSesion(form) {
   prefs.set('nbm.sesiones', String(s.numero + 1));
   sesiones.add({
     sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
-    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: Boolean(advertencia),
+    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], version_indicadores: VERSION_INDICADORES, advertencia_frecuencia: Boolean(advertencia),
     modo_fase: modo,
     fase2_version: fase2?.version ?? null,
     fase2_sesion: fase2?.numero ?? null,
@@ -844,6 +852,20 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   }
   const deLaSesion = log.rows().filter((r) => r.sesion_id === s.id);
   editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
+  // Regla de adaptación (H4.1 y H4.2): en los modos adaptativos (fase 3), propone por ventanas de
+  // 10 ensayos válidos y deja cada propuesta en el registro. No cambia la banda: eso lo decidirá la
+  // envolvente de seguridad (H4.3).
+  if (state.sesion?.modos?.[s.modo]?.adaptacion) {
+    const historial = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+    s.estadoAdaptacion ??= { sinSubir: false };
+    const ordenes = (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
+    const propuestas = proponer(rows, { bandas: ficha.bandas.map((b) => b.id), estado: s.estadoAdaptacion, base: lineaBaseRegulacion(historial), ordenes }).map((p) => ({
+      ...p,
+      adaptacion_activa: s.adaptacion ?? true,
+      motivo_no_ejecutada: MOTIVO_NO_EJECUTADA,
+    }));
+    editSesion(s.id, (r) => (r.adaptacion_propuestas = [...(r.adaptacion_propuestas ?? []), ...propuestas]));
+  }
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.

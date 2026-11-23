@@ -85,7 +85,7 @@ function filaHTML(n, fichas) {
 }
 
 export const AVISO_FASE =
-  'El modo de fase y la banda fija de cada niño los fija el investigador responsable (Arquitectura 14). En el estudio vienen del servidor; en este prototipo se fijan aquí. La banda fija se usa en las fases 1, 2, 3 y en el cierre; la familiarización usa siempre la banda mínima.';
+  'El modo de fase y la banda fija de cada niño los fija el investigador responsable (Arquitectura 14). En el estudio vienen del servidor; en este prototipo se fijan aquí. La banda fija se usa en las fases 1, 2, 3 y en el cierre. La familiarización empieza en la banda mínima; ahí el terapeuta puede probar otras bandas y, al cerrar, fija la banda inicial de la fase 1, que queda aquí.';
 
 export function renderNinos(app, { ninos, fichas = {} }) {
   let msg = '';

@@ -343,6 +343,7 @@ src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, accion
 src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
 src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
 src/sondas.js                 Sondas de generalización y presentación distribuida; IG e IRet
+src/adaptacion.js             Regla de adaptación (propone) y señal de regulación
 src/version.js                Versión y commit publicados (pie del adulto y CSV de expertos)
 src/indicadores/              Indicadores del núcleo: parámetros, estadística, A1 a A10 y dominio
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
@@ -581,10 +582,12 @@ Una fila por sesión, en este orden:
 | `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 | `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta fijó al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
+| `version_indicadores` | Versión de los indicadores con que se calcula la sesión (`VERSION_INDICADORES`, Arquitectura 6.2). |
+| `adaptacion_propuestas` | Solo en los modos adaptativos (fase 3): lista JSON de propuestas de la regla de adaptación, una por ventana de 10 ensayos válidos: `bloque`, `actividad`, `ventana`, `ensayos` (primero y último), `precision`, `omisiones`, `prematuras`, `senal` (`omisiones`, `prematuras`, `terapeuta` o vacío), `criterio_senal`, `accion` (`subir`, `mantener`, `bajar` o `pausa_y_bajar`), `motivo`, `regla`, `banda_actual`, `banda_propuesta`, `ejecutada` (siempre `false` hasta H4.3), `motivo_no_ejecutada`, `adaptacion_activa` y `version_regla`. |
 
 ## Indicadores del núcleo (H3)
 
-Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad al cerrar cada bloque y la sesión, y A9 al cerrar la sesión acumulando las sesiones previas del niño. Todavía no se muestran a nadie: el panel es H5. La exportación `indicadores.csv` y los vectores de prueba para R son H3.6.
+Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad, A9 acumulando las sesiones previas del niño, y A11 y A12 sobre sus actividades y sesiones. Todavía no se muestran a nadie: el panel es H5. «Descargar indicadores (CSV)», en el panel del registro, los calcula desde el registro por ensayo y `sesiones.csv`.
 
 - **Parámetros** (`src/indicadores/parametros.js`). Todos los umbrales, mínimos de datos y constantes, cada uno con la sección del Modelo matemático o la decisión de la que sale. El código de los indicadores no tiene números propios; una prueba lo revisa. Cada indicador tiene su versión de definición (`VERSIONES`, Arquitectura 6.2).
 - **Resultado.** Cada indicador da `{ id, nombre, valor, ic, n, disponible, motivo, version }`. Si no cumple su mínimo de datos (Modelo 4.1) o la calidad media de la sesión es menor de 0.80 (Modelo 3.4 y 7.2), queda `disponible: false`, sin valor ni intervalo, y `motivo` dice por qué (por ejemplo, «19 ensayos; el mínimo es 20»).
@@ -602,14 +605,42 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 | A8 IRPE | Aciertos en el ensayo siguiente a un error / errores | Wilson | 10 errores |
 | A9 DOM | Unidades que alcanzan el criterio en la sesión por cada 100 presentaciones | — | El criterio |
 | A10 TEP | Repetir la misma opción incorrecta que en la presentación anterior del mismo ítem (aunque sea de otra sesión) tras un error con retroalimentación correctiva / esas presentaciones | Wilson | 10 oportunidades |
+| A11 IPF | Actividades (bloques) completadas / iniciadas, en todas las sesiones del niño hasta la de hoy. Un bloque se completa si no se terminó desde el menú | Wilson | 5 actividades |
+| A12 IA | Sesiones terminadas desde el menú («Terminar la sesión») / sesiones del niño. El límite de 15 minutos no cuenta | Wilson | 5 sesiones |
 
 **Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e presentaciones sin acierto de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones cuentan como presentaciones sin acierto (parámetro, pendiente de confirmar).
+
+**indicadores.csv (H3.6).** Una fila por sesión, actividad e indicador:
+
+| Columna | Contenido |
+|---|---|
+| `sesion_id`, `codigo_nino`, `modo_fase` | La sesión. |
+| `actividad` | La actividad; vacía en A11 y A12, que son de la sesión. |
+| `indicador`, `nombre` | `A1` a `A12` y su nombre. |
+| `valor`, `ic_inferior`, `ic_superior`, `n` | Valor, intervalo de 95 % y número de datos con que se calculó (ensayos, válidos, errores, oportunidades, actividades o sesiones, según el indicador). Valor e intervalo vacíos si no está disponible. A9 no tiene intervalo. |
+| `disponible`, `motivo` | Si cumple el mínimo de datos y la calidad de 0.80; si no, por qué. |
+| `calidad_sesion` | Media de `peso_calidad` de la sesión, sin los ensayos pausados. |
+| `version_definicion`, `version_indicadores` | Versión de la definición del indicador y del conjunto (Arquitectura 6.2). |
+| `detalle` | JSON con datos de apoyo: aciertos y azar (A1), minutos (A6), aciertos tras error y tras acierto (A7), unidades dominadas en la sesión y en total, θ* y confianza (A9), etc. |
+
+Las sesiones de demostración y del modo experto no tienen historia de un niño: su A9 y su A10 solo miran la propia sesión y no tienen A11 ni A12. Los indicadores del nivel B (μ, σ, τ, EZ, α, λ, IG, IRet, ICS, ICM) no van en este archivo: Arquitectura 6.1 los deja al entorno de análisis, que los calcula con las columnas del registro por ensayo (`sonda` y `reaparicion` para IG e IRet; `modalidad` y `mitad_fase2` para ICM; el ítem de ACT-07 para ICS).
+
+**Vectores de prueba (H3.6).** `test/vectores/indicadores.json` trae seis casos (una sesión típica de ACT-02 y ACT-07, una sesión larga con A3, A6, A7 y A8 disponibles, pocos ensayos, calidad baja, seis sesiones de un niño para A9 a A12 y una demostración), cada uno con sus entradas (las columnas del registro y de `sesiones.csv` que usan los indicadores) y sus salidas (las filas de `indicadores.csv`), además de los parámetros, las versiones y el generador con una comprobación (semilla y primeros cinco números). Lo genera `node tools/vectores-indicadores.mjs`; la prueba falla si el archivo no coincide con lo que dan las funciones, y reimplementa el generador con enteros grandes para comprobar que su descripción basta. Criterio de comparación con R (Arquitectura 6.3): 1 ms en latencias y exacto en proporciones.
 
 **Reproducir los intervalos en otro programa (R, H3.7).**
 - Wilson: z = 1.959963984540054; límites recortados a [0, 1].
 - Mediana: rangos l y u = n − l + 1, con l el mayor entero tal que P(B ≤ l − 1) ≤ 0.025, B ~ Bin(n, 1/2). Con menos de 6 datos no hay intervalo.
 - Theil-Sen: C = z·√Var(S), Var(S) = [n(n − 1)(2n + 5) − Σ g(g − 1)(2g + 5)]/18, con g el tamaño de cada grupo de valores de y empatados; límites en las posiciones (N − C)/2 y (N + C)/2 + 1 de las N pendientes ordenadas, interpolando y acotando a [1, N].
 - Bootstrap: 2,000 remuestras, percentiles con cuantil tipo 1 (el ⌈p·B⌉-ésimo valor ordenado; en R, `quantile(x, p, type = 1)`). Generador: mulberry32 (`src/engine/selector.js`, `rng`) sembrado con FNV-1a de 32 bits del texto `sesion_id:actividad:indicador` (`seedOf`). Cada remuestra toma, para cada grupo y cada posición, el índice ⌊u · n⌋. En A7, los grupos son primero los aciertos tras error y después los aciertos tras acierto.
+
+## Regla de adaptación y señal de regulación (H4.1 y H4.2)
+
+`src/adaptacion.js`, con los parámetros en `src/indicadores/parametros.js` (Modelo 9.1 y 9.2; Arquitectura 7.2 y 7.3). Solo corre en los modos con `adaptacion: true` en `fichas/sesion.json` (la fase 3), al terminar cada bloque.
+
+- **Ventanas:** de 10 ensayos válidos (sin interrupción técnica), seguidas; la última incompleta no cuenta.
+- **Regla (C8):** precisión mayor de 0.85 en dos ventanas consecutivas → subir una banda; entre 0.70 y 0.85 → mantener; menor de 0.70 en una ventana → bajar una banda. Después de proponer un cambio, la cuenta de ventanas empieza de nuevo. En la banda más alta o más baja se propone mantener, con el motivo.
+- **Señal de regulación:** con línea base, la proporción de omisiones o de respuestas prematuras de la ventana supera el percentil 90 (tipo 7) de esa proporción en las ventanas de la línea base del niño. La línea base son las primeras 5 sesiones de la fase 1 con calidad de 0.80 o más en la actividad (decisión D3). Sin línea base: 3 o más omisiones, o 3 o más prematuras, en la ventana. En cualquier caso, también es señal un episodio de desregulación marcado o terminar el bloque o la sesión por «Desregulación o malestar del niño». Con señal, la regla propone ofrecer pausa y bajar una banda, y no subir en el resto de la sesión.
+- **La regla solo propone.** Según Arquitectura 7.1, una propuesta se ejecuta solo si la envolvente de seguridad (C9, H4.3) la permite. Mientras la envolvente no exista, ninguna cambia la banda. Cada propuesta queda en `adaptacion_propuestas` de `sesiones.csv` con la ventana, los valores que la activaron, la regla, las bandas actual y propuesta, `ejecutada: false` y el motivo. Los parámetros no cambian durante la sesión (Modelo 9.3).
 
 ## Banco de ítems
 
