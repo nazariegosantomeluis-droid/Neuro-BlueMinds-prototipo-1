@@ -23,12 +23,19 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'peso_calidad',
     // Tanda 2: al final, para que las columnas anteriores no cambien de lugar.
     't_muestra_fin',
+    // Tanda 3: la mitad de conceptos de la fase 2.
+    'mitad_fase2',
   ]);
   assert.deepEqual(SESION_COLUMNS, [
     'sesion_id', 'codigo_nino', 'dispositivo', 'inicio', 'fin', 'ensayos', 'pausas',
     'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
     'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia',
     'referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques',
+    'modo_fase', 'fase2_version', 'fase2_sesion', 'fase2_bloque', 'fase2_primera', 'plan_sesion',
+    'pasos_sesion', 'ordenes_terapeuta', 'limite_15_min', 'bloques_omitidos', 'duracion_uso_ms',
+    'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
+    'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
+    'tema_imagenes',
   ]);
 });
 

@@ -27,14 +27,16 @@ test('el motor da los mismos registros del piloto que antes de t_muestra_fin', a
   ahora.forEach((fila, i) => {
     for (const c of Object.keys(antes[i])) assert.deepEqual(fila[c], antes[i][c], `fila ${i + 1}, ${c}`);
     assert.equal(fila.t_muestra_fin, null, `fila ${i + 1}: el piloto no tiene muestra que se quite`);
+    assert.equal(fila.mitad_fase2, null, `fila ${i + 1}: fuera de la fase 2 no hay mitad`);
   });
 });
 
-test('las columnas anteriores siguen en el mismo lugar; la nueva va al final', () => {
-  assert.deepEqual(COLUMNS.slice(0, -1), Object.keys(antes[0]));
-  assert.equal(COLUMNS.at(-1), 't_muestra_fin');
+test('las columnas anteriores siguen en el mismo lugar; las nuevas van al final', () => {
+  const n = Object.keys(antes[0]).length;
+  assert.deepEqual(COLUMNS.slice(0, n), Object.keys(antes[0]));
+  assert.deepEqual(COLUMNS.slice(n), ['t_muestra_fin', 'mitad_fase2']);
   // En el CSV del piloto, la columna nueva queda vacía.
   const [cabecera, fila] = toCSV(antes.slice(0, 1)).replace('﻿', '').split('\r\n');
-  assert.ok(cabecera.endsWith(',t_muestra_fin'));
-  assert.ok(fila.endsWith(','));
+  assert.ok(cabecera.endsWith(',t_muestra_fin,mitad_fase2'));
+  assert.ok(fila.endsWith(',,'));
 });

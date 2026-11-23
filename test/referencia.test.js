@@ -239,8 +239,8 @@ test('la misma sesión da el mismo plan y los mismos resultados con los mismos t
 // ---------- Columnas, parámetros y aplicación ----------
 
 test('sesiones.csv guarda la mediana, los toques válidos, los anticipados y la lista completa', async () => {
-  const cols = SESION_COLUMNS.slice(SESION_COLUMNS.indexOf('referencia_motora_ms'));
-  assert.deepEqual(cols, ['referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques']);
+  const i = SESION_COLUMNS.indexOf('referencia_motora_ms');
+  assert.deepEqual(SESION_COLUMNS.slice(i, i + 4), ['referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques']);
   const { res } = await correr(plan(6), [100, 300, 400, 500, 600, 700]);
   const { terminada, ...resumen } = res;
   const log = createLog(null, { key: 'x', columns: SESION_COLUMNS });

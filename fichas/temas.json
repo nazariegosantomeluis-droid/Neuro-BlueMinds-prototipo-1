@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "descripcion": "Temas de imágenes por intereses del niño (Arquitectura 4.8). Un tema solo cambia imágenes: cada entrada de «imagenes» reemplaza la ruta de una imagen del banco por otra del mismo concepto. No cambia los ítems, el número de opciones, la respuesta correcta ni la banda. El tema de cada sesión queda en tema_imagenes.",
+  "temas": [
+    {
+      "id": "general",
+      "nombre": "General",
+      "descripcion": "Las imágenes del banco, sin cambios.",
+      "imagenes": {}
+    }
+  ],
+  "pendientes": [
+    "Agregar los temas por intereses (por ejemplo, animales o vehículos) cuando estén las imágenes del banco (rama imagenes-banco). Cada imagen nueva necesita su fila en items/licencias.csv y su revisión clínica.",
+    "Definir con los clínicos qué temas se ofrecen y si el tema puede cambiar entre sesiones de la misma fase: la Arquitectura 4.8 pide registrarlo porque puede afectar el desempeño."
+  ]
+}

@@ -146,7 +146,7 @@ test('participante: sin elegir, con un código que no existe o con modo experto 
 const PROHIBIDO = /nombre|apellido|name|nacimiento|birth|curp|correo|email|telefono|celular|direccion|domicilio|escuela|foto/i;
 
 test('el padrón tiene exactamente estas columnas y ninguna identifica al niño', () => {
-  assert.deepEqual(NINO_COLUMNS, ['codigo', 'icono', 'color', 'edad_meses', 'consentimiento', 'video']);
+  assert.deepEqual(NINO_COLUMNS, ['codigo', 'icono', 'color', 'edad_meses', 'consentimiento', 'video', 'modo_fase', 'bandas']);
   for (const c of [...NINO_COLUMNS, ...COLUMNS, ...SESION_COLUMNS]) assert.doesNotMatch(c, PROHIBIDO, c);
 });
 

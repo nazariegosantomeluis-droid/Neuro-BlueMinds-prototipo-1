@@ -6,6 +6,7 @@ import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
 import { gruposVisibles, modoExpertoActivo } from './modo-experto.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
+import { planNinoHTML } from './plan-pantalla.js';
 import { DEMO, nombreNino, abreviar } from './ninos.js';
 import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
 
@@ -237,6 +238,7 @@ function sesionHTML(state, f, forzado, padron, estado) {
           ? `<div class="sesion-actual"><p class="meta">${tipoDeSesion(s)} <strong>${esc(s.id)}</strong> · ${esc(quien(s))} · bloques: ${s.bloque}</p>
              <div class="acciones"><button type="button" id="cerrar-sesion">Terminar sesión</button></div></div>`
           : `${participante}
+             <div class="plan-nino" id="plan-nino" hidden></div>
              ${experto}
              <p class="ayuda" id="nota-referencia" ${forzado || f.experto ? 'hidden' : ''}>${esc(NOTA_REFERENCIA)}</p>`
       }
@@ -302,7 +304,7 @@ export function renderInicio(app, ctx, msg = '') {
             : ''
         }
         <p class="mensaje" role="alert">${esc(msg)}</p>
-        ${lista ? '<p class="ayuda">Durante el bloque, para pausar o terminar, toca dos veces el botón de la esquina superior derecha.</p>' : ''}
+        ${lista ? '<p class="ayuda">Durante la sesión, para pausar o terminar, mantén pulsado casi un segundo el botón de la esquina superior derecha: se abre el menú del terapeuta.</p>' : ''}
         <div class="barra-empezar">
           <p class="barra-resumen">
             <strong>${lista ? `${esc(ficha.id)} · ${esc(ficha.nombre)}` : 'Elige una actividad'}</strong>
@@ -402,25 +404,44 @@ export function renderInicio(app, ctx, msg = '') {
     if (casillaExperto.disabled) casillaExperto.checked = false;
     form.querySelector('#nota-referencia').hidden = casillaExperto.checked;
   };
+  // Con un niño inscrito, la sesión es completa y sigue su plan: los pasos 1 y 2 no aplican.
+  const planNino = form.querySelector('#plan-nino');
+  const ninoElegido = () => (form.participante && !forzado ? padron.find((n) => n.codigo === form.participante.value) : null);
+  const sincronizarPlan = () => {
+    if (!planNino) return;
+    const nino = state.sesion ? ninoElegido() : null;
+    form.classList.toggle('sesion-nino', Boolean(nino));
+    app.querySelector('.inicio-columnas')?.classList.toggle('sesion-nino', Boolean(nino));
+    planNino.hidden = !nino;
+    planNino.innerHTML = nino ? planNinoHTML({ nino, config: state.sesion, fichas: state.fichas, historial: ctx.historialFase2(nino.codigo), temas: state.temas, tema: state.form?.tema }) : '';
+    const boton = form.querySelector('[type=submit]');
+    boton.textContent = nino ? 'Empezar la sesión' : 'Empezar';
+    form.querySelector('.barra-resumen strong').textContent = nino ? 'Sesión completa con el niño' : `${ficha.id} · ${ficha.nombre}`;
+    form.querySelector('#resumen-ajustes').textContent = nino ? '' : resumenAjustes(ficha, elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
+  };
   form.participante?.addEventListener('change', () => {
     revisarParticipante(form, false);
     sincronizarExperto();
+    sincronizarPlan();
   });
   casillaExperto?.addEventListener('change', sincronizarExperto);
   sincronizarExperto();
+  if (lista) sincronizarPlan();
   form.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     ctx.cerrarSesion();
     renderInicio(app, ctx);
   });
   form.onsubmit = (e) => {
     e.preventDefault();
-    if (!lista || !revisarEnsayos(form, true) || !revisarParticipante(form, true)) return;
+    const conNino = Boolean(form.classList.contains('sesion-nino'));
+    if (!lista || (!conNino && !revisarEnsayos(form, true)) || !revisarParticipante(form, true)) return;
     ctx.desbloquearAudio(); // dentro del gesto del adulto
     const boton = form.querySelector('[type=submit]');
     boton.disabled = true; // un solo bloque aunque se toque dos veces
     boton.setAttribute('aria-busy', 'true');
     boton.textContent = 'Preparando…';
-    ctx.empezar(form);
+    if (conNino) ctx.empezarSesion(form);
+    else ctx.empezar(form);
   };
   ctx.bindVolumen(app);
   ctx.bindRegistro(app, () => renderInicio(app, ctx));

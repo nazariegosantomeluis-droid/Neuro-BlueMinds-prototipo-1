@@ -93,13 +93,52 @@ En Windows, el comando suele ser `python -m http.server 8000`. Después abre <ht
    - La pausa del terapeuta funciona igual: descarta la aparición en curso, que no se repite. Si se termina desde ahí, la sesión termina sin bloques.
 3. **Sesión.** Es la pantalla del niño: fondo neutro y sin texto.
    - Antes de cada bloque se mide un segundo de cuadros. Si la pantalla dibuja a menos de 50 Hz (periodo mayor de 20 ms; suele ser el ahorro de energía), se avisa al adulto, que puede volver a medir o continuar de todos modos. Si continúa, la sesión queda con `advertencia_frecuencia` = `true`.
-   - El botón de pausa del terapeuta está en la esquina superior derecha y se toca dos veces: el primer toque lo arma durante 3 s.
+   - El botón del terapeuta está en la esquina superior derecha. **Se mantiene pulsado 0.8 s** y abre el **menú del terapeuta** (H2.4), que pausa la sesión. Ver «Menú del terapeuta», más abajo.
    - El ensayo en curso queda registrado como interrumpido y no se repite.
-   - En la pausa se puede ajustar el volumen, continuar o terminar el bloque. Si se termina, se elige el motivo de una lista y se puede agregar una nota breve (sin nombres ni datos personales).
 4. **Fin de bloque.** Aparece una pantalla de «terminamos», igual sin importar el desempeño. El adulto toca dos veces el botón de la esquina para ver el resumen.
 5. **Resumen (para el adulto).** Es descriptivo: aciertos, omisiones y mediana del tiempo de respuesta, sin puntajes. Ahí el adulto elige el nivel de apoyo que dio en el bloque (ninguno, verbal, gestual o físico). Desde ahí se inicia otro bloque de la misma sesión o se termina la sesión.
 
 En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari no permite reproducir audio.
+
+**Sesión con un niño (H2.3).** Con un niño inscrito, el inicio no pide actividad, banda ni modalidad: muestra la **sesión completa** que corresponde a su modo de fase y el botón «Empezar la sesión». La estructura está en [`fichas/sesion.json`](fichas/sesion.json) y la lógica, en `src/fases.js`.
+- **Modo de fase.** Cada niño tiene uno: familiarización, fase 1, fase 2, fase 3 o cierre (Arquitectura 14). Lo fija el investigador responsable en «Niños inscritos», junto con la banda fija de ACT-02 y ACT-07. En el estudio vendrán del servidor (decisión D6 pendiente). Un niño nuevo empieza en la familiarización.
+- **Plan.** Rutina de inicio, referencia motora, ACT-02 y después ACT-07 (en la familiarización, antes ACT-01 con 10 ensayos), y rutina de cierre. En la familiarización la banda es la mínima; en las fases 1, 2 y 3 y en el cierre, la fija del niño (o la mínima si no tiene). Fuera de la fase 2 la modalidad es AV, la presentación multimodal (pendiente de confirmar en `fichas/sesion.json`).
+- **Fase 2, versión del Protocolo 3.3 (la que se usa).** ACT-02 se hace en dos bloques de 15 ensayos, uno en V y otro en AV, en la misma banda. La modalidad que abre se sortea en cada sesión, sin que una abra más de 2 sesiones seguidas. En las sesiones 1 a 6 los conceptos de la mitad A van en V y los de la B en AV; en las 7 a 12 se invierte. Los bloques de 15 son una excepción documentada al mínimo de 20 ensayos por bloque (Arquitectura 4.1).
+- **Fase 2, versión del Catálogo 5.2 (alternativa).** Un bloque de 30 ensayos en el que cada mitad de conceptos va en su modalidad, en orden al azar. Se elige en la ficha de ACT-02 (`fase2.version`). Cada sesión registra qué versión usó (`fase2_version`).
+- Todos los bloques se preparan antes de empezar: si falta una imagen o la voz, la sesión no empieza.
+
+**Menú del terapeuta (H2.4; Arquitectura 8.1).** Se abre manteniendo pulsado 0.8 s el botón de la esquina, en los bloques, en la referencia motora y en las rutinas (`src/menu-terapeuta.js`). Abrirlo pausa la sesión. Cada acción toma uno o dos toques:
+- **Reanudar** (1 toque).
+- **Terminar el bloque** o **terminar la sesión** (2 toques): primero el motivo, de la lista, y después el botón. Sin motivo no se termina. Con «Terminar la sesión», la sesión con un niño salta a la rutina de cierre; en un bloque suelto, el resumen ya no ofrece otro bloque. Fuera de un bloque solo está «Terminar la sesión».
+- **Fijar la banda** (1 toque): se usa desde el bloque siguiente de esa actividad; en la sesión con un niño, el bloque se arma de nuevo en esa banda.
+- **Desactivar o reactivar la adaptación** (1 toque). La adaptación todavía no existe (H4): por ahora la orden solo queda registrada.
+- **Anular el último cambio de banda** (1 toque).
+- **Marcar un episodio de desregulación** (1 toque): registra la hora (Protocolo 8.4). Al cerrar la sesión, el terapeuta los confirma (H2.6).
+- En la familiarización, la fase 3 y los bloques sueltos se puede fijar la banda. En las fases 1 y 2 y en el cierre la dificultad es fija: la orden de cambiar la banda o la adaptación no se ejecuta y queda registrada como bloqueada por INV-7 (Arquitectura 7.4).
+- El menú también tiene el volumen de la voz, una nota opcional y, solo en modo experto fuera del piloto, la pausa guiada.
+- Cada orden, incluida la de pausar al abrir el menú, queda en `ordenes_terapeuta` con su hora y el estado de la sesión.
+
+**Límite de 15 minutos (H2.5; INV-8).** El uso de la plataforma se cuenta desde que empieza la sesión (`performance.now()`).
+- Al llegar a 15 minutos no empieza ningún bloque nuevo: en la sesión con un niño se omiten los bloques que faltan, y su transición, y se pasa a la rutina de cierre; en los bloques sueltos, el inicio no deja empezar otro y el resumen no lo ofrece.
+- El bloque que ya empezó termina. El niño no ve ningún aviso; el adulto lo ve en el menú del terapeuta y en el resumen.
+- En `sesiones.csv` quedan `limite_15_min`, `bloques_omitidos` y `duracion_uso_ms`.
+
+**Registros del terapeuta al cerrar (H2.6; Arquitectura 8.4).** Después de la rutina de cierre, el adulto toca dos veces la esquina y ve, en una sola pantalla, el resumen de cada bloque con su nivel de apoyo y los registros del terapeuta (`src/registros-terapeuta.js`). Los campos son los del Protocolo de validación (5.4 y 8):
+- **Valoración de participación**, de 1 a 5. Los documentos todavía no describen cada valor (pendiente en `fichas/sesion.json`).
+- **Episodios de desregulación** (Protocolo 8.4): cada episodio marcado con el menú del terapeuta se confirma o no; los que no se marcaron durante la sesión se cuentan aparte.
+- **Eventos adversos** (Protocolo 8.1 y 8.2): uno por uno, con hora, qué pasó (sin nombres ni datos personales), actividad en curso, banda, duración, medidas tomadas, gravedad (leve, moderado o grave) y relación con la plataforma (no relacionado, improbable, posible o probable).
+- **Solo en la fase 3** (Protocolo 6.6): si consultó el panel, si la información contribuyó a alguna decisión y de qué tipo.
+- «Guardar y terminar» pide lo que falte. «Completar después» guarda lo que haya y deja la sesión **incompleta**: en «Sesiones» aparece con la etiqueta «Incompleta» y el botón «Completar los registros». Las demostraciones y los bloques del modo experto no piden registros.
+
+**Tema de imágenes (H2.7; Arquitectura 4.8).** En la sesión con un niño, el inicio tiene el selector «Tema de imágenes» (`src/temas.js`). Un tema solo reemplaza la ruta de cada imagen del banco por la de su tema: los ítems, el número y el orden de las opciones, la respuesta correcta y la banda no cambian (lo comprueba `test/temas.test.js` con ensayos reales de ACT-01 y ACT-02; ACT-07 dibuja sus tarjetas y ningún tema la cambia). Los temas están en [`fichas/temas.json`](fichas/temas.json). Por ahora solo existe `general`: los temas por intereses esperan las imágenes del banco. El tema queda en `tema_imagenes` de cada ensayo y de la sesión.
+
+**Rutinas de la sesión (Catálogo 7.1).** La sesión con un niño siempre sigue el mismo orden, para que el niño anticipe lo que sigue (`src/rutinas.js`). La pantalla del niño no tiene texto.
+- **Rutina de inicio** (6 s): con pictogramas, la secuencia de la sesión: la referencia motora (un dedo que toca un círculo), el esquema de cada actividad y el pictograma de «terminar», unidos por flechas. Es igual en todas las sesiones de un modo: en la fase 2, ACT-02 aparece una vez aunque tenga dos bloques.
+- **Referencia motora**, como siempre.
+- **Actividades en orden fijo**, con una **transición de 5 s** entre ellas que muestra el esquema de la actividad que sigue.
+- **Rutina de cierre** (5 s): el pictograma de «terminar», que aparece con una transición de 300 ms. Es igual en todas las sesiones y no depende del desempeño; aparece aunque la sesión termine antes. El Catálogo pide «una animación breve»; para cumplir RNF-05 (nada destella ni se repite) es una sola transición.
+- Después del cierre, el adulto toca dos veces la esquina para ver el resumen de la sesión, bloque por bloque, con el nivel de apoyo de cada uno.
+- Los 6 s del inicio y los 5 s del cierre son una propuesta (`fichas/sesion.json`); el Catálogo solo fija la transición.
 
 **Modo experto de la aplicación.** Es el interruptor «Modo experto» del encabezado de las pantallas del adulto (`src/modo-experto.js`). Empieza apagado y se guarda en este dispositivo (`localStorage`, clave `nbm.modoExperto`).
 - **Apagado:** el inicio, la galería, las sesiones y el formulario F3 muestran solo ACT-01, ACT-02 y ACT-07, sin los grupos «En preparación» ni «En investigación» y sin la pausa guiada; tampoco hay sesiones en modo experto. «Sesiones» oculta los bloques de las demás actividades y dice cuántos ensayos no muestra; la descarga de cada sesión y la del registro siguen completas.
@@ -124,6 +163,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - El código tiene 128 bits (32 caracteres hexadecimales) y se muestra abreviado (por ejemplo, `7F3A-91C2`). El código completo está en cada fila, para que el investigador lo anote fuera de la aplicación; el registro guarda siempre el completo.
 - El ícono es una forma (círculo, cuadrado, triángulo, estrella, rombo, corazón, luna o hexágono) con un color de una paleta apta para daltonismo. Mientras haya formas sin usar no se repite ninguna, así que la forma identifica al niño aunque no se distinga el color.
 - El consentimiento es `vigente`, `suspendido` o `retirado`. Un niño nuevo queda vigente. Suspendido puede volver a vigente; retirado no se revierte en la tableta. Solo con consentimiento vigente se puede iniciar una sesión.
+- El modo de fase y la banda fija de ACT-02 y ACT-07 se eligen en cada fila; los fija el investigador responsable (Arquitectura 14). Ver «Sesión con un niño».
 - El padrón se guarda en el navegador del dispositivo y no se borra con «Borrar registro».
 - Las sesiones empiezan con `S-` (niño inscrito), `DEMO-` (demostración) o `EXP-` (modo experto).
 - No incluye todavía lo que decide la familia al retirar el consentimiento (conservar o eliminar los datos): necesita el servidor.
@@ -285,7 +325,13 @@ src/revision.js               Revisión clínica de ítems (pantalla)
 src/revision-datos.js         Revisión clínica: ítems, faltantes y CSV
 src/revision-estado.js        Estado de revisión clínica para el inicio y la galería
 src/revision.css              Estilos de la revisión clínica
-src/ninos.js                  Padrón de niños: código, ícono, color, edad y consentimiento
+src/ninos.js                  Padrón de niños: código, ícono, color, edad, consentimiento, modo de fase y banda fija
+src/fases.js                  Modos de fase, plan de la sesión con un niño, fase 2 y límite de 15 minutos
+src/plan-pantalla.js          La sesión completa que el inicio muestra para un niño
+src/rutinas.js                Rutinas de inicio y de cierre y transición entre actividades
+src/menu-terapeuta.js         Menú del terapeuta: pulsación prolongada, acciones y su registro
+src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación, episodios, eventos adversos y decisiones
+src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
 src/ninos.css                 Estilos del padrón
 src/referencia.css            Estilos del objetivo de la referencia motora
@@ -307,7 +353,7 @@ src/activities/seleccion.js   Pantalla de consigna y opciones (ACT-01 y ACT-02)
 src/activities/cambia-regla.js  Pantalla de tarjeta y cajas, y figuras SVG (ACT-07)
 src/activities/referencia.js  Pantalla del objetivo de la referencia motora
 src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
-fichas/                       Ficha técnica de cada actividad (JSON)
+fichas/                       Ficha técnica de cada actividad (JSON), estructura de la sesión (sesion.json) y temas de imágenes (temas.json)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
@@ -419,8 +465,8 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `version_parametros` | Versión de los umbrales del motor: anticipatoria (150 ms), toque repetido (100 ms), tope del audio (5 s), tope de la decodificación (1 s), periodo de cuadro máximo (20 ms) la regla de fuera de tarea (3 MAD escaladas, mínimo 10 ensayos) y los de la referencia motora (6 a 8 apariciones, esperas de 800 a 1,500 ms, permanencia de 5 s —valor de planeación, por confirmar con los clínicos—, anticipatoria de 150 ms y mínimo de 5 toques válidos). Vale `0.3.0`. |
 | `item` | Código del ítem, por ejemplo `ACT01-B2-05`. En ACT-07 incluye la secuencia y el ensayo: `ACT07-B2-04-07`. |
 | `banda`, `modalidad` | Banda y modalidad (`V` o `AV`). |
-| `modo_fase` | Por ahora siempre `prototipo`. |
-| `tema_imagenes` | Por ahora siempre `general`. |
+| `modo_fase` | En la sesión con un niño, su modo de fase: `familiarizacion`, `fase1`, `fase2`, `fase3` o `cierre` (Arquitectura 14). En los bloques sueltos de la demostración y del modo experto, `prototipo`. |
+| `tema_imagenes` | Tema de imágenes de la sesión (H2.7; `fichas/temas.json`). Por ahora solo existe `general`, el banco sin cambios; también en los bloques sueltos. |
 | `n_opciones` | Número de opciones. |
 | `disposicion` | Filas x columnas de las opciones: `1x2`, `1x3`, `1x4` o `2x2`. |
 | `pos_correcta` | Posición de la opción correcta. |
@@ -451,6 +497,7 @@ Al exportar (CSV y JSON), los tiempos se redondean a 0.1 ms: las columnas `t_*` 
 | `fuera_de_tarea_provisional` | `false` si `fuera_de_tarea` se calculó al cerrar la sesión; `true` si la sesión seguía abierta al exportar. |
 | `peso_calidad` | Foco (0 o 1) × proporción de cuadros a tiempo × plausibilidad (0 si es anticipatoria) × técnico (0 si hubo fallo técnico). |
 | `t_muestra_fin` | Solo ACT-09: cuadro en que la muestra ya no se ve. La quita el motor, no la pantalla: en cada cuadro (`requestAnimationFrame`) mira si el siguiente llega a `t_consigna_inicio` + 2 s, con medio cuadro de margen; en ese cuadro la quita y guarda el timestamp del cuadro siguiente, como `t_opciones`. La pausa en blanco real es `t_opciones − t_muestra_fin`. Vacía en las demás actividades y si se pausó mientras se veía la muestra. Va al final para que las columnas anteriores no cambien de lugar. |
+| `mitad_fase2` | Solo en la fase 2, en ACT-02: la mitad de conceptos del ítem (`A` o `B`). En las sesiones 1 a 6 la mitad A va en V y la B en AV; en las 7 a 12, al revés. Vacía en lo demás. |
 
 Solo `tr_bruto_ms`, `tr_corregido_ms`, `anticipatoria`, `fuera_de_tarea` y `peso_calidad` se calculan a partir de otras columnas; todo lo demás se guarda tal como se midió.
 
@@ -484,10 +531,10 @@ Una fila por sesión, en este orden:
 | `inicio`, `fin` | Fecha y hora en ISO 8601, en UTC y con «Z» (por ejemplo, `2026-10-30T02:30:04.785Z`), del inicio del primer bloque y del fin del último. Solo identifican la sesión; las duraciones se miden con `performance.now()`. |
 | `ensayos` | Ensayos registrados en la sesión, incluidos los interrumpidos. |
 | `pausas` | Lista JSON de `{bloque, ensayo, duracion_ms}`: en qué ensayo se pausó y cuánto duró la pausa. `bloque` 0 es la referencia motora, y entonces `ensayo` es el número de aparición del objetivo. |
-| `terminada_antes` | `true` si el adulto terminó un bloque desde la pausa. |
-| `motivo_terminacion` | Motivo elegido al terminar el bloque: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
+| `terminada_antes` | `true` si el adulto terminó un bloque o la sesión desde el menú del terapeuta. |
+| `motivo_terminacion` | Motivo elegido al terminar el bloque o la sesión: «Desregulación o malestar del niño», «Cansancio o falta de interés», «Petición del niño o de la familia», «Fallo técnico», «Decisión clínica» u «Otro». |
 | `nota_terminacion` | Nota opcional de hasta 80 caracteres, sin nombres ni datos personales. |
-| `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque: `ninguno`, `verbal`, `gestual` o `físico`. |
+| `nivel_apoyo` | Lista JSON de `{bloque, nivel}`. El adulto lo elige en el resumen de cada bloque (en la sesión con un niño, en la pantalla de registros): `ninguno`, `verbal`, `gestual` o `físico`. |
 | `frecuencia_hz` | Frecuencia de la pantalla: 1000 / mediana de `periodo_cuadro_ms` de la sesión, redondeada. |
 | `proporcion_periodo_lento` | Proporción de ensayos con `periodo_cuadro_ms` mayor de 20 ms. |
 | `advertencia_frecuencia` | `true` si el adulto continuó después del aviso de frecuencia baja. |
@@ -495,6 +542,27 @@ Una fila por sesión, en este orden:
 | `referencia_motora_n` | Toques válidos: con tiempo, sin anticipar y sin pausa. El mínimo para tener referencia es 5. |
 | `referencia_motora_anticipados` | Toques de menos de 150 ms desde la aparición (mismo umbral de respuesta anticipatoria del Modelo matemático 3.3). Se registran y se cuentan aparte; no entran en la mediana ni en el mínimo. |
 | `referencia_motora_toques` | Lista JSON de las 6 a 8 apariciones: `aparicion`, `pos` (celda, por filas), `tr_ms` (vacío si no hubo toque), `x`, `y` (del toque), `anticipatorio`, `omision`, `interrumpida` (pausa) y `fuera`, los toques fuera del objetivo, con `t_ms` respecto de la aparición (o del inicio de la espera si `antes` es verdadero), `x` e `y`. |
+| `modo_fase` | Modo de fase de la sesión con un niño (el de su padrón). Vacío en los bloques sueltos de la demostración y del modo experto. |
+| `fase2_version` | Solo en la fase 2: `protocolo` (dos bloques de 15, uno por modalidad) o `catalogo` (un bloque de 30 con V y AV mezclados), según la ficha de ACT-02. |
+| `fase2_sesion` | Solo en la fase 2: número de la sesión de fase 2 del niño (1 a 12), contado con las sesiones anteriores de este dispositivo. |
+| `fase2_bloque` | Solo en la fase 2: bloque del análisis, 1 (sesiones 1 a 6) o 2 (7 a 12). |
+| `fase2_primera` | Solo en la fase 2: modalidad que abrió la sesión, sorteada sin que una abra más de 2 sesiones seguidas. |
+| `plan_sesion` | Lista JSON de los bloques planeados, en orden: `actividad`, `banda`, `modalidad` (`V`, `AV` o `mixta`), `ensayos` y, en la fase 2, `mitad` o `mitades`. |
+| `pasos_sesion` | Lista JSON de los pasos de la sesión con un niño, en orden: `paso` (`rutina-inicio`, `referencia`, `bloque`, `transicion` o `rutina-cierre`), `inicio_ms` y `fin_ms` desde el inicio de la sesión y, según el paso, `bloque`, `actividad`, `modalidad` o `siguiente`. |
+| `ordenes_terapeuta` | Lista JSON de las órdenes del menú del terapeuta: `hora` (ISO 8601, solo para identificarla), `ms` desde el inicio de la sesión, `accion` (`pausar`, `reanudar`, `terminar_bloque`, `terminar_sesion`, `fijar_banda`, `desactivar_adaptacion`, `reactivar_adaptacion`, `anular_cambio_banda` o `episodio_desregulacion`), `detalle` (el motivo, o el cambio de banda `{actividad, de, a}`), `bloqueada` (el invariante que la bloqueó, por ejemplo `INV-7`, o vacío), y el estado en ese momento: `bloque` (0 en la referencia; vacío en las rutinas), `ensayo`, `modo`, `banda` y `adaptacion`. |
+| `limite_15_min` | `true` si la sesión llegó a los 15 minutos de uso (INV-8). |
+| `bloques_omitidos` | Lista JSON de los bloques planeados que no se hicieron, con `actividad`, `modalidad` y `motivo`: `limite_15_min` o `sesion_terminada` (desde el menú). |
+| `duracion_uso_ms` | Tiempo de uso de la sesión con un niño, de la rutina de inicio al fin de la rutina de cierre. |
+| `participacion` | Valoración de participación del terapeuta, de 1 a 5 (H2.6). Vacía hasta registrarla. |
+| `episodios_confirmados` | Lista JSON de los episodios marcados con el menú: `hora`, `ms`, `bloque`, `ensayo` y `confirmado` (`true` si el terapeuta lo confirmó al cerrar). |
+| `episodios_no_marcados` | Episodios de desregulación que el terapeuta no marcó durante la sesión (0 o más). |
+| `eventos_adversos` | Lista JSON de eventos: `hora` (HH:MM), `descripcion` (hasta 120 caracteres, sin datos personales), `actividad` (o `fuera` si ocurrió en las 24 horas siguientes), `banda`, `duracion_min`, `medidas`, `gravedad` (`leve`, `moderado` o `grave`) y `relacion` (`no_relacionado`, `improbable`, `posible` o `probable`). |
+| `consulto_panel` | Solo en la fase 3: `true` o `false`. |
+| `decision_informada` | Solo en la fase 3: `true` si la información del panel contribuyó a alguna decisión. |
+| `tipo_decision` | Solo en la fase 3 y con decisión: `ajustar el objetivo`, `cambiar el material`, `cambiar el nivel de apoyo`, `cambiar la duración de la actividad`, `comentar con la familia` u `otra`. |
+| `registros_completos` | En la sesión con un niño: `false` desde que empieza hasta que se guardan los registros completos; `true` después. Vacío en las demostraciones y el modo experto. |
+| `registros_hora` | Fecha y hora (ISO 8601) del último guardado de los registros, completos o no. |
+| `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 
 ## Banco de ítems
 
@@ -693,7 +761,6 @@ Notas:
   - el color típico de ACT-01 B1;
   - los conceptos `short` y `camión`.
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
-- **Fase 2 de ACT-02:** los 15 ensayos en V y 15 en AV de un mismo bloque, por mitad, todavía no están implementados como modalidad mixta.
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
 - **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.

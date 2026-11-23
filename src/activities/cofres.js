@@ -196,7 +196,11 @@ const pct = (p) => `${Math.round(p * 100)} %`;
 export function galeriaHTML(it) {
   const nombre = (c) => COLOR[c].nombre;
   const otro = it.favorableInicial === 'a' ? 'b' : 'a';
-  const cambio = it.inversion ? ` Desde el ensayo ${it.inversion}, el que más premia es el ${nombre(otro)}.` : '';
+  const cambio = it.inversion
+    ? ` Desde el ensayo ${it.inversion}, el que más premia es el ${nombre(otro)}.`
+    : it.cambiaAlEmpezar
+      ? ` Es el segundo bloque del programa de 80 elecciones: empieza después del cambio de ventaja (elección ${it.ensayos[0].eleccion}).`
+      : '';
   const marcas = it.ensayos
     .map((e) => {
       const c = e.opciones.find((o) => o.premio).cofre;
@@ -219,4 +223,4 @@ export function previa(it) {
 
 export const consignaTexto = () => 'Dos cofres';
 export const notaPrevia = (ficha, banda) =>
-  `El cofre que más premia tiene la estrella el ${pct(banda.probabilidad)} de las veces${banda.inversion ? '; a la mitad del bloque, la ventaja pasa al otro cofre, sin aviso' : ''}.`;
+  `El cofre que más premia tiene la estrella el ${pct(banda.probabilidad)} de las veces${banda.inversion ? `; en las 80 elecciones de dos bloques de esta banda, la ventaja pasa al otro cofre una vez, en la elección ${ficha.juntarBloques?.inversionEnEleccion ?? 41}, sin aviso` : ''}.`;

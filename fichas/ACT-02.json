@@ -5,6 +5,11 @@
   "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
   "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
   "fases": "1, 2, 3 y cierre; 30 ensayos (en la fase 2, 15 en V y 15 en AV).",
+  "fase2": {
+    "version": "protocolo",
+    "alternativas": ["catalogo"],
+    "nota": "Versión de la fase 2 que usa el prototipo (decisión de Luis, 15 de noviembre): la del Protocolo 3.3, con dos bloques de 15 ensayos, uno por modalidad. La del Catálogo 5.2 (un bloque de 30 con V y AV mezclados por mitad de conceptos) queda como alternativa. Cada sesión registra cuál se usó. Las dos se describen en fichas/sesion.json."
+  },
   "tipoRespuesta": "seleccion_unica",
   "pantalla": "seleccion",
   "bandas": [

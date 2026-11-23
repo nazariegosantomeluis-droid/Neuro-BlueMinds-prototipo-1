@@ -19,6 +19,8 @@ export const COLUMNS = [
   'anticipatoria', 'fuera_de_tarea', 'fuera_de_tarea_provisional', 'peso_calidad',
   // Al final, para que las columnas del piloto no cambien de lugar. Solo la llena ACT-09.
   't_muestra_fin',
+  // Tanda 3: en la fase 2, la mitad de conceptos (A o B) del ítem de ACT-02.
+  'mitad_fase2',
 ];
 
 // Una fila por sesión (sesiones.csv).
@@ -27,6 +29,23 @@ export const SESION_COLUMNS = [
   'terminada_antes', 'motivo_terminacion', 'nota_terminacion', 'nivel_apoyo',
   'frecuencia_hz', 'proporcion_periodo_lento', 'advertencia_frecuencia',
   'referencia_motora_ms', 'referencia_motora_n', 'referencia_motora_anticipados', 'referencia_motora_toques',
+  // Tanda 3 (H2.3): modo de fase de la sesión y, en la fase 2, versión, número de sesión, bloque del
+  // análisis y modalidad que abrió. plan_sesion: los bloques planeados, en orden.
+  'modo_fase', 'fase2_version', 'fase2_sesion', 'fase2_bloque', 'fase2_primera', 'plan_sesion',
+  // Catálogo 7.1: cada paso de la sesión (rutinas, referencia, bloques y transiciones) con su inicio
+  // y su fin en ms desde el inicio de la sesión.
+  'pasos_sesion',
+  // H2.4: cada orden del menú del terapeuta con su hora y el estado de la sesión.
+  'ordenes_terapeuta',
+  // H2.5 (INV-8): si se llegó a los 15 minutos, los bloques planeados que no se hicieron y el
+  // tiempo de uso de la sesión con un niño.
+  'limite_15_min', 'bloques_omitidos', 'duracion_uso_ms',
+  // H2.6: registros del terapeuta al cerrar (Arquitectura 8.4; Protocolo 5.4 y 8). La sesión con un
+  // niño queda incompleta (registros_completos false) hasta que se guardan.
+  'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
+  'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
+  // H2.7: tema de imágenes de la sesión (también en cada ensayo).
+  'tema_imagenes',
 ];
 
 const KEY = 'neuro-blueminds.registro';

@@ -116,3 +116,12 @@ test('el resumen cuenta las elecciones de la banda en la sesión, con los bloque
   assert.match(app, /const previas = log\.rows\(\)\.filter\(\(r\) => r\.sesion_id === s\.id && r\.actividad === ficha\.id && r\.banda === banda\.id\);/);
   assert.match(app, /lineasDelBloque\(rows, ficha, pantalla, byCode, \{ cambio, previas \}\)/);
 });
+
+test('la mecánica, la vista previa y la galería describen una sola inversión, en la elección 41', () => {
+  assert.doesNotMatch(JSON.stringify(ficha), /a la mitad del bloque/);
+  assert.match(ficha.mecanica, /una sola vez, en la elección 41/);
+  const b3 = ficha.bandas.find((b) => b.id === 'B3');
+  assert.match(cofres.notaPrevia(ficha, b3), /la ventaja pasa al otro cofre una vez, en la elección 41, sin aviso\.$/);
+  const segundo = deBanda('B3').find((p) => p.parte === 2);
+  assert.match(cofres.galeriaHTML(segundo), /empieza después del cambio de ventaja \(elección 41\)/);
+});

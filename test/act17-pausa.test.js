@@ -26,10 +26,11 @@ test('solo se permite en una sesión en modo experto y fuera de los bloques del 
 
 test('el panel de pausa, la página «Pausa guiada» y el inicio usan la misma regla', () => {
   const app = leer('src/app.js');
-  // Panel de pausa: solo si está permitida, nunca en la referencia motora.
-  assert.match(app, /\$\{state\.pausa && !enReferencia && pausaGuiadaPermitida\(\{ sesion, ficha \}\) \? pausaOpcionesHTML\(true\) : ''\}/);
-  assert.match(app, /await pausePanel\(wrap, false, \{ sesion: s, ficha \}\)/);
-  assert.match(app, /await pausePanel\(wrap, true\)/);
+  // Menú del terapeuta: solo si está permitida, nunca en la referencia motora ni en las rutinas.
+  assert.match(app, /\$\{state\.pausa && !enReferencia && pausaGuiadaPermitida\(\{ sesion: s, ficha \}\) \? pausaOpcionesHTML\(true\) : ''\}/);
+  assert.match(app, /await abrirMenu\(wrap, \{ s, ficha, ensayo \}\)/);
+  assert.match(app, /await abrirMenu\(wrap, \{ s, enReferencia: true, ensayo: aparicion \}\)/);
+  assert.match(app, /abrirMenu\(wrap, \{ s, enRutina: true \}\)/);
   // Página #pausa: sin permiso, solo el aviso y ningún botón.
   assert.match(app, /const permitida = pausaGuiadaPermitida\(\{ sesion: state\.session \}\);/);
   assert.match(app, /: `<p class="aviso" role="status">\$\{esc\(PAUSA_SOLO_EXPERTO\)\}<\/p>`/);

@@ -12,9 +12,16 @@ test('terminar el bloque antes de tiempo exige un motivo de la lista; continuar 
   assert.equal(faltaMotivo('continuar', ''), false);
 });
 
-test('el panel de pausa no deja terminar sin motivo', () => {
-  const app = src('app.js');
-  assert.match(app, /faltaMotivo\(b\.dataset\.r, valor\('motivo'\)\)[\s\S]*?return;[\s\S]*?capa\.remove\(\)/);
+test('el menú del terapeuta no deja terminar sin motivo', async () => {
+  const { crearMenu } = await import('../src/menu-terapeuta.js');
+  const menu = crearMenu({});
+  for (const control of ['terminar-bloque', 'terminar-sesion']) {
+    const r = menu.tocar(control);
+    assert.equal(r.cerrar, undefined, control);
+    assert.equal(r.mensaje, 'Elige el motivo para terminar.');
+  }
+  // El menú solo se cierra desde la máquina de estados, cuando devuelve «cerrar».
+  assert.match(src('app.js'), /if \(res\.cerrar\) \{\n\s+capa\.remove\(\);/);
 });
 
 test('la galería tiene el contenedor del botón F3 y el botón se ancla a él', () => {

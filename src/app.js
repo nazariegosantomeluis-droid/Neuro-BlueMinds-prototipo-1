@@ -21,17 +21,25 @@ import { renderF3 } from './f3.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { CLAVE_MODO_EXPERTO, fijarModoExperto, leerModoExperto, modoExpertoActivo } from './modo-experto.js';
-import { MOTIVOS_TERMINACION, MOTIVO_OBLIGATORIO_MSG, faltaMotivo } from './terminacion.js';
+import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-terapeuta.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
+import { modoDe } from './ninos.js';
+import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
+import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
+import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
+import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
 
 // Las actividades y el módulo que dibuja cada pantalla están en catalogo.js. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
 const PICTO_FIN = 'assets/picto/terminar.png';
+// INV-8 (Arquitectura 7.4): al llegar a 15 minutos de uso no empieza un bloque nuevo.
+const LIMITE_MSG = 'Se llegaron a los 15 minutos de uso de la sesión: se propone terminarla. No se puede empezar otro bloque (INV-8).';
 const NIVELES_APOYO = ['ninguno', 'verbal', 'gestual', 'físico'];
+const MODO_NOMBRE = { familiarizacion: 'Familiarización', fase1: 'Fase 1', fase2: 'Fase 2', fase3: 'Fase 3', cierre: 'Cierre' };
 
 const ICONO_PAUSA =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
@@ -131,6 +139,18 @@ async function init() {
   } catch {
     state.problemas.items = ['No se pudo cargar el banco de ítems (items/items.json, items/conceptos.json o items/revision.json).'];
   }
+  // Estructura de la sesión con un niño (Catálogo 7.1, Arquitectura 14): sin ella solo hay bloques sueltos.
+  try {
+    state.sesion = await (await fetch('fichas/sesion.json')).json();
+  } catch {
+    state.problemas.sesion = ['No se pudo cargar la estructura de la sesión (fichas/sesion.json).'];
+  }
+  // Temas de imágenes (Arquitectura 4.8): sin el archivo, todas las sesiones usan «general».
+  try {
+    state.temas = await (await fetch('fichas/temas.json')).json();
+  } catch {
+    state.temas = null;
+  }
   // El banco de las actividades de uso posterior va aparte: si falta, el piloto sigue funcionando.
   try {
     state.items = [...state.items, ...(await (await fetch('items/items-posteriores.json')).json()).items];
@@ -173,11 +193,11 @@ function route() {
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
-  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro });
+  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro, completarRegistros: (id) => renderRegistros(id, { volver: 'sesiones' }) });
   else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
-  else if (ruta === 'ninos') renderNinos(app, { ninos });
+  else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -216,6 +236,8 @@ const renderInicio = (msg = '') =>
       bindVolumen,
       cerrarSesion,
       empezar: start,
+      empezarSesion,
+      historialFase2: (codigo) => historialFase2(sesiones.rows(), codigo),
       desbloquearAudio: () => audio.unlock(),
     },
     msg,
@@ -334,45 +356,17 @@ async function start(form) {
   if (!state.session && p.tipo === 'nino' && !(await confirmarNino(app, p.nino))) return renderInicio();
   // La sesión empieza con su primer bloque; hasta entonces no existe.
   const s = state.session ?? newSession(p, valor);
-  const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
-  const usados = (s.usados[ficha.id] ??= new Set());
-  const repeat = ficha.repetirItems !== false;
-  // Los ítems retirados en la revisión clínica no entran en las sesiones.
-  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
-  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
-  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
-  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
-  bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === f.modalidad);
-  let picked;
-  try {
-    if (pantalla.elegir) {
-      // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
-      // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
-      // previas: lo ya registrado de esta actividad y banda en la sesión (ACT-12 junta bloques).
-      const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
-      picked = pantalla.elegir(bandItems, n, rand, { ficha, banda, repeat, previas });
-    } else if (banda.composicion) {
-      // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
-      s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
-      picked = pickComposed(bandItems, banda.composicion, s.orden[ficha.id], rand);
-    } else if (ficha.estratificarPor === 'emocion') {
-      picked = elegirPorEmocion(bandItems, n, rand);
-    } else {
-      picked = pickItems(bandItems, n, rand, { repeat, exclude: repeat ? new Set() : usados });
-    }
-  } catch (e) {
-    return renderInicio(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
+  // INV-8: al llegar a 15 minutos de uso no empieza un bloque nuevo.
+  if (state.session && s.inicioMs !== undefined && limiteAlcanzado(s.inicioMs, performance.now(), state.sesion?.limiteMinutos ?? 15)) {
+    return renderInicio(LIMITE_MSG);
   }
-  const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
-  // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
-  const todos = pantalla.toTrials(picked, { ficha, banda, pareja, modalidad: f.modalidad });
-  const trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
+  let preparado;
   try {
-    const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
-    await preloadImages([PICTO_FIN, ...srcs]);
+    preparado = await prepararBloque({ ficha, banda, modalidad: f.modalidad, n, s });
   } catch (e) {
     return renderInicio(e.message);
   }
+  const { trials, usados } = preparado;
   if (f.modalidad === 'AV' && !(await audio.available(trials.map((t) => t.consigna.audio)))) {
     return renderInicio(NO_AUDIO_MSG);
   }
@@ -388,6 +382,7 @@ async function start(form) {
   history.replaceState(null, '', '#inicio'); // al terminar el bloque se vuelve al inicio
   if (!state.session) {
     state.session = s;
+    s.inicioMs = performance.now(); // reloj del límite de 15 minutos (INV-8)
     prefs.set('nbm.sesiones', String(s.numero + 1));
     // Fecha y hora (ISO 8601 en UTC, con «Z») solo para identificar la sesión; las duraciones
     // se miden con performance.now().
@@ -409,6 +404,233 @@ async function start(form) {
   }
   s.bloque++;
   await runBlock({ ficha, banda, modalidad: f.modalidad, trials, s, usados, pantalla, periodo });
+}
+
+// ---------- Sesión con un niño (H2.3 y Catálogo 7.1) ----------
+
+// Con un niño, la sesión sigue un plan fijo según su modo de fase: referencia motora, ACT-02 y
+// ACT-07 (en la familiarización, antes ACT-01). Todos los bloques se preparan antes de empezar, para
+// que la sesión no se detenga entre uno y otro. El adulto no elige actividad, banda ni modalidad.
+async function empezarSesion(form) {
+  state.form = { ...state.form, ...Object.fromEntries(new FormData(form)) };
+  const cfg = state.sesion;
+  if (!cfg) return renderInicio(state.problemas.sesion?.[0] ?? 'Falta la estructura de la sesión.');
+  const p = participante(state.form.participante, false, ninos.rows());
+  if (p.error) return renderInicio(p.error);
+  if (p.tipo !== 'nino') return renderInicio('La sesión completa es solo con un niño inscrito.');
+  if (!(await confirmarNino(app, p.nino))) return renderInicio();
+  const modo = modoDe(p.nino);
+  const s = Object.assign(newSession(p, state.form.participante), { modo, tema: temaPorId(state.temas, state.form.tema)?.id ?? TEMA_GENERAL });
+  // Fase 2: número de sesión, bloque del análisis y modalidad que abre (sorteada, Protocolo 3.3).
+  let fase2 = null;
+  if (modo === 'fase2') {
+    const previas = historialFase2(sesiones.rows(), p.codigo);
+    const version = state.fichas[cfg.fase2.actividad]?.fase2?.version ?? 'protocolo';
+    const primera = primeraModalidadFase2(previas, rng(seedOf(`${s.id}:fase2`)), cfg.fase2.maxSeguidasMismaModalidad);
+    fase2 = { version, numero: previas.length + 1, primera };
+  }
+  let plan;
+  try {
+    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2 });
+  } catch (e) {
+    return renderInicio(e.message);
+  }
+  const bloques = [];
+  try {
+    for (const [k, paso] of plan.filter((x) => x.tipo === 'bloque').entries()) {
+      const ficha = state.fichas[paso.actividad];
+      const banda = ficha.bandas.find((b) => b.id === paso.banda);
+      s.bloque = k; // semilla de cada bloque, como en los bloques sueltos
+      const preparado = await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayos, s, mitad: paso.mitad ?? null, mitades: paso.mitades ?? null });
+      bloques.push({ paso, ficha, banda, ...preparado });
+    }
+  } catch (e) {
+    return renderInicio(e.message);
+  } finally {
+    s.bloque = 0;
+  }
+  const conAudio = bloques.flatMap((b) => b.trials.filter((t) => (t.modalidad ?? b.paso.modalidad) === 'AV').map((t) => t.consigna.audio));
+  if (conAudio.length && !(await audio.available(conAudio))) return renderInicio(NO_AUDIO_MSG);
+  for (const b of bloques) {
+    const ajuste = avisoDeAjuste(b.ficha, b.banda);
+    if (ajuste && !(await confirmarPantalla(ajuste))) return renderInicio();
+  }
+  const { periodo, advertencia } = await comprobarFrecuencia(app);
+  history.replaceState(null, '', '#inicio');
+  state.session = s;
+  s.inicioMs = performance.now();
+  prefs.set('nbm.sesiones', String(s.numero + 1));
+  sesiones.add({
+    sesion_id: s.id, codigo_nino: s.codigo, dispositivo: dispositivo(), inicio: new Date().toISOString(),
+    ensayos: 0, pausas: [], terminada_antes: false, nivel_apoyo: [], advertencia_frecuencia: Boolean(advertencia),
+    modo_fase: modo,
+    fase2_version: fase2?.version ?? null,
+    fase2_sesion: fase2?.numero ?? null,
+    fase2_bloque: fase2 ? bloqueFase2(fase2.numero, cfg.fase2.sesionesPorBloque) : null,
+    fase2_primera: fase2?.primera ?? null,
+    registros_completos: false,
+    tema_imagenes: s.tema,
+    plan_sesion: bloques.map(({ paso }) => ({ actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) })),
+  });
+  const resultados = [];
+  let terminar = false;
+  let k = 0;
+  // Cada paso queda en pasos_sesion con su inicio y su fin, en ms desde el inicio de la sesión.
+  const pasos = [];
+  const marca = (tipo, extra = {}) => {
+    const p = { paso: tipo, ...extra, inicio_ms: performance.now() - s.inicioMs, fin_ms: null };
+    pasos.push(p);
+    return () => {
+      p.fin_ms = performance.now() - s.inicioMs;
+      editSesion(s.id, (r) => (r.pasos_sesion = pasos));
+    };
+  };
+  const omitidos = [];
+  for (const paso of plan) {
+    // INV-8: al llegar a los 15 minutos de uso, no empieza otro bloque; la sesión va al cierre.
+    const decision = decidirPaso(paso, { usoMs: performance.now() - s.inicioMs, limiteMinutos: cfg.limiteMinutos, terminada: terminar });
+    if (decision !== 'ejecutar') {
+      if (paso.tipo === 'bloque') {
+        k++;
+        omitidos.push({ actividad: paso.actividad, modalidad: paso.modalidad, motivo: decision === 'limite' ? 'limite_15_min' : 'sesion_terminada' });
+      }
+      if (decision === 'limite') {
+        s.limiteAlcanzado = true;
+        editSesion(s.id, (r) => (r.limite_15_min = true));
+      }
+      continue;
+    }
+    if (paso.tipo === 'rutina-inicio') {
+      const fin = marca('rutina-inicio');
+      if ((await mostrarRutina(rutinaInicioHTML(paso.actividades, PICTO_FIN), cfg.rutinaInicioMs, s)) === 'terminar') terminar = true;
+      fin();
+    } else if (paso.tipo === 'transicion') {
+      const fin = marca('transicion', { siguiente: paso.siguiente });
+      if ((await mostrarRutina(transicionHTML(paso.siguiente), cfg.transicionMs, s)) === 'terminar') terminar = true;
+      fin();
+    } else if (paso.tipo === 'rutina-cierre') {
+      // Igual en todas las sesiones e independiente del desempeño (Catálogo 7.1).
+      const fin = marca('rutina-cierre');
+      await mostrarRutina(cierreHTML(PICTO_FIN), cfg.rutinaCierreMs);
+      fin();
+    } else if (paso.tipo === 'referencia') {
+      const fin = marca('referencia');
+      s.referenciaHecha = true;
+      const ref = await ejecutarReferencia(s, periodo);
+      fin();
+      if (ref.terminada) terminar = true;
+    } else if (paso.tipo === 'bloque') {
+      const b = bloques[k++];
+      // Si el terapeuta fijó otra banda desde el menú (fase 3 o familiarización), el bloque se arma
+      // de nuevo en esa banda.
+      const fijada = s.bandaFijada?.[paso.actividad];
+      if (fijada && fijada !== b.banda.id) {
+        try {
+          const banda = b.ficha.bandas.find((x) => x.id === fijada);
+          Object.assign(b, { banda, ...(await prepararBloque({ ficha: b.ficha, banda, modalidad: paso.modalidad, n: paso.ensayos, s, mitad: paso.mitad ?? null, mitades: paso.mitades ?? null })) });
+        } catch {
+          // Sin ítems en esa banda: el bloque sigue en la planeada.
+        }
+      }
+      s.bloque++;
+      s.bandaActual = b.banda.id;
+      const finBloque = marca('bloque', { bloque: s.bloque, actividad: paso.actividad, modalidad: paso.modalidad, banda: b.banda.id });
+      const r = await ejecutarBloque({ ficha: b.ficha, banda: b.banda, modalidad: paso.modalidad, trials: b.trials, s, usados: b.usados, pantalla: b.pantalla, periodo });
+      finBloque();
+      if (r.error) {
+        terminar = true;
+        continue;
+      }
+      resultados.push(r.last);
+      if (r.terminarSesion) terminar = true;
+    }
+  }
+  editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
+  state.ultimaSesion = { s, resultados };
+  // Después del cierre, el adulto toca dos veces la esquina para ver el resumen.
+  app.innerHTML = `
+    <div class="nino">
+      ${cierreHTML(PICTO_FIN).replace(' rutina-aparece', '')}
+      <button type="button" class="esquina" id="adulto" aria-label="Resumen para el adulto: tocar dos veces">${ICONO_ADULTO}</button>
+    </div>`;
+  twoTaps(app.querySelector('#adulto'), renderResumenSesion);
+}
+
+// Pantalla del niño con una rutina o una transición, el tiempo fijado. Sin texto.
+// Con s, la esquina abre el menú del terapeuta; si se abre, la rutina espera a que se cierre.
+// Devuelve 'terminar' si desde el menú se terminó la sesión.
+async function mostrarRutina(html, ms, s = null) {
+  app.innerHTML = `<div class="nino">${html}${s ? `<button type="button" class="esquina" id="pausa" aria-label="Menú del terapeuta: mantener pulsado">${ICONO_PAUSA}</button>` : ''}</div>`;
+  const wrap = app.firstElementChild;
+  state.running = true;
+  // El cierre aparece con su transición en el cuadro siguiente.
+  requestAnimationFrame(() => requestAnimationFrame(() => app.querySelector('.rutina-aparece')?.classList.add('visible')));
+  let menu = null;
+  if (s) mantenerPulsado(wrap.querySelector('#pausa'), () => (menu ??= abrirMenu(wrap, { s, enRutina: true })));
+  await new Promise((r) => setTimeout(r, ms));
+  const res = menu ? await menu : null;
+  state.running = false;
+  if (res?.accion === 'terminar') {
+    s.terminarSesion = true;
+    editSesion(s.id, (r) => Object.assign(r, { terminada_antes: true, motivo_terminacion: res.motivo || null, nota_terminacion: res.nota || null }));
+    return 'terminar';
+  }
+  return 'continuar';
+}
+
+// Arma los ensayos de un bloque: elige los ítems de la banda y carga sus imágenes. Lanza un error con
+// un mensaje para el adulto si no se puede. mitad: en la fase 2, solo los conceptos de esa mitad.
+// mitades: en la versión del Catálogo 5.2, la mitad de cada modalidad ({ V: 'A', AV: 'B' }): la
+// mitad de los ensayos va en V y la otra en AV, en orden al azar.
+async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mitades = null }) {
+  const pantalla = PANTALLAS[ficha.pantalla];
+  const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
+  const usados = (s.usados[ficha.id] ??= new Set());
+  const repeat = ficha.repetirItems !== false;
+  // Los ítems retirados en la revisión clínica no entran en las sesiones.
+  let bandItems = state.items.filter((i) => i.actividad === ficha.id && i.banda === banda.id && disponibleEnSesion(i));
+  // Juego de cajas de la sesión (ACT-06): alterna entre sesiones, como las parejas de ACT-07.
+  if (banda.juegos) bandItems = bandItems.filter((i) => i.juego === juegoDeSesion(banda, s.numero));
+  // Algunos ítems son de una sola modalidad (ACT-10: historias en V, instrucciones habladas en AV).
+  if (modalidad !== 'mixta') bandItems = bandItems.filter((i) => !i.modalidad || i.modalidad === modalidad);
+  const elegir = (deItems, cuantos) => {
+    try {
+      if (pantalla.elegir) {
+        // La pantalla arma el bloque a su manera: un programa de premios (ACT-12), una serie de
+        // presentaciones (ACT-13) o n secuencias completas (ACT-10 y ACT-16).
+        // previas: lo ya registrado de esta actividad y banda en la sesión (ACT-12 junta bloques).
+        const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
+        return pantalla.elegir(deItems, cuantos, rand, { ficha, banda, repeat, previas });
+      }
+      if (banda.composicion) {
+        // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
+        s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
+        return pickComposed(deItems, banda.composicion, s.orden[ficha.id], rand);
+      }
+      if (ficha.estratificarPor === 'emocion') return elegirPorEmocion(deItems, cuantos, rand);
+      return pickItems(deItems, cuantos, rand, { repeat, exclude: repeat ? new Set() : usados });
+    } catch (e) {
+      throw new Error(`${e.message} Elige menos ensayos o termina la sesión para empezar una nueva.`);
+    }
+  };
+  const pareja = ficha.parejas?.[s.numero % ficha.parejas.length];
+  let trials;
+  if (mitades) {
+    // Fase 2, versión del Catálogo 5.2: cada modalidad con su mitad de conceptos, mezcladas al azar.
+    const mitadN = Math.floor(n / 2);
+    const de = (m, cuantos) =>
+      pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitades[m]), cuantos), { ficha, banda, pareja, modalidad: m }).map((t) => ({ ...t, modalidad: m }));
+    trials = shuffle([...de('V', mitadN), ...de('AV', n - mitadN)], rand);
+  } else {
+    // En las actividades por secuencias, n cuenta secuencias completas y cada paso es un ensayo.
+    const todos = pantalla.toTrials(elegir(itemsDeMitad(bandItems, mitad), n), { ficha, banda, pareja, modalidad });
+    trials = ficha.unidadDelBloque === 'secuencia' ? todos : todos.slice(0, n);
+  }
+  // El tema de la sesión solo cambia las imágenes (Arquitectura 4.8).
+  trials = aplicarTema(trials, temaPorId(state.temas, s.tema));
+  const srcs = trials.flatMap((t) => [t.consigna.src, ...t.opciones.map((o) => o.src), ...(t.imagenes ?? [])]).filter(Boolean);
+  await preloadImages([PICTO_FIN, ...srcs]);
+  return { trials, usados, pantalla };
 }
 
 // Aviso antes del bloque: las opciones no caben en esta pantalla a su tamaño mínimo.
@@ -454,7 +676,7 @@ function montarNino({ experto = false, claseStage = '' } = {}) {
   app.innerHTML = `
     <div class="nino">
       <div class="stage ${claseStage}" id="stage"></div>
-      <button type="button" class="esquina" id="pausa" aria-label="Pausa: tocar dos veces">${ICONO_PAUSA}</button>
+      <button type="button" class="esquina" id="pausa" aria-label="Menú del terapeuta: mantener pulsado">${ICONO_PAUSA}</button>
       ${experto ? '<p class="codigo-item" id="codigo-item"></p><button type="button" class="siguiente" id="siguiente">Siguiente</button>' : ''}
     </div>`;
   const wrap = app.firstElementChild;
@@ -472,11 +694,12 @@ async function ejecutarReferencia(s, periodo) {
     view: referencia.createView(stage),
     onPause: async (aparicion) => {
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, true);
+      const { accion, motivo, nota, guiada_ms } = await abrirMenu(wrap, { s, enReferencia: true, ensayo: aparicion });
       editSesion(s.id, (r) => {
         r.pausas.push({ bloque: 0, ensayo: aparicion, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
         if (accion === 'terminar') Object.assign(r, { terminada_antes: true, motivo_terminacion: motivo || null, nota_terminacion: nota || null });
       });
+      if (accion === 'terminar') s.terminarSesion = true;
       return accion;
     },
   });
@@ -485,7 +708,7 @@ async function ejecutarReferencia(s, periodo) {
     const objetivo = e.target.closest('[data-pos]');
     ref.pointer({ t: eventTime(e), x: Math.round(e.clientX), y: Math.round(e.clientY), pos: objetivo ? Number(objetivo.dataset.pos) : null });
   });
-  twoTaps(wrap.querySelector('#pausa'), () => ref.pause());
+  mantenerPulsado(wrap.querySelector('#pausa'), () => ref.pause());
   try {
     const { terminada, ...resumen } = await ref.done;
     editSesion(s.id, (r) => Object.assign(r, resumen));
@@ -496,7 +719,18 @@ async function ejecutarReferencia(s, periodo) {
   }
 }
 
-async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usados, pantalla, periodo }) {
+// Bloque suelto (demostración y modo experto): al terminar, el fin de bloque y su resumen.
+async function runBlock(opciones) {
+  const r = await ejecutarBloque(opciones);
+  if (r.error) return renderInicio(r.error);
+  state.last = r.last;
+  renderFin();
+  // Si desde el menú se terminó la sesión, el resumen ya no ofrece otro bloque.
+}
+
+// Ejecuta un bloque y devuelve { rows, last } o { error }. extra: campos del registro que dependen
+// de la sesión con niño (por ejemplo, la mitad de conceptos de la fase 2).
+async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s, usados, pantalla, periodo }) {
   const banda = bandaDeFicha.id;
   const { wrap, stage } = montarNino({ experto: s.experto });
   state.running = true;
@@ -513,12 +747,14 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
     view,
     log,
     // latencia_dispositivo_ms queda vacía hasta medir cada tableta.
-    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP, modo_fase: 'prototipo', tema_imagenes: 'general' },
+    // modo_fase: el del niño en las sesiones con niño; «prototipo» en las de demostración y modo experto.
+    base: { sesion_id: s.id, bloque: s.bloque, codigo_nino: s.codigo, dispositivo: dispositivo(), banda, version_app: VERSION_APP, modo_fase: s.modo ?? 'prototipo', tema_imagenes: s.tema ?? 'general' },
     rand: rng(seedOf(`${s.id}:${s.bloque}:posiciones`)),
     onPause: async () => {
       view.clear();
       const t0 = performance.now();
-      const { accion, motivo, nota, guiada_ms } = await pausePanel(wrap, false, { sesion: s, ficha });
+      const { accion, alcance, motivo, nota, guiada_ms } = await abrirMenu(wrap, { s, ficha, ensayo });
+      if (accion === 'terminar' && alcance === 'sesion') s.terminarSesion = true;
       editSesion(s.id, (r) => {
         // De la pausa guiada solo se registra que ocurrió y cuánto duró.
         r.pausas.push({ bloque: s.bloque, ensayo, duracion_ms: performance.now() - t0, ...(guiada_ms ? { pausa_guiada_ms: guiada_ms } : {}) });
@@ -542,16 +778,27 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
     const opcion = e.target.closest('[data-pos]');
     block.pointer({ t: eventTime(e), x: Math.round(e.clientX), y: Math.round(e.clientY), pos: opcion ? Number(opcion.dataset.pos) : null });
   });
-  twoTaps(wrap.querySelector('#pausa'), () => block.pause());
+  mantenerPulsado(wrap.querySelector('#pausa'), () => block.pause());
 
   let rows;
   try {
     rows = await block.done;
   } catch (e) {
-    return renderInicio(e.message);
+    return { error: e.message };
   } finally {
     state.running = false;
     wake?.release().catch(() => {});
+  }
+  // INV-8: si el bloque terminó después de los 15 minutos de uso, ya no empieza otro.
+  if (s.inicioMs !== undefined && limiteAlcanzado(s.inicioMs, performance.now(), state.sesion?.limiteMinutos ?? 15)) {
+    s.limiteAlcanzado = true;
+    editSesion(s.id, (r) => (r.limite_15_min = true));
+  }
+  // Fase 2: la mitad de conceptos de cada ensayo (Protocolo 3.3, Catálogo 5.2).
+  if (s.modo === 'fase2' && ficha.id === state.sesion?.fase2.actividad) {
+    const mitad = new Map(state.items.filter((i) => i.actividad === ficha.id).map((i) => [i.codigo, i.mitad]));
+    const delBloque = new Set(rows);
+    log.edit((all) => all.filter((r) => delBloque.has(r)).forEach((r) => (r.mitad_fase2 = mitad.get(r.item) ?? null)));
   }
   const deLaSesion = log.rows().filter((r) => r.sesion_id === s.id);
   editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
@@ -561,8 +808,7 @@ async function runBlock({ ficha, banda: bandaDeFicha, modalidad, trials, s, usad
   const cambio = (r) => Boolean(byCode.get(r.item).cambio);
   const delBloque = new Set(rows);
   const previas = deLaSesion.filter((r) => !delBloque.has(r));
-  state.last = { rows, ficha, banda, modalidad, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) };
-  renderFin();
+  return { rows, terminarSesion: Boolean(s.terminarSesion), last: { rows, ficha, banda, modalidad, bloque: s.bloque, lineas: lineasDelBloque(rows, ficha, pantalla, byCode, { cambio, previas }) } };
 }
 
 // Control del adulto en una esquina: el primer toque lo arma y el segundo, antes de 3 s, lo ejecuta.
@@ -586,39 +832,63 @@ function twoTaps(button, action, ms = 3000) {
   });
 }
 
+// Menú del terapeuta (H2.4): se abre con una pulsación prolongada en la esquina y pausa la sesión.
 // enReferencia: la pausa llegó durante la referencia motora, antes de cualquier bloque.
-// La pausa guiada solo aparece en el panel si está permitida (pausa-permiso.js).
-function pausePanel(wrap, enReferencia = false, { sesion = null, ficha = null } = {}) {
+// ficha: la del bloque en curso (para fijar su banda); sin ella, el menú no ofrece la banda.
+// Devuelve { accion: 'continuar' | 'terminar', alcance: 'bloque' | 'sesion', motivo, nota, guiada_ms }.
+function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = false, ensayo = null }) {
   return new Promise((resolve) => {
+    const cfg = state.sesion;
+    const bandaActual = ficha ? (s.bandaFijada?.[ficha.id] ?? s.bandaActual ?? null) : null;
+    const menu = crearMenu({ modo: s.modo ?? null, config: cfg, actividad: ficha?.id, banda: bandaActual, adaptacion: s.adaptacion ?? Boolean(cfg?.modos?.[s.modo]?.adaptacion), cambios: s.cambiosBanda ?? [] });
+    const usoMs = s.inicioMs !== undefined ? performance.now() - s.inicioMs : null;
+    // Cada orden queda en ordenes_terapeuta con su hora y el estado de la sesión en ese momento.
+    const registrar = (orden) =>
+      editSesion(s.id, (r) => {
+        r.ordenes_terapeuta = [
+          ...(r.ordenes_terapeuta ?? []),
+          ordenRegistro(orden, {
+            hora: new Date().toISOString(),
+            ms: s.inicioMs !== undefined ? performance.now() - s.inicioMs : null,
+            bloque: enReferencia ? 0 : enRutina ? null : s.bloque,
+            ensayo,
+            modo: s.modo ?? null,
+            banda: menu.estado.banda,
+            adaptacion: menu.estado.adaptacion,
+          }),
+        ];
+      });
+    registrar({ accion: 'pausar' });
+    const minutos = (ms) => `${Math.floor(ms / 60000)} min ${String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')} s`;
+    const limite = usoMs !== null && limiteAlcanzado(0, usoMs, cfg?.limiteMinutos ?? 15);
+    if (limite) s.limiteAlcanzado = true;
     const capa = document.createElement('div');
     capa.className = 'capa';
     capa.innerHTML = `
       <div class="adulto">
-        ${tituloHTML('Sesión en pausa', enReferencia ? 'La aparición del objetivo en curso se descartó y no se repetirá.' : 'El ensayo en curso quedó registrado como interrumpido y no se repetirá.')}
+        ${tituloHTML('Menú del terapeuta', 'La sesión está en pausa.')}
         <div class="panel">
+          ${menuHTML({
+            donde: enReferencia ? 'referencia' : enRutina ? 'rutina' : 'bloque',
+            bandas: ficha && !enReferencia ? ficha.bandas.map((b) => b.id) : [],
+            banda: menu.estado.banda,
+            adaptacion: menu.estado.adaptacion,
+            hayCambios: menu.estado.cambios.length > 0,
+            uso: usoMs !== null ? minutos(usoMs) : '',
+            aviso: limite ? LIMITE_MSG : '',
+          })}
           <label for="volumen-pausa">Volumen de la voz <output data-volumen-valor>${volumen()} %</output>
             <input type="range" id="volumen-pausa" min="0" max="100" value="${volumen()}" data-volumen>
-          </label>
-          <label>Motivo (obligatorio si terminas ${enReferencia ? 'la sesión' : 'el bloque'})
-            <select name="motivo">
-              <option value="">—</option>
-              ${MOTIVOS_TERMINACION.map((m) => `<option>${esc(m)}</option>`).join('')}
-            </select>
           </label>
           <label>Nota (opcional)
             <input name="nota" maxlength="80" autocomplete="off">
             <span class="ayuda">Sin nombres ni datos personales.</span>
           </label>
-          <p class="mensaje" role="alert"></p>
-          <div class="acciones">
-            <button type="button" class="primario" data-r="continuar">Continuar</button>
-            <button type="button" data-r="terminar">${enReferencia ? 'Terminar sesión' : 'Terminar bloque'}</button>
-          </div>
-          ${state.pausa && !enReferencia && pausaGuiadaPermitida({ sesion, ficha }) ? pausaOpcionesHTML(true) : ''}
+          ${state.pausa && !enReferencia && pausaGuiadaPermitida({ sesion: s, ficha }) ? pausaOpcionesHTML(true) : ''}
         </div>
       </div>`;
     bindVolumen(capa);
-    // La pausa guiada corre encima del panel y, al terminar, regresa a él.
+    // La pausa guiada corre encima del menú y, al terminar, regresa a él.
     let guiada = 0;
     capa.querySelector('[data-guiada]')?.addEventListener('click', async () => {
       capa.hidden = true;
@@ -627,18 +897,29 @@ function pausePanel(wrap, enReferencia = false, { sesion = null, ficha = null } 
       capa.hidden = false;
       capa.querySelector('[data-guiada-estado]').textContent = `La pausa guiada duró ${Math.round(duracion_ms / 1000)} s.`;
     });
-    for (const b of capa.querySelectorAll('[data-r]')) {
-      b.onclick = () => {
-        const valor = (name) => capa.querySelector(`[name=${name}]`).value.trim();
-        if (faltaMotivo(b.dataset.r, valor('motivo'))) {
-          capa.querySelector('.mensaje').textContent = MOTIVO_OBLIGATORIO_MSG;
-          capa.querySelector('[name=motivo]').focus();
-          return;
-        }
+    const mensaje = capa.querySelector('[data-menu-mensaje]');
+    const atender = (res) => {
+      if (res.orden) registrar(res.orden);
+      // Lo que el menú cambió queda en la sesión: banda fijada, pila de cambios y adaptación.
+      s.adaptacion = menu.estado.adaptacion;
+      s.cambiosBanda = menu.estado.cambios;
+      if (ficha && menu.estado.banda && menu.estado.banda !== bandaActual) {
+        s.bandaFijada = { ...(s.bandaFijada ?? {}), [ficha.id]: menu.estado.banda };
+        state.form.banda = menu.estado.banda; // el siguiente bloque suelto empieza en esa banda
+      }
+      const anular = capa.querySelector('[data-menu=anular]');
+      if (anular) anular.disabled = menu.estado.cambios.length === 0;
+      const adaptacion = capa.querySelector('[data-menu=adaptacion]');
+      if (adaptacion) adaptacion.textContent = menu.estado.adaptacion ? 'Desactivar la adaptación' : 'Reactivar la adaptación';
+      mensaje.textContent = res.mensaje ?? '';
+      if (res.cerrar) {
         capa.remove();
-        resolve({ accion: b.dataset.r, motivo: valor('motivo'), nota: valor('nota'), guiada_ms: guiada });
-      };
-    }
+        resolve({ ...res.cerrar, nota: capa.querySelector('[name=nota]').value.trim(), guiada_ms: guiada });
+      }
+    };
+    for (const b of capa.querySelectorAll('[data-menu]')) b.onclick = () => atender(menu.tocar(b.dataset.menu));
+    for (const r of capa.querySelectorAll('[name=menu-motivo]')) r.onchange = () => atender(menu.tocar('motivo', r.value));
+    for (const r of capa.querySelectorAll('[name=menu-banda]')) r.onchange = () => atender(menu.tocar('banda', r.value));
     wrap.append(capa);
   });
 }
@@ -727,6 +1008,87 @@ function renderFin() {
   twoTaps(app.querySelector('#adulto'), renderResumen);
 }
 
+// Cierre de la sesión con un niño (H2.6): cada bloque con su resumen y su nivel de apoyo, y los
+// registros del terapeuta en la misma pantalla. También se abre desde «Sesiones» para completar
+// los registros de una sesión que quedó incompleta (entonces sin el resumen de cada bloque).
+function renderResumenSesion() {
+  const { s, resultados } = state.ultimaSesion;
+  renderRegistros(s.id, { resultados, modo: s.modo });
+}
+
+function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio' } = {}) {
+  const fila = () => sesiones.rows().find((r) => r.sesion_id === id);
+  const f = fila();
+  if (!f) return renderInicio('La sesión ya no está en el registro de este dispositivo.');
+  modo = modo ?? f.modo_fase;
+  const fase3 = Boolean(state.sesion?.modos?.[modo]?.registroDecisiones);
+  const marcados = episodiosMarcados(f.ordenes_terapeuta ?? []);
+  const actividades = [...new Set((f.plan_sesion ?? []).map((b) => b.actividad))];
+  const bandas = [...new Set(actividades.flatMap((a) => state.fichas[a]?.bandas.map((b) => b.id) ?? []))];
+  // Sin los resultados en memoria (desde «Sesiones»), los bloques salen del registro de ensayos.
+  const bloques =
+    resultados ??
+    [...new Map(log.rows().filter((r) => r.sesion_id === id).map((r) => [r.bloque, r])).values()].map((r) => ({
+      bloque: r.bloque, ficha: state.fichas[r.actividad] ?? { id: r.actividad, nombre: '' }, banda: r.banda, modalidad: r.modalidad, lineas: [],
+    }));
+  const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  app.innerHTML = `
+    <div class="adulto">
+      ${marcaHTML()}
+      ${tituloHTML(resultados ? 'Resumen de la sesión' : 'Registros de la sesión', `Sesión ${esc(id)} · ${esc(MODO_NOMBRE[modo] ?? modo ?? '')}`)}
+      ${bloques
+        .map(
+          (b) => `
+        <section class="panel">
+          <h2>Bloque ${b.bloque}: ${esc(b.ficha.id)} ${esc(b.ficha.nombre)} · banda ${esc(b.banda)} · ${esc(b.modalidad === 'mixta' ? 'V y AV' : b.modalidad)}</h2>
+          ${b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+          <fieldset class="chips">
+            <legend>Nivel de apoyo en este bloque</legend>
+            ${NIVELES_APOYO.map((n) => chipHTML(`apoyo-${b.bloque}`, n, mayuscula(n), fila()?.nivel_apoyo.find((x) => x.bloque === b.bloque)?.nivel === n)).join('')}
+          </fieldset>
+        </section>`,
+        )
+        .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
+      ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      <h2 class="registros-titulo">Registros del terapeuta</h2>
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {} })}
+    </div>`;
+  for (const r of app.querySelectorAll('[name^=apoyo-]')) {
+    const bloque = Number(r.name.slice(6));
+    r.onchange = () => editSesion(id, (x) => (x.nivel_apoyo = [...x.nivel_apoyo.filter((n) => n.bloque !== bloque), { bloque, nivel: r.value }]));
+  }
+  const form = app.querySelector('#registros');
+  const msg = form.querySelector('#registros-msg');
+  form.querySelector('#agregar-evento').onclick = () => {
+    const n = form.querySelectorAll('[data-evento]').length;
+    form.querySelector('#eventos').insertAdjacentHTML('beforeend', eventoHTML(n, { actividades, bandas }));
+    form.querySelector(`[name="ev-hora-${n}"]`).focus();
+  };
+  // Al salir se cierra la sesión (si era la de esta pantalla) y fuera_de_tarea queda definitivo.
+  const salir = () => {
+    if (state.session?.id === id) cerrarSesion();
+    if (volver === 'sesiones') route();
+    else renderInicio();
+  };
+  const guardar = (completos) => {
+    const reg = leerRegistros(datosDelFormulario(form), { marcados, fase3 });
+    if (completos) {
+      const f = faltantes(reg, { fase3 });
+      if (f.length) {
+        msg.textContent = f.join(' ');
+        return;
+      }
+    }
+    editSesion(id, (x) => Object.assign(x, filaRegistros(reg, { completos, hora: new Date().toISOString() })));
+    salir();
+  };
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    guardar(true);
+  };
+  form.querySelector('#despues').onclick = () => guardar(false);
+}
+
 function renderResumen() {
   const { ficha, banda, modalidad, lineas } = state.last;
   const s = state.session;
@@ -748,7 +1110,7 @@ function renderResumen() {
           ${NIVELES_APOYO.map((n) => chipHTML('apoyo', n, mayuscula(n), nivel === n)).join('')}
         </fieldset>
         <div class="acciones">
-          <button type="button" class="primario" id="otro">Otro bloque</button>
+          ${s.terminarSesion || s.limiteAlcanzado ? '' : '<button type="button" class="primario" id="otro">Otro bloque</button>'}
           <button type="button" id="cerrar">Terminar sesión</button>
         </div>
       </div>
@@ -760,7 +1122,8 @@ function renderResumen() {
         fila.nivel_apoyo = [...fila.nivel_apoyo.filter((n) => n.bloque !== s.bloque), { bloque: s.bloque, nivel: r.value }];
       });
   }
-  app.querySelector('#otro').onclick = () => renderInicio();
+  if (s.terminarSesion || s.limiteAlcanzado) app.querySelector('.panel .acciones').insertAdjacentHTML('beforebegin', `<p class="aviso">${esc(s.terminarSesion ? 'La sesión se terminó desde el menú del terapeuta.' : LIMITE_MSG)}</p>`);
+  app.querySelector('#otro')?.addEventListener('click', () => renderInicio());
   app.querySelector('#cerrar').onclick = () => {
     cerrarSesion();
     renderInicio();

@@ -35,3 +35,22 @@
   font-weight: 700;
   margin: 0;
 }
+
+/* Modo de fase y banda fija de cada niño. */
+.nino-fase label {
+  display: grid;
+  gap: 0.2rem;
+  font-size: var(--letra-chica);
+}
+
+.nino-bandas-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+/* En una tableta vertical, la tabla se desplaza de lado en vez de apretarse. */
+.ninos .panel:has(> .nino-tabla) {
+  overflow-x: auto;
+}

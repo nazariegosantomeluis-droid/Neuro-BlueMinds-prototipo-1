@@ -8,6 +8,7 @@ import { REF_MIN_VALIDOS } from './engine/referencia.js';
 import { nombreNino, abreviar } from './ninos.js';
 import { PANTALLAS } from './catalogo.js';
 import { esc, navHTML, tituloHTML } from './paginas.js';
+import { registrosPendientes } from './registros-terapeuta.js';
 
 
 const fechaLocal = (iso) => {
@@ -129,9 +130,11 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
         <p class="sesion-etiquetas">
           ${abierta ? '<span class="etiqueta">En curso</span>' : ''}
           ${tipo ? `<span class="etiqueta">${tipo}</span>` : ''}
+          ${!abierta && registrosPendientes(sesion) ? '<span class="etiqueta incompleta">Incompleta</span>' : ''}
         </p>
       </header>
       ${notas.length ? `<p class="meta">${esc(mayuscula(notas.join(' · ')))}.</p>` : ''}
+      ${!abierta && registrosPendientes(sesion) ? '<p class="aviso">Faltan los registros del terapeuta de esta sesión (participación, episodios y eventos adversos).</p>' : ''}
       ${
         bloques.length
           ? `<details class="sesion-detalle">
@@ -142,12 +145,13 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
           : '<p class="meta">Esta sesión no tiene ensayos guardados.</p>'
       }
       <div class="acciones">
+        ${!abierta && registrosPendientes(sesion) ? `<button type="button" class="primario" data-completar="${esc(sesion.sesion_id)}">Completar los registros</button>` : ''}
         <button type="button" data-descargar-sesion="${esc(sesion.sesion_id)}" ${rows.length ? '' : 'disabled'}>Descargar esta sesión (CSV)</button>
       </div>
     </article>`;
 }
 
-// ctx: { state, log, sesiones, padron, registroHTML, bindRegistro }
+// ctx: { state, log, sesiones, padron, registroHTML, bindRegistro, completarRegistros }
 export function renderSesiones(app, ctx) {
   const { state, log, sesiones, padron = [], registroHTML, bindRegistro } = ctx;
   const todas = [...sesiones.rows()].reverse(); // la más reciente primero
@@ -188,5 +192,6 @@ export function renderSesiones(app, ctx) {
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
   }
+  for (const b of app.querySelectorAll('[data-completar]')) b.onclick = () => ctx.completarRegistros?.(b.dataset.completar);
   bindRegistro(app, () => renderSesiones(app, ctx));
 }
