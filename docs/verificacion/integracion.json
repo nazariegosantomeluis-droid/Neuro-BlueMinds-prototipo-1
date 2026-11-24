@@ -1,0 +1,21 @@
+{
+  "fecha": "2026-11-24",
+  "sesiones": 500,
+  "ensayos": 29900,
+  "decisiones": 1233,
+  "porModo": {
+    "familiarizacion": 25,
+    "fase1": 125,
+    "fase2": 100,
+    "fase3": 200,
+    "cierre": 50
+  },
+  "vacios": 0,
+  "ejemplos": [],
+  "auditoria": {
+    "ok": true,
+    "rota_en": null,
+    "motivo": null,
+    "ultima": "5c29080ea35c98de94c82a95f9d04e2eee3ee3d6c7b1cd8289b865a8931f216d"
+  }
+}
