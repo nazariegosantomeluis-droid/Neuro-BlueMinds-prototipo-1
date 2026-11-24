@@ -27,6 +27,7 @@ import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { renderPanel } from './panel/panel-pantalla.js';
 import { crearAlmacen, abrirIDB, memoriaIDB } from './almacen.js';
+import { crearAuditoria, AUDITORIA_KEY, AUDITORIA_COLUMNS } from './auditoria.js';
 import { renderBloqueo, crearInactividad, RUTAS_SIN_DATOS } from './bloqueo.js';
 import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
@@ -37,6 +38,7 @@ import { VERSION_INDICADORES } from './indicadores/parametros.js';
 import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
 import { lineaBaseRegulacion, contextoDeRegla, proponerVentana, propuestasFinales, ventanas, ordenDeMalestar } from './adaptacion.js';
 import { crearEnvolvente, huellaDeParametros, motivoDeBloqueo } from './envolvente.js';
+import { huellaDe } from './huella.js';
 import { alertaDeSesion } from './alerta.js';
 import { utilizable } from './indicadores/nucleo.js';
 import { cargarVersion, textoVersion } from './version.js';
@@ -71,7 +73,7 @@ const almacen = crearAlmacen({
       return memoriaIDB();
     }
   })(),
-  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY],
+  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY, AUDITORIA_KEY],
 });
 const log = createLog(almacen.storage);
 // Una fila por sesión: inicio, fin, pausas, terminación anticipada y nivel de apoyo por bloque.
@@ -84,7 +86,11 @@ const editSesion = (id, fn) =>
   });
 // Padrón local de niños: solo código seudónimo, ícono, color, edad en meses y consentimiento.
 const ninos = createLog(almacen.storage, { key: NINO_KEY, columns: NINO_COLUMNS });
-const recargarRegistros = () => [log, sesiones, ninos].forEach((x) => x.recargar());
+// Registro de auditoría encadenado (H6.3; Arquitectura 10.1).
+const registroAuditoria = createLog(almacen.storage, { key: AUDITORIA_KEY, columns: AUDITORIA_COLUMNS });
+const auditoria = crearAuditoria(registroAuditoria);
+const auditar = (tipo, datos) => (almacen.desbloqueado ? auditoria.agregar(tipo, datos) : null);
+const recargarRegistros = () => [log, sesiones, ninos, registroAuditoria].forEach((x) => x.recargar());
 const audio = createAudio();
 const state = {
   catalogo: [], // las 17 actividades del Catálogo, con su estado
@@ -244,11 +250,22 @@ async function pedirPin(mensaje = '') {
     alDesbloquear: async (pin) => {
       if (!(await almacen.desbloquear(pin))) return 'PIN incorrecto.';
       recargarRegistros();
+      const cadena = auditoria.verificar();
       inactividad.tocar();
       route();
+      if (!cadena.ok) avisoAuditoria(cadena);
       return null;
     },
   });
+}
+
+// Si la cadena de auditoría no cuadra al desbloquear, se avisa (Arquitectura 10.1).
+function avisoAuditoria(cadena) {
+  const p = document.createElement('p');
+  p.className = 'aviso';
+  p.setAttribute('role', 'alert');
+  p.textContent = `El registro de auditoría de este dispositivo no cuadra desde la entrada ${cadena.rota_en}: ${cadena.motivo}. Avisa al investigador responsable.`;
+  app.prepend(p);
 }
 
 // Bloqueo tras 5 minutos sin uso del adulto; nunca con la pantalla del niño a la vista.
@@ -293,7 +310,7 @@ function route() {
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
-  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, params: new URLSearchParams(query) });
+  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, auditar, params: new URLSearchParams(query) });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -368,6 +385,7 @@ function registroHTML({ enlaceSesiones = true } = {}) {
         <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
         <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
         <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores (CSV)</button>
+        <button type="button" data-descargar="auditoria" ${registroAuditoria.rows().length ? '' : 'disabled'}>Descargar auditoría (JSON)</button>
       </div>
       <p class="meta estado" role="status"></p>
       ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
@@ -388,8 +406,13 @@ function bindRegistro(root, rerender) {
       else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
       else if (tipo === 'indicadores') {
         // Se calculan al descargar, desde el registro (con fuera_de_tarea provisional en una sesión abierta).
-        const filas = calcularIndicadores(paraExportar(log.rows(), { sinTiempos: sinTiempos() }), sesiones.rows(), { fichas: state.fichas, items: state.items });
+        const entrada = paraExportar(log.rows(), { sinTiempos: sinTiempos() });
+        const filas = calcularIndicadores(entrada, sesiones.rows(), { fichas: state.fichas, items: state.items });
+        auditar('indicadores', { sesion_id: null, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos: entrada, sesiones: sesiones.rows().map((x) => x.sesion_id) }), filas: filas.length, huella_resultado: huellaDe(filas) });
         download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(filas), 'text/csv;charset=utf-8');
+      } else if (tipo === 'auditoria') {
+        // La cadena entera, con su verificación: cualquiera puede volver a comprobarla (H6.3).
+        download((nombre = `auditoria-neuro-blueminds-${fecha}.json`), JSON.stringify({ verificacion: auditoria.verificar(), entradas: auditoria.entradas() }, null, 2), 'application/json');
       } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
@@ -398,6 +421,8 @@ function bindRegistro(root, rerender) {
   if (borrar) {
     borrar.onclick = () => {
       if (confirm('¿Borrar todo el registro guardado en este dispositivo? Descárgalo antes si lo necesitas.')) {
+        // El registro de auditoría no se borra: queda la entrada del borrado (Arquitectura 10.1).
+        auditar('borrado', { ensayos: log.rows().length, sesiones: sesiones.rows().length });
         log.clear();
         sesiones.clear();
         rerender();
@@ -607,6 +632,18 @@ async function empezarSesion(form) {
           : { actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) },
       ),
   });
+  // Auditoría (Arquitectura 10.1): inicio de sesión con todas las versiones en uso y el modo de fase.
+  auditar('inicio_sesion', {
+    sesion_id: s.id,
+    codigo_nino: s.codigo,
+    modo_fase: modo,
+    version_app: VERSION_APP,
+    version_indicadores: VERSION_INDICADORES,
+    huella_parametros: s.envolvente.huellaInicial,
+    fichas: Object.fromEntries([...new Set(plan.map((x) => x.actividad).filter(Boolean))].map((a) => [a, state.fichas[a]?.version ?? null])),
+    sesion_config: cfg.version ?? null,
+    plantillas_panel: state.plantillas?.version ?? null,
+  });
   const resultados = [];
   let terminar = false;
   let k = 0;
@@ -726,6 +763,8 @@ async function empezarSesion(form) {
   editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
   // Señales de alerta temprana (H4.4): solo se calculan y se guardan; nunca se muestran ni se usan (INV-9).
   editSesion(s.id, (r) => (r.alerta_temprana = alertaDeSesion(log.rows().filter((x) => x.sesion_id === s.id))));
+  // Cálculo de los indicadores de la sesión, a la auditoría (Arquitectura 10.1 y 10.2).
+  auditarIndicadores(s);
   // Familiarización (decisión R6): la plataforma propone la banda inicial de la fase 1 (la última
   // aprobada, B1 si ninguna) y, al cerrar la sesión, avisa si en toda la sesión hubo menos de 10
   // ensayos con respuesta sin interrumpir (decisión R6b; Protocolo 4.2, criterio 4).
@@ -746,6 +785,17 @@ async function empezarSesion(form) {
       <button type="button" class="esquina" id="adulto" aria-label="Resumen para el adulto: tocar dos veces">${ICONO_ADULTO}</button>
     </div>`;
   twoTaps(app.querySelector('#adulto'), renderResumenSesion);
+}
+
+// Auditoría (Arquitectura 10.1): los indicadores de la sesión, con la huella de los datos de entrada
+// (el registro del niño hasta esta sesión), la versión de las definiciones y el resultado.
+function auditarIndicadores(s) {
+  const delNino = sesiones.rows().filter((x) => x.codigo_nino === s.codigo && String(x.sesion_id).startsWith('S-'));
+  const hasta = delNino.slice(0, delNino.findIndex((x) => x.sesion_id === s.id) + 1);
+  const ids = new Set(hasta.map((x) => x.sesion_id));
+  const ensayos = paraExportar(log.rows(), { sinTiempos: sinTiempos() }).filter((r) => ids.has(r.sesion_id));
+  const resultado = calcularIndicadores(ensayos, hasta, { fichas: state.fichas, items: state.items }).filter((x) => x.sesion_id === s.id);
+  auditar('indicadores', { sesion_id: s.id, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos, sesiones: [...ids] }), resultado, huella_resultado: huellaDe(resultado) });
 }
 
 // Pantalla del niño con una rutina o una transición, el tiempo fijado. Sin texto.
@@ -1004,6 +1054,7 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
       adaptacion_activa: s.envolvente.estado.adaptacion,
     };
     editSesion(s.id, (r) => Object.assign(r, { adaptacion_propuestas: [...(r.adaptacion_propuestas ?? []), registro], envolvente_bloqueos: s.envolvente.estado.bloqueos.length, aviso_bloqueos: res.aviso }));
+    auditar('adaptacion', { sesion_id: s.id, bloque: s.bloque, actividad: ficha.id, ventana: registro.ventana, accion: registro.accion, banda_actual: registro.banda_actual, banda_propuesta: registro.banda_propuesta, ejecutada: registro.ejecutada, invariante: registro.invariante });
     return { ...res, cambio: res.ejecutada && res.banda !== res.desde };
   };
   const block = startBlock({
@@ -1135,6 +1186,8 @@ function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = fal
             adaptacion: menu.estado.adaptacion,
           }),
         ];
+        const o = r.ordenes_terapeuta.at(-1);
+        auditar('orden', { sesion_id: s.id, accion: o.accion, detalle: o.detalle, bloqueada: o.bloqueada, bloque: o.bloque, ensayo: o.ensayo });
       });
     registrar({ accion: 'pausar' });
     const minutos = (ms) => `${Math.floor(ms / 60000)} min ${String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')} s`;

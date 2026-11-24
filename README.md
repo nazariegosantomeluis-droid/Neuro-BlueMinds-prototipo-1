@@ -72,6 +72,7 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
 - **Desviaciones de Arquitectura por la decisión D1 (aplicación web):**
   - **La web no puede bloquear capturas de pantalla** (Arquitectura 9.3: «no permite hacer capturas de pantalla del panel»). Lo cubren el bloqueo de la tableta con código, el bloqueo por inactividad y la capacitación de los terapeutas.
   - **La llave se deriva del PIN** (Arquitectura 9.3: «la llave se guarda en el almacén seguro de llaves del sistema operativo»). El navegador no tiene acceso a ese almacén; la seguridad depende de que el PIN no sea trivial y del bloqueo de la tableta.
+- **Registro de auditoría encadenado (H6.3; Arquitectura 10.1).** `src/auditoria.js`: solo admite agregar entradas; cada una lleva la huella SHA-256 de la anterior y la suya (del JSON canónico de la entrada). Registra el inicio de cada sesión con las versiones en uso y el modo de fase, cada decisión de la regla de adaptación (ejecutada o bloqueada y el invariante), cada orden del terapeuta, cada cálculo de indicadores (huella de los datos de entrada, versión y resultado), qué plantillas mostró el panel y cuándo, y cada borrado del registro (que no borra la auditoría). La cadena se verifica al desbloquear y se descarga con su verificación («Descargar auditoría (JSON)»). Guardar cada día la huella de la última entrada en el servidor depende de H7 (decisión D6).
 
 ## Cómo correrlo localmente
 

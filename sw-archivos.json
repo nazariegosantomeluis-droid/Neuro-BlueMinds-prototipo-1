@@ -350,6 +350,7 @@
   "src/alerta.js",
   "src/almacen.js",
   "src/app.js",
+  "src/auditoria.js",
   "src/bloqueo.js",
   "src/catalogo.js",
   "src/engine/audio.js",

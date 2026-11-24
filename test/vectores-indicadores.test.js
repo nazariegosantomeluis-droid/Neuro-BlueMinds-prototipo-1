@@ -68,7 +68,7 @@ test('indicadores.csv: una fila por sesión, actividad e indicador, con detalle 
   assert.match(csv, /"\{""nuevos"":\[\],""dominados"":0/);
   const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
   assert.match(app, /data-descargar="indicadores"/);
-  assert.match(app, /calcularIndicadores\(paraExportar\(log\.rows\(\), \{ sinTiempos: sinTiempos\(\) \}\), sesiones\.rows\(\), \{ fichas: state\.fichas, items: state\.items \}\)/);
+  assert.match(app, /const entrada = paraExportar\(log\.rows\(\), \{ sinTiempos: sinTiempos\(\) \}\);\n\s+const filas = calcularIndicadores\(entrada, sesiones\.rows\(\), \{ fichas: state\.fichas, items: state\.items \}\);/);
 });
 
 test('decisión R3: en indicadores.csv, A5 (omisiones) va siempre justo después de A1', () => {
