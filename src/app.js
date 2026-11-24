@@ -35,7 +35,7 @@ import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
 import { proponer, lineaBaseRegulacion, MOTIVO_NO_EJECUTADA } from './adaptacion.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
-import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso, bandaAprobada, bandaPropuesta, siguePorEscalera } from './fases.js';
+import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso, bandaAprobada, bandaPropuesta, siguePorEscalera, ensayosParaInclusion, avisoDeInclusion } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
 
@@ -465,7 +465,9 @@ async function empezarSesion(form) {
         for (const id of paso.bandas) {
           const banda = ficha.bandas.find((b) => b.id === id);
           s.bloque = k++;
-          peldanos.push({ paso: { ...paso, banda: id, ensayos: paso.ensayosPorBanda }, ficha, banda, ...(await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayosPorBanda, s })) });
+          // Decisión R6b: un peldaño puede tener su propia composición (B2 de ACT-07: 5 + 5).
+          const composicion = paso.composicion?.[id] ?? null;
+          peldanos.push({ paso: { ...paso, banda: id, ensayos: paso.ensayosPorBanda }, ficha, banda, ...(await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayosPorBanda, s, composicion })) });
         }
         escaleras.set(paso.actividad, peldanos);
         continue;
@@ -614,14 +616,16 @@ async function empezarSesion(form) {
   }
   editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
   // Familiarización (decisión R6): la plataforma propone la banda inicial de la fase 1 (la última
-  // aprobada, B1 si ninguna) y avisa si el niño no completó 10 ensayos de ACT-01 (Protocolo 4).
+  // aprobada, B1 si ninguna) y, al cerrar la sesión, avisa si en toda la sesión hubo menos de 10
+  // ensayos con respuesta sin interrumpir (decisión R6b; Protocolo 4.2, criterio 4).
   const famil = cfg.modos[modo];
   if (famil.escalera) {
     const propuesta = Object.fromEntries(
       famil.escalera.actividades.filter((a) => state.fichas[a]).map((a) => [a, bandaPropuesta((s.escalera ?? []).filter((x) => x.actividad === a), state.fichas[a].bandas.map((b) => b.id))]),
     );
-    const act01 = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === 'ACT-01' && !r.interrumpido && !r.omision).length;
-    editSesion(s.id, (r) => Object.assign(r, { escalera_familiarizacion: s.escalera ?? [], banda_inicial_propuesta: propuesta, aviso_inclusion_act01: act01 < (famil.minimoEnsayosACT01?.valor ?? 10) }));
+    const deSesion = log.rows().filter((r) => r.sesion_id === s.id);
+    const minimo = famil.minimoEnsayosInclusion?.valor ?? 10;
+    editSesion(s.id, (r) => Object.assign(r, { escalera_familiarizacion: s.escalera ?? [], banda_inicial_propuesta: propuesta, ensayos_inclusion: ensayosParaInclusion(deSesion), aviso_inclusion: avisoDeInclusion(deSesion, minimo) }));
   }
   state.ultimaSesion = { s, resultados };
   // Después del cierre, el adulto toca dos veces la esquina para ver el resumen.
@@ -659,7 +663,7 @@ async function mostrarRutina(html, ms, s = null) {
 // un mensaje para el adulto si no se puede. mitad: en la fase 2, solo los conceptos de esa mitad.
 // mitades: en la versión del Catálogo 5.2, la mitad de cada modalidad ({ V: 'A', AV: 'B' }): la
 // mitad de los ensayos va en V y la otra en AV, en orden al azar.
-async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mitades = null }) {
+async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mitades = null, composicion = null }) {
   const pantalla = PANTALLAS[ficha.pantalla];
   const rand = rng(seedOf(`${s.id}:${s.bloque + 1}`));
   const usados = (s.usados[ficha.id] ??= new Set());
@@ -679,10 +683,10 @@ async function prepararBloque({ ficha, banda, modalidad, n, s, mitad = null, mit
         const previas = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && r.banda === banda.id);
         return pantalla.elegir(deItems, cuantos, rand, { ficha, banda, repeat, previas });
       }
-      if (banda.composicion) {
+      if (composicion ?? banda.composicion) {
         // El orden de las dimensiones se sortea una vez por sesión: en B1 la regla es la misma toda la sesión.
         s.orden[ficha.id] ??= shuffle(ficha.dimensiones, rand);
-        return pickComposed(deItems, banda.composicion, s.orden[ficha.id], rand);
+        return pickComposed(deItems, composicion ?? banda.composicion, s.orden[ficha.id], rand);
       }
       if (ficha.estratificarPor === 'emocion') return elegirPorEmocion(deItems, cuantos, rand);
       return pickItems(deItems, cuantos, rand, { repeat, exclude: repeat ? new Set() : usados });
@@ -1183,7 +1187,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
       ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
-      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial, avisoInclusion: Boolean(f.aviso_inclusion_act01) })}
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial, avisoInclusion: Boolean(f.aviso_inclusion) })}
     </div>`;
   for (const r of app.querySelectorAll('[name^=apoyo-]')) {
     const bloque = Number(r.name.slice(6));
