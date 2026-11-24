@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "descripcion": "Estructura fija de la sesión con un niño (Catálogo de actividades 7.1; Arquitectura y software 4.1, 7.4 y 14; Protocolo de validación 3.3). Lo que no dicen los documentos es una propuesta del prototipo y está en «pendientes».",
   "rutinaInicioMs": 6000,
   "transicionMs": 5000,
@@ -22,11 +22,15 @@
         "actividades": ["ACT-02", "ACT-07"],
         "ensayosPorBanda": 10,
         "aciertosParaSubir": 8,
+        "composicion": {
+          "ACT-07": { "B2": ["{a}>{b}"] }
+        },
+        "seccionComposicion": "Decisión R6b, 23 nov 2026: en la escalera, la banda B2 de ACT-07 se prueba como 5 + 5 (una secuencia de 10 con cambio de regla en el ensayo 6).",
         "seccion": "Decisión R6, 23 nov 2026: desde B1, 10 ensayos por banda; sube con 8 o más aciertos de 10 (al azar con 2 opciones, 56/1024 ≈ 0.055); se detiene en la primera banda no aprobada; la banda inicial de la fase 1 es la última aprobada (B1 si ninguna). Resuelve Protocolo 3.1 («fija, mínima», para ACT-01) frente a 3.2 (elegir el nivel, para ACT-02 y ACT-07)."
       },
-      "minimoEnsayosACT01": {
+      "minimoEnsayosInclusion": {
         "valor": 10,
-        "seccion": "Decisión R6, 23 nov 2026; Protocolo 4 (criterio de inclusión: completar al menos 10 ensayos de ACT-01)"
+        "seccion": "Decisión R6b, 23 nov 2026; Protocolo 4.2, criterio 4: cuenta los ensayos con respuesta, acertados o no y sin los interrumpidos, de toda la sesión de familiarización (ACT-01, ACT-02 y ACT-07 juntas); avisa al cerrar la sesión si son menos de 10."
       },
       "adaptacion": false,
       "panel": "resumen",

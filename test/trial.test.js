@@ -223,7 +223,7 @@ test('pérdida de foco y cuadros perdidos se reflejan en el peso de calidad', as
 
 // Bloque de ACT-01 B1 con tres ensayos; plan[i] decide qué pasa en el ensayo i:
 // 'acierto', 'error', 'pausa', 'salto' o un número (acierto a esos ms de la inserción).
-function runBlock({ modalidad = 'V', audio, plan = [], log = createLog(null), base = {} } = {}) {
+function runBlock({ modalidad = 'V', audio, plan = [], log = createLog(null), base = {}, alTerminarEnsayo } = {}) {
   const env = simEnv({ audio });
   const trials = ['ACT01-B1-01', 'ACT01-B1-02', 'ACT01-B1-03'].map((codigo) => ({ codigo, consigna, opciones }));
   let shown = 0;
@@ -253,6 +253,7 @@ function runBlock({ modalidad = 'V', audio, plan = [], log = createLog(null), ba
     rand: rng(1),
     onPause: async () => (pauses++, 'continuar'),
     onTrial: (t) => started.push(t.codigo),
+    ...(alTerminarEnsayo ? { alTerminarEnsayo } : {}),
   });
   return { done: env.run(block.done), log, pauses: () => pauses, started };
 }
@@ -319,4 +320,27 @@ test('tr_corregido_ms descuenta la latencia del dispositivo; sin latencia queda 
   assert.deepEqual(sin.map((r) => r.tr_corregido_ms), [null, null, null]);
   const con = await runBlock({ base: { latencia_dispositivo_ms: 40 } }).done;
   for (const r of con) assert.equal(r.tr_corregido_ms, r.tr_bruto_ms - 40);
+});
+
+// Tanda 6 (Arquitectura 7.1): alTerminarEnsayo permite que la envolvente termine el bloque después
+// de un ensayo. Lo que ya se registraba no cambia.
+test('alTerminarEnsayo no cambia el registro: con y sin él, los mismos ensayos con los mismos campos', async () => {
+  const sin = await runBlock({ plan: ['acierto', 'error', 'acierto'] }).done;
+  const vistos = [];
+  const con = await runBlock({ plan: ['acierto', 'error', 'acierto'], alTerminarEnsayo: (rows) => (vistos.push(rows.length), false) }).done;
+  assert.deepEqual(vistos, [1, 2, 3], 'se llama después de registrar cada ensayo');
+  assert.equal(con.length, sin.length);
+  for (let i = 0; i < sin.length; i++) {
+    assert.deepEqual(Object.keys(con[i]), COLUMNS);
+    for (const k of ['item', 'ensayo', 'acierto', 'omision', 'tr_bruto_ms', 'interrumpido', 'banda', 'pos_correcta']) assert.deepEqual(con[i][k], sin[i][k], k);
+  }
+});
+
+test('alTerminarEnsayo: si devuelve true, el bloque termina después de ese ensayo, sin marcar nada', async () => {
+  const b = runBlock({ plan: ['acierto', 'acierto', 'acierto'], alTerminarEnsayo: async (rows) => rows.length === 2 });
+  const rows = await b.done;
+  assert.deepEqual(rows.map((r) => r.item), ['ACT01-B1-01', 'ACT01-B1-02']);
+  assert.deepEqual(rows.map((r) => r.interrumpido), [false, false]);
+  assert.equal(b.log.rows().length, 2);
+  assert.deepEqual(b.started, ['ACT01-B1-01', 'ACT01-B1-02'], 'el tercer ensayo no empieza');
 });

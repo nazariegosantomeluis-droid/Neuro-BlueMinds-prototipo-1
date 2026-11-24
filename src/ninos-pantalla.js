@@ -80,7 +80,7 @@ function filaHTML(n, fichas) {
       <td>${n.video ? 'Sí' : 'No'}</td>
       <td>${esc(ETIQUETA_CONSENTIMIENTO[n.consentimiento] ?? n.consentimiento)}</td>
       <td class="nino-fase">${faseHTML(n, fichas)}</td>
-      <td><div class="acciones">${acciones}</div></td>
+      <td><div class="acciones"><a class="boton" href="#panel?nino=${encodeURIComponent(n.codigo)}">Panel</a>${acciones}</div></td>
     </tr>`;
 }
 

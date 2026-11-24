@@ -16,6 +16,9 @@
   "A12": "0.2.0",
   "C8": "0.2.0",
   "regulacion": "0.2.0",
+  "C9": "0.1.0",
+  "alerta": "0.1.0",
+  "panel": "0.1.0",
   "IG": "0.1.0",
   "IRet": "0.1.0"
  },
@@ -153,6 +156,27 @@
   "a6Unidad": {
    "valor": "ln(ms) por minuto",
    "seccion": "Modelo 4.2 (t en minutos desde el primer ensayo de la actividad)"
+  },
+  "envolvente": {
+   "ensayosEntreCambios": 10,
+   "subidasPorSesion": 4,
+   "ensayosTrasBajada": 30,
+   "limiteMinutos": 15,
+   "bloqueosParaAviso": 3,
+   "seccion": "Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)"
+  },
+  "alertaTemprana": {
+   "ventana": 10,
+   "alfa": 0.05,
+   "simulaciones": 2000,
+   "semilla": "FNV-1a de «alerta:n_ventanas»",
+   "seccion": "Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)"
+  },
+  "bandaVariacion": {
+   "mads": 2,
+   "sesionesConsecutivas": 2,
+   "fiabilidadParaRCI": 0.75,
+   "seccion": "Modelo 6.3 y 6.4; Arquitectura 6.4"
   }
  },
  "generador": {

@@ -1,0 +1,53 @@
+/* Panel del terapeuta (#panel). Describe, no califica: solo usa los colores neutros de styles.css,
+   nunca verde o rojo para «bien» o «mal». */
+
+.panel-terapeuta .panel-seccion {
+  border-top: 1px solid var(--borde);
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+}
+
+.panel-terapeuta .panel-seccion > p,
+.panel-terapeuta .panel-indicador > p {
+  margin: 0.25rem 0;
+  max-width: var(--medida);
+}
+
+.panel-terapeuta .panel-indicadores,
+.panel-terapeuta .panel-sesiones {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.panel-terapeuta .panel-indicador,
+.panel-terapeuta .panel-sesiones > li {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-control);
+  padding: 0.6rem 0.8rem;
+  background: var(--tarjeta);
+}
+
+.panel-terapeuta .panel-sesiones > li p {
+  margin: 0.15rem 0;
+}
+
+.panel-marca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.panel-marca [aria-pressed='true'] {
+  background: var(--acento-suave);
+  border-color: var(--acento);
+  font-weight: 600;
+}
+
+.panel-comentario {
+  flex: 1 1 16rem;
+  font-size: var(--letra-chica);
+}

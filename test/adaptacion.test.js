@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ventanas, percentil, lineaBaseRegulacion, senalEnVentana, proponer, ordenDeMalestar } from '../src/adaptacion.js';
+import { ventanas, percentil, lineaBaseRegulacion, senalEnVentana, proponer, ordenDeMalestar, contextoDeRegla, proponerVentana } from '../src/adaptacion.js';
 import { PARAMETROS } from '../src/indicadores/parametros.js';
 import { filas, omision, errorCon } from '../tools/filas-prueba.mjs';
 
@@ -104,14 +104,24 @@ test('un episodio marcado o terminar por malestar es señal en cualquier caso', 
   assert.deepEqual(fin.map((p) => [p.ventana, p.accion]), [[1, 'mantener'], [null, 'pausa_y_bajar']]);
 });
 
-test('ninguna propuesta se ejecuta: la regla propone y la envolvente (H4.3) decidirá', () => {
+test('la regla solo propone (ejecutada: false); la ejecución la decide la envolvente en app.js', () => {
   const ps = proponer(bloque([ventana(10), ventana(10), ventana(4)]), { bandas: BANDAS });
   assert.ok(ps.every((p) => p.ejecutada === false && p.version_regla === '0.2.0'));
   const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
-  assert.match(app, /if \(state\.sesion\?\.modos\?\.\[s\.modo\]\?\.adaptacion\) \{/);
-  assert.match(app, /r\.adaptacion_propuestas = \[\.\.\.\(r\.adaptacion_propuestas \?\? \[\]\), \.\.\.propuestas\]/);
-  const tramo = app.slice(app.indexOf('const propuestas = proponer('), app.indexOf('r.adaptacion_propuestas = ['));
-  assert.doesNotMatch(tramo, /s\.banda\w* =|state\.form\.banda =/, 'la propuesta no cambia la banda');
+  // Cada propuesta pasa por s.envolvente.evaluar y queda en el registro con ejecutada e invariante.
+  assert.match(app, /const res = s\.envolvente\.evaluar\(accion\);/);
+  assert.match(app, /ejecutada: res\.ejecutada,\n\s+invariante: res\.invariante,/);
+  assert.match(app, /adaptacion_propuestas: \[\.\.\.\(r\.adaptacion_propuestas \?\? \[\]\), registro\]/);
+  // La regla no cambia la banda: solo la envolvente (estado.bandas) la cambia.
+  const regla = readFileSync(new URL('../src/adaptacion.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(regla, /estado\.bandas|\.banda =/);
   const sesion = JSON.parse(readFileSync(new URL('../fichas/sesion.json', import.meta.url), 'utf8'));
   assert.deepEqual(Object.entries(sesion.modos).filter(([, m]) => m.adaptacion).map(([k]) => k), ['fase3']);
+});
+
+test('proponerVentana, ventana a ventana, da lo mismo que proponer con el bloque entero', () => {
+  const rows = bloque([ventana(10), ventana(10), ventana(4), ventana(9), ventana(9)]);
+  const ctx = contextoDeRegla({ bandas: BANDAS });
+  const enLinea = ventanas(rows).map((v, k) => proponerVentana(v, k, ctx));
+  assert.deepEqual(enLinea, proponer(rows, { bandas: BANDAS }));
 });

@@ -120,9 +120,9 @@ export function eventoHTML(i, { actividades = [], bandas = [], e = {} } = {}) {
     </fieldset>`;
 }
 
-// Aviso del criterio de inclusión (Protocolo 4; decisión R6).
+// Aviso del criterio de inclusión al cerrar la familiarización (Protocolo 4.2, criterio 4; decisión R6b).
 export const AVISO_INCLUSION =
-  'El niño no completó al menos 10 ensayos de ACT-01 en la familiarización. El Protocolo (sección 4) lo pide como criterio de inclusión: coméntalo con el investigador responsable.';
+  'En esta sesión de familiarización el niño completó menos de 10 ensayos con respuesta (ACT-01, ACT-02 y ACT-07 juntas, sin los interrumpidos). El Protocolo (sección 4.2, criterio 4) lo pide como criterio de inclusión: coméntalo con el investigador responsable.';
 
 // Una actividad de la banda inicial: lo que pasó en la escalera, la propuesta y el selector.
 function bandaInicialHTML({ id, nombre, bandas: bs, actual, propuesta, motivo = '', escalera = [] }) {

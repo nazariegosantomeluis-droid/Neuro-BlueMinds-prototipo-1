@@ -66,6 +66,8 @@ export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = nu
         bandas: ficha.bandas.map((b) => b.id),
         ensayosPorBanda: m.escalera.ensayosPorBanda,
         aciertosParaSubir: m.escalera.aciertosParaSubir,
+        // Decisión R6b: composición de un peldaño distinta de la de la ficha (B2 de ACT-07: 5 + 5).
+        composicion: m.escalera.composicion?.[id] ?? {},
       });
       continue;
     }
@@ -138,3 +140,14 @@ export function bandaPropuesta(resultados, bandas) {
 
 // Si la escalera sigue: la banda anterior se aprobó y hay otra arriba.
 export const siguePorEscalera = (resultado, bandas) => Boolean(resultado.aprobada) && bandas.indexOf(resultado.banda) < bandas.length - 1;
+
+// ---------- Criterio de inclusión (decisión R6b; Protocolo 4.2, criterio 4) ----------
+
+// Ensayos que cuentan para el criterio: los de toda la sesión de familiarización (ACT-01, ACT-02 y
+// ACT-07 juntas) con respuesta, acertados o no, sin los interrumpidos (interrupción del terapeuta,
+// pérdida de foco o fallo técnico). rows: el registro por ensayo de la sesión.
+export const ensayosParaInclusion = (rows) =>
+  rows.filter((r) => !r.omision && !r.interrumpido && !r.perdida_foco && !r.fallo_tecnico).length;
+
+// Aviso al cerrar la sesión: menos del mínimo (10).
+export const avisoDeInclusion = (rows, minimo = 10) => ensayosParaInclusion(rows) < minimo;

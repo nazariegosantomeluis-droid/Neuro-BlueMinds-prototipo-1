@@ -36,7 +36,8 @@ test('el registro tiene todas las columnas en el orden acordado', () => {
     'participacion', 'episodios_confirmados', 'episodios_no_marcados', 'eventos_adversos',
     'consulto_panel', 'decision_informada', 'tipo_decision', 'registros_completos', 'registros_hora',
     'tema_imagenes', 'banda_inicial_fase1', 'version_indicadores', 'adaptacion_propuestas',
-    'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'aviso_inclusion_act01',
+    'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'ensayos_inclusion', 'aviso_inclusion',
+    'huella_parametros', 'envolvente_bloqueos', 'aviso_bloqueos', 'alerta_temprana', 'marcas_observacion',
   ]);
 });
 
