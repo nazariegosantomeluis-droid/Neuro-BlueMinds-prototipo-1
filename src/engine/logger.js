@@ -57,6 +57,9 @@ export const SESION_COLUMNS = [
   // Tanda 5b (decisión R6): escalera de la familiarización, banda inicial propuesta, cambios del
   // terapeuta con su motivo y aviso del criterio de inclusión de ACT-01 (Protocolo 4).
   'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'ensayos_inclusion', 'aviso_inclusion',
+  // Tanda 6: huella SHA-256 de los parámetros de la regla al iniciar (INV-6), acciones bloqueadas por
+  // la envolvente y aviso a los 3 bloqueos (Arquitectura 7.4).
+  'huella_parametros', 'envolvente_bloqueos', 'aviso_bloqueos',
 ];
 
 const KEY = 'neuro-blueminds.registro';

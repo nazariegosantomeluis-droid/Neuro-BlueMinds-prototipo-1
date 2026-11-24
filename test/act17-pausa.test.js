@@ -28,7 +28,7 @@ test('el panel de pausa, la página «Pausa guiada» y el inicio usan la misma r
   const app = leer('src/app.js');
   // Menú del terapeuta: solo si está permitida, nunca en la referencia motora ni en las rutinas.
   assert.match(app, /\$\{state\.pausa && !enReferencia && pausaGuiadaPermitida\(\{ sesion: s, ficha \}\) \? pausaOpcionesHTML\(true\) : ''\}/);
-  assert.match(app, /await abrirMenu\(wrap, \{ s, ficha, ensayo \}\)/);
+  assert.match(app, /await abrirMenu\(wrap, \{ s, ficha, ensayo, aviso \}\)/);
   assert.match(app, /await abrirMenu\(wrap, \{ s, enReferencia: true, ensayo: aparicion \}\)/);
   assert.match(app, /abrirMenu\(wrap, \{ s, enRutina: true \}\)/);
   // Página #pausa: sin permiso, solo el aviso y ningún botón.

@@ -243,9 +243,11 @@ export function createTrial({ ficha, modalidad, consigna, opciones, posCorrecta,
  *   modo_fase, tema_imagenes y, cuando se haya medido la tableta, latencia_dispositivo_ms).
  * onPause(): lo llama después de un ensayo pausado; devuelve 'continuar' o 'terminar'.
  * onTrial(trial, i): avisa qué ensayo empieza (el modo experto muestra su código).
+ * alTerminarEnsayo(rows): después de registrar cada ensayo; si devuelve true, el bloque termina ahí
+ *   (la envolvente ejecutó un cambio de banda o una pausa, Arquitectura 7.1). No cambia el registro.
  * En AV, si el dispositivo no tiene audio, el bloque no empieza (done falla con NO_AUDIO_MSG).
  */
-export function startBlock({ ficha, modalidad, trials, base, env, view, log, rand, onPause = async () => 'continuar', onState, onTrial = () => {} }) {
+export function startBlock({ ficha, modalidad, trials, base, env, view, log, rand, onPause = async () => 'continuar', onState, onTrial = () => {}, alTerminarEnsayo = () => false }) {
   let current = null;
   let reason = null;
   const banda = ficha.bandas.find((b) => b.id === base.banda);
@@ -298,6 +300,7 @@ export function startBlock({ ficha, modalidad, trials, base, env, view, log, ran
       );
       // El ensayo pausado no se repite: al continuar sigue el siguiente.
       if (await paused()) break;
+      if (await alTerminarEnsayo(rows)) break;
     }
     current = null;
     return rows;

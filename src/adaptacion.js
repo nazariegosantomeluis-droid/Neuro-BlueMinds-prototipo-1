@@ -2,9 +2,9 @@
 // Modelo 9.2; Arquitectura 7.3). Lógica pura, sin DOM.
 //
 // La regla solo PROPONE. Según Arquitectura 7.1, una propuesta se ejecuta solo si la envolvente de
-// seguridad (C9, H4.3) la permite; mientras la envolvente no exista, ninguna propuesta cambia la
-// banda: cada una queda en el registro (adaptacion_propuestas en sesiones.csv) con la regla que la
-// produjo, los valores que la activaron y ejecutada = false. Los parámetros vienen de
+// seguridad (C9, src/envolvente.js) la permite. Cada propuesta queda en el registro
+// (adaptacion_propuestas en sesiones.csv) con la regla que la produjo, los valores que la activaron,
+// si se ejecutó y, si se bloqueó, el invariante. Los parámetros vienen de
 // src/indicadores/parametros.js y no cambian durante la sesión (Modelo 9.3).
 import { PARAMETROS as P, VERSIONES } from './indicadores/parametros.js';
 import { utilizable, calidadDeSesion, calidadBaja } from './indicadores/nucleo.js';
@@ -79,77 +79,101 @@ const REGLA = {
   pausa_y_bajar: 'Señal de regulación: ofrecer pausa y bajar una banda; no subir en el resto de la sesión (Modelo 9.2; Arquitectura 7.2 y 7.3)',
 };
 
-// Propuestas de la regla para un bloque. rows: los ensayos del bloque, en orden. bandas: ids de la
-// ficha, de la más fácil a la más difícil. estado: el de la sesión ({ sinSubir }), que se actualiza.
-// base: lineaBaseRegulacion(…) o null. ordenes: órdenes del terapeuta del bloque.
-// Después de una propuesta de cambio, la cuenta de ventanas empieza de nuevo (Arquitectura 7.2).
-export function proponer(rows, { bandas, estado = { sinSubir: false }, base = null, ordenes = [] }) {
-  const out = [];
-  const vs = ventanas(rows);
-  let seguidas = 0;
-  const malestar = ordenes.filter(ordenDeMalestar);
-  const usadas = new Set();
-  vs.forEach((v, k) => {
-    const banda = v[v.length - 1].banda;
-    const i = bandas.indexOf(banda);
-    const p = proporciones(v);
-    const [desde, hasta] = [v[0].ensayo, v[v.length - 1].ensayo];
-    const deTerapeuta = malestar.find((o) => !usadas.has(o) && o.ensayo !== null && o.ensayo !== undefined && o.ensayo <= hasta);
-    if (deTerapeuta) usadas.add(deTerapeuta);
-    const senal = deTerapeuta ? 'terapeuta' : senalEnVentana(v, base);
-    let accion;
-    let motivo = null;
-    if (senal) {
-      accion = 'pausa_y_bajar';
-      estado.sinSubir = true;
-      seguidas = 0;
-    } else if (p.precision < A.bajarSiMenorDe) {
-      accion = 'bajar';
-      seguidas = 0;
-    } else if (p.precision > A.subirSiMayorDe) {
-      seguidas++;
-      if (seguidas >= A.ventanasParaSubir && !estado.sinSubir) {
-        accion = 'subir';
-        seguidas = 0;
-      } else {
-        accion = 'mantener';
-        motivo = estado.sinSubir ? 'después de una señal de regulación no se sube en esta sesión' : `ventana ${seguidas} de ${A.ventanasParaSubir} sobre ${A.subirSiMayorDe}`;
-      }
+// Una orden se reconoce por su contenido (hora, ms, acción…): el registro puede devolver copias.
+const claveDeOrden = (o) => JSON.stringify(o);
+
+// Contexto de la regla para un bloque: se actualiza ventana a ventana (la cuenta de ventanas
+// seguidas sobre 0.85 y las órdenes de malestar ya usadas). bandas: ids de la ficha, de la más fácil
+// a la más difícil. estado: el de la sesión ({ sinSubir }), que se actualiza. base:
+// lineaBaseRegulacion(…) o null. ordenes: órdenes del terapeuta del bloque.
+export const contextoDeRegla = ({ bandas, estado = { sinSubir: false }, base = null, ordenes = [] }) => ({
+  bandas,
+  estado,
+  base,
+  malestar: ordenes.filter(ordenDeMalestar),
+  usadas: new Set(),
+  seguidas: 0,
+});
+
+// Propuesta de la regla para la ventana k (desde 0) de un bloque. Sirve para decidir en línea, al
+// cerrar cada ventana de 10 ensayos válidos (Arquitectura 7.1). Después de una propuesta de cambio,
+// la cuenta de ventanas empieza de nuevo (Arquitectura 7.2).
+export function proponerVentana(v, k, ctx) {
+  const { bandas, estado, base, malestar, usadas } = ctx;
+  const banda = v[v.length - 1].banda;
+  const i = bandas.indexOf(banda);
+  const p = proporciones(v);
+  const [desde, hasta] = [v[0].ensayo, v[v.length - 1].ensayo];
+  const deTerapeuta = malestar.find((o) => !usadas.has(claveDeOrden(o)) && o.ensayo !== null && o.ensayo !== undefined && o.ensayo <= hasta);
+  if (deTerapeuta) usadas.add(claveDeOrden(deTerapeuta));
+  const senal = deTerapeuta ? 'terapeuta' : senalEnVentana(v, base);
+  let accion;
+  let motivo = null;
+  if (senal) {
+    accion = 'pausa_y_bajar';
+    estado.sinSubir = true;
+    ctx.seguidas = 0;
+  } else if (p.precision < A.bajarSiMenorDe) {
+    accion = 'bajar';
+    ctx.seguidas = 0;
+  } else if (p.precision > A.subirSiMayorDe) {
+    ctx.seguidas++;
+    if (ctx.seguidas >= A.ventanasParaSubir && !estado.sinSubir) {
+      accion = 'subir';
+      ctx.seguidas = 0;
     } else {
       accion = 'mantener';
-      seguidas = 0;
+      motivo = estado.sinSubir ? 'después de una señal de regulación no se sube en esta sesión' : `ventana ${ctx.seguidas} de ${A.ventanasParaSubir} sobre ${A.subirSiMayorDe}`;
     }
-    let propuesta = banda;
-    if (accion === 'subir') {
-      if (i + 1 < bandas.length) propuesta = bandas[i + 1];
-      else [accion, motivo] = ['mantener', 'ya está en la banda más alta'];
-    }
-    if (accion === 'bajar' || accion === 'pausa_y_bajar') {
-      if (i > 0) propuesta = bandas[i - 1];
-      else motivo = 'ya está en la banda más baja';
-    }
-    out.push({
-      bloque: v[0].bloque,
-      actividad: v[0].actividad,
-      ventana: k + 1,
-      ensayos: [desde, hasta],
-      precision: p.precision,
-      omisiones: p.omisiones,
-      prematuras: p.prematuras,
-      senal,
-      criterio_senal: senal === 'terapeuta' ? 'orden del terapeuta' : base ? 'linea_base' : 'sin_linea_base',
-      accion,
-      motivo,
-      regla: REGLA[accion],
-      banda_actual: banda,
-      banda_propuesta: propuesta,
-      ejecutada: false,
-      version_regla: VERSIONES.C8,
-    });
-  });
-  // Una orden de malestar después de la última ventana completa (por ejemplo, al terminar el bloque)
-  // también es señal: propone pausa y bajar, sin ventana.
-  for (const o of malestar.filter((x) => !usadas.has(x))) {
+  } else {
+    accion = 'mantener';
+    ctx.seguidas = 0;
+  }
+  let propuesta = banda;
+  if (accion === 'subir') {
+    if (i + 1 < bandas.length) propuesta = bandas[i + 1];
+    else [accion, motivo] = ['mantener', 'ya está en la banda más alta'];
+  }
+  if (accion === 'bajar' || accion === 'pausa_y_bajar') {
+    if (i > 0) propuesta = bandas[i - 1];
+    else motivo = 'ya está en la banda más baja';
+  }
+  return {
+    bloque: v[0].bloque,
+    actividad: v[0].actividad,
+    ventana: k + 1,
+    ensayos: [desde, hasta],
+    precision: p.precision,
+    omisiones: p.omisiones,
+    prematuras: p.prematuras,
+    senal,
+    criterio_senal: senal === 'terapeuta' ? 'orden del terapeuta' : base ? 'linea_base' : 'sin_linea_base',
+    accion,
+    motivo,
+    regla: REGLA[accion],
+    banda_actual: banda,
+    banda_propuesta: propuesta,
+    ejecutada: false,
+    version_regla: VERSIONES.C8,
+  };
+}
+
+// Propuestas de la regla para un bloque completo (las mismas que, ventana a ventana, da
+// proponerVentana). rows: los ensayos del bloque, en orden.
+export function proponer(rows, opciones) {
+  const ctx = contextoDeRegla(opciones);
+  const out = ventanas(rows).map((v, k) => proponerVentana(v, k, ctx));
+  out.push(...propuestasFinales(rows, ctx));
+  return out;
+}
+
+// Una orden de malestar después de la última ventana completa (por ejemplo, al terminar el bloque)
+// también es señal: propone pausa y bajar, sin ventana.
+export function propuestasFinales(rows, ctx) {
+  const { bandas, estado, malestar, usadas } = ctx;
+  const out = [];
+  for (const o of malestar.filter((x) => !usadas.has(claveDeOrden(x)))) {
+    usadas.add(claveDeOrden(o));
     estado.sinSubir = true;
     const banda = rows[rows.length - 1]?.banda ?? null;
     const i = bandas.indexOf(banda);
@@ -175,5 +199,3 @@ export function proponer(rows, { bandas, estado = { sinSubir: false }, base = nu
   return out;
 }
 
-// Por qué una propuesta no se ejecutó: hasta H4.3 (envolvente de seguridad) ninguna se ejecuta.
-export const MOTIVO_NO_EJECUTADA = 'La envolvente de seguridad (C9, H4.3) todavía no existe: la regla solo propone y nada cambia la banda.';

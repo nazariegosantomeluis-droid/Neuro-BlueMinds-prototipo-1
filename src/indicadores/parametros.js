@@ -82,13 +82,19 @@ export const PARAMETROS = Object.freeze({
   lineaBase: { sesiones: 5, modo: 'fase1', seccion: 'Modelo 6.2 corregido por D3; Protocolo 2.4 y 3.2' },
   // A6: unidad de la pendiente.
   a6Unidad: { valor: 'ln(ms) por minuto', seccion: 'Modelo 4.2 (t en minutos desde el primer ensayo de la actividad)' },
+  // Envolvente de seguridad (C9, H4.3; Arquitectura 7.4): entre dos cambios de banda automáticos de
+  // una actividad, al menos una ventana de 10 ensayos válidos (INV-1); no más de 4 subidas por
+  // sesión (INV-3); después de una bajada, 30 ensayos válidos antes de volver a subir (INV-4); a los
+  // 15 minutos de uso no se sube (INV-8); un aviso al terapeuta cuando se bloquean 3 acciones en una
+  // sesión.
+  envolvente: { ensayosEntreCambios: 10, subidasPorSesion: 4, ensayosTrasBajada: 30, limiteMinutos: 15, bloqueosParaAviso: 3, seccion: 'Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)' },
 });
 
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
   A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.2.0', A12: '0.2.0',
-  C8: '0.2.0', regulacion: '0.2.0',
+  C8: '0.2.0', regulacion: '0.2.0', C9: '0.1.0',
   IG: '0.1.0', IRet: '0.1.0',
 });
 
@@ -107,6 +113,7 @@ export const NOMBRES = Object.freeze({
   A12: 'IA, abandono',
   C8: 'Regla de adaptación por bandas',
   regulacion: 'Señal de regulación',
+  C9: 'Envolvente de seguridad',
   IG: 'IG, generalización',
   IRet: 'IRet, retención',
 });

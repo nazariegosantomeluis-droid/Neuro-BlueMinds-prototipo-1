@@ -16,6 +16,7 @@
   "A12": "0.2.0",
   "C8": "0.2.0",
   "regulacion": "0.2.0",
+  "C9": "0.1.0",
   "IG": "0.1.0",
   "IRet": "0.1.0"
  },
@@ -153,6 +154,14 @@
   "a6Unidad": {
    "valor": "ln(ms) por minuto",
    "seccion": "Modelo 4.2 (t en minutos desde el primer ensayo de la actividad)"
+  },
+  "envolvente": {
+   "ensayosEntreCambios": 10,
+   "subidasPorSesion": 4,
+   "ensayosTrasBajada": 30,
+   "limiteMinutos": 15,
+   "bloqueosParaAviso": 3,
+   "seccion": "Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)"
   }
  },
  "generador": {
