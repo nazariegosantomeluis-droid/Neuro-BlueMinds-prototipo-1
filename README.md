@@ -65,6 +65,10 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
 - En la tableta no existe nada que permita saber quién es el niño real: no se pide ni se guarda nombre, fecha de nacimiento, correo ni ningún dato que lo identifique. El niño es un código seudónimo aleatorio de 128 bits, con un ícono y un color para confirmar que es el correcto, su edad en meses y su estado de consentimiento. La relación entre el código y el niño la lleva el investigador fuera de la aplicación (Arquitectura 9.1).
 - El registro se guarda únicamente en el navegador del dispositivo y se descarga como CSV o JSON. Nada se envía a ningún servidor.
 
+## Datos y seguridad en la tableta (H6)
+
+- **Aplicación instalable sin conexión (H6.1).** `manifest.webmanifest` (AutiPal, pantalla completa, íconos de 192 y 512 px) y el trabajador de servicio `sw.js`, que al instalarse guarda todos los archivos de `sw-archivos.json` (la aplicación, las fichas, el banco y las imágenes; nunca datos de niños). Cada pedido va primero a la red y, sin red o si tarda más de 3 s, se sirve lo guardado. Si agregas o quitas un archivo, corre `node tools/generar-sw.mjs` (la prueba `test/instalable.test.js` lo comprueba). Falta medir en la tableta más lenta que arranque en menos de 10 s sin red (H8.2).
+
 ## Cómo correrlo localmente
 
 Los módulos de JavaScript no cargan desde `file://`, así que se necesita un servidor estático. Desde la carpeta del proyecto:
@@ -891,7 +895,6 @@ Notas:
 - **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.
 - **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
-- **Uso sin conexión:** no está implementado (era opcional en este hito).
 
 ## Autoría y licencia
 

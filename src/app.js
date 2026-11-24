@@ -139,6 +139,9 @@ const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBloque === 'secuencia').map((f) => f.id);
 
 async function init() {
+  // Aplicación instalable que funciona sin conexión (H6.1): el trabajador de servicio guarda los
+  // archivos de la aplicación (nunca datos de niños).
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
   applyCm();
   audio.setVolume(volumen() / 100);
   // Versión y commit publicados: en el pie de las pantallas del adulto y en los CSV del F3 y de
