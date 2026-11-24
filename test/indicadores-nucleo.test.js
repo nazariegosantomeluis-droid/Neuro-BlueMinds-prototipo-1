@@ -1,7 +1,7 @@
 // Indicadores A1 a A8 y A10 (H3.2 y H3.3). Sesiones sintéticas con resultados calculados a mano.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { a1, a2, a3, a4, a5, a6, a7, a8, a10, indicadoresDeSesion, calidadDeSesion, utilizable, validoLatencia } from '../src/indicadores/nucleo.js';
+import { a1, a2, a3, a4, a5, a6, a7, a8, a10, indicadoresDeSesion, calidadDeSesion, utilizable, validoLatencia, cuadrosHastaAparicion, aparicionTardia } from '../src/indicadores/nucleo.js';
 import { PARAMETROS, VERSIONES } from '../src/indicadores/parametros.js';
 import { fila, filas, omision, errorCon } from '../tools/filas-prueba.mjs';
 
@@ -19,7 +19,8 @@ test('cada indicador da valor, intervalo, n, disponible, motivo y versión', () 
 
 test('ensayos que entran: sin interrupción técnica (Modelo 3.3) y sin sondas', () => {
   assert.ok(utilizable(fila(1)));
-  for (const c of [{ interrumpido: true }, { perdida_foco: true }, { fallo_tecnico: true }, { cuadros_perdidos: 1 }, { sonda: true }]) assert.ok(!utilizable(fila(1, c)), JSON.stringify(c));
+  for (const c of [{ interrumpido: true }, { perdida_foco: true }, { fallo_tecnico: true }, { sonda: true }]) assert.ok(!utilizable(fila(1, c)), JSON.stringify(c));
+  assert.ok(utilizable(fila(1, { cuadros_perdidos: 3 })), 'decisión R7: los cuadros perdidos no excluyen el ensayo');
   assert.ok(!validoLatencia(fila(1, { anticipatoria: true })));
   assert.ok(!validoLatencia(fila(1, { fuera_de_tarea: true })));
   assert.ok(validoLatencia(fila(1, { fuera_de_tarea: null })), 'sin marca (menos de 10 ensayos) no excluye');
@@ -45,7 +46,7 @@ test('A1: 24 de 30 con 3 opciones da PA = 0.7; el intervalo es el de Wilson tran
   assert.equal(r3.n, 29);
   assert.equal(r3.omisiones, 1);
   cerca(r3.valor, 43 / 58, 1e-12);
-  assert.equal(r3.version, '0.2.0');
+  assert.equal(r3.version, '0.3.0');
   // Con 2 y 4 opciones mezcladas, el azar es la media de 1/G: (1/2 + 1/4)/2 = 0.375.
   const mixto = filas(20, (k) => ({ n_opciones: k % 2 ? 2 : 4 }));
   assert.equal(a1(mixto, 1).azar, 0.375);
@@ -167,4 +168,26 @@ test('calidad de la sesión menor de 0.80: ningún indicador se muestra', () => 
   assert.ok(r.every((x) => !x.disponible && /calidad de la sesión 0\.77, menor de 0\.80/.test(x.motivo)));
   // Los ensayos interrumpidos por la pausa no cuentan en la calidad.
   assert.equal(calidadDeSesion([...alcanza, fila(31, { interrumpido: true, peso_calidad: 0 })]), calidadDeSesion(alcanza));
+});
+
+test('decisión R7: los cuadros perdidos solo sacan de las latencias si las opciones aparecieron más de 2 cuadros tarde', () => {
+  // A 60 Hz (periodo 16.7 ms): 33.4 ms entre la inserción y la aparición son 2 cuadros (a tiempo);
+  // 50.1 ms son 3 cuadros (tarde). Sin periodo registrado se supone 1000/60 ms: 50 ms → 3 cuadros.
+  const aTiempo = fila(1, { t_opciones_insercion: 1000, t_opciones: 1033.4, periodo_cuadro_ms: 16.7, cuadros_perdidos: 1 });
+  const tarde = fila(2, { t_opciones_insercion: 1000, t_opciones: 1050.1, periodo_cuadro_ms: 16.7, cuadros_perdidos: 1 });
+  assert.equal(cuadrosHastaAparicion(aTiempo), 2);
+  assert.equal(cuadrosHastaAparicion(tarde), 3);
+  assert.equal(cuadrosHastaAparicion(fila(3, { t_opciones_insercion: 1000, t_opciones: 1050, periodo_cuadro_ms: null })), 3);
+  assert.ok(!aparicionTardia(aTiempo));
+  assert.ok(aparicionTardia(tarde));
+  assert.ok(validoLatencia(aTiempo));
+  assert.ok(!validoLatencia(tarde));
+  // 21 ensayos con RT 400..600 ms; el ensayo 1 (400 ms) aparece tarde: sale de A2 (quedan 20,
+  // 410..600, mediana (500 + 510)/2 en logaritmos = √(500·510) = 504.975) pero cuenta en A1 y en A4/A5.
+  const rows = filas(21, (k) => ({ tr_bruto_ms: 400 + 10 * (k - 1), t_opciones_insercion: 0, t_opciones: k === 1 ? 60 : 30, periodo_cuadro_ms: 16.7, cuadros_perdidos: k === 1 ? 2 : 0 }));
+  assert.equal(a2(rows, 1).n, 20);
+  cerca(a2(rows, 1).valor, Math.sqrt(500 * 510), 1e-9);
+  assert.equal(a1(rows, 1).n, 21);
+  assert.equal(a5(rows, 1).n, 21);
+  assert.ok(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A10'].every((id) => VERSIONES[id] >= '0.2.0'));
 });

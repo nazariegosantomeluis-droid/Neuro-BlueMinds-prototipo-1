@@ -68,6 +68,6 @@ test('decisión R3: las omisiones no cuentan ni en a ni en e; las sondas y las i
   const conOmisiones = filas(11, (k) => ({ item: 'Y', ...(k % 3 === 0 && k < 10 ? omision : {}) }));
   const y = estadoDeDominio(conOmisiones).get('Y');
   assert.deepEqual([y.a, y.e, y.dominado], [8, 0, true]);
-  assert.equal(a9(conOmisiones, { calidad: 1 }).version, '0.2.0');
+  assert.equal(a9(conOmisiones, { calidad: 1 }).version, '0.3.0');
   assert.equal(a9(filas(3), { calidad: 0.5 }).disponible, false);
 });

@@ -16,7 +16,7 @@ import { calcularIndicadores, INDICADORES_COLUMNS } from '../src/indicadores/exp
 export const RUTA_VECTORES = new URL('../test/vectores/indicadores.json', import.meta.url);
 
 export const COLUMNAS_ENTRADA = [
-  'sesion_id', 'codigo_nino', 'modo_fase', 'actividad', 'bloque', 'ensayo', 'item', 'banda', 'n_opciones', 't_opciones',
+  'sesion_id', 'codigo_nino', 'modo_fase', 'actividad', 'bloque', 'ensayo', 'item', 'banda', 'n_opciones', 't_opciones_insercion', 't_opciones', 'periodo_cuadro_ms',
   'opcion_elegida', 'opcion_elegida_id', 'acierto', 'omision', 'anticipatoria', 'interrumpido', 'perdida_foco',
   'cuadros_perdidos', 'fallo_tecnico', 'tr_bruto_ms', 'tr_corregido_ms', 'fuera_de_tarea', 'peso_calidad', 'sonda',
 ];
@@ -27,7 +27,7 @@ const redondear = (x) => Math.round(x * 10) / 10;
 
 // Una sesión simulada de una actividad. p: probabilidades de cada desenlace; lento: pendiente de ln RT
 // por minuto; las opciones elegidas en un error se reparten entre dos distractores para A10.
-function sesion({ id, nino, modo = 'fase1', actividad, banda = 'B2', g = 3, n = 30, bloque = 1, semilla, pAcierto = 0.8, pOmision = 0.05, pAnticip = 0.03, pInterrump = 0.02, pCuadro = 0.02, lento = 0, items = (k) => `${actividad}-I${String(k).padStart(2, '0')}` }) {
+function sesion({ id, nino, modo = 'fase1', actividad, banda = 'B2', g = 3, n = 30, bloque = 1, semilla, pAcierto = 0.8, pOmision = 0.05, pAnticip = 0.03, pInterrump = 0.02, pCuadro = 0.08, lento = 0, items = (k) => `${actividad}-I${String(k).padStart(2, '0')}` }) {
   const u = rng(seedOf(semilla));
   const filas = [];
   for (let k = 1; k <= n; k++) {
@@ -38,9 +38,12 @@ function sesion({ id, nino, modo = 'fase1', actividad, banda = 'B2', g = 3, n = 
     const acierto = !omision && u() < pAcierto;
     const tr = omision ? null : anticipatoria ? redondear(60 + u() * 80) : redondear(Math.exp(Math.log(900) + 0.35 * normal(u) + lento * ((t - 3000) / 60000)));
     const interrumpido = u() < pInterrump;
-    const cuadros = u() < pCuadro ? 1 : 0;
+    // Cuadros perdidos: a veces 1 (a tiempo) y a veces 2 (las opciones aparecen 4 cuadros después de
+    // insertarlas: tarde para las latencias, decisión R7).
+    const cuadros = u() < pCuadro ? (u() < 0.5 ? 1 : 2) : 0;
     filas.push({
-      sesion_id: id, codigo_nino: nino, modo_fase: modo, actividad, bloque, ensayo: k, item: items(k), banda, n_opciones: g, t_opciones: t,
+      sesion_id: id, codigo_nino: nino, modo_fase: modo, actividad, bloque, ensayo: k, item: items(k), banda, n_opciones: g,
+      t_opciones_insercion: redondear(t - (cuadros === 2 ? 4 : 2) * 16.7), t_opciones: t, periodo_cuadro_ms: 16.7,
       opcion_elegida: omision ? null : acierto ? 1 : 2, opcion_elegida_id: omision ? null : acierto ? 'correcta' : u() < 0.6 ? 'distractor-a' : 'distractor-b',
       acierto, omision, anticipatoria, interrumpido, perdida_foco: false, cuadros_perdidos: cuadros, fallo_tecnico: false,
       tr_bruto_ms: tr, tr_corregido_ms: null, fuera_de_tarea: null,
@@ -66,7 +69,7 @@ export function generarVectores() {
   }
   // 2. Sesión larga: dos bloques de 40 ensayos de ACT-07 con muchos errores (A3, A6, A7 y A8 disponibles).
   {
-    const ensayos = [1, 2].flatMap((b) => sesion({ id: 'S-v6', nino: 'nino-e', actividad: 'ACT-07', g: 2, bloque: b, n: 40, semilla: `v6:${b}`, pAcierto: 0.65, pOmision: 0.02, pAnticip: 0.01, pInterrump: 0, pCuadro: 0, lento: 0.02, items: (k) => `ACT07-B3-${b}-${String(k).padStart(2, '0')}` }).map((r) => ({ ...r, t_opciones: r.t_opciones + (b - 1) * 600000 })));
+    const ensayos = [1, 2].flatMap((b) => sesion({ id: 'S-v6', nino: 'nino-e', actividad: 'ACT-07', g: 2, bloque: b, n: 40, semilla: `v6:${b}`, pAcierto: 0.65, pOmision: 0.02, pAnticip: 0.01, pInterrump: 0, pCuadro: 0, lento: 0.02, items: (k) => `ACT07-B3-${b}-${String(k).padStart(2, '0')}` }).map((r) => ({ ...r, t_opciones: r.t_opciones + (b - 1) * 600000, t_opciones_insercion: r.t_opciones_insercion + (b - 1) * 600000 })));
     casos.push({ nombre: 'sesion-larga', descripcion: 'Dos bloques de 40 ensayos de ACT-07 con precisión cercana a 0.65: A3, A6, A7 y A8 disponibles.', ensayos, sesiones: [sesionCSV('S-v6', 'nino-e', 'fase1')] });
   }
   // 3. Pocos ensayos: casi nada disponible.

@@ -106,7 +106,7 @@ test('un episodio marcado o terminar por malestar es señal en cualquier caso', 
 
 test('ninguna propuesta se ejecuta: la regla propone y la envolvente (H4.3) decidirá', () => {
   const ps = proponer(bloque([ventana(10), ventana(10), ventana(4)]), { bandas: BANDAS });
-  assert.ok(ps.every((p) => p.ejecutada === false && p.version_regla === '0.1.0'));
+  assert.ok(ps.every((p) => p.ejecutada === false && p.version_regla === '0.2.0'));
   const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
   assert.match(app, /if \(state\.sesion\?\.modos\?\.\[s\.modo\]\?\.adaptacion\) \{/);
   assert.match(app, /r\.adaptacion_propuestas = \[\.\.\.\(r\.adaptacion_propuestas \?\? \[\]\), \.\.\.propuestas\]/);

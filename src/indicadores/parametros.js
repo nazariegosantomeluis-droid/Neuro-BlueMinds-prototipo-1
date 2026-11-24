@@ -18,9 +18,14 @@ export const PARAMETROS = Object.freeze({
   calidadMinima: { valor: 0.8, seccion: 'Modelo 3.4 y 7.2; Arquitectura 6.4' },
   // MAD escalada: comparable con una desviación estándar con datos normales (Modelo 3.2).
   madEscala: { valor: 1.4826, seccion: 'Modelo 3.2' },
-  // Interrupción técnica: pérdida de foco o de cuadros durante el ensayo; el ensayo sale de todos
-  // los indicadores (Modelo 3.3; Arquitectura 5.2). Con 1, basta un cuadro perdido.
-  cuadrosPerdidosExcluyen: { valor: 1, seccion: 'Modelo 3.3; Arquitectura 5.2' },
+  // Cuadros perdidos (decisión R7, 23 nov 2026): la pérdida de foco excluye el ensayo de todo; la
+  // pérdida de cuadros no lo excluye de A1 ni de A9 (no cambia si la respuesta fue correcta). Para
+  // las latencias (A2, A3, A6 y A7) se excluye solo si las opciones aparecieron tarde: más de 2
+  // cuadros entre t_opciones_insercion y t_opciones. Fuera de eso, los cuadros perdidos solo bajan
+  // el peso de calidad (Modelo 3.4). Las pérdidas importan sobre todo en el momento de aparición
+  // (Anwyl-Irvine et al., 2021). Sin periodo_cuadro_ms registrado, se supone 60 Hz.
+  cuadrosAparicionMaximos: { valor: 2, seccion: 'Decisión R7, 23 nov 2026 (Modelo 3.3 y 3.4)' },
+  periodoCuadroSupuestoMs: { valor: 1000 / 60, seccion: 'Decisión R7, 23 nov 2026; Arquitectura 5.3 (60 Hz)' },
   // Intervalos (Modelo 7.1 y decisión D2): Wilson para proporciones; estadísticos de orden para
   // medianas; A6 con Theil-Sen e intervalo por tau de Kendall; A3 y A7 con bootstrap de percentiles,
   // 2,000 remuestras, generador mulberry32 y semilla FNV-1a del texto «sesion:actividad:indicador».
@@ -81,8 +86,8 @@ export const PARAMETROS = Object.freeze({
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
-  A1: '0.2.0', A2: '0.1.0', A3: '0.1.0', A4: '0.1.0', A5: '0.1.0', A6: '0.1.0', A7: '0.1.0', A8: '0.1.0', A9: '0.2.0', A10: '0.1.0', A11: '0.1.0', A12: '0.1.0',
-  C8: '0.1.0', regulacion: '0.1.0',
+  A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.1.0', A12: '0.1.0',
+  C8: '0.2.0', regulacion: '0.2.0',
   IG: '0.1.0', IRet: '0.1.0',
 });
 

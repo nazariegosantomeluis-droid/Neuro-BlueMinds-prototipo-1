@@ -77,6 +77,8 @@ test('decisión R3: en indicadores.csv, A5 (omisiones) va siempre justo después
       if (s.indicador === 'A1') assert.equal(c.salidas[k + 1].indicador, 'A5', `${c.nombre} ${s.sesion_id} ${s.actividad}`);
     });
   }
-  assert.equal(archivo.versiones_definicion.A1, '0.2.0');
-  assert.equal(archivo.versiones_definicion.A9, '0.2.0');
+  // Decisión R7: hay ensayos con opciones que aparecieron tarde (4 cuadros) para probar la exclusión.
+  assert.ok(archivo.casos.some((c) => c.entradas.ensayos.some((r) => Math.round((r.t_opciones - r.t_opciones_insercion) / r.periodo_cuadro_ms) > 2)));
+  assert.equal(archivo.versiones_definicion.A1, '0.3.0');
+  assert.equal(archivo.versiones_definicion.A9, '0.3.0');
 });
