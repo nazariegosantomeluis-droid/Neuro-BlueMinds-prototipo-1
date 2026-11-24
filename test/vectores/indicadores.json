@@ -17,6 +17,7 @@
   "C8": "0.2.0",
   "regulacion": "0.2.0",
   "C9": "0.1.0",
+  "alerta": "0.1.0",
   "IG": "0.1.0",
   "IRet": "0.1.0"
  },
@@ -162,6 +163,13 @@
    "limiteMinutos": 15,
    "bloqueosParaAviso": 3,
    "seccion": "Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)"
+  },
+  "alertaTemprana": {
+   "ventana": 10,
+   "alfa": 0.05,
+   "simulaciones": 2000,
+   "semilla": "FNV-1a de «alerta:n_ventanas»",
+   "seccion": "Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)"
   }
  },
  "generador": {

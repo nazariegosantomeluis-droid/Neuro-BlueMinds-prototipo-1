@@ -34,6 +34,7 @@ import { VERSION_INDICADORES } from './indicadores/parametros.js';
 import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
 import { lineaBaseRegulacion, contextoDeRegla, proponerVentana, propuestasFinales, ventanas, ordenDeMalestar } from './adaptacion.js';
 import { crearEnvolvente, huellaDeParametros, motivoDeBloqueo } from './envolvente.js';
+import { alertaDeSesion } from './alerta.js';
 import { utilizable } from './indicadores/nucleo.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
@@ -644,6 +645,8 @@ async function empezarSesion(form) {
     }
   }
   editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
+  // Señales de alerta temprana (H4.4): solo se calculan y se guardan; nunca se muestran ni se usan (INV-9).
+  editSesion(s.id, (r) => (r.alerta_temprana = alertaDeSesion(log.rows().filter((x) => x.sesion_id === s.id))));
   // Familiarización (decisión R6): la plataforma propone la banda inicial de la fase 1 (la última
   // aprobada, B1 si ninguna) y, al cerrar la sesión, avisa si en toda la sesión hubo menos de 10
   // ensayos con respuesta sin interrumpir (decisión R6b; Protocolo 4.2, criterio 4).
