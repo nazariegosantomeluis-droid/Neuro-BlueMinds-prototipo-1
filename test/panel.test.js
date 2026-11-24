@@ -224,6 +224,56 @@ test('ACT-07: más errores al cambiar de regla y diferencia de tiempo, con 10 en
   assert.deepEqual(lecturasACT07(rows.slice(0, 15), reglas), [], 'con menos de 10 de cada tipo, nada');
 });
 
+// ---------- Decisión R15: pares simétricos ----------
+
+test('R15: toda frase con sentido tiene su par simétrico y neutral, con los mismos huecos', () => {
+  const P = plantillas.plantillas;
+  const huecos = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+  const conSentido = Object.entries(P).filter(([, p]) => p.sentido);
+  assert.equal(conSentido.length, 16, '8 pares');
+  for (const [id, p] of conSentido) {
+    assert.ok(['arriba', 'abajo'].includes(p.sentido), id);
+    const par = P[p.par];
+    assert.ok(par, `${id}: su par ${p.par} existe`);
+    assert.equal(par.par, id, `${p.par} apunta de vuelta a ${id}`);
+    assert.notEqual(par.sentido, p.sentido, `${id} y ${p.par} tienen sentidos opuestos`);
+    assert.deepEqual(huecos(par.texto), huecos(p.texto), `${id} y ${p.par}: mismos huecos`);
+  }
+  // Ninguna frase con dirección («más», «menos», «por arriba», «por abajo») queda sin par.
+  for (const [id, p] of Object.entries(P)) {
+    const direccional = /\b(más|menos)\b|por (arriba|abajo)/.test(p.texto.replace(/o más\b|menos de \d/g, ''));
+    if (direccional) assert.ok(p.sentido && p.par, `${id} tiene dirección y no tiene par`);
+  }
+  assert.equal(plantillas.version, '0.2.0');
+});
+
+test('R15: el panel usa la frase del sentido que corresponde', () => {
+  // LPR por abajo de la línea base en dos sesiones seguidas: CMP-07 y CMP-09.
+  const h = historial(datos({ fase3: [{ rt: 500 }, { rt: 500 }] }));
+  const html = sesionHTML(plantillas, h, 6, { config, fichas });
+  const ids = revisarHTML(html);
+  assert.ok(ids.includes('CMP-07') && ids.includes('CMP-09'), ids.join(' '));
+  assert.ok(!ids.includes('CMP-03'), 'nada de «más lento»');
+  assert.match(html, /ACT-02 · LPR, latencia robusta: por abajo de su variación habitual en esta sesión y en la anterior\./);
+  // ACT-07 al revés: menos errores y menos tiempo al cambiar de regla.
+  const reglas = new Map();
+  const rows = [];
+  for (let i = 0; i < 40; i++) {
+    const codigo = `S7-${i}`;
+    const regla = Math.floor(i / 2) % 2 ? 'forma' : 'color';
+    reglas.set(codigo, regla);
+    const cambio = i > 0 && regla !== reglas.get(`S7-${i - 1}`);
+    rows.push(fila(i + 1, { actividad: 'ACT-07', item: codigo, acierto: !(!cambio && i % 4 === 1), tr_bruto_ms: cambio ? 900 : 1200 }));
+  }
+  const ls = lecturasACT07(rows, reglas);
+  assert.deepEqual(ls.map((l) => l.id), ['LEC-13', 'LEC-14']);
+  assert.equal(ls[1].valores.ms, 300);
+  // IFC y PES con el intervalo debajo de cero: LEC-11 y LEC-12.
+  const src = leer('src/panel/panel.js');
+  assert.match(src, /x\.indicador === 'A6' && x\.ic_superior < 0\) partes\.push\(frase\(plantillas, 'LEC-11'\)\)/);
+  assert.match(src, /x\.indicador === 'A7' && x\.ic_superior < 0\) partes\.push\(frase\(plantillas, 'LEC-12'\)\)/);
+});
+
 // ---------- H5.5: marcas ----------
 
 test('la marca «coincide / no coincide» se guarda como dato y no cambia indicadores ni parámetros', () => {

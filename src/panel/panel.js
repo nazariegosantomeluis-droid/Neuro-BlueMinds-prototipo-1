@@ -145,9 +145,12 @@ export function lecturasACT07(rows, reglas) {
   const out = [];
   if (Math.min(cambio.length, repite.length) < P.minimos.A7.valor) return out;
   const error = (xs) => xs.filter((r) => !r.acierto).length / xs.length;
+  // Decisión R15: cada lectura con su par simétrico (más o menos errores; más o menos tiempo).
   if (error(cambio) > error(repite)) out.push({ id: 'LEC-08', valores: {} });
+  else if (error(cambio) < error(repite)) out.push({ id: 'LEC-13', valores: {} });
   const [mc, mr] = [media(cambio.filter(validoLatencia).map(rtDe)), media(repite.filter(validoLatencia).map(rtDe))];
   if (mc !== null && mr !== null && mc - mr >= 1) out.push({ id: 'LEC-09', valores: { ms: Math.round(mc - mr) } });
+  else if (mc !== null && mr !== null && mr - mc >= 1) out.push({ id: 'LEC-14', valores: { ms: Math.round(mr - mc) } });
   return out;
 }
 
@@ -207,14 +210,18 @@ function indicadorHTML(plantillas, x, { banda, calidad, marcas, hayBase }) {
     if (hayBase && banda) {
       const lado = ladoFuera(x.valor, banda);
       const rango = { minimo: valorDe(x.indicador, banda.minimo), maximo: valorDe(x.indicador, banda.maximo), unidad };
+      // Decisión R15: por arriba y por abajo, con frases simétricas y sin calificar el sentido.
+      const arriba = lado === 'arriba';
       if (!lado) partes.push(frase(plantillas, 'CMP-01', rango));
-      else if (x.indicador === 'A2' && lado === 'arriba') partes.push(frase(plantillas, 'CMP-03', { valor: valorDe('A2', x.valor), minimo: rango.minimo, maximo: rango.maximo }));
-      else if (x.indicador === 'A3' && lado === 'arriba') partes.push(frase(plantillas, 'CMP-04'));
-      else partes.push(frase(plantillas, 'CMP-02', rango));
+      else if (x.indicador === 'A2') partes.push(frase(plantillas, arriba ? 'CMP-03' : 'CMP-07', { valor: valorDe('A2', x.valor), minimo: rango.minimo, maximo: rango.maximo }));
+      else if (x.indicador === 'A3') partes.push(frase(plantillas, arriba ? 'CMP-04' : 'CMP-08'));
+      else partes.push(frase(plantillas, arriba ? 'CMP-02' : 'CMP-06', rango));
     }
     // Lecturas permitidas (Modelo 4.4): solo con el intervalo de un lado del cero, cuando aplica.
     if (x.indicador === 'A6' && x.ic_inferior > 0) partes.push(frase(plantillas, 'LEC-01'));
+    if (x.indicador === 'A6' && x.ic_superior < 0) partes.push(frase(plantillas, 'LEC-11'));
     if (x.indicador === 'A7' && x.ic_inferior > 0) partes.push(frase(plantillas, 'LEC-02'));
+    if (x.indicador === 'A7' && x.ic_superior < 0) partes.push(frase(plantillas, 'LEC-12'));
     if (x.indicador === 'A4' && x.valor > 0) partes.push(frase(plantillas, 'LEC-03', { porcentaje: Math.round(x.valor * 100) }));
     if (x.indicador === 'A10' && x.valor > 0) partes.push(frase(plantillas, 'LEC-04', { veces: x.detalle?.perseverativos ?? 0, oportunidades: x.n }));
   }
@@ -281,7 +288,7 @@ export function sesionHTML(plantillas, historial, k, { config, fichas = {}, regl
     partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-04">${esc(texto(plantillas, 'ETQ-04'))}</h3>${bandas ? '' : frase(plantillas, 'PNL-05')}${frase(plantillas, 'PNL-07')}${bloques.join('')}</section>`);
     // Cambios que persisten (Modelo 6.4).
     const persistentes = bandas
-      ? actividades.flatMap((a) => ORDEN_NUCLEO.filter((id) => persiste(historial, k, a, id, bandas)).map((id) => frase(plantillas, 'CMP-05', { indicador: `${a} · ${NOMBRES[id]}` }, 'li')))
+      ? actividades.flatMap((a) => ORDEN_NUCLEO.map((id) => [id, persiste(historial, k, a, id, bandas)]).filter(([, lado]) => lado).map(([id, lado]) => frase(plantillas, lado === 'arriba' ? 'CMP-05' : 'CMP-09', { indicador: `${a} · ${NOMBRES[id]}` }, 'li')))
       : [];
     partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-05">${esc(texto(plantillas, 'ETQ-05'))}</h3>${bandas ? (persistentes.length ? `<ul>${persistentes.join('')}</ul>` : frase(plantillas, 'PNL-06')) : frase(plantillas, 'PNL-05')}</section>`);
     // Ítems dominados: lista y ritmo (A9).
