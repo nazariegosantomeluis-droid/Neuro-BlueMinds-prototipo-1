@@ -110,11 +110,13 @@ export function persiste(historial, k, actividad, indicador, bandas, { consecuti
   return lados[0] && lados.every((l) => l === lados[0]) ? lados[0] : null;
 }
 
-// Señal falsa de la regla con valores sin cambio real: la banda de una línea base de n valores y
-// consecutivas sesiones fuera hacia el mismo lado. z: generador de normales. Para la prueba de H5.2.
-export function senalFalsa(z, { n = P.lineaBase.sesiones, mads = P.bandaVariacion.mads, consecutivas = P.bandaVariacion.sesionesConsecutivas } = {}) {
+// Señal de la regla en una simulación: la banda de una línea base de n valores y `consecutivas`
+// sesiones fuera hacia el mismo lado. z: generador de ruido; desplazamiento: lo que cambió el
+// valor real después de la línea base (0 = sin cambio: señal falsa). Para la prueba de H5.2 y la
+// calibración de la decisión R12 (tools/simular-banda.mjs).
+export function senalSimulada(z, { n = P.lineaBase.sesiones, mads = P.bandaVariacion.mads, consecutivas = P.bandaVariacion.sesionesConsecutivas, desplazamiento = 0 } = {}) {
   const banda = bandaDeVariacion(Array.from({ length: n }, z), { mads });
-  const lados = Array.from({ length: consecutivas }, () => ladoFuera(z(), banda));
+  const lados = Array.from({ length: consecutivas }, () => ladoFuera(z() + desplazamiento, banda));
   return Boolean(lados[0]) && lados.every((l) => l === lados[0]);
 }
 

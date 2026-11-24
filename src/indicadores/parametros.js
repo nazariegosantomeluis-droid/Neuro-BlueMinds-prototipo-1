@@ -95,11 +95,16 @@ export const PARAMETROS = Object.freeze({
   // fija; al lado, la regla simple de 3 errores seguidos. Solo en modo de observación: se calculan
   // y se guardan, nunca se muestran ni se usan (INV-9).
   alertaTemprana: { fraccionVentana: 0.5, ventanaMinima: 10, fraccionesSensibilidad: [0.25, 0.75], falsasAlertas: 0.05, permutaciones: 500, semilla: 'alerta-temprana', erroresSeguidos: 3, seccion: 'Decisión R13, 23 nov 2026; Modelo 10.1 y 13.7; Dakos et al. (2012)' },
-  // Panel (H5.2; Modelo 6.3 y 6.4; Arquitectura 6.4): banda de variación de la línea base = mediana
-  // ± 2 MAD (escalada) de los valores de las sesiones de línea base; un cambio se señala solo si el
-  // valor sale de la banda en 2 sesiones consecutivas. Sin índice de cambio fiable (RCI) hasta que
-  // la fiabilidad test-retest del indicador sea de 0.75 o más (ninguna lo es todavía).
-  bandaVariacion: { mads: 2, sesionesConsecutivas: 2, fiabilidadParaRCI: 0.75, seccion: 'Modelo 6.3 y 6.4; Arquitectura 6.4' },
+  // Panel (H5.2; Modelo 6.3 y 6.4; Arquitectura 6.4; decisión R12): banda de variación de la línea
+  // base = mediana ± k MAD de los valores de las sesiones de línea base, con la MAD escalada por
+  // 1.4826 (madEscala); un cambio se señala solo si el valor sale de la banda, hacia el mismo lado,
+  // en 2 sesiones consecutivas. k = 3.0 es el menor k (pasos de 0.1 desde 2.0) con menos de 5 % de
+  // falsas señales por indicador con ruido normal (4.68 %) y con ruido t de 5 grados de libertad
+  // (4.41 %), con el límite superior de Wilson de 95 % debajo de 5 % (tools/simular-banda.mjs,
+  // 400 000 repeticiones). Sensibilidad con k = 3: cambio de 1 DE, 11.3 % (normal) y 13.3 % (t5);
+  // de 2 DE, 29.3 % y 36.4 %. Sin índice de cambio fiable (RCI) hasta que la fiabilidad test-retest
+  // del indicador sea de 0.75 o más (ninguna lo es todavía).
+  bandaVariacion: { mads: 3, sesionesConsecutivas: 2, fiabilidadParaRCI: 0.75, seccion: 'Decisión R12, 23 nov 2026; Modelo 6.3, 6.4 y 13; Arquitectura 6.4; Jensen et al. (2006)' },
 });
 
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
