@@ -4,6 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
+    <!-- Política de seguridad del contenido (H8.5; MASVS-PLATFORM y MASVS-CODE): solo recursos de la
+         propia aplicación; sin scripts en línea, sin eval y sin conexiones a otros sitios. Los
+         estilos en línea se permiten porque algunas pantallas los usan para medidas en cm. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta name="referrer" content="no-referrer" />
     <meta name="description" content="AutiPal, de Neuro-BlueMinds. Prototipo para revisión de expertos. No es una herramienta diagnóstica." />
     <title>AutiPal · Prototipo E13</title>
     <link rel="icon" href="assets/marca/favicon.svg" type="image/svg+xml" />

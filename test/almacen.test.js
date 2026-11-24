@@ -123,3 +123,25 @@ test('la correspondencia entre el código del niño y su identidad nunca está e
   for (const c of NINO_COLUMNS) assert.doesNotMatch(c, /nombre|apellido|nacimiento|curp|telefono|correo|direccion|tutor|expediente|foto/);
   assert.match(leer('README.md'), /La correspondencia entre el código del niño y su identidad nunca está en la tableta/);
 });
+
+test('H8.5: después de 5 PIN equivocados, espera creciente guardada en IndexedDB (recargar no la reinicia)', async () => {
+  let t = 1_000_000;
+  const db = memoriaIDB();
+  const a = crearAlmacen({ db, claves: CLAVES, ahora: () => t });
+  await a.crearPin('482915', RAPIDO);
+  const { esperaTrasFallos, INTENTOS_LIBRES } = await import('../src/almacen.js');
+  assert.deepEqual([4, 5, 6, 7, 20].map(esperaTrasFallos), [0, 30000, 60000, 120000, 15 * 60000]);
+  assert.equal(INTENTOS_LIBRES, 5);
+  const b = crearAlmacen({ db, claves: CLAVES, ahora: () => t });
+  for (let i = 0; i < 4; i++) assert.equal(await b.desbloquear('000000'), false);
+  assert.equal(await b.espera(), 0, 'con 4 fallos todavía no hay espera');
+  assert.equal(await b.desbloquear('000000'), false);
+  assert.equal(await b.espera(), 30000);
+  // Otra instancia (la página recargada) ve la misma espera; ni el PIN correcto entra.
+  const c = crearAlmacen({ db, claves: CLAVES, ahora: () => t });
+  assert.equal(await c.espera(), 30000);
+  assert.equal(await c.desbloquear('482915'), false);
+  t += 30001;
+  assert.equal(await c.desbloquear('482915'), true);
+  assert.equal(await c.espera(), 0, 'el PIN correcto reinicia la cuenta');
+});

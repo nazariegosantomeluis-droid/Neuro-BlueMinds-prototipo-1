@@ -161,6 +161,12 @@ const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBloque === 'secuencia').map((f) => f.id);
 
 async function init() {
+  // H8.5 (MASVS-PLATFORM-3): la aplicación no corre dentro de un marco de otra página (protege
+  // contra el «clickjacking»; la cabecera frame-ancestors no se puede declarar en una página estática).
+  if (window.top !== window.self) {
+    app.innerHTML = '<p class="aviso" role="alert">AutiPal no se puede abrir dentro de otra página. Ábrelo directamente.</p>';
+    return;
+  }
   // Aplicación instalable que funciona sin conexión (H6.1): el trabajador de servicio guarda los
   // archivos de la aplicación (nunca datos de niños).
   if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -249,7 +255,12 @@ async function pedirPin(mensaje = '') {
       return null;
     },
     alDesbloquear: async (pin) => {
-      if (!(await almacen.desbloquear(pin))) return 'PIN incorrecto.';
+      const espera = await almacen.espera();
+      if (espera > 0) return `Demasiados intentos. Espera ${Math.ceil(espera / 1000)} s antes de volver a intentarlo.`;
+      if (!(await almacen.desbloquear(pin))) {
+        const despues = await almacen.espera();
+        return despues > 0 ? `PIN incorrecto. Demasiados intentos: espera ${Math.ceil(despues / 1000)} s.` : 'PIN incorrecto.';
+      }
       recargarRegistros();
       const cadena = auditoria.verificar();
       inactividad.tocar();
