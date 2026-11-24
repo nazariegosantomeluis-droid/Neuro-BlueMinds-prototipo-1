@@ -2482,3 +2482,17 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
 body:has(#app > .nino) .pie-version {
   display: none;
 }
+
+/* Participación (PRPS adaptada, decisión R9): cada valor con su ancla a la vista. */
+.registros-terapeuta .participacion label.ancla {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-block: 0.4rem;
+  min-height: 2.75rem;
+}
+
+.registros-terapeuta .participacion label.ancla input {
+  margin-top: 0.3rem;
+  flex: none;
+}
