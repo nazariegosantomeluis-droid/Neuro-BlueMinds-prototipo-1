@@ -137,6 +137,11 @@ test('«Anular el último cambio» revierte el último cambio de banda, sea de l
   assert.equal(env.estado.bandas['ACT-02'], 'B2');
   assert.equal(sube(env, 40).invariante, 'INV-4', 'la vuelta atrás cuenta como bajada para INV-4');
   assert.equal(env.terapeuta({ accion: 'anular_cambio_banda' }), null, 'nada más que anular');
+  // Decisión R14: la subida anulada sigue contando para INV-3, y la decisión se cita en el código.
+  assert.equal(env.estado.subidas, 1);
+  const src = leer('src/envolvente.js');
+  assert.match(src, /Decisión R14 \(23 nov 2026\): si la banda baja \(anular una subida\), cuenta como/);
+  assert.match(src, /Decisión R14: la subida anulada sigue contando entre las 4 de INV-3/);
 });
 
 // ---------- Prueba por propiedades (H4.3) ----------

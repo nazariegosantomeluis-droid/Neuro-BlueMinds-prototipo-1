@@ -146,13 +146,14 @@ export function crearEnvolvente({ bandas, iniciales = {}, dificultad = 'adaptati
           estado.bandas[actividad] = a;
         }
       } else if (orden.accion === 'anular_cambio_banda') {
-        // Revierte el último cambio (de la regla o del terapeuta). Si la banda baja, cuenta como
-        // bajada para INV-4; la adaptación sigue como estaba.
+        // Revierte el último cambio (de la regla o del terapeuta); la adaptación sigue como estaba.
+        // Decisión R14 (23 nov 2026): si la banda baja (anular una subida), cuenta como bajada para
+        // INV-4, porque anular una subida y volver a subir enseguida sería un ciclo.
         const ultimo = estado.cambios.pop();
         if (!ultimo) return null;
         const bs = bandas[ultimo.actividad] ?? [];
         if (bs.indexOf(ultimo.de) < bs.indexOf(ultimo.a)) estado.ultimaBajada[ultimo.actividad] = orden.ensayosValidos ?? estado.ultimoCambio[ultimo.actividad] ?? 0;
-        // Una subida anulada sigue contando para INV-3.
+        // Decisión R14: la subida anulada sigue contando entre las 4 de INV-3 (el niño la vivió).
         estado.bandas[ultimo.actividad] = ultimo.de;
         return ultimo;
       }
