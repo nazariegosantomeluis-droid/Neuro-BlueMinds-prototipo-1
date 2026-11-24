@@ -4,9 +4,11 @@
 // archivo es cambiar una definición: sube su versión en VERSIONES (Arquitectura 6.2).
 //
 // Fuente: el Modelo matemático del zip del proyecto del 8 de noviembre de 2026, con las decisiones
-// D2 a D5 del 12 de noviembre (hoja de ruta del prototipo, sección 2).
+// D2 a D5 del 12 de noviembre (hoja de ruta del prototipo, sección 2) y las decisiones R1 a R11 del
+// 23 de noviembre (claude/Pendientes_clinicos_y_del_Modelo.md, sección 1), que mandan sobre los
+// valores provisionales.
 
-export const VERSION_INDICADORES = '0.2.0';
+export const VERSION_INDICADORES = '0.3.0';
 
 export const PARAMETROS = Object.freeze({
   // Todo indicador se reporta con su intervalo de 95 % (Modelo 2.3).
@@ -16,16 +18,21 @@ export const PARAMETROS = Object.freeze({
   calidadMinima: { valor: 0.8, seccion: 'Modelo 3.4 y 7.2; Arquitectura 6.4' },
   // MAD escalada: comparable con una desviación estándar con datos normales (Modelo 3.2).
   madEscala: { valor: 1.4826, seccion: 'Modelo 3.2' },
-  // Interrupción técnica: pérdida de foco o de cuadros durante el ensayo; el ensayo sale de todos
-  // los indicadores (Modelo 3.3; Arquitectura 5.2). Con 1, basta un cuadro perdido.
-  cuadrosPerdidosExcluyen: { valor: 1, seccion: 'Modelo 3.3; Arquitectura 5.2' },
+  // Cuadros perdidos (decisión R7, 23 nov 2026): la pérdida de foco excluye el ensayo de todo; la
+  // pérdida de cuadros no lo excluye de A1 ni de A9 (no cambia si la respuesta fue correcta). Para
+  // las latencias (A2, A3, A6 y A7) se excluye solo si las opciones aparecieron tarde: más de 2
+  // cuadros entre t_opciones_insercion y t_opciones. Fuera de eso, los cuadros perdidos solo bajan
+  // el peso de calidad (Modelo 3.4). Las pérdidas importan sobre todo en el momento de aparición
+  // (Anwyl-Irvine et al., 2021). Sin periodo_cuadro_ms registrado, se supone 60 Hz.
+  cuadrosAparicionMaximos: { valor: 2, seccion: 'Decisión R7, 23 nov 2026 (Modelo 3.3 y 3.4)' },
+  periodoCuadroSupuestoMs: { valor: 1000 / 60, seccion: 'Decisión R7, 23 nov 2026; Arquitectura 5.3 (60 Hz)' },
   // Intervalos (Modelo 7.1 y decisión D2): Wilson para proporciones; estadísticos de orden para
   // medianas; A6 con Theil-Sen e intervalo por tau de Kendall; A3 y A7 con bootstrap de percentiles,
   // 2,000 remuestras, generador mulberry32 y semilla FNV-1a del texto «sesion:actividad:indicador».
   bootstrap: { remuestras: 2000, metodo: 'percentiles (cuantil tipo 1)', generador: 'mulberry32', semilla: 'FNV-1a de «sesion_id:actividad:indicador»', seccion: 'Modelo 7.1; decisión D2' },
   // Mínimos de datos de planeación (Modelo 4.1).
   minimos: {
-    A1: { valor: 20, unidad: 'ensayos', seccion: 'Modelo 4.1' },
+    A1: { valor: 20, unidad: 'ensayos con respuesta', seccion: 'Modelo 4.1; decisión R3, 23 nov 2026' },
     A2: { valor: 20, unidad: 'ensayos válidos', seccion: 'Modelo 4.1' },
     A3: { valor: 30, unidad: 'ensayos válidos', seccion: 'Modelo 4.1' },
     A4: { valor: 20, unidad: 'ensayos', seccion: 'Modelo 4.1' },
@@ -43,18 +50,22 @@ export const PARAMETROS = Object.freeze({
   // (decisión D5), configurable en la ficha («dominio.thetaEstrella»); 0.80 solo como análisis de
   // sensibilidad (Documento rector 4.4; Protocolo 2.4).
   dominio: { thetaEstrella: 0.7, confianza: 0.95, sensibilidad: 0.8, porCada: 100, seccion: 'Modelo 4.3; decisión D5' },
-  // Decisiones que el Modelo no precisa (pendientes; README, «Indicadores»):
-  // - en el dominio, una omisión cuenta como presentación sin acierto (e incluye omisiones);
-  omisionCuentaComoErrorEnDominio: { valor: true, seccion: 'Modelo 4.3 no lo precisa (pendiente)' },
+  // Omisiones (decisión R3, 23 nov 2026): A1 y A9 se calculan sobre los ensayos con respuesta; la
+  // corrección por azar 1/G supone que el niño eligió una opción, y puntuar las omisiones como
+  // errores sesga la estimación de la habilidad (Lord, 1974; Pohl et al., 2014). Las omisiones solo
+  // entran en A5, que se reporta siempre junto a A1 (Modelo 3.3).
+  omisionesEnA1yA9: { valor: 'excluidas', seccion: 'Decisión R3, 23 nov 2026 (Modelo 3.3, 4.2 y 4.3)' },
   // - con número de opciones distinto entre ensayos, el azar de A1 es la media de 1/G;
   azarConOpcionesVariables: { valor: 'media de 1/G', seccion: 'Modelo 4.2 define A1 con G fijo (pendiente)' },
-  // - los ensayos de sonda (Catálogo 7.3) no entran en A1 a A10 ni en el dominio.
-  sondasEnIndicadoresDeSesion: { valor: false, seccion: 'Catálogo 7.3 no lo precisa (pendiente)' },
-  // A11 y A12 se calculan al cerrar la sesión sobre las últimas actividades y sesiones del niño
-  // (Arquitectura 6.1), sin decir cuántas: el prototipo usa todas las de este dispositivo (pendiente).
+  // Los ensayos de sonda (Catálogo 7.3) no entran en A1 a A10 ni en el dominio: son otro tipo de
+  // ensayo (ejemplar no entrenado, sin corrección) (decisión R4, 23 nov 2026).
+  sondasEnIndicadoresDeSesion: { valor: false, seccion: 'Decisión R4, 23 nov 2026 (Catálogo 7.3)' },
+  // A11 y A12 (decisión R8, 23 nov 2026): por niño, acumulados dentro de la fase y reiniciados al
+  // cambiar de fase; disponibles desde 5 actividades o 5 sesiones; se reportan como resumen de fase,
+  // no como indicador por sesión para detectar cambios (las fases tienen estructura distinta).
   // Una actividad (bloque) se completa si no se terminó desde el menú; una sesión termina antes de lo
   // previsto si se terminó desde el menú (el límite de 15 minutos no cuenta: lo impone la plataforma).
-  ventanaPersistencia: { valor: 'todas las del niño en el dispositivo', seccion: 'Arquitectura 6.1 no lo precisa (pendiente)' },
+  ventanaPersistencia: { valor: 'la fase actual del niño, desde su primera sesión en ella', seccion: 'Decisión R8, 23 nov 2026 (Modelo 4.1; Arquitectura 6.1)' },
   // Regla de adaptación (C8; Modelo 9.1; Arquitectura 7.2): ventanas de 10 ensayos válidos; subir si
   // la precisión es mayor de 0.85 en dos ventanas consecutivas; bajar si es menor de 0.70 en una;
   // mantener entre 0.70 y 0.85; con señal de regulación, ofrecer pausa y bajar, y no subir en el
@@ -76,8 +87,8 @@ export const PARAMETROS = Object.freeze({
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
-  A1: '0.1.0', A2: '0.1.0', A3: '0.1.0', A4: '0.1.0', A5: '0.1.0', A6: '0.1.0', A7: '0.1.0', A8: '0.1.0', A9: '0.1.0', A10: '0.1.0', A11: '0.1.0', A12: '0.1.0',
-  C8: '0.1.0', regulacion: '0.1.0',
+  A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.2.0', A12: '0.2.0',
+  C8: '0.2.0', regulacion: '0.2.0',
   IG: '0.1.0', IRet: '0.1.0',
 });
 

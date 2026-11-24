@@ -1,61 +1,100 @@
-// Familiarización (tanda 4; Protocolo 3.2): el terapeuta prueba bandas de ACT-02 y ACT-07 y, al
-// cerrar, fija la banda inicial de la fase 1, que queda en el padrón y en el registro de la sesión.
+// Familiarización (decisión R6, 23 nov 2026; Protocolo 3.1, 3.2 y 4): ACT-01 en la banda mínima y,
+// después, ACT-02 y ACT-07 por una escalera desde B1, 10 ensayos por banda; sube con 8 o más
+// aciertos de 10 y se detiene en la primera banda no aprobada. La banda inicial de la fase 1 es la
+// última aprobada (B1 si ninguna); el terapeuta la confirma o la cambia con un motivo.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { bandaDelModo, planDeSesion } from '../src/fases.js';
-import { planNinoHTML, leerBandasPrueba } from '../src/plan-pantalla.js';
-import { leerRegistros, faltantes, registrosHTML } from '../src/registros-terapeuta.js';
+import { planDeSesion, bandaAprobada, bandaPropuesta, siguePorEscalera, decidirPaso } from '../src/fases.js';
+import { planNinoHTML } from '../src/plan-pantalla.js';
+import { leerRegistros, faltantes, registrosHTML, AVISO_INCLUSION } from '../src/registros-terapeuta.js';
+import { binomialCDF } from '../src/indicadores/estadistica.js';
 import { crearNino } from '../src/ninos.js';
 import { SESION_COLUMNS } from '../src/engine/logger.js';
 
 const leer = (ruta) => readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8');
 const config = JSON.parse(leer('fichas/sesion.json'));
 const fichas = Object.fromEntries(['ACT-01', 'ACT-02', 'ACT-07'].map((id) => [id, JSON.parse(leer(`fichas/${id}.json`))]));
-const bandaInicial = ['ACT-02', 'ACT-07'].map((id) => ({ id, nombre: fichas[id].nombre, bandas: fichas[id].bandas.map((b) => b.id), actual: null }));
+const E = config.modos.familiarizacion.escalera;
+const BANDAS = ['B1', 'B2', 'B3', 'B4'];
 
-test('la familiarización empieza en la banda mínima y deja probar otra solo en ACT-02 y ACT-07', () => {
-  assert.deepEqual(config.modos.familiarizacion.probarBandas, ['ACT-02', 'ACT-07']);
-  assert.equal(bandaDelModo('familiarizacion', fichas['ACT-02'], {}, config), 'B1');
-  assert.equal(bandaDelModo('familiarizacion', fichas['ACT-02'], {}, config, { 'ACT-02': 'B3' }), 'B3');
-  assert.equal(bandaDelModo('familiarizacion', fichas['ACT-01'], {}, config, { 'ACT-01': 'B2' }), 'B1', 'ACT-01 no se prueba');
-  assert.equal(bandaDelModo('familiarizacion', fichas['ACT-02'], {}, config, { 'ACT-02': 'B9' }), 'B1');
-  // Fuera de la familiarización la banda de prueba no cuenta.
-  assert.equal(bandaDelModo('fase1', fichas['ACT-02'], { 'ACT-02': 'B2' }, config, { 'ACT-02': 'B4' }), 'B2');
-  const plan = planDeSesion({ modo: 'familiarizacion', fichas, config, bandasPrueba: { 'ACT-07': 'B2' } }).filter((p) => p.tipo === 'bloque');
-  assert.deepEqual(plan.map((b) => `${b.actividad} ${b.banda}`), ['ACT-01 B1', 'ACT-02 B1', 'ACT-07 B2']);
-  assert.deepEqual(leerBandasPrueba({ 'prueba-ACT-02': 'B2', 'prueba-ACT-07': '', participante: 'x' }), { 'ACT-02': 'B2' });
+test('los parámetros de la escalera son los de la decisión R6', () => {
+  assert.deepEqual(E.actividades, ['ACT-02', 'ACT-07']);
+  assert.equal(E.ensayosPorBanda, 10);
+  assert.equal(E.aciertosParaSubir, 8);
+  assert.match(E.seccion, /Decisión R6, 23 nov 2026/);
+  assert.equal(config.modos.familiarizacion.minimoEnsayosACT01.valor, 10);
+  assert.equal(config.modalidadFueraDeFase2['ACT-02'], 'AV');
+  assert.match(config.origen.modalidadFueraDeFase2, /Decisión R2, 23 nov 2026/);
+  assert.match(config.origen.rutinaInicioMs, /Decisión R10, 23 nov 2026/);
+  assert.ok(!config.pendientes.some((p) => /familiarización|rutina|modalidad de ACT/.test(p)), 'ya no son pendientes');
+  for (const id of ['ACT-02', 'ACT-07']) assert.ok(!(fichas[id].pendientesClinicos ?? []).some((p) => /banda inicial/.test(p)), id);
 });
 
-test('el inicio de la familiarización muestra las bandas para probar', () => {
-  const nino = crearNino({ edad_meses: 70 });
-  const html = planNinoHTML({ nino, config, fichas, bandasPrueba: { 'ACT-02': 'B3' } });
-  assert.match(html, /name="prueba-ACT-02" data-probar>.*<option selected>B3<\/option>/s);
-  assert.match(html, /name="prueba-ACT-07" data-probar>/);
-  assert.match(html, /ACT-02 Pictograma e imagen: banda B3/);
-  assert.doesNotMatch(planNinoHTML({ nino: { ...nino, modo_fase: 'fase1' }, config, fichas }), /data-probar/);
+test('8 de 10 al azar es poco probable: 56/1024 con 2 opciones y 201/59049 con 3 (a mano)', () => {
+  // P(X ≥ 8 | n = 10, p = 1/2) = [C(10,8) + C(10,9) + C(10,10)]/2^10 = (45 + 10 + 1)/1024 = 56/1024.
+  assert.equal(1 - binomialCDF(7, 10, 0.5), 56 / 1024);
+  // Con p = 1/3: [45·2² + 10·2 + 1]/3^10 = 201/59049 = 0.0034.
+  assert.ok(Math.abs(1 - binomialCDF(7, 10, 1 / 3) - 201 / 59049) < 1e-12);
+  // Con 5 ensayos («4 de 5»), un niño que adivina con 2 opciones pasaría (5 + 1)/32 = 0.1875 de las veces.
+  assert.equal(1 - binomialCDF(3, 5, 0.5), 6 / 32);
 });
 
-test('al cerrar, la banda inicial de cada actividad es obligatoria y se guarda', () => {
-  const html = registrosHTML({ bandaInicial });
-  assert.match(html, /Banda inicial para la fase 1/);
-  assert.match(html, /name="banda-inicial-ACT-02"/);
-  assert.match(html, /name="banda-inicial-ACT-07"/);
-  assert.doesNotMatch(registrosHTML({}), /Banda inicial/);
-  const sin = leerRegistros({ participacion: '3', no_marcados: '0', banda_inicial: { 'ACT-02': 'B2' } }, { bandaInicial });
-  assert.deepEqual(sin.banda_inicial_fase1, { 'ACT-02': 'B2', 'ACT-07': null });
-  assert.deepEqual(faltantes(sin, { bandaInicial }), ['Elige la banda inicial de ACT-07 para la fase 1.']);
-  const con = leerRegistros({ participacion: '3', no_marcados: '0', banda_inicial: { 'ACT-02': 'B2', 'ACT-07': 'B1' } }, { bandaInicial });
+test('una banda se aprueba con 8 o más de 10; la escalera para en la primera no aprobada', () => {
+  assert.ok(bandaAprobada({ ensayos: 10, aciertos: 8 }, E));
+  assert.ok(!bandaAprobada({ ensayos: 10, aciertos: 7 }, E));
+  assert.ok(!bandaAprobada({ ensayos: 9, aciertos: 9 }, E), 'un bloque cortado no se aprueba');
+  assert.ok(siguePorEscalera({ banda: 'B2', aprobada: true }, BANDAS));
+  assert.ok(!siguePorEscalera({ banda: 'B4', aprobada: true }, BANDAS), 'no hay banda arriba de B4');
+  assert.ok(!siguePorEscalera({ banda: 'B2', aprobada: false }, BANDAS));
+  // Propuesta: la última aprobada.
+  assert.equal(bandaPropuesta([{ banda: 'B1', aprobada: true }, { banda: 'B2', aprobada: true }, { banda: 'B3', aprobada: false }], BANDAS), 'B2');
+  assert.equal(bandaPropuesta([{ banda: 'B1', aprobada: false }], BANDAS), 'B1', 'B1 si no aprueba ninguna');
+  assert.equal(bandaPropuesta([], BANDAS), 'B1', 'sin escalera (límite o sesión terminada antes), B1');
+  assert.equal(bandaPropuesta(BANDAS.map((banda) => ({ banda, aprobada: true })), BANDAS), 'B4');
+  // Límite de 15 minutos: la escalera no empieza otra banda; la propuesta es la última aprobada hasta ahí.
+  assert.equal(decidirPaso({ tipo: 'escalera' }, { usoMs: 15 * 60000, limiteMinutos: 15 }), 'limite');
+  assert.equal(bandaPropuesta([{ banda: 'B1', aprobada: true }], BANDAS), 'B1');
+});
+
+test('el plan y el inicio describen la escalera', () => {
+  const plan = planDeSesion({ modo: 'familiarizacion', fichas, config });
+  const esc = plan.filter((p) => p.tipo === 'escalera');
+  assert.deepEqual(esc.map((p) => [p.actividad, p.bandas, p.ensayosPorBanda, p.aciertosParaSubir, p.modalidad]), [['ACT-02', BANDAS, 10, 8, 'AV'], ['ACT-07', BANDAS, 10, 8, 'AV']]);
+  assert.deepEqual(plan.map((p) => p.tipo), ['rutina-inicio', 'referencia', 'bloque', 'transicion', 'escalera', 'transicion', 'escalera', 'rutina-cierre']);
+  const html = planNinoHTML({ nino: crearNino({ edad_meses: 70 }), config, fichas });
+  assert.match(html, /ACT-02 Pictograma e imagen: desde B1, 10 ensayos por banda, con voz \(AV\); sube con 8 aciertos o más de 10/);
+  assert.match(html, /ACT-01 Igual a la muestra: banda B1/);
+  assert.doesNotMatch(html, /data-probar/, 'ya no se eligen bandas para probar');
+});
+
+test('al cerrar: la propuesta se confirma o se cambia con motivo; el aviso de ACT-01 se muestra', () => {
+  const bandaInicial = ['ACT-02', 'ACT-07'].map((id) => ({ id, nombre: fichas[id].nombre, bandas: BANDAS, propuesta: id === 'ACT-02' ? 'B2' : 'B1', actual: id === 'ACT-02' ? 'B2' : 'B1', escalera: id === 'ACT-02' ? [{ banda: 'B1', ensayos: 10, aciertos: 9, aprobada: true }, { banda: 'B2', ensayos: 10, aciertos: 8, aprobada: true }, { banda: 'B3', ensayos: 10, aciertos: 5, aprobada: false }] : [] }));
+  const html = registrosHTML({ bandaInicial, avisoInclusion: true });
+  assert.match(html, /B1: 9 de 10 \(aprobada\) · B2: 8 de 10 \(aprobada\) · B3: 5 de 10\. Propuesta: <strong>B2<\/strong>/);
+  assert.match(html, /<option value="B2" selected>B2 \(propuesta\)<\/option>/);
+  assert.ok(html.includes(AVISO_INCLUSION));
+  assert.match(AVISO_INCLUSION, /10 ensayos de ACT-01/);
+  // Confirmar: sin cambios.
+  const ok = leerRegistros({ participacion: '4', no_marcados: '0', banda_inicial: { 'ACT-02': 'B2', 'ACT-07': 'B1' } }, { bandaInicial });
+  assert.deepEqual(ok.banda_inicial_cambios, []);
+  assert.deepEqual(faltantes(ok, { bandaInicial }), []);
+  // Cambiar sin motivo no se guarda como completo; con motivo, queda registrado.
+  const sin = leerRegistros({ participacion: '4', no_marcados: '0', banda_inicial: { 'ACT-02': 'B3', 'ACT-07': 'B1' } }, { bandaInicial });
+  assert.deepEqual(faltantes(sin, { bandaInicial }), ['Escribe por qué cambias la banda inicial de ACT-02 (la plataforma propuso B2).']);
+  const con = leerRegistros({ participacion: '4', no_marcados: '0', banda_inicial: { 'ACT-02': 'B3', 'ACT-07': 'B1' }, motivo_banda: { 'ACT-02': 'En B3 se distrajo al final; la conoce' } }, { bandaInicial });
+  assert.deepEqual(con.banda_inicial_cambios, [{ actividad: 'ACT-02', propuesta: 'B2', elegida: 'B3', motivo: 'En B3 se distrajo al final; la conoce' }]);
   assert.deepEqual(faltantes(con, { bandaInicial }), []);
-  assert.equal(leerRegistros({ participacion: '3' }, {}).banda_inicial_fase1, null, 'fuera de la familiarización no se pide');
 });
 
-test('la banda elegida va al padrón y a sesiones.csv; la regla queda como pendiente clínico', () => {
-  assert.ok(SESION_COLUMNS.includes('banda_inicial_fase1'));
+test('todo va al registro y al padrón', () => {
+  for (const c of ['banda_inicial_fase1', 'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'aviso_inclusion_act01']) assert.ok(SESION_COLUMNS.includes(c), c);
   const app = leer('src/app.js');
+  assert.match(app, /peldano\.aprobada = bandaAprobada\(peldano, paso\);/);
+  assert.match(app, /if \(!siguePorEscalera\(peldano, paso\.bandas\)\) break;/);
+  assert.match(app, /decidirPaso\(\{ tipo: 'bloque' \}, \{ usoMs: performance\.now\(\) - s\.inicioMs, limiteMinutos: cfg\.limiteMinutos \}\) === 'limite'/);
+  assert.match(app, /aviso_inclusion_act01: act01 < \(famil\.minimoEnsayosACT01\?\.valor \?\? 10\)/);
   assert.match(app, /for \(const \[a, b\] of elegidas\) n\.bandas = fijarBanda\(n\.bandas, state\.fichas\[a\], b\);/);
-  assert.match(app, /bandasPrueba: leerBandasPrueba\(state\.form\)/);
-  for (const id of ['ACT-02', 'ACT-07']) assert.ok(fichas[id].pendientesClinicos.some((p) => /banda inicial de la fase 1/.test(p)), id);
   const readme = leer('README.md');
-  assert.match(readme, /\| `banda_inicial_fase1` \|/);
+  for (const c of ['escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'aviso_inclusion_act01']) assert.match(readme, new RegExp(`\\| \`${c}\` \\|`), c);
 });

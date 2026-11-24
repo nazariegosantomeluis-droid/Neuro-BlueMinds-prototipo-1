@@ -1,11 +1,22 @@
 // Registros del terapeuta al cerrar la sesión con un niño (H2.6; Arquitectura 8.4; Protocolo 5.4 y
-// 8). En una sola pantalla: valoración de participación de 1 a 5, episodios de desregulación
+// 8). En una sola pantalla: participación (PRPS adaptada, de 1 a 6), episodios de desregulación
 // confirmados, eventos adversos con su gravedad y, en la fase 3, si consultó el panel y qué decisión
 // informó. Puede completarse después, pero la sesión queda incompleta hasta hacerlo.
 // Lógica pura y HTML; app.js la muestra y guarda lo leído en sesiones.csv.
 import { esc } from './html.js';
 
-export const PARTICIPACION = [1, 2, 3, 4, 5];
+// Participación (decisión R9, 23 nov 2026): Pittsburgh Rehabilitation Participation Scale adaptada
+// (PRPS; Lenze et al., 2004), de 6 niveles, con las anclas de claude/Pendientes_clinicos_y_del_Modelo.md.
+// Está validada en adultos en rehabilitación; el piloto mide su acuerdo entre evaluadores.
+export const ANCLAS_PARTICIPACION = {
+  1: ['Ninguna', 'Rechazó toda la sesión o no participó en ninguna actividad'],
+  2: ['Escasa', 'Rechazó o no participó en al menos la mitad de la sesión'],
+  3: ['Regular', 'Participó en la mayoría o en todas las actividades, pero sin esfuerzo sostenido o sin terminar la mayoría, o necesitó mucho estímulo para terminarlas'],
+  4: ['Buena', 'Participó en todas con buen esfuerzo y terminó la mayoría, pero no todas'],
+  5: ['Muy buena', 'Participó en todas con esfuerzo sostenido y las terminó todas, siguiendo las indicaciones de forma pasiva'],
+  6: ['Excelente', 'Participó en todas con esfuerzo sostenido, las terminó todas y mostró interés activo (se acercó, inició o pidió seguir)'],
+};
+export const PARTICIPACION = Object.keys(ANCLAS_PARTICIPACION).map(Number);
 
 // Protocolo 8.1.
 export const GRAVEDADES = {
@@ -55,13 +66,19 @@ export function leerRegistros(datos, { marcados = [], fase3 = false, bandaInicia
     decision_informada: fase3 ? (datos.decision === 'si' ? true : datos.decision === 'no' ? false : null) : null,
     tipo_decision: fase3 && datos.decision === 'si' ? datos.tipo_decision || null : null,
     banda_inicial_fase1: bandaInicial.length ? Object.fromEntries(bandaInicial.map(({ id }) => [id, datos.banda_inicial?.[id] || null])) : null,
+    // Decisión R6: si el terapeuta cambia la banda que propuso la escalera, queda con su motivo.
+    banda_inicial_cambios: bandaInicial.length
+      ? bandaInicial
+          .filter(({ id, propuesta }) => propuesta && datos.banda_inicial?.[id] && datos.banda_inicial[id] !== propuesta)
+          .map(({ id, propuesta }) => ({ actividad: id, propuesta, elegida: datos.banda_inicial[id], motivo: texto(datos.motivo_banda?.[id]) }))
+      : null,
   };
 }
 
 // Lo que falta para que los registros estén completos.
 export function faltantes(reg, { fase3 = false, bandaInicial = [] }) {
   const f = [];
-  if (!PARTICIPACION.includes(reg.participacion)) f.push('Elige la valoración de participación, de 1 a 5.');
+  if (!PARTICIPACION.includes(reg.participacion)) f.push('Elige la participación, de 1 a 6.');
   if (!Number.isInteger(reg.episodios_no_marcados) || reg.episodios_no_marcados < 0) f.push('Los episodios no marcados deben ser un número entero (0 o más).');
   reg.eventos_adversos.forEach((e, i) => {
     const n = i + 1;
@@ -73,6 +90,7 @@ export function faltantes(reg, { fase3 = false, bandaInicial = [] }) {
   for (const { id, bandas } of bandaInicial) {
     if (!bandas.includes(reg.banda_inicial_fase1?.[id])) f.push(`Elige la banda inicial de ${id} para la fase 1.`);
   }
+  for (const c of reg.banda_inicial_cambios ?? []) if (!c.motivo) f.push(`Escribe por qué cambias la banda inicial de ${c.actividad} (la plataforma propuso ${c.propuesta}).`);
   if (fase3) {
     if (reg.consulto_panel === null) f.push('Indica si consultaste el panel.');
     if (reg.decision_informada === null) f.push('Indica si la información contribuyó a alguna decisión.');
@@ -102,30 +120,46 @@ export function eventoHTML(i, { actividades = [], bandas = [], e = {} } = {}) {
     </fieldset>`;
 }
 
+// Aviso del criterio de inclusión (Protocolo 4; decisión R6).
+export const AVISO_INCLUSION =
+  'El niño no completó al menos 10 ensayos de ACT-01 en la familiarización. El Protocolo (sección 4) lo pide como criterio de inclusión: coméntalo con el investigador responsable.';
+
+// Una actividad de la banda inicial: lo que pasó en la escalera, la propuesta y el selector.
+function bandaInicialHTML({ id, nombre, bandas: bs, actual, propuesta, motivo = '', escalera = [] }) {
+  const pasos = escalera.length
+    ? escalera.map((p) => `${esc(p.banda)}: ${p.aciertos} de ${p.ensayos}${p.aprobada ? ' (aprobada)' : ''}`).join(' · ')
+    : 'no se hizo la escalera';
+  return `
+    <div class="banda-inicial-actividad" data-banda-inicial="${esc(id)}">
+      <p><strong>${esc(id)} ${esc(nombre ?? '')}</strong> · ${pasos}. Propuesta: <strong>${esc(propuesta ?? '—')}</strong>.</p>
+      <label>Banda inicial <select name="banda-inicial-${esc(id)}">${bs.map((b) => opcion(b, b === propuesta ? `${b} (propuesta)` : b, actual)).join('')}</select></label>
+      <label>Motivo del cambio (solo si eliges otra) <input name="motivo-banda-${esc(id)}" maxlength="${TEXTO_MAX}" autocomplete="off" value="${esc(motivo)}"></label>
+    </div>`;
+}
+
 // Formulario completo. previo: lo ya guardado de la sesión (para completarlo después).
-export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {}, bandaInicial = [] }) {
+export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {}, bandaInicial = [], avisoInclusion = false }) {
   const hora = (iso) => (iso ? new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '');
   const confirmado = (i) => previo.episodios_confirmados?.[i]?.confirmado;
   return `
     <form class="panel registros-terapeuta" id="registros" novalidate>
+      ${avisoInclusion ? `<p class="aviso" role="alert">${esc(AVISO_INCLUSION)}</p>` : ''}
       ${
         bandaInicial.length
           ? `<fieldset class="banda-inicial">
                <legend>Banda inicial para la fase 1</legend>
-               ${bandaInicial
-                 .map(
-                   ({ id, nombre, bandas: bs, actual }) =>
-                     `<label>${esc(id)} ${esc(nombre ?? '')} <select name="banda-inicial-${esc(id)}">${opcion('', '—', actual ?? '')}${bs.map((b) => opcion(b, b, actual)).join('')}</select></label>`,
-                 )
-                 .join('')}
-               <p class="ayuda">Queda en el padrón del niño y se usa en todas sus sesiones de la fase 1 y del cierre (Protocolo 3.2). La regla para elegirla está pendiente de decisión clínica (pendientesClinicos de cada ficha).</p>
+               ${bandaInicial.map((b) => bandaInicialHTML(b)).join('')}
+               <p class="ayuda">La plataforma propone la última banda aprobada en la escalera (10 ensayos por banda, 8 aciertos o más; B1 si no aprobó ninguna). Confírmala o cámbiala; si la cambias, escribe el motivo. Queda en el padrón del niño y se usa en la fase 1 y el cierre (decisión R6; Protocolo 3.2).</p>
              </fieldset>`
           : ''
       }
-      <fieldset class="chips">
-        <legend>Valoración de participación</legend>
-        ${PARTICIPACION.map((n) => radio('participacion', n, String(n), previo.participacion)).join('')}
-        <p class="ayuda">De 1 a 5 (Arquitectura 8.4). Los documentos todavía no describen cada valor: está en los pendientes de fichas/sesion.json.</p>
+      <fieldset class="participacion">
+        <legend>Participación en la sesión</legend>
+        ${PARTICIPACION.map(
+          (n) =>
+            `<label class="ancla"><input type="radio" name="participacion" value="${n}" ${String(n) === String(previo.participacion) ? 'checked' : ''}><span><strong>${n} ${esc(ANCLAS_PARTICIPACION[n][0])}.</strong> ${esc(ANCLAS_PARTICIPACION[n][1])}.</span></label>`,
+        ).join('')}
+        <p class="ayuda">Escala de participación de Pittsburgh (PRPS) adaptada, de 1 a 6 (Lenze et al., 2004).</p>
       </fieldset>
       <fieldset>
         <legend>Episodios de desregulación</legend>
@@ -191,5 +225,6 @@ export function datosDelFormulario(form) {
     decision: fd.get('decision') ?? '',
     tipo_decision: fd.get('tipo_decision') ?? '',
     banda_inicial: Object.fromEntries([...fd.entries()].filter(([k]) => k.startsWith('banda-inicial-')).map(([k, v]) => [k.slice(14), v])),
+    motivo_banda: Object.fromEntries([...fd.entries()].filter(([k]) => k.startsWith('motivo-banda-')).map(([k, v]) => [k.slice(13), v])),
   };
 }

@@ -16,10 +16,20 @@ export const calidadBaja = (calidad) => calidad + 1e-9 < P.calidadMinima.valor;
 
 // ---------- Ensayos que entran ----------
 
-// Interrupción técnica (Modelo 3.3; Arquitectura 5.2): pausa, pérdida de foco, cuadros perdidos o
-// fallo técnico. Esos ensayos no entran en ningún indicador, pero se conservan en el registro.
-export const interrupcionTecnica = (r) =>
-  Boolean(r.interrumpido || r.perdida_foco || r.fallo_tecnico || (r.cuadros_perdidos ?? 0) >= P.cuadrosPerdidosExcluyen.valor);
+// Interrupción técnica (Modelo 3.3; Arquitectura 5.2; decisión R7): pausa, pérdida de foco o fallo
+// técnico. Esos ensayos no entran en ningún indicador, pero se conservan en el registro. Los cuadros
+// perdidos ya no excluyen el ensayo: bajan su peso de calidad (Modelo 3.4) y, si retrasaron la
+// aparición de las opciones, lo sacan de las latencias (aparicionTardia).
+export const interrupcionTecnica = (r) => Boolean(r.interrumpido || r.perdida_foco || r.fallo_tecnico);
+
+// Cuadros entre la inserción de las opciones y su aparición en pantalla.
+export function cuadrosHastaAparicion(r) {
+  if (r.t_opciones == null || r.t_opciones_insercion == null) return null;
+  return Math.round((r.t_opciones - r.t_opciones_insercion) / (r.periodo_cuadro_ms || P.periodoCuadroSupuestoMs.valor));
+}
+
+// Las opciones aparecieron tarde por cuadros perdidos: más de 2 cuadros (decisión R7).
+export const aparicionTardia = (r) => (cuadrosHastaAparicion(r) ?? 0) > P.cuadrosAparicionMaximos.valor;
 
 // Ensayo que entra en los indicadores de la sesión: sin interrupción técnica y, salvo que el
 // parámetro diga otra cosa, que no sea una sonda de generalización (Catálogo 7.3).
@@ -28,9 +38,10 @@ export const utilizable = (r) => !interrupcionTecnica(r) && (P.sondasEnIndicador
 // Tiempo de respuesta del ensayo: corregido si hay latencia del dispositivo; si no, el bruto.
 export const rtDe = (r) => r.tr_corregido_ms ?? r.tr_bruto_ms;
 
-// Válido para la latencia (A2, A3, A6 y A7): con respuesta, no anticipatorio y no fuera de tarea
+// Válido para la latencia (A2, A3, A6 y A7): con respuesta, no anticipatorio, no fuera de tarea y
+// con las opciones a tiempo (decisión R7)
 // (Modelo 3.3). fuera_de_tarea vacío (menos de 10 ensayos válidos) no excluye.
-export const validoLatencia = (r) => utilizable(r) && !r.omision && rtDe(r) > 0 && !r.anticipatoria && r.fuera_de_tarea !== true;
+export const validoLatencia = (r) => utilizable(r) && !r.omision && rtDe(r) > 0 && !r.anticipatoria && r.fuera_de_tarea !== true && !aparicionTardia(r);
 
 const respondio = (r) => r.opcion_elegida !== null && r.opcion_elegida !== undefined && !r.omision;
 const error = (r) => respondio(r) && !r.acierto;
@@ -71,14 +82,17 @@ const semillaDe = (rows, id) => `${rows[0]?.sesion_id ?? ''}:${rows[0]?.activida
 
 // A1. Precisión ajustada: PA = (p − 1/G)/(1 − 1/G), intervalo de Wilson sobre p transformado con
 // la misma fórmula (Modelo 4.2). Con G distinto entre ensayos, el azar es la media de 1/G.
+// Decisión R3 (23 nov 2026): solo los ensayos con respuesta; las omisiones van a A5, que se
+// reporta junto a A1 (en el detalle de A1 y en la fila siguiente de indicadores.csv).
 export function a1(rows, calidad) {
-  const us = rows.filter(utilizable);
+  const omisiones = rows.filter(utilizable).filter((r) => r.omision).length;
+  const us = rows.filter(utilizable).filter((r) => !r.omision);
   const n = us.length;
   const x = us.filter((r) => r.acierto).length;
   const azar = n ? us.reduce((t, r) => t + 1 / r.n_opciones, 0) / n : null;
   const pa = (p) => (p - azar) / (1 - azar);
   const ic = wilson(x, n, CONF);
-  return resultado('A1', { valor: n ? pa(x / n) : null, ic: ic && ic.map(pa), n, minimo: P.minimos.A1, calidad, extra: { aciertos: x, azar } });
+  return resultado('A1', { valor: n ? pa(x / n) : null, ic: ic && ic.map(pa), n, minimo: P.minimos.A1, calidad, extra: { aciertos: x, azar, omisiones } });
 }
 
 // A2. Latencia robusta: LPR = exp(mediana ln RT) (Modelo 3.2). Intervalo por estadísticos de

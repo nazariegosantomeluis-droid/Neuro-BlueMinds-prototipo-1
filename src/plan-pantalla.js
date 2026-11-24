@@ -9,40 +9,20 @@ export const NOMBRE_MODO = { familiarizacion: 'Familiarización', fase1: 'Fase 1
 const MODALIDAD = { V: 'visual (V)', AV: 'con voz (AV)', mixta: 'V y AV mezcladas' };
 
 // historial: modalidades que abrieron las sesiones de fase 2 anteriores del niño.
-// En la familiarización, la banda que el terapeuta elige probar en cada actividad (Protocolo 3.2).
-// datos: lo del formulario; los campos se llaman prueba-ACT-02, prueba-ACT-07.
-export const leerBandasPrueba = (datos = {}) =>
-  Object.fromEntries(Object.entries(datos).filter(([k, v]) => k.startsWith('prueba-') && v).map(([k, v]) => [k.slice(7), v]));
-
-function probarBandasHTML(modo, config, fichas, bandasPrueba) {
-  const ids = config.modos[modo]?.probarBandas ?? [];
-  if (!ids.length) return '';
-  return `
-    <fieldset class="probar-bandas">
-      <legend>Bandas para probar</legend>
-      ${ids
-        .map((id) => {
-          const f = fichas[id];
-          const actual = bandasPrueba[id] ?? f.bandas[0].id;
-          return `<label>${esc(id)} ${esc(f.nombre)} <select name="prueba-${esc(id)}" data-probar>${f.bandas.map((b) => `<option ${b.id === actual ? 'selected' : ''}>${esc(b.id)}</option>`).join('')}</select></label>`;
-        })
-        .join('')}
-      <p class="ayuda">La familiarización empieza en la banda mínima. Puedes probar otra para elegir la banda inicial de la fase 1, que fijas al cerrar la sesión (Protocolo 3.2). La regla para elegirla está pendiente de decisión clínica.</p>
-    </fieldset>`;
-}
-
-export function planNinoHTML({ nino, config, fichas, historial = [], temas = null, tema = TEMA_GENERAL, bandasPrueba = {} }) {
+export function planNinoHTML({ nino, config, fichas, historial = [], temas = null, tema = TEMA_GENERAL }) {
   const modo = modoDe(nino);
   const fase2 = modo === 'fase2' ? { version: fichas[config.fase2.actividad]?.fase2?.version ?? 'protocolo', numero: historial.length + 1, primera: 'V' } : null;
   let plan;
   try {
-    plan = planDeSesion({ modo, fichas, config, bandasNino: nino.bandas ?? {}, fase2, bandasPrueba });
+    plan = planDeSesion({ modo, fichas, config, bandasNino: nino.bandas ?? {}, fase2 });
   } catch (e) {
     return `<p class="mensaje">${esc(e.message)}</p>`;
   }
-  const bloques = plan.filter((p) => p.tipo === 'bloque');
+  const bloques = plan.filter((p) => p.tipo === 'bloque' || p.tipo === 'escalera');
   const linea = (b) =>
-    fase2 && b.actividad === config.fase2.actividad && b.modalidad !== 'mixta'
+    b.tipo === 'escalera'
+      ? `${esc(b.actividad)} ${esc(fichas[b.actividad].nombre)}: desde ${esc(b.bandas[0])}, ${b.ensayosPorBanda} ensayos por banda, ${MODALIDAD[b.modalidad]}; sube con ${b.aciertosParaSubir} aciertos o más de ${b.ensayosPorBanda} y se detiene en la primera banda no aprobada`
+      : fase2 && b.actividad === config.fase2.actividad && b.modalidad !== 'mixta'
       ? `${esc(b.actividad)} ${esc(fichas[b.actividad].nombre)}: banda ${esc(b.banda)}, ${b.ensayos} ensayos en una modalidad (mitad ${esc(b.mitad)})`
       : `${esc(b.actividad)} ${esc(fichas[b.actividad].nombre)}: banda ${esc(b.banda)}, ${MODALIDAD[b.modalidad]}, ${b.ensayos} ensayos`;
   const notaFase2 = fase2
@@ -57,7 +37,11 @@ export function planNinoHTML({ nino, config, fichas, historial = [], temas = nul
         <li>Rutina de cierre y registros del terapeuta</li>
       </ol>
       ${notaFase2}
-      ${probarBandasHTML(modo, config, fichas, bandasPrueba)}
+      ${
+        config.modos[modo]?.escalera
+          ? `<p class="ayuda">La plataforma propone como banda inicial de la fase 1 la última banda aprobada (${esc(fichas[config.modos[modo].escalera.actividades[0]]?.bandas[0].id ?? 'B1')} si no aprueba ninguna); al cerrar la confirmas o la cambias con un motivo (decisión R6).</p>`
+          : ''
+      }
       ${selectorTemaHTML(temas, tema, esc)}
       <p class="ayuda">El modo de fase y la banda los fija el investigador en <a href="#ninos">Niños inscritos</a>. Entre actividades hay una transición de ${config.transicionMs / 1000} s; a los ${config.limiteMinutos} minutos no empieza otro bloque.</p>
     </div>`;

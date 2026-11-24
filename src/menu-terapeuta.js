@@ -29,7 +29,8 @@ export const TOQUES = {
 export function bloqueoDe(accion, modo, config) {
   const cambiaBanda = ['fijar_banda', 'anular_cambio_banda', 'desactivar_adaptacion', 'reactivar_adaptacion'].includes(accion);
   if (!cambiaBanda || !modo || !config?.modos?.[modo]) return null;
-  return config.modos[modo].dificultad === 'fija' ? 'INV-7' : null;
+  // La escalera de la familiarización (decisión R6) también fija la banda: la mueve su regla.
+  return ['fija', 'escalera'].includes(config.modos[modo].dificultad) ? 'INV-7' : null;
 }
 
 export const MENSAJE_BLOQUEO = {

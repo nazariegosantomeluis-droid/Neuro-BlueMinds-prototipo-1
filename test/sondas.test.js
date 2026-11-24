@@ -129,3 +129,8 @@ test('la aplicación las usa solo en los modos activos y antes de precargar las 
   // La pantalla de selección no marca nada con showFeedback(null).
   assert.match(leer('src/activities/seleccion.js'), /querySelector\(`\[data-pos="\$\{posCorrecta\}"\]`\)\?\.classList\.add\('marco'\)/);
 });
+
+test('decisiones R4 y R5: su origen está en la ficha y ya no son pendientes clínicos', () => {
+  assert.match(act02.sondas.origen, /Decisiones R4 y R5, 23 nov 2026/);
+  assert.equal(act02.pendientesClinicos, undefined);
+});

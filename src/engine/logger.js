@@ -54,6 +54,9 @@ export const SESION_COLUMNS = [
   // Tanda 5: versión de los indicadores con que se calcula la sesión (Arquitectura 6.2) y propuestas
   // de la regla de adaptación en la fase 3 (H4.1 y H4.2; ninguna se ejecuta hasta H4.3).
   'version_indicadores', 'adaptacion_propuestas',
+  // Tanda 5b (decisión R6): escalera de la familiarización, banda inicial propuesta, cambios del
+  // terapeuta con su motivo y aviso del criterio de inclusión de ACT-01 (Protocolo 4).
+  'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'aviso_inclusion_act01',
 ];
 
 const KEY = 'neuro-blueminds.registro';

@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  GRAVEDADES, RELACIONES, TIPOS_DECISION, episodiosMarcados, leerRegistros, faltantes, registrosHTML, eventoHTML, filaRegistros, registrosPendientes,
+  ANCLAS_PARTICIPACION, PARTICIPACION, GRAVEDADES, RELACIONES, TIPOS_DECISION, episodiosMarcados, leerRegistros, faltantes, registrosHTML, eventoHTML, filaRegistros, registrosPendientes,
 } from '../src/registros-terapeuta.js';
 import { SESION_COLUMNS } from '../src/engine/logger.js';
 
@@ -64,7 +64,7 @@ test('en la fase 3 se pide si consultó el panel y qué decisión informó', () 
 
 test('una sola pantalla; «Completar después» deja la sesión incompleta', () => {
   const html = registrosHTML({ marcados: episodiosMarcados(ordenes), actividades: ['ACT-02', 'ACT-07'], bandas: ['B1', 'B2'] });
-  assert.equal((html.match(/name="participacion"/g) ?? []).length, 5);
+  assert.equal((html.match(/name="participacion"/g) ?? []).length, 6);
   assert.equal((html.match(/name="confirmado"/g) ?? []).length, 2);
   for (const id of ['agregar-evento', 'despues']) assert.match(html, new RegExp(`id="${id}"`));
   assert.match(html, /Guardar y terminar/);
@@ -95,4 +95,15 @@ test('todo va al registro y «Sesiones» ofrece completar las incompletas', () =
   assert.match(sesiones, /<span class="etiqueta incompleta">Incompleta<\/span>/);
   const readme = leer('README.md');
   for (const c of ['participacion', 'eventos_adversos', 'registros_completos']) assert.match(readme, new RegExp(`\\| \`${c}\` \\|`), `README: ${c}`);
+});
+
+test('decisión R9: participación con la PRPS adaptada, de 1 a 6, con sus anclas a la vista', () => {
+  assert.deepEqual(PARTICIPACION, [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(Object.values(ANCLAS_PARTICIPACION).map((a) => a[0]), ['Ninguna', 'Escasa', 'Regular', 'Buena', 'Muy buena', 'Excelente']);
+  const html = registrosHTML({});
+  for (const [n, [nombre, ancla]] of Object.entries(ANCLAS_PARTICIPACION)) assert.ok(html.includes(`<strong>${n} ${nombre}.</strong> ${ancla.replace(/[()]/g, (c) => c)}.`), `ancla ${n}`);
+  assert.match(html, /Lenze et al\., 2004/);
+  assert.equal(faltantes(leerRegistros({ participacion: '6', no_marcados: '0' }, {}), {}).length, 0, '6 es válido');
+  assert.match(faltantes(leerRegistros({ participacion: '7', no_marcados: '0' }, {}), {})[0], /de 1 a 6/);
+  assert.match(readFileSync(new URL('../README.md', import.meta.url), 'utf8'), /Lenze, E\. J\., et al\. \(2004\)/);
 });

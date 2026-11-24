@@ -70,3 +70,15 @@ test('indicadores.csv: una fila por sesión, actividad e indicador, con detalle 
   assert.match(app, /data-descargar="indicadores"/);
   assert.match(app, /calcularIndicadores\(paraExportar\(log\.rows\(\), \{ sinTiempos: sinTiempos\(\) \}\), sesiones\.rows\(\), \{ fichas: state\.fichas, items: state\.items \}\)/);
 });
+
+test('decisión R3: en indicadores.csv, A5 (omisiones) va siempre justo después de A1', () => {
+  for (const c of archivo.casos) {
+    c.salidas.forEach((s, k) => {
+      if (s.indicador === 'A1') assert.equal(c.salidas[k + 1].indicador, 'A5', `${c.nombre} ${s.sesion_id} ${s.actividad}`);
+    });
+  }
+  // Decisión R7: hay ensayos con opciones que aparecieron tarde (4 cuadros) para probar la exclusión.
+  assert.ok(archivo.casos.some((c) => c.entradas.ensayos.some((r) => Math.round((r.t_opciones - r.t_opciones_insercion) / r.periodo_cuadro_ms) > 2)));
+  assert.equal(archivo.versiones_definicion.A1, '0.3.0');
+  assert.equal(archivo.versiones_definicion.A9, '0.3.0');
+});

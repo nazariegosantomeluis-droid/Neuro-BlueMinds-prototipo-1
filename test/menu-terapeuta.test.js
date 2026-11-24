@@ -69,7 +69,9 @@ test('INV-7: en los modos con dificultad fija la banda y la adaptación no cambi
     assert.equal(menu.estado.adaptacion, false);
   }
   // En la fase 3 y la familiarización sí se puede; también en la demostración, sin modo.
-  for (const modo of ['fase3', 'familiarizacion', null]) assert.equal(bloqueoDe('fijar_banda', modo, config), null, String(modo));
+  for (const modo of ['fase3', null]) assert.equal(bloqueoDe('fijar_banda', modo, config), null, String(modo));
+  // En la familiarización la banda la mueve la escalera (decisión R6): tampoco se fija a mano.
+  assert.equal(bloqueoDe('fijar_banda', 'familiarizacion', config), 'INV-7');
   // Pausar, reanudar, terminar y marcar un episodio nunca se bloquean.
   for (const accion of ['pausar', 'reanudar', 'terminar_bloque', 'terminar_sesion', 'episodio_desregulacion']) assert.equal(bloqueoDe(accion, 'fase1', config), null, accion);
 });
