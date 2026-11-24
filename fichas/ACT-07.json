@@ -1,6 +1,6 @@
 {
   "id": "ACT-07",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "nombre": "Cambia la regla",
   "objetivo": "Describir el desempeño al clasificar por un criterio y al cambiar de criterio, y el costo de ese cambio.",
   "paradigma": "Clasificación por dimensiones con cambio de regla, del tipo de la tarea de cambio dimensional de tarjetas (Zelazo, 2006).",
@@ -89,9 +89,6 @@
   "lecturasPermitidas": ["Cometió más errores en los ensayos en que cambió la regla que en los que se repitió", "Tardó en promedio 300 ms más al cambiar de regla"],
   "lecturasNoPermitidas": ["Tiene rigidez cognitiva", "Su función ejecutiva está alterada"],
   "contraindicaciones": ["Discapacidad visual no corregida.", "Si el niño no supera la banda B1, se mantiene en ella y no se calcula ICS."],
-  "pendientesClinicos": [
-    "Regla para elegir, en la sesión de familiarización, la banda inicial de la fase 1 (Protocolo 3.2: «un nivel inicial elegido para cada niño con la sesión de familiarización», sin decir cómo). Mientras se decide, el terapeuta prueba bandas y fija la banda al cerrar la sesión; queda en el padrón y en banda_inicial_fase1."
-  ],
   "revisionClinica": {
     "revisor": "",
     "fecha": ""

@@ -1,17 +1,33 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "descripcion": "Estructura fija de la sesión con un niño (Catálogo de actividades 7.1; Arquitectura y software 4.1, 7.4 y 14; Protocolo de validación 3.3). Lo que no dicen los documentos es una propuesta del prototipo y está en «pendientes».",
   "rutinaInicioMs": 6000,
   "transicionMs": 5000,
   "rutinaCierreMs": 5000,
   "limiteMinutos": 15,
+  "origen": {
+    "rutinaInicioMs": "Decisión R10, 23 nov 2026: 6 s; no hay evidencia que fije otra cifra",
+    "rutinaCierreMs": "Decisión R10, 23 nov 2026: 5 s",
+    "transicionMs": "Catálogo 7.1: transición de 5 s",
+    "limiteMinutos": "Arquitectura 4.1 y 7.4 (INV-8)",
+    "modalidadFueraDeFase2": "Decisión R2, 23 nov 2026: AV en familiarización, fase 1 y fase 3, para que la única manipulación de modalidad del estudio sea la fase 2 (Protocolo 3.3 y H4)",
+    "fase2": "Decisión R1, 23 nov 2026: versión del Protocolo 3.3; la del Catálogo 5.2 queda como alternativa"
+  },
   "modos": {
     "familiarizacion": {
       "nombre": "Familiarización",
       "actividades": ["ACT-01", "ACT-02", "ACT-07"],
-      "dificultad": "minima",
-      "probarBandas": ["ACT-02", "ACT-07"],
-      "fijaBandaInicial": ["ACT-02", "ACT-07"],
+      "dificultad": "escalera",
+      "escalera": {
+        "actividades": ["ACT-02", "ACT-07"],
+        "ensayosPorBanda": 10,
+        "aciertosParaSubir": 8,
+        "seccion": "Decisión R6, 23 nov 2026: desde B1, 10 ensayos por banda; sube con 8 o más aciertos de 10 (al azar con 2 opciones, 56/1024 ≈ 0.055); se detiene en la primera banda no aprobada; la banda inicial de la fase 1 es la última aprobada (B1 si ninguna). Resuelve Protocolo 3.1 («fija, mínima», para ACT-01) frente a 3.2 (elegir el nivel, para ACT-02 y ACT-07)."
+      },
+      "minimoEnsayosACT01": {
+        "valor": 10,
+        "seccion": "Decisión R6, 23 nov 2026; Protocolo 4 (criterio de inclusión: completar al menos 10 ensayos de ACT-01)"
+      },
       "adaptacion": false,
       "panel": "resumen",
       "analiza": false
@@ -69,10 +85,6 @@
     "nota": "Catálogo 7.2: cuando un concepto alcanza el dominio, reaparece después de 1, 3 y 7 sesiones; su precisión en esas reapariciones es IRet. En el piloto está desactivada hasta la fase 3. Solo cuentan los dominios alcanzados en una sesión en que estaba activa; las sesiones se cuentan entre las del niño con la actividad."
   },
   "pendientes": [
-    "Confirmar las actividades de la familiarización: ACT-01 (10 ensayos) y después ACT-02 y ACT-07 en la banda mínima.",
-    "Confirmar la modalidad de ACT-01, ACT-02 y ACT-07 fuera de la fase 2. Se propone AV: el Protocolo (2.3, sobre H4) dice que la plataforma mantiene la presentación multimodal por defecto si H4 se refuta.",
-    "Confirmar la duración de la rutina de inicio (6 s) y de la de cierre (5 s); el Catálogo solo fija la transición de 5 s.",
-    "Alinear el Catálogo 5.2 con el Protocolo 3.3 en la fase 2 (dos bloques de 15, uno por modalidad).",
-    "Confirmar que en la familiarización el terapeuta puede probar otras bandas de ACT-02 y ACT-07 para elegir la banda inicial de la fase 1: el Protocolo 3.1 dice que la dificultad de la familiarización es fija y mínima, y el 3.2 que con ella se elige el nivel inicial."
+    "Alinear el Catálogo 5.2 con el Protocolo 3.3 en la fase 2 (dos bloques de 15, uno por modalidad)."
   ]
 }

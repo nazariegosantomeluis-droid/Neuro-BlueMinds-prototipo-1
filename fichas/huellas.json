@@ -4,8 +4,8 @@
     "huella": "3786c30e0aff63f7d1c75ba342eb8b1b101978a422c356838698ea91b862d3e7"
   },
   "ACT-02.json": {
-    "version": "0.3.0",
-    "huella": "7929eef69c773f2b95991a8558aa51ae3968ebc1efb4d776f9c1520f0d4e5a2f"
+    "version": "0.4.0",
+    "huella": "d7198a0b89979d9da67db57a7eb69a35578f20bff2aa23f4f6f1dd46ce25b49b"
   },
   "ACT-03.json": {
     "version": "0.2.0",
@@ -24,8 +24,8 @@
     "huella": "2652a7a47123ada473c4ed7ac02f02974cb46c28f2fa3dd9454b552d218b2f7a"
   },
   "ACT-07.json": {
-    "version": "0.1.1",
-    "huella": "b6a325c6d0b027ef8180470c39c0dba400387dfb199cfb422aa163dadb9f392d"
+    "version": "0.2.0",
+    "huella": "8f7efaafff1840d0d73b2947f15cf524bab64b256e89d503e95eddc6bd07d8af"
   },
   "ACT-08.json": {
     "version": "0.2.0",
@@ -72,8 +72,8 @@
     "huella": "58f549dc6e46c51d87787e8195617652f8ac858d6c24ddde512d9343703a6a5f"
   },
   "sesion.json": {
-    "version": "0.4.0",
-    "huella": "38b29ff7adb8475fcf3cd2aa8aa504141ba759ac5f24f24aa9c123a60c1e00d0"
+    "version": "0.5.0",
+    "huella": "f11bf387fd7b68ff46928539ba1fa17669f6cc0e15f5cd3da3e4c5ebb3dade19"
   },
   "temas.json": {
     "version": "0.1.0",

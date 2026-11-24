@@ -28,7 +28,6 @@ import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
-import { leerBandasPrueba } from './plan-pantalla.js';
 import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conceptoDeFila, codigoBase } from './sondas.js';
 import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
 import { VERSION_INDICADORES } from './indicadores/parametros.js';
@@ -36,7 +35,7 @@ import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
 import { proponer, lineaBaseRegulacion, MOTIVO_NO_EJECUTADA } from './adaptacion.js';
 import { cargarVersion, textoVersion } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
-import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso } from './fases.js';
+import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso, bandaAprobada, bandaPropuesta, siguePorEscalera } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
 
@@ -449,16 +448,30 @@ async function empezarSesion(form) {
   }
   let plan;
   try {
-    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2, bandasPrueba: leerBandasPrueba(state.form) });
+    plan = planDeSesion({ modo, fichas: state.fichas, config: cfg, bandasNino: p.nino.bandas ?? {}, fase2 });
   } catch (e) {
     return renderInicio(e.message);
   }
   const bloques = [];
+  // Escalera de la familiarización (decisión R6): un bloque de 10 ensayos por banda, preparados desde
+  // el principio (para comprobar el audio); se ejecutan mientras el niño apruebe.
+  const escaleras = new Map();
   try {
-    for (const [k, paso] of plan.filter((x) => x.tipo === 'bloque').entries()) {
+    let k = 0;
+    for (const paso of plan.filter((x) => x.tipo === 'bloque' || x.tipo === 'escalera')) {
       const ficha = state.fichas[paso.actividad];
+      if (paso.tipo === 'escalera') {
+        const peldanos = [];
+        for (const id of paso.bandas) {
+          const banda = ficha.bandas.find((b) => b.id === id);
+          s.bloque = k++;
+          peldanos.push({ paso: { ...paso, banda: id, ensayos: paso.ensayosPorBanda }, ficha, banda, ...(await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayosPorBanda, s })) });
+        }
+        escaleras.set(paso.actividad, peldanos);
+        continue;
+      }
       const banda = ficha.bandas.find((b) => b.id === paso.banda);
-      s.bloque = k; // semilla de cada bloque, como en los bloques sueltos
+      s.bloque = k++; // semilla de cada bloque, como en los bloques sueltos
       const preparado = await prepararBloque({ ficha, banda, modalidad: paso.modalidad, n: paso.ensayos, s, mitad: paso.mitad ?? null, mitades: paso.mitades ?? null });
       bloques.push({ paso, ficha, banda, ...preparado });
     }
@@ -467,9 +480,10 @@ async function empezarSesion(form) {
   } finally {
     s.bloque = 0;
   }
-  const conAudio = bloques.flatMap((b) => b.trials.filter((t) => (t.modalidad ?? b.paso.modalidad) === 'AV').map((t) => t.consigna.audio));
+  const todos = [...bloques, ...[...escaleras.values()].flat()];
+  const conAudio = todos.flatMap((b) => b.trials.filter((t) => (t.modalidad ?? b.paso.modalidad) === 'AV').map((t) => t.consigna.audio));
   if (conAudio.length && !(await audio.available(conAudio))) return renderInicio(NO_AUDIO_MSG);
-  for (const b of bloques) {
+  for (const b of todos) {
     const ajuste = avisoDeAjuste(b.ficha, b.banda);
     if (ajuste && !(await confirmarPantalla(ajuste))) return renderInicio();
   }
@@ -488,7 +502,13 @@ async function empezarSesion(form) {
     fase2_primera: fase2?.primera ?? null,
     registros_completos: false,
     tema_imagenes: s.tema,
-    plan_sesion: bloques.map(({ paso }) => ({ actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) })),
+    plan_sesion: plan
+      .filter((x) => x.tipo === 'bloque' || x.tipo === 'escalera')
+      .map((paso) =>
+        paso.tipo === 'escalera'
+          ? { actividad: paso.actividad, escalera: true, bandas: paso.bandas, modalidad: paso.modalidad, ensayos_por_banda: paso.ensayosPorBanda, aciertos_para_subir: paso.aciertosParaSubir }
+          : { actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) },
+      ),
   });
   const resultados = [];
   let terminar = false;
@@ -508,6 +528,7 @@ async function empezarSesion(form) {
     // INV-8: al llegar a los 15 minutos de uso, no empieza otro bloque; la sesión va al cierre.
     const decision = decidirPaso(paso, { usoMs: performance.now() - s.inicioMs, limiteMinutos: cfg.limiteMinutos, terminada: terminar });
     if (decision !== 'ejecutar') {
+      if (paso.tipo === 'escalera') omitidos.push({ actividad: paso.actividad, modalidad: paso.modalidad, motivo: decision === 'limite' ? 'limite_15_min' : 'sesion_terminada' });
       if (paso.tipo === 'bloque') {
         k++;
         omitidos.push({ actividad: paso.actividad, modalidad: paso.modalidad, motivo: decision === 'limite' ? 'limite_15_min' : 'sesion_terminada' });
@@ -537,6 +558,34 @@ async function empezarSesion(form) {
       const ref = await ejecutarReferencia(s, periodo);
       fin();
       if (ref.terminada) terminar = true;
+    } else if (paso.tipo === 'escalera') {
+      // Decisión R6: 10 ensayos por banda desde B1; sube con 8 o más aciertos y se detiene en la
+      // primera banda no aprobada. A los 15 minutos no empieza otra banda (INV-8).
+      for (const b of escaleras.get(paso.actividad)) {
+        if (terminar) break;
+        if (decidirPaso({ tipo: 'bloque' }, { usoMs: performance.now() - s.inicioMs, limiteMinutos: cfg.limiteMinutos }) === 'limite') {
+          s.limiteAlcanzado = true;
+          editSesion(s.id, (r) => (r.limite_15_min = true));
+          omitidos.push({ actividad: paso.actividad, banda: b.banda.id, modalidad: paso.modalidad, motivo: 'limite_15_min' });
+          break;
+        }
+        s.bloque++;
+        s.bandaActual = b.banda.id;
+        const finBloque = marca('bloque', { bloque: s.bloque, actividad: paso.actividad, modalidad: paso.modalidad, banda: b.banda.id, escalera: true });
+        const r = await ejecutarBloque({ ficha: b.ficha, banda: b.banda, modalidad: paso.modalidad, trials: b.trials, s, usados: b.usados, pantalla: b.pantalla, periodo });
+        finBloque();
+        if (r.error) {
+          terminar = true;
+          break;
+        }
+        resultados.push(r.last);
+        if (r.terminarSesion) terminar = true;
+        const peldano = { actividad: paso.actividad, banda: b.banda.id, ensayos: r.rows.length, aciertos: r.rows.filter((x) => x.acierto).length };
+        peldano.aprobada = bandaAprobada(peldano, paso);
+        (s.escalera ??= []).push(peldano);
+        editSesion(s.id, (x) => (x.escalera_familiarizacion = s.escalera));
+        if (!siguePorEscalera(peldano, paso.bandas)) break;
+      }
     } else if (paso.tipo === 'bloque') {
       const b = bloques[k++];
       // Si el terapeuta fijó otra banda desde el menú (fase 3 o familiarización), el bloque se arma
@@ -564,6 +613,16 @@ async function empezarSesion(form) {
     }
   }
   editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
+  // Familiarización (decisión R6): la plataforma propone la banda inicial de la fase 1 (la última
+  // aprobada, B1 si ninguna) y avisa si el niño no completó 10 ensayos de ACT-01 (Protocolo 4).
+  const famil = cfg.modos[modo];
+  if (famil.escalera) {
+    const propuesta = Object.fromEntries(
+      famil.escalera.actividades.filter((a) => state.fichas[a]).map((a) => [a, bandaPropuesta((s.escalera ?? []).filter((x) => x.actividad === a), state.fichas[a].bandas.map((b) => b.id))]),
+    );
+    const act01 = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === 'ACT-01' && !r.interrumpido && !r.omision).length;
+    editSesion(s.id, (r) => Object.assign(r, { escalera_familiarizacion: s.escalera ?? [], banda_inicial_propuesta: propuesta, aviso_inclusion_act01: act01 < (famil.minimoEnsayosACT01?.valor ?? 10) }));
+  }
   state.ultimaSesion = { s, resultados };
   // Después del cierre, el adulto toca dos veces la esquina para ver el resumen.
   app.innerHTML = `
@@ -1089,13 +1148,15 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
   const marcados = episodiosMarcados(f.ordenes_terapeuta ?? []);
   const actividades = [...new Set((f.plan_sesion ?? []).map((b) => b.actividad))];
   const bandas = [...new Set(actividades.flatMap((a) => state.fichas[a]?.bandas.map((b) => b.id) ?? []))];
-  // Familiarización (Protocolo 3.2): al cerrar se fija la banda inicial de la fase 1. Se propone la
-  // ya fijada en el padrón o, si no hay, la última que se probó en la sesión.
-  const nino = ninos.rows().find((n) => n.codigo === f.codigo_nino);
-  const probadas = Object.fromEntries(log.rows().filter((r) => r.sesion_id === id).map((r) => [r.actividad, r.banda]));
-  const bandaInicial = (state.sesion?.modos?.[modo]?.fijaBandaInicial ?? [])
+  // Familiarización (decisión R6): al cerrar, el terapeuta confirma la banda inicial de la fase 1 que
+  // propone la escalera (la última aprobada) o la cambia con un motivo.
+  const bandaInicial = (state.sesion?.modos?.[modo]?.escalera?.actividades ?? [])
     .filter((a) => state.fichas[a])
-    .map((a) => ({ id: a, nombre: state.fichas[a].nombre, bandas: state.fichas[a].bandas.map((b) => b.id), actual: f.banda_inicial_fase1?.[a] ?? nino?.bandas?.[a] ?? probadas[a] ?? null }));
+    .map((a) => {
+      const bs = state.fichas[a].bandas.map((b) => b.id);
+      const propuesta = f.banda_inicial_propuesta?.[a] ?? bs[0];
+      return { id: a, nombre: state.fichas[a].nombre, bandas: bs, propuesta, actual: f.banda_inicial_fase1?.[a] ?? propuesta, motivo: f.banda_inicial_cambios?.find((c) => c.actividad === a)?.motivo ?? '', escalera: (f.escalera_familiarizacion ?? []).filter((x) => x.actividad === a) };
+    });
   // Sin los resultados en memoria (desde «Sesiones»), los bloques salen del registro de ensayos.
   const bloques =
     resultados ??
@@ -1122,7 +1183,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
       ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
-      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial })}
+      ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial, avisoInclusion: Boolean(f.aviso_inclusion_act01) })}
     </div>`;
   for (const r of app.querySelectorAll('[name^=apoyo-]')) {
     const bloque = Number(r.name.slice(6));

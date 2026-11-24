@@ -66,6 +66,12 @@ export function leerRegistros(datos, { marcados = [], fase3 = false, bandaInicia
     decision_informada: fase3 ? (datos.decision === 'si' ? true : datos.decision === 'no' ? false : null) : null,
     tipo_decision: fase3 && datos.decision === 'si' ? datos.tipo_decision || null : null,
     banda_inicial_fase1: bandaInicial.length ? Object.fromEntries(bandaInicial.map(({ id }) => [id, datos.banda_inicial?.[id] || null])) : null,
+    // Decisión R6: si el terapeuta cambia la banda que propuso la escalera, queda con su motivo.
+    banda_inicial_cambios: bandaInicial.length
+      ? bandaInicial
+          .filter(({ id, propuesta }) => propuesta && datos.banda_inicial?.[id] && datos.banda_inicial[id] !== propuesta)
+          .map(({ id, propuesta }) => ({ actividad: id, propuesta, elegida: datos.banda_inicial[id], motivo: texto(datos.motivo_banda?.[id]) }))
+      : null,
   };
 }
 
@@ -84,6 +90,7 @@ export function faltantes(reg, { fase3 = false, bandaInicial = [] }) {
   for (const { id, bandas } of bandaInicial) {
     if (!bandas.includes(reg.banda_inicial_fase1?.[id])) f.push(`Elige la banda inicial de ${id} para la fase 1.`);
   }
+  for (const c of reg.banda_inicial_cambios ?? []) if (!c.motivo) f.push(`Escribe por qué cambias la banda inicial de ${c.actividad} (la plataforma propuso ${c.propuesta}).`);
   if (fase3) {
     if (reg.consulto_panel === null) f.push('Indica si consultaste el panel.');
     if (reg.decision_informada === null) f.push('Indica si la información contribuyó a alguna decisión.');
@@ -113,23 +120,36 @@ export function eventoHTML(i, { actividades = [], bandas = [], e = {} } = {}) {
     </fieldset>`;
 }
 
+// Aviso del criterio de inclusión (Protocolo 4; decisión R6).
+export const AVISO_INCLUSION =
+  'El niño no completó al menos 10 ensayos de ACT-01 en la familiarización. El Protocolo (sección 4) lo pide como criterio de inclusión: coméntalo con el investigador responsable.';
+
+// Una actividad de la banda inicial: lo que pasó en la escalera, la propuesta y el selector.
+function bandaInicialHTML({ id, nombre, bandas: bs, actual, propuesta, motivo = '', escalera = [] }) {
+  const pasos = escalera.length
+    ? escalera.map((p) => `${esc(p.banda)}: ${p.aciertos} de ${p.ensayos}${p.aprobada ? ' (aprobada)' : ''}`).join(' · ')
+    : 'no se hizo la escalera';
+  return `
+    <div class="banda-inicial-actividad" data-banda-inicial="${esc(id)}">
+      <p><strong>${esc(id)} ${esc(nombre ?? '')}</strong> · ${pasos}. Propuesta: <strong>${esc(propuesta ?? '—')}</strong>.</p>
+      <label>Banda inicial <select name="banda-inicial-${esc(id)}">${bs.map((b) => opcion(b, b === propuesta ? `${b} (propuesta)` : b, actual)).join('')}</select></label>
+      <label>Motivo del cambio (solo si eliges otra) <input name="motivo-banda-${esc(id)}" maxlength="${TEXTO_MAX}" autocomplete="off" value="${esc(motivo)}"></label>
+    </div>`;
+}
+
 // Formulario completo. previo: lo ya guardado de la sesión (para completarlo después).
-export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {}, bandaInicial = [] }) {
+export function registrosHTML({ marcados = [], fase3 = false, actividades = [], bandas = [], previo = {}, bandaInicial = [], avisoInclusion = false }) {
   const hora = (iso) => (iso ? new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '');
   const confirmado = (i) => previo.episodios_confirmados?.[i]?.confirmado;
   return `
     <form class="panel registros-terapeuta" id="registros" novalidate>
+      ${avisoInclusion ? `<p class="aviso" role="alert">${esc(AVISO_INCLUSION)}</p>` : ''}
       ${
         bandaInicial.length
           ? `<fieldset class="banda-inicial">
                <legend>Banda inicial para la fase 1</legend>
-               ${bandaInicial
-                 .map(
-                   ({ id, nombre, bandas: bs, actual }) =>
-                     `<label>${esc(id)} ${esc(nombre ?? '')} <select name="banda-inicial-${esc(id)}">${opcion('', '—', actual ?? '')}${bs.map((b) => opcion(b, b, actual)).join('')}</select></label>`,
-                 )
-                 .join('')}
-               <p class="ayuda">Queda en el padrón del niño y se usa en todas sus sesiones de la fase 1 y del cierre (Protocolo 3.2). La regla para elegirla está pendiente de decisión clínica (pendientesClinicos de cada ficha).</p>
+               ${bandaInicial.map((b) => bandaInicialHTML(b)).join('')}
+               <p class="ayuda">La plataforma propone la última banda aprobada en la escalera (10 ensayos por banda, 8 aciertos o más; B1 si no aprobó ninguna). Confírmala o cámbiala; si la cambias, escribe el motivo. Queda en el padrón del niño y se usa en la fase 1 y el cierre (decisión R6; Protocolo 3.2).</p>
              </fieldset>`
           : ''
       }
@@ -205,5 +225,6 @@ export function datosDelFormulario(form) {
     decision: fd.get('decision') ?? '',
     tipo_decision: fd.get('tipo_decision') ?? '',
     banda_inicial: Object.fromEntries([...fd.entries()].filter(([k]) => k.startsWith('banda-inicial-')).map(([k, v]) => [k.slice(14), v])),
+    motivo_banda: Object.fromEntries([...fd.entries()].filter(([k]) => k.startsWith('motivo-banda-')).map(([k, v]) => [k.slice(13), v])),
   };
 }

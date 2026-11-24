@@ -1,6 +1,6 @@
 {
   "id": "ACT-02",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "nombre": "Pictograma e imagen",
   "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
   "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
@@ -89,8 +89,7 @@
   ],
   "pendientesClinicos": [
     "Retroalimentación «neutra sin corrección» de las sondas (Catálogo 7.3): el prototipo no marca ninguna opción y la pantalla queda igual el mismo tiempo que la retroalimentación habitual. Confirmar que así se ve.",
-    "Si las sondas cuentan en los indicadores de la sesión (A1 a A10): el prototipo las deja fuera para que la sesión sea comparable con las que no tienen sondas (parámetro sondasEnIndicadoresDeSesion).",
-    "Regla para elegir, en la sesión de familiarización, la banda inicial de la fase 1 (Protocolo 3.2: «un nivel inicial elegido para cada niño con la sesión de familiarización», sin decir cómo). Mientras se decide, el terapeuta prueba bandas y fija la banda al cerrar la sesión; queda en el padrón y en banda_inicial_fase1."
+    "Si las sondas cuentan en los indicadores de la sesión (A1 a A10): el prototipo las deja fuera para que la sesión sea comparable con las que no tienen sondas (parámetro sondasEnIndicadoresDeSesion)."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }

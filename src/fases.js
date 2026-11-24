@@ -30,17 +30,13 @@ export const mitadDeModalidad = (modalidad, bloque) => (['A', 'B'].find((m) => m
 
 // ---------- Banda ----------
 
-// Banda de cada actividad según el modo: en la familiarización, la mínima, salvo que el terapeuta
-// elija probar otra en una actividad de «probarBandas» (para fijar la banda inicial de la fase 1,
-// Protocolo 3.2); en los modos con dificultad fija y en la fase 3, la que se fijó para el niño (o la
-// mínima si no hay).
-export function bandaDelModo(modo, ficha, bandasNino = {}, config, bandasPrueba = {}) {
+// Banda de cada actividad según el modo: en la familiarización, la mínima (ACT-01; ACT-02 y ACT-07
+// van por la escalera, decisión R6); en los modos con dificultad fija y en la fase 3, la que se fijó
+// para el niño (o la mínima si no hay).
+export function bandaDelModo(modo, ficha, bandasNino = {}, config) {
   const minima = ficha.bandas[0].id;
   const existe = (b) => ficha.bandas.some((x) => x.id === b);
-  if (config.modos[modo].dificultad === 'minima') {
-    const prueba = bandasPrueba[ficha.id];
-    return (config.modos[modo].probarBandas ?? []).includes(ficha.id) && existe(prueba) ? prueba : minima;
-  }
+  if (['minima', 'escalera'].includes(config.modos[modo].dificultad)) return minima;
   const fijada = bandasNino[ficha.id];
   return existe(fijada) ? fijada : minima;
 }
@@ -50,16 +46,29 @@ export function bandaDelModo(modo, ficha, bandasNino = {}, config, bandasPrueba 
 // Pasos de la sesión, en orden. Cada bloque dice actividad, banda, modalidad y número de ensayos;
 // en la fase 2 también la mitad de conceptos (o, en la versión del Catálogo, una por modalidad).
 // fase2: { version, numero (1 a 12), primera ('V' o 'AV') }; solo en el modo fase2.
-// bandasPrueba: en la familiarización, la banda que el terapeuta eligió probar en cada actividad.
-export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = null, bandasPrueba = {} }) {
+// Familiarización (decisión R6, 23 nov 2026): ACT-01 en la banda mínima y, después, ACT-02 y ACT-07
+// por una escalera: desde B1, 10 ensayos por banda; sube si acierta 8 o más de 10 y se detiene en la
+// primera banda no aprobada. La banda inicial de la fase 1 es la última aprobada (B1 si ninguna).
+export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = null }) {
   const m = config.modos[modo];
   if (!m) throw new Error(`Modo de fase desconocido: ${modo}.`);
   const bloques = [];
   for (const id of m.actividades) {
     const ficha = fichas[id];
     if (!ficha) throw new Error(`Falta la ficha de ${id}.`);
-    const banda = bandaDelModo(modo, ficha, bandasNino, config, bandasPrueba);
+    const banda = bandaDelModo(modo, ficha, bandasNino, config);
     const base = { actividad: id, banda };
+    if (m.escalera?.actividades?.includes(id)) {
+      bloques.push({
+        tipo: 'escalera',
+        actividad: id,
+        modalidad: config.modalidadFueraDeFase2[id] ?? ficha.modalidades[0],
+        bandas: ficha.bandas.map((b) => b.id),
+        ensayosPorBanda: m.escalera.ensayosPorBanda,
+        aciertosParaSubir: m.escalera.aciertosParaSubir,
+      });
+      continue;
+    }
     if (modo === 'fase2' && id === config.fase2.actividad) {
       const bloque = bloqueFase2(fase2.numero, config.fase2.sesionesPorBloque);
       const n = config.fase2.ensayosPorModalidad;
@@ -79,6 +88,8 @@ export function planDeSesion({ modo, fichas, config, bandasNino = {}, fase2 = nu
     if (i > 0) pasos.push({ tipo: 'transicion', siguiente: b.actividad });
     pasos.push({ tipo: 'bloque', ...b });
   });
+  // tipo 'escalera' queda en el paso (el spread de b lo conserva sobre 'bloque').
+
   pasos.push({ tipo: 'rutina-cierre' });
   return pasos;
 }
@@ -100,7 +111,7 @@ export const limiteAlcanzado = (inicioMs, ahoraMs, minutos = 15) => ahoraMs - in
 export function decidirPaso(paso, { usoMs, limiteMinutos = 15, terminada = false }) {
   if (paso.tipo === 'rutina-cierre') return 'ejecutar';
   if (terminada) return 'omitir';
-  if ((paso.tipo === 'bloque' || paso.tipo === 'transicion') && limiteAlcanzado(0, usoMs, limiteMinutos)) return 'limite';
+  if (['bloque', 'escalera', 'transicion'].includes(paso.tipo) && limiteAlcanzado(0, usoMs, limiteMinutos)) return 'limite';
   return 'ejecutar';
 }
 
@@ -108,3 +119,22 @@ export function decidirPaso(paso, { usoMs, limiteMinutos = 15, terminada = false
 export function historialFase2(sesiones, codigo) {
   return sesiones.filter((s) => s.codigo_nino === codigo && s.modo_fase === 'fase2' && s.fase2_primera).map((s) => s.fase2_primera);
 }
+
+// ---------- Escalera de la familiarización (decisión R6) ----------
+
+// Una banda se aprueba con los 10 ensayos hechos y 8 aciertos o más (las omisiones no son aciertos).
+export const bandaAprobada = ({ ensayos, aciertos }, { ensayosPorBanda, aciertosParaSubir }) => ensayos >= ensayosPorBanda && aciertos >= aciertosParaSubir;
+
+// Banda inicial de la fase 1 que propone la plataforma: la última aprobada, en orden desde B1 (B1 si
+// no aprobó ninguna). resultados: los de la escalera de una actividad, en orden.
+export function bandaPropuesta(resultados, bandas) {
+  let propuesta = bandas[0];
+  for (const r of resultados) {
+    if (!r.aprobada) break;
+    propuesta = r.banda;
+  }
+  return propuesta;
+}
+
+// Si la escalera sigue: la banda anterior se aprobó y hay otra arriba.
+export const siguePorEscalera = (resultado, bandas) => Boolean(resultado.aprobada) && bandas.indexOf(resultado.banda) < bandas.length - 1;

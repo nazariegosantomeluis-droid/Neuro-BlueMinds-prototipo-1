@@ -18,7 +18,7 @@ test('la configuración tiene los cinco modos de la Arquitectura 14 y los tiempo
   assert.equal(config.transicionMs, 5000);
   assert.equal(config.limiteMinutos, 15);
   for (const m of ['fase1', 'fase2', 'cierre']) assert.equal(config.modos[m].dificultad, 'fija', m);
-  assert.equal(config.modos.familiarizacion.dificultad, 'minima');
+  assert.equal(config.modos.familiarizacion.dificultad, 'escalera', 'decisión R6');
   assert.equal(config.modos.fase3.adaptacion, true);
   assert.equal(config.modos.fase3.registroDecisiones, true);
   // En el piloto, ACT-02 y después ACT-07 (Catálogo 7.1).
@@ -83,9 +83,10 @@ test('planes de los otros modos: orden fijo, bandas y modalidad por defecto', ()
     const bloques = planDeSesion({ modo, fichas, config, bandasNino: bandas }).filter((p) => p.tipo === 'bloque');
     assert.deepEqual(bloques.map((b) => [b.actividad, b.banda, b.modalidad, b.ensayos]), [['ACT-02', 'B4', 'AV', 30], ['ACT-07', 'B3', 'AV', 30]], modo);
   }
-  // Familiarización: banda mínima y ACT-01 primero, con sus 10 ensayos.
-  const fam = planDeSesion({ modo: 'familiarizacion', fichas, config, bandasNino: bandas }).filter((p) => p.tipo === 'bloque');
-  assert.deepEqual(fam.map((b) => [b.actividad, b.banda, b.ensayos]), [['ACT-01', 'B1', 10], ['ACT-02', 'B1', 30], ['ACT-07', 'B1', 30]]);
+  // Familiarización (decisión R6): ACT-01 en la banda mínima con sus 10 ensayos; ACT-02 y ACT-07
+  // por la escalera desde B1.
+  const fam = planDeSesion({ modo: 'familiarizacion', fichas, config, bandasNino: bandas }).filter((p) => p.tipo === 'bloque' || p.tipo === 'escalera');
+  assert.deepEqual(fam.map((b) => [b.tipo, b.actividad, b.banda ?? b.bandas[0], b.ensayos ?? b.ensayosPorBanda]), [['bloque', 'ACT-01', 'B1', 10], ['escalera', 'ACT-02', 'B1', 10], ['escalera', 'ACT-07', 'B1', 10]]);
   // Sin banda fijada, la mínima; una banda que no existe tampoco se usa.
   assert.equal(bandaDelModo('fase1', fichas['ACT-02'], {}, config), 'B1');
   assert.equal(bandaDelModo('fase1', fichas['ACT-02'], { 'ACT-02': 'B9' }, config), 'B1');

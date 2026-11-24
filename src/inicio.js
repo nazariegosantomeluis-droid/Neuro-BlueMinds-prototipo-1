@@ -6,7 +6,7 @@ import { itemDeEjemplo, previaHTML } from './previa.js';
 import { comprobarPantalla, avisoPantalla } from './ajuste-pantalla.js';
 import { gruposVisibles, modoExpertoActivo } from './modo-experto.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
-import { planNinoHTML, leerBandasPrueba } from './plan-pantalla.js';
+import { planNinoHTML } from './plan-pantalla.js';
 import { DEMO, nombreNino, abreviar } from './ninos.js';
 import { REF_MIN_APARICIONES, REF_MAX_APARICIONES } from './engine/referencia.js';
 
@@ -413,22 +413,13 @@ export function renderInicio(app, ctx, msg = '') {
     form.classList.toggle('sesion-nino', Boolean(nino));
     app.querySelector('.inicio-columnas')?.classList.toggle('sesion-nino', Boolean(nino));
     planNino.hidden = !nino;
-    planNino.innerHTML = nino ? planNinoHTML({ nino, config: state.sesion, fichas: state.fichas, historial: ctx.historialFase2(nino.codigo), temas: state.temas, tema: state.form?.tema, bandasPrueba: leerBandasPrueba(state.form) }) : '';
+    planNino.innerHTML = nino ? planNinoHTML({ nino, config: state.sesion, fichas: state.fichas, historial: ctx.historialFase2(nino.codigo), temas: state.temas, tema: state.form?.tema }) : '';
     const boton = form.querySelector('[type=submit]');
     boton.textContent = nino ? 'Empezar la sesión' : 'Empezar';
     form.querySelector('.barra-resumen strong').textContent = nino ? 'Sesión completa con el niño' : `${ficha.id} · ${ficha.nombre}`;
     form.querySelector('#resumen-ajustes').textContent = nino ? '' : resumenAjustes(ficha, elegida(), form.modalidad.value, ensayosOk(form.ensayos) ? form.ensayos.value : '');
   };
-  // Al cambiar la banda para probar, el plan se vuelve a dibujar con ella.
-  planNino?.addEventListener('change', (e) => {
-    if (!e.target.matches('[data-probar]')) return;
-    state.form = { ...state.form, [e.target.name]: e.target.value };
-    sincronizarPlan();
-    planNino.querySelector(`[name="${e.target.name}"]`)?.focus();
-  });
   form.participante?.addEventListener('change', () => {
-    // Las bandas para probar son de cada niño: se olvidan al cambiar de participante.
-    state.form = Object.fromEntries(Object.entries(state.form ?? {}).filter(([k]) => !k.startsWith('prueba-')));
     revisarParticipante(form, false);
     sincronizarExperto();
     sincronizarPlan();
