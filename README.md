@@ -80,6 +80,7 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
 
 - **Integración (H8.3; Arquitectura 13.1; RF-02).** `test/integracion.test.js` simula 500 sesiones de 25 niños ficticios con la secuencia del estudio, más corta (familiarización, 5 sesiones de la fase 1, 4 de la fase 2, 8 de la fase 3 y 2 de cierre), con el motor real en tiempo simulado, la regla de adaptación, la envolvente, la alerta temprana y la auditoría, y comprueba que ningún campo obligatorio quede vacío. Qué campo es obligatorio y en qué condición está en `tools/campos-obligatorios.mjs`. `node tools/integracion.mjs` escribe el resultado en [`docs/verificacion/integracion.json`](docs/verificacion/integracion.json).
 - **Seguridad (H8.5; Arquitectura 9.5).** Revisión con OWASP MASVS, perfil básico, adaptada a la web: [`docs/verificacion/masvs.md`](docs/verificacion/masvs.md), con sus hallazgos. Las comprobaciones automáticas están en `test/seguridad.test.js`. Desde esta revisión: espera creciente tras 5 PIN equivocados, política de seguridad del contenido en `index.html` (solo recursos propios, sin scripts en línea ni conexiones a otros sitios), sin referente al salir y sin arrancar dentro de un marco ajeno.
+- **Informe de verificación (H8.6, borrador).** [`docs/verificacion/informe-verificacion.md`](docs/verificacion/informe-verificacion.md): requisito por requisito (RF-01 a RF-12 y RNF-01 a RNF-10), cómo se verificó, con qué prueba y qué queda pendiente de H7 (servidor), H8.2 (latencia), H8.4 (usabilidad) y H3.7 (R). `test/requisitos.test.js` agrega las pruebas de RF-01 (una actividad nueva solo con su ficha) y RNF-01 (reloj monótono).
 
 ## Cómo correrlo localmente
 
@@ -906,6 +907,7 @@ Notas:
   - los conceptos `short` y `camión`.
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
+- **Verificación pendiente (H8.6):** sincronización o exportación cifrada (H7, D6), latencia y arranque en cada tableta (H8.2), usabilidad con 5 terapeutas (H8.4) e implementación en R (H3.7); ver el informe de verificación.
 - **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.
 - **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
