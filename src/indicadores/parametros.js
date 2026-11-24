@@ -88,13 +88,13 @@ export const PARAMETROS = Object.freeze({
   // 15 minutos de uso no se sube (INV-8); un aviso al terapeuta cuando se bloquean 3 acciones en una
   // sesión.
   envolvente: { ensayosEntreCambios: 10, subidasPorSesion: 4, ensayosTrasBajada: 30, limiteMinutos: 15, bloqueosParaAviso: 3, seccion: 'Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)' },
-  // Señales de alerta temprana (H4.4; Modelo 10.1 y 13.7): autocorrelación de orden 1 y varianza del
-  // residuo del tiempo de respuesta (ln TR menos la media de ln TR de la actividad en la sesión) en
-  // una ventana móvil de W ensayos; τ de Kendall de cada serie contra el tiempo. Los umbrales c_ρ y
-  // c_V se calibran con series simuladas sin transición (ruido normal independiente del mismo largo)
-  // como el cuantil 1 − α; W = 10 y α = 0.05 son valores de planeación (el Modelo no los fija). Solo
-  // en modo de observación: se calculan y se guardan, nunca se muestran ni se usan (INV-9).
-  alertaTemprana: { ventana: 10, alfa: 0.05, simulaciones: 2000, semilla: 'FNV-1a de «alerta:n_ventanas»', seccion: 'Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)' },
+  // Señales de alerta temprana (H4.4; Modelo 10.1 y 13.7; decisión R13): residuo de ln TR sin la
+  // media ni la tendencia lineal de la actividad en la sesión; ventana móvil de la mitad de los
+  // ensayos válidos para latencia (mínimo 10), con sensibilidad a 1/4 y 3/4; umbrales de τ
+  // calibrados con permutaciones de los residuos para 5 % de falsas alertas por sesión, con semilla
+  // fija; al lado, la regla simple de 3 errores seguidos. Solo en modo de observación: se calculan
+  // y se guardan, nunca se muestran ni se usan (INV-9).
+  alertaTemprana: { fraccionVentana: 0.5, ventanaMinima: 10, fraccionesSensibilidad: [0.25, 0.75], falsasAlertas: 0.05, permutaciones: 500, semilla: 'alerta-temprana', erroresSeguidos: 3, seccion: 'Decisión R13, 23 nov 2026; Modelo 10.1 y 13.7; Dakos et al. (2012)' },
   // Panel (H5.2; Modelo 6.3 y 6.4; Arquitectura 6.4): banda de variación de la línea base = mediana
   // ± 2 MAD (escalada) de los valores de las sesiones de línea base; un cambio se señala solo si el
   // valor sale de la banda en 2 sesiones consecutivas. Sin índice de cambio fiable (RCI) hasta que
@@ -106,7 +106,7 @@ export const PARAMETROS = Object.freeze({
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
   A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.2.0', A12: '0.2.0',
-  C8: '0.2.0', regulacion: '0.2.0', C9: '0.1.0', alerta: '0.1.0', panel: '0.1.0',
+  C8: '0.2.0', regulacion: '0.2.0', C9: '0.1.0', alerta: '0.2.0', panel: '0.1.0',
   IG: '0.1.0', IRet: '0.1.0',
 });
 
