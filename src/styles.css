@@ -2417,13 +2417,13 @@ form.sesion-nino [aria-labelledby='grupo-bloque'],
   margin-top: 1.25rem;
 }
 
-.registros-terapeuta label:not(.chip, .casilla) {
+.registros-terapeuta label:not(.chip, .casilla, .ancla) {
   display: block;
   margin-block: 0.5rem;
   min-height: 0;
 }
 
-.registros-terapeuta label:not(.chip, .casilla) > :is(input, select) {
+.registros-terapeuta label:not(.chip, .casilla, .ancla) > :is(input, select) {
   display: block;
   width: 100%;
   max-width: 36rem;
