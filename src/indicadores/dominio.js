@@ -1,5 +1,5 @@
 // A9. Dominio de ítem (H3.4; Modelo 4.3; Arquitectura 4.7 y 6.1; decisión D5).
-// Con a aciertos y e presentaciones sin acierto de una unidad (ítem o concepto) y previa uniforme,
+// Con a aciertos y e errores (respuestas incorrectas; las omisiones no cuentan) de una unidad (ítem o concepto) y previa uniforme,
 // θ | datos ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > confianza.
 // θ* y la confianza vienen de parametros.js y la ficha puede cambiarlos («dominio»).
 // Se calcula al cerrar la sesión, acumulando las sesiones previas del niño.
@@ -31,9 +31,9 @@ export function aciertosNecesarios({ thetaEstrella, confianza }) {
   return a;
 }
 
-// Presentaciones que cuentan para el dominio: utilizables y con respuesta (o sin ella, si las
-// omisiones cuentan como presentación sin acierto), sin sondas (Catálogo 7.3).
-const cuenta = (r) => utilizable(r) && !r.sonda && (P.omisionCuentaComoErrorEnDominio.valor || !r.omision);
+// Presentaciones que cuentan para el dominio: utilizables, con respuesta y sin sondas (Catálogo 7.3).
+// Decisión R3 (23 nov 2026): las omisiones no cuentan ni en a ni en e.
+const cuenta = (r) => utilizable(r) && !r.sonda && !r.omision;
 
 // Estado de cada unidad tras las filas dadas, en orden cronológico (las del niño en una actividad).
 // Devuelve Map unidad → { a, e, probabilidad, dominado, alcanzado: { sesion_id, bloque, ensayo } | null }.

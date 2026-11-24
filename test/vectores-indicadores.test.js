@@ -70,3 +70,13 @@ test('indicadores.csv: una fila por sesión, actividad e indicador, con detalle 
   assert.match(app, /data-descargar="indicadores"/);
   assert.match(app, /calcularIndicadores\(paraExportar\(log\.rows\(\), \{ sinTiempos: sinTiempos\(\) \}\), sesiones\.rows\(\), \{ fichas: state\.fichas, items: state\.items \}\)/);
 });
+
+test('decisión R3: en indicadores.csv, A5 (omisiones) va siempre justo después de A1', () => {
+  for (const c of archivo.casos) {
+    c.salidas.forEach((s, k) => {
+      if (s.indicador === 'A1') assert.equal(c.salidas[k + 1].indicador, 'A5', `${c.nombre} ${s.sesion_id} ${s.actividad}`);
+    });
+  }
+  assert.equal(archivo.versiones_definicion.A1, '0.2.0');
+  assert.equal(archivo.versiones_definicion.A9, '0.2.0');
+});

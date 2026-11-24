@@ -58,10 +58,16 @@ test('el estado se acumula entre sesiones y guarda la presentación en que se al
   assert.equal(despues.get('perro').dominado, false, '8 aciertos y 1 error: P = 0.85, ya no supera 0.95 ahora');
 });
 
-test('las omisiones cuentan como presentaciones sin acierto; las sondas y las interrupciones no cuentan', () => {
-  assert.equal(PARAMETROS.omisionCuentaComoErrorEnDominio.valor, true);
-  const rows = filas(4, (k) => ({ item: 'X', ...(k === 1 ? omision : k === 2 ? { sonda: true } : k === 3 ? { interrumpido: true } : {}) }));
+test('decisión R3: las omisiones no cuentan ni en a ni en e; las sondas y las interrupciones tampoco', () => {
+  assert.match(PARAMETROS.omisionesEnA1yA9.seccion, /Decisión R3, 23 nov 2026/);
+  const rows = filas(5, (k) => ({ item: 'X', ...(k === 1 ? omision : k === 2 ? { sonda: true } : k === 3 ? { interrumpido: true } : k === 4 ? errorCon() : {}) }));
   const s = estadoDeDominio(rows).get('X');
-  assert.deepEqual([s.a, s.e], [1, 1]);
+  assert.deepEqual([s.a, s.e], [1, 1], 'un acierto y un error; la omisión no cuenta');
+  // 8 aciertos con 3 omisiones intercaladas siguen siendo 8 aciertos sin errores: Beta(9, 1),
+  // P(θ > 0.7) = 1 − 0.7^9 = 0.9596 > 0.95 → dominado (antes de R3 serían 8 y 3: no).
+  const conOmisiones = filas(11, (k) => ({ item: 'Y', ...(k % 3 === 0 && k < 10 ? omision : {}) }));
+  const y = estadoDeDominio(conOmisiones).get('Y');
+  assert.deepEqual([y.a, y.e, y.dominado], [8, 0, true]);
+  assert.equal(a9(conOmisiones, { calidad: 1 }).version, '0.2.0');
   assert.equal(a9(filas(3), { calidad: 0.5 }).disponible, false);
 });

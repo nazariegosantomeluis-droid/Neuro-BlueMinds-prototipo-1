@@ -1,8 +1,8 @@
 {
  "descripcion": "Vectores de prueba de los indicadores A1 a A12 del prototipo AutiPal (H3.6). Para reimplementarlos en R (H3.7) y comparar: con las entradas de cada caso, las salidas deben coincidir con tolerancia de 1 ms en latencias y exacta en proporciones (Arquitectura 6.3). Las definiciones y los parámetros están en el README («Indicadores del núcleo») y en src/indicadores/parametros.js.",
- "version_indicadores": "0.2.0",
+ "version_indicadores": "0.3.0",
  "versiones_definicion": {
-  "A1": "0.1.0",
+  "A1": "0.2.0",
   "A2": "0.1.0",
   "A3": "0.1.0",
   "A4": "0.1.0",
@@ -10,7 +10,7 @@
   "A6": "0.1.0",
   "A7": "0.1.0",
   "A8": "0.1.0",
-  "A9": "0.1.0",
+  "A9": "0.2.0",
   "A10": "0.1.0",
   "A11": "0.1.0",
   "A12": "0.1.0",
@@ -46,8 +46,8 @@
   "minimos": {
    "A1": {
     "valor": 20,
-    "unidad": "ensayos",
-    "seccion": "Modelo 4.1"
+    "unidad": "ensayos con respuesta",
+    "seccion": "Modelo 4.1; decisión R3, 23 nov 2026"
    },
    "A2": {
     "valor": 20,
@@ -111,9 +111,9 @@
    "porCada": 100,
    "seccion": "Modelo 4.3; decisión D5"
   },
-  "omisionCuentaComoErrorEnDominio": {
-   "valor": true,
-   "seccion": "Modelo 4.3 no lo precisa (pendiente)"
+  "omisionesEnA1yA9": {
+   "valor": "excluidas",
+   "seccion": "Decisión R3, 23 nov 2026 (Modelo 3.3, 4.2 y 4.3)"
   },
   "azarConOpcionesVariables": {
    "valor": "media de 1/G",
@@ -121,7 +121,7 @@
   },
   "sondasEnIndicadoresDeSesion": {
    "valor": false,
-   "seccion": "Catálogo 7.3 no lo precisa (pendiente)"
+   "seccion": "Decisión R4, 23 nov 2026 (Catálogo 7.3)"
   },
   "ventanaPersistencia": {
    "valor": "todas las del niño en el dispositivo",
@@ -1796,74 +1796,19 @@
      "actividad": "ACT-02",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.7857142857142855,
-     "ic_inferior": 0.5276529675471205,
-     "ic_superior": 0.9145149202037589,
-     "n": 28,
+     "valor": 0.8333333333333333,
+     "ic_inferior": 0.5791329877258026,
+     "ic_superior": 0.9422194775753523,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 24,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 909.8999999999997,
-     "ic_inferior": 658.1999999999999,
-     "ic_superior": 1358.2000000000003,
-     "n": 27,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 27,
-     "disponible": false,
-     "motivo": "27 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0,
-     "ic_inferior": 1.2203525623840559e-17,
-     "ic_superior": 0.12064330476584562,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.33333333333333326,
+      "omisiones": 1
      }
     },
     {
@@ -1881,9 +1826,65 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
+     }
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 909.8999999999997,
+     "ic_inferior": 658.1999999999999,
+     "ic_superior": 1358.2000000000003,
+     "n": 27,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 27,
+     "disponible": false,
+     "motivo": "27 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0,
+     "ic_inferior": 1.2203525623840559e-17,
+     "ic_superior": 0.12064330476584562,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
      }
     },
     {
@@ -1901,7 +1902,7 @@
      "motivo": "27 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.790233333333333,
       "unidad": "ln(ms) por minuto"
@@ -1922,7 +1923,7 @@
      "motivo": "2 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 19
@@ -1943,7 +1944,7 @@
      "motivo": "3 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
      }
@@ -1958,12 +1959,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 28,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -1986,7 +1987,7 @@
      "motivo": "0 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -1998,74 +1999,19 @@
      "actividad": "ACT-07",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.4285714285714286,
-     "ic_inferior": 0.05881423133408559,
-     "ic_superior": 0.6949200788666181,
-     "n": 28,
+     "valor": 0.5384615384615385,
+     "ic_inferior": 0.15896891842112626,
+     "ic_superior": 0.7793230118843342,
+     "n": 26,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 20,
-      "azar": 0.5
-     }
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 988.8469649040746,
-     "ic_inferior": 781.5999999999997,
-     "ic_superior": 1144.1999999999998,
-     "n": 26,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 26,
-     "disponible": false,
-     "motivo": "26 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v1",
-     "codigo_nino": "nino-a",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0,
-     "ic_inferior": 1.2203525623840559e-17,
-     "ic_superior": 0.12064330476584562,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.5,
+      "omisiones": 2
      }
     },
     {
@@ -2083,9 +2029,65 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 2
+     }
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 988.8469649040746,
+     "ic_inferior": 781.5999999999997,
+     "ic_superior": 1144.1999999999998,
+     "n": 26,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 26,
+     "disponible": false,
+     "motivo": "26 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v1",
+     "codigo_nino": "nino-a",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0,
+     "ic_inferior": 1.2203525623840559e-17,
+     "ic_superior": 0.12064330476584562,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
      }
     },
     {
@@ -2103,7 +2105,7 @@
      "motivo": "26 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.610116666666666,
       "unidad": "ln(ms) por minuto"
@@ -2124,7 +2126,7 @@
      "motivo": "6 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 6,
       "tras_acierto": 10
@@ -2145,7 +2147,7 @@
      "motivo": "6 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 6
      }
@@ -2160,12 +2162,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 28,
+     "n": 26,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -2188,7 +2190,7 @@
      "motivo": "0 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -2208,7 +2210,7 @@
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 2
      }
@@ -2228,7 +2230,7 @@
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -4338,74 +4340,19 @@
      "actividad": "ACT-07",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.32499999999999996,
-     "ic_inferior": 0.10713046796353942,
-     "ic_superior": 0.5130877478383677,
-     "n": 80,
+     "valor": 0.3417721518987342,
+     "ic_inferior": 0.12293153384718325,
+     "ic_superior": 0.5289159923640596,
+     "n": 79,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 53,
-      "azar": 0.5
-     }
-    },
-    {
-     "sesion_id": "S-v6",
-     "codigo_nino": "nino-e",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 924.0423908025,
-     "ic_inferior": 867.0999999999999,
-     "ic_superior": 1039.6999999999998,
-     "n": 78,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v6",
-     "codigo_nino": "nino-e",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": 0.320010530800297,
-     "ic_inferior": 0.2150433309381983,
-     "ic_superior": 0.42652408687182364,
-     "n": 78,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v6",
-     "codigo_nino": "nino-e",
-     "modo_fase": "fase1",
-     "actividad": "ACT-07",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0.0125,
-     "ic_inferior": 0.0022099755204522758,
-     "ic_superior": 0.06746270077668665,
-     "n": 80,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 1
+      "azar": 0.5,
+      "omisiones": 1
      }
     },
     {
@@ -4423,7 +4370,63 @@
      "motivo": null,
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 1
+     }
+    },
+    {
+     "sesion_id": "S-v6",
+     "codigo_nino": "nino-e",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 924.0423908025,
+     "ic_inferior": 867.0999999999999,
+     "ic_superior": 1039.6999999999998,
+     "n": 78,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9875,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v6",
+     "codigo_nino": "nino-e",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": 0.320010530800297,
+     "ic_inferior": 0.2150433309381983,
+     "ic_superior": 0.42652408687182364,
+     "n": 78,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9875,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v6",
+     "codigo_nino": "nino-e",
+     "modo_fase": "fase1",
+     "actividad": "ACT-07",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0.0125,
+     "ic_inferior": 0.0022099755204522758,
+     "ic_superior": 0.06746270077668665,
+     "n": 80,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9875,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
      }
@@ -4443,7 +4446,7 @@
      "motivo": null,
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 17.809966666666668,
       "unidad": "ln(ms) por minuto"
@@ -4464,7 +4467,7 @@
      "motivo": null,
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 15,
       "tras_acierto": 37
@@ -4485,7 +4488,7 @@
      "motivo": null,
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 15
      }
@@ -4500,12 +4503,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 80,
+     "n": 79,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -4528,7 +4531,7 @@
      "motivo": "0 oportunidades; el mínimo es 10",
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -4548,7 +4551,7 @@
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 2
      }
@@ -4568,7 +4571,7 @@
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9875,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -4913,71 +4916,16 @@
      "valor": null,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 12,
+     "n": 11,
      "disponible": false,
-     "motivo": "12 ensayos; el mínimo es 20",
+     "motivo": "11 ensayos con respuesta; el mínimo es 20",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 8,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v2",
-     "codigo_nino": "nino-b",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 11,
-     "disponible": false,
-     "motivo": "11 ensayos válidos; el mínimo es 20",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v2",
-     "codigo_nino": "nino-b",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 11,
-     "disponible": false,
-     "motivo": "11 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v2",
-     "codigo_nino": "nino-b",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 12,
-     "disponible": false,
-     "motivo": "12 ensayos; el mínimo es 20",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.33333333333333337,
+      "omisiones": 1
      }
     },
     {
@@ -4995,9 +4943,65 @@
      "motivo": "12 ensayos; el mínimo es 20",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
+     }
+    },
+    {
+     "sesion_id": "S-v2",
+     "codigo_nino": "nino-b",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 11,
+     "disponible": false,
+     "motivo": "11 ensayos válidos; el mínimo es 20",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v2",
+     "codigo_nino": "nino-b",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 11,
+     "disponible": false,
+     "motivo": "11 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v2",
+     "codigo_nino": "nino-b",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 12,
+     "disponible": false,
+     "motivo": "12 ensayos; el mínimo es 20",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
      }
     },
     {
@@ -5015,7 +5019,7 @@
      "motivo": "11 ensayos válidos; el mínimo es 30; los ensayos abarcan 2.2 min; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 2.1807666666666665,
       "unidad": "ln(ms) por minuto"
@@ -5036,7 +5040,7 @@
      "motivo": "1 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 1,
       "tras_acierto": 5
@@ -5057,7 +5061,7 @@
      "motivo": "2 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 1
      }
@@ -5072,12 +5076,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 12,
+     "n": 11,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -5100,7 +5104,7 @@
      "motivo": "0 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -5120,7 +5124,7 @@
      "motivo": "1 actividades; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 1
      }
@@ -5140,7 +5144,7 @@
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -5953,71 +5957,16 @@
      "valor": null,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 26,
+     "n": 23,
      "disponible": false,
      "motivo": "calidad de la sesión 0.77, menor de 0.80",
      "calidad_sesion": 0.7692307692307693,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 19,
-      "azar": 0.33333333333333326
-     }
-    },
-    {
-     "sesion_id": "S-v3",
-     "codigo_nino": "nino-c",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 16,
-     "disponible": false,
-     "motivo": "calidad de la sesión 0.77, menor de 0.80; 16 ensayos válidos; el mínimo es 20",
-     "calidad_sesion": 0.7692307692307693,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v3",
-     "codigo_nino": "nino-c",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 16,
-     "disponible": false,
-     "motivo": "calidad de la sesión 0.77, menor de 0.80; 16 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 0.7692307692307693,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v3",
-     "codigo_nino": "nino-c",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 26,
-     "disponible": false,
-     "motivo": "calidad de la sesión 0.77, menor de 0.80",
-     "calidad_sesion": 0.7692307692307693,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 6
+      "azar": 0.3333333333333332,
+      "omisiones": 3
      }
     },
     {
@@ -6035,9 +5984,65 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 3
+     }
+    },
+    {
+     "sesion_id": "S-v3",
+     "codigo_nino": "nino-c",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 16,
+     "disponible": false,
+     "motivo": "calidad de la sesión 0.77, menor de 0.80; 16 ensayos válidos; el mínimo es 20",
+     "calidad_sesion": 0.7692307692307693,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v3",
+     "codigo_nino": "nino-c",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 16,
+     "disponible": false,
+     "motivo": "calidad de la sesión 0.77, menor de 0.80; 16 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 0.7692307692307693,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v3",
+     "codigo_nino": "nino-c",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 26,
+     "disponible": false,
+     "motivo": "calidad de la sesión 0.77, menor de 0.80",
+     "calidad_sesion": 0.7692307692307693,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 6
      }
     },
     {
@@ -6055,7 +6060,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 16 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.60535,
       "unidad": "ln(ms) por minuto"
@@ -6076,7 +6081,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 1 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 1,
       "tras_acierto": 6
@@ -6097,7 +6102,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 3 errores; el mínimo es 10",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
      }
@@ -6112,12 +6117,12 @@
      "valor": null,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 26,
+     "n": 23,
      "disponible": false,
      "motivo": "calidad de la sesión 0.77, menor de 0.80",
      "calidad_sesion": 0.7692307692307693,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -6140,7 +6145,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 0 oportunidades; el mínimo es 10",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -6160,7 +6165,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 1 actividades; el mínimo es 5",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 1
      }
@@ -6180,7 +6185,7 @@
      "motivo": "calidad de la sesión 0.77, menor de 0.80; 1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.7692307692307693,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -10939,67 +10944,12 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 18,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-1",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 877.4360375548755,
-     "ic_inferior": 712.3999999999997,
-     "ic_superior": 1101.2000000000005,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-1",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 28,
-     "disponible": false,
-     "motivo": "28 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-1",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0.034482758620689655,
-     "ic_inferior": 0.006113214292762649,
-     "ic_superior": 0.17175521879320288,
-     "n": 29,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 1
+      "azar": 0.3333333333333333,
+      "omisiones": 0
      }
     },
     {
@@ -11017,9 +10967,65 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
+     }
+    },
+    {
+     "sesion_id": "S-v4-1",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 877.4360375548755,
+     "ic_inferior": 712.3999999999997,
+     "ic_superior": 1101.2000000000005,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-1",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 28,
+     "disponible": false,
+     "motivo": "28 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-1",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0.034482758620689655,
+     "ic_inferior": 0.006113214292762649,
+     "ic_superior": 0.17175521879320288,
+     "n": 29,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 1
      }
     },
     {
@@ -11037,7 +11043,7 @@
      "motivo": "28 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.7866,
       "unidad": "ln(ms) por minuto"
@@ -11058,7 +11064,7 @@
      "motivo": "8 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 8,
       "tras_acierto": 9
@@ -11079,7 +11085,7 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 8
      }
@@ -11098,8 +11104,8 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -11122,7 +11128,7 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -11142,7 +11148,7 @@
      "motivo": "1 actividades; el mínimo es 5",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 1
      }
@@ -11162,7 +11168,7 @@
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -11181,67 +11187,12 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 21,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-2",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 902.481124456351,
-     "ic_inferior": 806.7999999999997,
-     "ic_superior": 1000.4999999999999,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-2",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 28,
-     "disponible": false,
-     "motivo": "28 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-2",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0,
-     "ic_inferior": 0,
-     "ic_superior": 0.11696979849974075,
-     "n": 29,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.3333333333333333,
+      "omisiones": 0
      }
     },
     {
@@ -11259,7 +11210,63 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
+     }
+    },
+    {
+     "sesion_id": "S-v4-2",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 902.481124456351,
+     "ic_inferior": 806.7999999999997,
+     "ic_superior": 1000.4999999999999,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-2",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 28,
+     "disponible": false,
+     "motivo": "28 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-2",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0,
+     "ic_inferior": 0,
+     "ic_superior": 0.11696979849974075,
+     "n": 29,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
      }
@@ -11279,7 +11286,7 @@
      "motivo": "28 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.785816666666666,
       "unidad": "ln(ms) por minuto"
@@ -11300,7 +11307,7 @@
      "motivo": "6 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 6,
       "tras_acierto": 13
@@ -11321,7 +11328,7 @@
      "motivo": "8 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 6
      }
@@ -11340,8 +11347,8 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -11364,7 +11371,7 @@
      "motivo": "6 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 2
      }
@@ -11384,7 +11391,7 @@
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 2
      }
@@ -11404,7 +11411,7 @@
      "motivo": "2 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -11416,74 +11423,19 @@
      "actividad": "ACT-02",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.5178571428571429,
-     "ic_inferior": 0.24008264771286425,
-     "ic_superior": 0.7310012961625756,
-     "n": 28,
+     "valor": 0.5555555555555556,
+     "ic_inferior": 0.27278975553777784,
+     "ic_superior": 0.7622043929533033,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 19,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-3",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 827.1498775917214,
-     "ic_inferior": 759.5000000000002,
-     "ic_superior": 972.1999999999998,
-     "n": 26,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-3",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 26,
-     "disponible": false,
-     "motivo": "26 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-3",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0,
-     "ic_inferior": 1.2203525623840559e-17,
-     "ic_superior": 0.12064330476584562,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.33333333333333326,
+      "omisiones": 1
      }
     },
     {
@@ -11501,9 +11453,65 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
+     }
+    },
+    {
+     "sesion_id": "S-v4-3",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 827.1498775917214,
+     "ic_inferior": 759.5000000000002,
+     "ic_superior": 972.1999999999998,
+     "n": 26,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-3",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 26,
+     "disponible": false,
+     "motivo": "26 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-3",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0,
+     "ic_inferior": 1.2203525623840559e-17,
+     "ic_superior": 0.12064330476584562,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
      }
     },
     {
@@ -11521,7 +11529,7 @@
      "motivo": "26 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.774116666666667,
       "unidad": "ln(ms) por minuto"
@@ -11542,7 +11550,7 @@
      "motivo": "5 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 5,
       "tras_acierto": 12
@@ -11563,7 +11571,7 @@
      "motivo": "7 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 5
      }
@@ -11575,15 +11583,15 @@
      "actividad": "ACT-02",
      "indicador": "A9",
      "nombre": "DOM, dominio de ítem",
-     "valor": 3.571428571428571,
+     "valor": 3.7037037037037033,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 28,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [
        "ACT02-B2-05"
@@ -11608,7 +11616,7 @@
      "motivo": "6 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 1
      }
@@ -11628,7 +11636,7 @@
      "motivo": "3 actividades; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 2
      }
@@ -11648,7 +11656,7 @@
      "motivo": "3 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -11660,74 +11668,19 @@
      "actividad": "ACT-02",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.5714285714285714,
-     "ic_inferior": 0.2941106735005642,
-     "ic_superior": 0.7711900591499634,
-     "n": 28,
+     "valor": 0.653846153846154,
+     "ic_inferior": 0.36922668881584475,
+     "ic_superior": 0.8344922589132506,
+     "n": 26,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 20,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-4",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 905.8998013025505,
-     "ic_inferior": 847.2,
-     "ic_superior": 1068.9,
-     "n": 24,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-4",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 24,
-     "disponible": false,
-     "motivo": "24 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-4",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0.03571428571428571,
-     "ic_inferior": 0.006332519849037753,
-     "ic_superior": 0.1771219774335332,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 1
+      "azar": 0.33333333333333326,
+      "omisiones": 2
      }
     },
     {
@@ -11745,9 +11698,65 @@
      "motivo": null,
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 2
+     }
+    },
+    {
+     "sesion_id": "S-v4-4",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 905.8998013025505,
+     "ic_inferior": 847.2,
+     "ic_superior": 1068.9,
+     "n": 24,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9642857142857143,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-4",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 24,
+     "disponible": false,
+     "motivo": "24 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 0.9642857142857143,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-4",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0.03571428571428571,
+     "ic_inferior": 0.006332519849037753,
+     "ic_superior": 0.1771219774335332,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9642857142857143,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 1
      }
     },
     {
@@ -11765,7 +11774,7 @@
      "motivo": "24 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.61315,
       "unidad": "ln(ms) por minuto"
@@ -11786,7 +11795,7 @@
      "motivo": "4 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 4,
       "tras_acierto": 12
@@ -11807,7 +11816,7 @@
      "motivo": "5 errores; el mínimo es 10",
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 4
      }
@@ -11822,12 +11831,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 28,
+     "n": 26,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 1,
@@ -11850,7 +11859,7 @@
      "motivo": null,
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -11870,7 +11879,7 @@
      "motivo": "4 actividades; el mínimo es 5",
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 3
      }
@@ -11890,7 +11899,7 @@
      "motivo": "4 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 0
      }
@@ -11909,67 +11918,12 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 22,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-5",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 787.1989265744712,
-     "ic_inferior": 700.6999999999998,
-     "ic_superior": 888.2999999999998,
-     "n": 24,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-5",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 24,
-     "disponible": false,
-     "motivo": "24 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-5",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0.03571428571428571,
-     "ic_inferior": 0.006332519849037753,
-     "ic_superior": 0.1771219774335332,
-     "n": 28,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 1
+      "azar": 0.3333333333333333,
+      "omisiones": 0
      }
     },
     {
@@ -11987,9 +11941,65 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
+     }
+    },
+    {
+     "sesion_id": "S-v4-5",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 787.1989265744712,
+     "ic_inferior": 700.6999999999998,
+     "ic_superior": 888.2999999999998,
+     "n": 24,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-5",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 24,
+     "disponible": false,
+     "motivo": "24 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-5",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0.03571428571428571,
+     "ic_inferior": 0.006332519849037753,
+     "ic_superior": 0.1771219774335332,
+     "n": 28,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9655172413793104,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 1
      }
     },
     {
@@ -12007,7 +12017,7 @@
      "motivo": "24 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.805266666666666,
       "unidad": "ln(ms) por minuto"
@@ -12028,7 +12038,7 @@
      "motivo": "4 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 4,
       "tras_acierto": 11
@@ -12049,7 +12059,7 @@
      "motivo": "6 errores; el mínimo es 10",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 4
      }
@@ -12068,8 +12078,8 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 1,
@@ -12092,7 +12102,7 @@
      "motivo": "5 oportunidades; el mínimo es 10",
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -12112,7 +12122,7 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 3
      }
@@ -12132,7 +12142,7 @@
      "motivo": null,
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 1
      }
@@ -12144,74 +12154,19 @@
      "actividad": "ACT-02",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.7499999999999999,
-     "ic_inferior": 0.49653474240375955,
-     "ic_superior": 0.8899518644222717,
-     "n": 30,
+     "valor": 0.888888888888889,
+     "ic_inferior": 0.6494561097546528,
+     "ic_superior": 0.9691680189085172,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 25,
-      "azar": 0.3333333333333333
-     }
-    },
-    {
-     "sesion_id": "S-v4-6",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": 1057.7485523506994,
-     "ic_inferior": 852.3999999999999,
-     "ic_superior": 1189.3000000000004,
-     "n": 26,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-6",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 26,
-     "disponible": false,
-     "motivo": "26 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "S-v4-6",
-     "codigo_nino": "nino-d",
-     "modo_fase": "fase1",
-     "actividad": "ACT-02",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0,
-     "ic_inferior": 0,
-     "ic_superior": 0.11351339317396876,
-     "n": 30,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 0
+      "azar": 0.33333333333333326,
+      "omisiones": 3
      }
     },
     {
@@ -12229,9 +12184,65 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 3
+     }
+    },
+    {
+     "sesion_id": "S-v4-6",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": 1057.7485523506994,
+     "ic_inferior": 852.3999999999999,
+     "ic_superior": 1189.3000000000004,
+     "n": 26,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-6",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 26,
+     "disponible": false,
+     "motivo": "26 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "S-v4-6",
+     "codigo_nino": "nino-d",
+     "modo_fase": "fase1",
+     "actividad": "ACT-02",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0,
+     "ic_inferior": 0,
+     "ic_superior": 0.11351339317396876,
+     "n": 30,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 1,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 0
      }
     },
     {
@@ -12249,7 +12260,7 @@
      "motivo": "26 ensayos válidos; el mínimo es 30",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 5.800233333333333,
       "unidad": "ln(ms) por minuto"
@@ -12270,7 +12281,7 @@
      "motivo": "2 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 19
@@ -12291,7 +12302,7 @@
      "motivo": "2 errores; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
      }
@@ -12306,12 +12317,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 30,
+     "n": 27,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 1,
@@ -12334,7 +12345,7 @@
      "motivo": "3 oportunidades; el mínimo es 10",
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }
@@ -12354,7 +12365,7 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "completadas": 4
      }
@@ -12374,7 +12385,7 @@
      "motivo": null,
      "calidad_sesion": 1,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "terminadas_antes": 1
      }
@@ -12924,74 +12935,19 @@
      "actividad": "ACT-01",
      "indicador": "A1",
      "nombre": "PA, precisión ajustada",
-     "valor": 0.6666666666666666,
-     "ic_inferior": 0.3750654965083413,
-     "ic_superior": 0.850851064789779,
-     "n": 20,
-     "disponible": true,
-     "motivo": null,
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 19,
+     "disponible": false,
+     "motivo": "19 ensayos con respuesta; el mínimo es 20",
      "calidad_sesion": 0.9,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 15,
-      "azar": 0.25
-     }
-    },
-    {
-     "sesion_id": "DEMO-v5",
-     "codigo_nino": "DEMO",
-     "modo_fase": "prototipo",
-     "actividad": "ACT-01",
-     "indicador": "A2",
-     "nombre": "LPR, latencia robusta",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 17,
-     "disponible": false,
-     "motivo": "17 ensayos válidos; el mínimo es 20",
-     "calidad_sesion": 0.9,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "DEMO-v5",
-     "codigo_nino": "DEMO",
-     "modo_fase": "prototipo",
-     "actividad": "ACT-01",
-     "indicador": "A3",
-     "nombre": "IVI, variabilidad intraindividual",
-     "valor": null,
-     "ic_inferior": null,
-     "ic_superior": null,
-     "n": 17,
-     "disponible": false,
-     "motivo": "17 ensayos válidos; el mínimo es 30",
-     "calidad_sesion": 0.9,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": null
-    },
-    {
-     "sesion_id": "DEMO-v5",
-     "codigo_nino": "DEMO",
-     "modo_fase": "prototipo",
-     "actividad": "ACT-01",
-     "indicador": "A4",
-     "nombre": "IRP, respuestas prematuras",
-     "valor": 0.1,
-     "ic_inferior": 0.02786648121376822,
-     "ic_superior": 0.3010336452284873,
-     "n": 20,
-     "disponible": true,
-     "motivo": null,
-     "calidad_sesion": 0.9,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
-     "detalle": {
-      "casos": 2
+      "azar": 0.25,
+      "omisiones": 1
      }
     },
     {
@@ -13009,9 +12965,65 @@
      "motivo": null,
      "calidad_sesion": 0.9,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
+     }
+    },
+    {
+     "sesion_id": "DEMO-v5",
+     "codigo_nino": "DEMO",
+     "modo_fase": "prototipo",
+     "actividad": "ACT-01",
+     "indicador": "A2",
+     "nombre": "LPR, latencia robusta",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 17,
+     "disponible": false,
+     "motivo": "17 ensayos válidos; el mínimo es 20",
+     "calidad_sesion": 0.9,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "DEMO-v5",
+     "codigo_nino": "DEMO",
+     "modo_fase": "prototipo",
+     "actividad": "ACT-01",
+     "indicador": "A3",
+     "nombre": "IVI, variabilidad intraindividual",
+     "valor": null,
+     "ic_inferior": null,
+     "ic_superior": null,
+     "n": 17,
+     "disponible": false,
+     "motivo": "17 ensayos válidos; el mínimo es 30",
+     "calidad_sesion": 0.9,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": null
+    },
+    {
+     "sesion_id": "DEMO-v5",
+     "codigo_nino": "DEMO",
+     "modo_fase": "prototipo",
+     "actividad": "ACT-01",
+     "indicador": "A4",
+     "nombre": "IRP, respuestas prematuras",
+     "valor": 0.1,
+     "ic_inferior": 0.02786648121376822,
+     "ic_superior": 0.3010336452284873,
+     "n": 20,
+     "disponible": true,
+     "motivo": null,
+     "calidad_sesion": 0.9,
+     "version_definicion": "0.1.0",
+     "version_indicadores": "0.3.0",
+     "detalle": {
+      "casos": 2
      }
     },
     {
@@ -13029,7 +13041,7 @@
      "motivo": "17 ensayos válidos; el mínimo es 30; los ensayos abarcan 3.8 min; el mínimo es 5",
      "calidad_sesion": 0.9,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "minutos": 3.7938,
       "unidad": "ln(ms) por minuto"
@@ -13050,7 +13062,7 @@
      "motivo": "2 ensayos de cada tipo; el mínimo es 10",
      "calidad_sesion": 0.9,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 10
@@ -13071,7 +13083,7 @@
      "motivo": "4 errores; el mínimo es 10",
      "calidad_sesion": 0.9,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 3
      }
@@ -13086,12 +13098,12 @@
      "valor": 0,
      "ic_inferior": null,
      "ic_superior": null,
-     "n": 20,
+     "n": 19,
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9,
-     "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_definicion": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "nuevos": [],
       "dominados": 0,
@@ -13114,7 +13126,7 @@
      "motivo": "0 oportunidades; el mínimo es 10",
      "calidad_sesion": 0.9,
      "version_definicion": "0.1.0",
-     "version_indicadores": "0.2.0",
+     "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
      }

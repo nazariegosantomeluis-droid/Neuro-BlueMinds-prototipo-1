@@ -4,9 +4,11 @@
 // archivo es cambiar una definición: sube su versión en VERSIONES (Arquitectura 6.2).
 //
 // Fuente: el Modelo matemático del zip del proyecto del 8 de noviembre de 2026, con las decisiones
-// D2 a D5 del 12 de noviembre (hoja de ruta del prototipo, sección 2).
+// D2 a D5 del 12 de noviembre (hoja de ruta del prototipo, sección 2) y las decisiones R1 a R11 del
+// 23 de noviembre (claude/Pendientes_clinicos_y_del_Modelo.md, sección 1), que mandan sobre los
+// valores provisionales.
 
-export const VERSION_INDICADORES = '0.2.0';
+export const VERSION_INDICADORES = '0.3.0';
 
 export const PARAMETROS = Object.freeze({
   // Todo indicador se reporta con su intervalo de 95 % (Modelo 2.3).
@@ -25,7 +27,7 @@ export const PARAMETROS = Object.freeze({
   bootstrap: { remuestras: 2000, metodo: 'percentiles (cuantil tipo 1)', generador: 'mulberry32', semilla: 'FNV-1a de «sesion_id:actividad:indicador»', seccion: 'Modelo 7.1; decisión D2' },
   // Mínimos de datos de planeación (Modelo 4.1).
   minimos: {
-    A1: { valor: 20, unidad: 'ensayos', seccion: 'Modelo 4.1' },
+    A1: { valor: 20, unidad: 'ensayos con respuesta', seccion: 'Modelo 4.1; decisión R3, 23 nov 2026' },
     A2: { valor: 20, unidad: 'ensayos válidos', seccion: 'Modelo 4.1' },
     A3: { valor: 30, unidad: 'ensayos válidos', seccion: 'Modelo 4.1' },
     A4: { valor: 20, unidad: 'ensayos', seccion: 'Modelo 4.1' },
@@ -43,13 +45,16 @@ export const PARAMETROS = Object.freeze({
   // (decisión D5), configurable en la ficha («dominio.thetaEstrella»); 0.80 solo como análisis de
   // sensibilidad (Documento rector 4.4; Protocolo 2.4).
   dominio: { thetaEstrella: 0.7, confianza: 0.95, sensibilidad: 0.8, porCada: 100, seccion: 'Modelo 4.3; decisión D5' },
-  // Decisiones que el Modelo no precisa (pendientes; README, «Indicadores»):
-  // - en el dominio, una omisión cuenta como presentación sin acierto (e incluye omisiones);
-  omisionCuentaComoErrorEnDominio: { valor: true, seccion: 'Modelo 4.3 no lo precisa (pendiente)' },
+  // Omisiones (decisión R3, 23 nov 2026): A1 y A9 se calculan sobre los ensayos con respuesta; la
+  // corrección por azar 1/G supone que el niño eligió una opción, y puntuar las omisiones como
+  // errores sesga la estimación de la habilidad (Lord, 1974; Pohl et al., 2014). Las omisiones solo
+  // entran en A5, que se reporta siempre junto a A1 (Modelo 3.3).
+  omisionesEnA1yA9: { valor: 'excluidas', seccion: 'Decisión R3, 23 nov 2026 (Modelo 3.3, 4.2 y 4.3)' },
   // - con número de opciones distinto entre ensayos, el azar de A1 es la media de 1/G;
   azarConOpcionesVariables: { valor: 'media de 1/G', seccion: 'Modelo 4.2 define A1 con G fijo (pendiente)' },
-  // - los ensayos de sonda (Catálogo 7.3) no entran en A1 a A10 ni en el dominio.
-  sondasEnIndicadoresDeSesion: { valor: false, seccion: 'Catálogo 7.3 no lo precisa (pendiente)' },
+  // Los ensayos de sonda (Catálogo 7.3) no entran en A1 a A10 ni en el dominio: son otro tipo de
+  // ensayo (ejemplar no entrenado, sin corrección) (decisión R4, 23 nov 2026).
+  sondasEnIndicadoresDeSesion: { valor: false, seccion: 'Decisión R4, 23 nov 2026 (Catálogo 7.3)' },
   // A11 y A12 se calculan al cerrar la sesión sobre las últimas actividades y sesiones del niño
   // (Arquitectura 6.1), sin decir cuántas: el prototipo usa todas las de este dispositivo (pendiente).
   // Una actividad (bloque) se completa si no se terminó desde el menú; una sesión termina antes de lo
@@ -76,7 +81,7 @@ export const PARAMETROS = Object.freeze({
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
-  A1: '0.1.0', A2: '0.1.0', A3: '0.1.0', A4: '0.1.0', A5: '0.1.0', A6: '0.1.0', A7: '0.1.0', A8: '0.1.0', A9: '0.1.0', A10: '0.1.0', A11: '0.1.0', A12: '0.1.0',
+  A1: '0.2.0', A2: '0.1.0', A3: '0.1.0', A4: '0.1.0', A5: '0.1.0', A6: '0.1.0', A7: '0.1.0', A8: '0.1.0', A9: '0.2.0', A10: '0.1.0', A11: '0.1.0', A12: '0.1.0',
   C8: '0.1.0', regulacion: '0.1.0',
   IG: '0.1.0', IRet: '0.1.0',
 });

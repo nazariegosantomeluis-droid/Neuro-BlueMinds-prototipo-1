@@ -37,9 +37,15 @@ test('A1: 24 de 30 con 3 opciones da PA = 0.7; el intervalo es el de Wilson tran
   cerca(r.ic[0], 0.440415, 1e-6);
   cerca(r.ic[1], 0.857423, 1e-6);
   assert.equal(r.n, 30);
-  // Una omisión cuenta como no acierto; un ensayo interrumpido no cuenta.
+  // Decisión R3: las omisiones no entran en A1 (van a A5); un ensayo interrumpido tampoco.
+  // 24 aciertos y 5 errores con respuesta, más 1 omisión: p = 24/29; PA = (24/29 − 1/3)/(2/3) =
+  // (72 − 29)/58 = 43/58 = 0.741379.
   const conOmision = [...rows.slice(0, 29), fila(30, omision), fila(31, { interrumpido: true })];
-  assert.equal(a1(conOmision, 1).n, 30);
+  const r3 = a1(conOmision, 1);
+  assert.equal(r3.n, 29);
+  assert.equal(r3.omisiones, 1);
+  cerca(r3.valor, 43 / 58, 1e-12);
+  assert.equal(r3.version, '0.2.0');
   // Con 2 y 4 opciones mezcladas, el azar es la media de 1/G: (1/2 + 1/4)/2 = 0.375.
   const mixto = filas(20, (k) => ({ n_opciones: k % 2 ? 2 : 4 }));
   assert.equal(a1(mixto, 1).azar, 0.375);
@@ -48,7 +54,7 @@ test('A1: 24 de 30 con 3 opciones da PA = 0.7; el intervalo es el de Wilson tran
   const pocos = a1(filas(19), 1);
   assert.equal(pocos.disponible, false);
   assert.equal(pocos.valor, null);
-  assert.equal(pocos.motivo, '19 ensayos; el mínimo es 20');
+  assert.equal(pocos.motivo, '19 ensayos con respuesta; el mínimo es 20');
 });
 
 test('A2: LPR = exp(mediana ln RT); intervalo por estadísticos de orden', () => {

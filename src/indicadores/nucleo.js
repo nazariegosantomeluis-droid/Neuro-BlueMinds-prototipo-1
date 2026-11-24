@@ -71,14 +71,17 @@ const semillaDe = (rows, id) => `${rows[0]?.sesion_id ?? ''}:${rows[0]?.activida
 
 // A1. Precisión ajustada: PA = (p − 1/G)/(1 − 1/G), intervalo de Wilson sobre p transformado con
 // la misma fórmula (Modelo 4.2). Con G distinto entre ensayos, el azar es la media de 1/G.
+// Decisión R3 (23 nov 2026): solo los ensayos con respuesta; las omisiones van a A5, que se
+// reporta junto a A1 (en el detalle de A1 y en la fila siguiente de indicadores.csv).
 export function a1(rows, calidad) {
-  const us = rows.filter(utilizable);
+  const omisiones = rows.filter(utilizable).filter((r) => r.omision).length;
+  const us = rows.filter(utilizable).filter((r) => !r.omision);
   const n = us.length;
   const x = us.filter((r) => r.acierto).length;
   const azar = n ? us.reduce((t, r) => t + 1 / r.n_opciones, 0) / n : null;
   const pa = (p) => (p - azar) / (1 - azar);
   const ic = wilson(x, n, CONF);
-  return resultado('A1', { valor: n ? pa(x / n) : null, ic: ic && ic.map(pa), n, minimo: P.minimos.A1, calidad, extra: { aciertos: x, azar } });
+  return resultado('A1', { valor: n ? pa(x / n) : null, ic: ic && ic.map(pa), n, minimo: P.minimos.A1, calidad, extra: { aciertos: x, azar, omisiones } });
 }
 
 // A2. Latencia robusta: LPR = exp(mediana ln RT) (Modelo 3.2). Intervalo por estadísticos de

@@ -135,7 +135,7 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 - El dominio se cuenta por concepto (`dominio.unidad` en la ficha), con el criterio de A9 y las sesiones anteriores del niño en este dispositivo.
 - **Sondas:** en cada tramo de 10 ensayos, uno al azar se cambia por una sonda: el ítem de un concepto ya dominado, en la banda del bloque, con su tercer ejemplar como opción correcta. Cada concepto se sondea una sola vez, porque el ejemplar 3 deja de ser nuevo. La retroalimentación de la sonda no marca ninguna opción y dura lo mismo.
 - **Presentación distribuida:** un concepto que alcanzó el dominio en una sesión de la fase 3 vuelve a aparecer 1, 3 y 7 sesiones después (contadas entre las sesiones del niño con ACT-02). Si ya estaba en el bloque solo se marca; si no, reemplaza un ensayo.
-- El bloque sigue con 30 ensayos. Las sondas no entran en A1 a A10 ni en el dominio (parámetro `sondasEnIndicadoresDeSesion`, pendiente de confirmar).
+- El bloque sigue con 30 ensayos. Las sondas no entran en A1 a A10 ni en el dominio (parámetro `sondasEnIndicadoresDeSesion`; decisión R4).
 - **IG** (precisión en sondas / precisión en práctica de las mismas bandas) e **IRet** (precisión en las reapariciones, por demora) son indicadores del nivel B: se calculan con `indiceGeneralizacion` y `retencion` para exportarlos y no se muestran.
 - En una sesión cada concepto aparece una sola vez (Catálogo 5.2), así que el máximo de presentaciones por sesión de Arquitectura 4.7 es 1 y el dominio se acumula entre sesiones.
 
@@ -595,11 +595,11 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 
 | Indicador | Cálculo | Intervalo (decisión D2) | Mínimo |
 |---|---|---|---|
-| A1 PA | (p − azar)/(1 − azar), azar = 1/G (con G distinto entre ensayos, la media de 1/G) | Wilson sobre p, transformado | 20 ensayos |
+| A1 PA | (p − azar)/(1 − azar), azar = 1/G (con G distinto entre ensayos, la media de 1/G), sobre los ensayos con respuesta: las omisiones no entran (decisión R3) | Wilson sobre p, transformado | 20 ensayos con respuesta |
 | A2 LPR | exp(mediana de ln RT), en ms | Estadísticos de orden sobre ln RT | 20 válidos |
 | A3 IVI | 1.4826 · mediana \|ln RT − mediana\| | Bootstrap | 30 válidos |
 | A4 IRP | Anticipatorias / ensayos | Wilson | 20 ensayos |
-| A5 IOM | Omisiones / ensayos | Wilson | 20 ensayos |
+| A5 IOM | Omisiones / ensayos. Se reporta siempre junto a A1 (decisión R3) | Wilson | 20 ensayos |
 | A6 IFC | Pendiente de Theil-Sen de ln RT sobre el tiempo, en ln(ms) por minuto desde el primer ensayo de la actividad; solo con la banda constante | Tau de Kendall (Sen, 1968) | 30 válidos en 5 min |
 | A7 PES | Mediana del RT de aciertos tras error − la de aciertos tras acierto, en el mismo bloque; error = respuesta incorrecta | Bootstrap estratificado | 10 de cada tipo |
 | A8 IRPE | Aciertos en el ensayo siguiente a un error / errores | Wilson | 10 errores |
@@ -608,7 +608,7 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 | A11 IPF | Actividades (bloques) completadas / iniciadas, en todas las sesiones del niño hasta la de hoy. Un bloque se completa si no se terminó desde el menú | Wilson | 5 actividades |
 | A12 IA | Sesiones terminadas desde el menú («Terminar la sesión») / sesiones del niño. El límite de 15 minutos no cuenta | Wilson | 5 sesiones |
 
-**Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e presentaciones sin acierto de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones cuentan como presentaciones sin acierto (parámetro, pendiente de confirmar).
+**Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e errores de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones no cuentan ni como aciertos ni como errores (decisión R3).
 
 **indicadores.csv (H3.6).** Una fila por sesión, actividad e indicador:
 
@@ -626,6 +626,8 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 Las sesiones de demostración y del modo experto no tienen historia de un niño: su A9 y su A10 solo miran la propia sesión y no tienen A11 ni A12. Los indicadores del nivel B (μ, σ, τ, EZ, α, λ, IG, IRet, ICS, ICM) no van en este archivo: Arquitectura 6.1 los deja al entorno de análisis, que los calcula con las columnas del registro por ensayo (`sonda` y `reaparicion` para IG e IRet; `modalidad` y `mitad_fase2` para ICM; el ítem de ACT-07 para ICS).
 
 **Vectores de prueba (H3.6).** `test/vectores/indicadores.json` trae seis casos (una sesión típica de ACT-02 y ACT-07, una sesión larga con A3, A6, A7 y A8 disponibles, pocos ensayos, calidad baja, seis sesiones de un niño para A9 a A12 y una demostración), cada uno con sus entradas (las columnas del registro y de `sesiones.csv` que usan los indicadores) y sus salidas (las filas de `indicadores.csv`), además de los parámetros, las versiones y el generador con una comprobación (semilla y primeros cinco números). Lo genera `node tools/vectores-indicadores.mjs`; la prueba falla si el archivo no coincide con lo que dan las funciones, y reimplementa el generador con enteros grandes para comprobar que su descripción basta. Criterio de comparación con R (Arquitectura 6.3): 1 ms en latencias y exacto en proporciones.
+
+**Omisiones (decisión R3, 23 nov 2026).** A1 y A9 se calculan sobre los ensayos con respuesta: la corrección por azar supone que el niño eligió una opción, y puntuar una omisión como error sesga la estimación de la habilidad cuando la omisión no se debe a no saber (Pohl, Gräfe y Rose, 2014). Las omisiones solo entran en A5, que va siempre junto a A1: en `indicadores.csv` la fila de A5 sigue a la de A1, y el detalle de A1 trae cuántas omisiones hubo. Si un niño omite sobre todo los ítems difíciles, A1 sale alta; por eso se leen juntas. Versión de definición de A1 y A9: 0.2.0.
 
 **Reproducir los intervalos en otro programa (R, H3.7).**
 - Wilson: z = 1.959963984540054; límites recortados a [0, 1].

@@ -17,6 +17,9 @@ export const INDICADORES_COLUMNS = [
   'calidad_sesion', 'version_definicion', 'version_indicadores', 'detalle',
 ];
 
+// Orden de las filas: A5 (omisiones) va siempre junto a A1 (decisión R3, 23 nov 2026).
+export const ORDEN = ['A1', 'A5', 'A2', 'A3', 'A4', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'A12'];
+
 const BASE = new Set(['id', 'nombre', 'valor', 'ic', 'n', 'disponible', 'motivo', 'version']);
 
 function fila(sesion, actividad, calidad, x) {
@@ -59,7 +62,7 @@ export function calcularIndicadores(ensayos, sesiones, { fichas = {}, items = []
       const previas = conNino(s) ? ensayos.filter((r) => anteriores.has(r.sesion_id) && r.codigo_nino === s.codigo_nino && r.actividad === actividad) : [];
       const ficha = fichas[actividad];
       const res = [...indicadoresDeSesion(rows, { calidad, previas }), a9(rows, { previas, unidad: unidadDe(ficha, porCodigo), criterio: criterioDe(ficha), calidad })];
-      for (const x of res.sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)))) out.push(fila(s, actividad, calidad, x));
+      for (const x of res.sort((a, b) => ORDEN.indexOf(a.id) - ORDEN.indexOf(b.id))) out.push(fila(s, actividad, calidad, x));
     }
     if (conNino(s)) {
       const delNino = sesiones.slice(0, k + 1).filter((x) => x.codigo_nino === s.codigo_nino && conNino(x));
