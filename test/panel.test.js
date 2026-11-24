@@ -3,11 +3,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  texto, frase, patronDe, historialDelNino, historialHTML, sesionHTML, bandaDeVariacion, ladoFuera, persiste, bandasDeLineaBase, sesionesDeLineaBase, lecturasACT07, marcaRegistro, senalFalsa,
+  texto, frase, patronDe, historialDelNino, historialHTML, sesionHTML, bandaDeVariacion, ladoFuera, persiste, bandasDeLineaBase, sesionesDeLineaBase, lecturasACT07, marcaRegistro,
 } from '../src/panel/panel.js';
 import { calcularIndicadores } from '../src/indicadores/exportar.js';
 import { PARAMETROS } from '../src/indicadores/parametros.js';
 import { fila } from '../tools/filas-prueba.mjs';
+import { tasa } from '../tools/simular-banda.mjs';
+import { wilson } from '../src/indicadores/estadistica.js';
 
 const leer = (ruta) => readFileSync(new URL(`../${ruta}`, import.meta.url), 'utf8');
 const plantillas = JSON.parse(leer('src/panel/plantillas.json'));
@@ -159,16 +161,18 @@ test('adaptaciones: cada cambio con su regla, cada bloqueo con su invariante y a
 
 // ---------- H5.2: línea base y cambio que persiste ----------
 
-test('banda de variación: mediana ± 2 MAD escalada (a mano) y cambio solo con dos sesiones seguidas', () => {
+test('banda de variación: mediana ± 3 MAD escalada (a mano) y cambio solo con dos sesiones seguidas', () => {
   const b = bandaDeVariacion([10, 12, 14, 16, 18]);
-  // mediana 14; |x − 14| = 4, 2, 0, 2, 4 → mediana 2; MAD = 1.4826 · 2 = 2.9652; banda 14 ± 5.9304.
+  // mediana 14; |x − 14| = 4, 2, 0, 2, 4 → mediana 2; MAD escalada = 1.4826 · 2 = 2.9652; banda 14 ± 3 · 2.9652 = 14 ± 8.8956.
   assert.equal(b.mediana, 14);
-  assert.ok(Math.abs(b.minimo - 8.0696) < 1e-9 && Math.abs(b.maximo - 19.9304) < 1e-9);
+  assert.ok(Math.abs(b.minimo - 5.1044) < 1e-9 && Math.abs(b.maximo - 22.8956) < 1e-9);
+  const b2 = bandaDeVariacion([10, 12, 14, 16, 18], { mads: 2 });
+  assert.ok(Math.abs(b2.maximo - 19.9304) < 1e-9, 'con k = 2, 14 + 5.9304');
   assert.equal(bandaDeVariacion([1, null, 2]), null, 'con menos de 3 valores no hay banda');
-  assert.equal(ladoFuera(20, b), 'arriba');
-  assert.equal(ladoFuera(8, b), 'abajo');
-  assert.equal(ladoFuera(14, b), null);
-  assert.equal(PARAMETROS.bandaVariacion.mads, 2);
+  assert.equal(ladoFuera(23, b), 'arriba');
+  assert.equal(ladoFuera(5, b), 'abajo');
+  assert.equal(ladoFuera(20, b), null);
+  assert.equal(PARAMETROS.bandaVariacion.mads, 3);
   assert.equal(PARAMETROS.bandaVariacion.sesionesConsecutivas, 2);
   // Una sola sesión fuera no es cambio; dos seguidas hacia el mismo lado, sí.
   const d1 = datos({ fase3: [{ rt: 900 }, { rt: 1400 }] });
@@ -181,35 +185,25 @@ test('banda de variación: mediana ± 2 MAD escalada (a mano) y cambio solo con 
   assert.equal(sesionesDeLineaBase(h2.slice(0, 4)), null, 'con 4 sesiones válidas no hay línea base (D3)');
 });
 
-// Generador propio con semilla para la simulación.
-function normalCon(semilla) {
-  let x = semilla >>> 0;
-  const u = () => {
-    x = (x + 0x6d2b79f5) >>> 0;
-    let t = x;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-  return () => Math.sqrt(-2 * Math.log(Math.max(u(), 1e-12))) * Math.cos(2 * Math.PI * u());
-}
-
-// H5.2 pide una tasa de falsas señales menor de 5 % por indicador. Con la regla del Modelo 6.3 y 6.4
-// tal cual (línea base de 5 sesiones, mediana ± 2 MAD, dos sesiones seguidas), la simulación da
-// cerca de 8.5 %: no cumple. No se cambia el umbral sin decisión (queda configurable en
-// bandaVariacion de parametros.js y se reporta como contradicción). Esta prueba fija la tasa actual y
-// muestra que la regla, con 3 sesiones seguidas, sí queda debajo de 5 %.
-test('simulación (H5.2): tasa de falsas señales sin cambio real, con la regla actual y con una alternativa', () => {
-  const tasa = (opciones) => {
-    const z = normalCon(1124);
-    let f = 0;
-    for (let k = 0; k < 40000; k++) f += senalFalsa(z, opciones);
-    return f / 40000;
-  };
-  const actual = tasa();
-  assert.ok(actual > 0.07 && actual < 0.1, `con 2 MAD y 2 sesiones: ${actual}`);
-  assert.ok(tasa({ consecutivas: 3 }) < 0.05, 'con 3 sesiones seguidas, menos de 5 %');
-  assert.ok(tasa({ mads: 3 }) < 0.05, 'con 3 MAD, menos de 5 %');
+// Decisión R12: se mantienen las 2 sesiones consecutivas y k es el menor multiplicador de la MAD
+// con menos de 5 % de falsas señales por indicador con ruido normal y con ruido t de 5 grados de
+// libertad. La elección completa (400 000 repeticiones por k) está en tools/simular-banda.mjs; aquí
+// se comprueba con otra semilla y menos repeticiones que k = 3 cumple con los dos ruidos, que
+// k = 2.5 no cumple y que la sensibilidad crece con el tamaño del cambio.
+test('R12: con k = 3 y 2 sesiones seguidas, menos de 5 % de falsas señales con ruido normal y t5', () => {
+  assert.equal(PARAMETROS.bandaVariacion.mads, 3);
+  assert.equal(PARAMETROS.bandaVariacion.sesionesConsecutivas, 2);
+  assert.match(PARAMETROS.bandaVariacion.seccion, /Decisión R12/);
+  const reps = 40000;
+  for (const ruido of ['normal', 't5']) {
+    const t3 = tasa({ k: 3, ruido, repeticiones: reps, semilla: 7 });
+    assert.ok(wilson(Math.round(t3 * reps), reps)[1] < 0.05, `${ruido}, k = 3: ${t3}`);
+    assert.ok(tasa({ k: 2.5, ruido, repeticiones: reps, semilla: 7 }) > 0.05, `${ruido}, k = 2.5 no cumple`);
+    const [d1, d2] = [1, 2].map((d) => tasa({ k: 3, ruido, desviaciones: d, repeticiones: 20000, semilla: 7 }));
+    assert.ok(t3 < d1 && d1 < d2, `${ruido}: sensibilidad ${d1} y ${d2}`);
+  }
+  // La regla de antes (2 MAD) daba cerca de 8.5 %.
+  assert.ok(tasa({ k: 2, ruido: 'normal', repeticiones: reps, semilla: 7 }) > 0.07);
 });
 
 // ---------- Lecturas de ACT-07 ----------
@@ -228,6 +222,56 @@ test('ACT-07: más errores al cambiar de regla y diferencia de tiempo, con 10 en
   assert.deepEqual(ls.map((l) => l.id), ['LEC-08', 'LEC-09']);
   assert.equal(ls[1].valores.ms, 300);
   assert.deepEqual(lecturasACT07(rows.slice(0, 15), reglas), [], 'con menos de 10 de cada tipo, nada');
+});
+
+// ---------- Decisión R15: pares simétricos ----------
+
+test('R15: toda frase con sentido tiene su par simétrico y neutral, con los mismos huecos', () => {
+  const P = plantillas.plantillas;
+  const huecos = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+  const conSentido = Object.entries(P).filter(([, p]) => p.sentido);
+  assert.equal(conSentido.length, 16, '8 pares');
+  for (const [id, p] of conSentido) {
+    assert.ok(['arriba', 'abajo'].includes(p.sentido), id);
+    const par = P[p.par];
+    assert.ok(par, `${id}: su par ${p.par} existe`);
+    assert.equal(par.par, id, `${p.par} apunta de vuelta a ${id}`);
+    assert.notEqual(par.sentido, p.sentido, `${id} y ${p.par} tienen sentidos opuestos`);
+    assert.deepEqual(huecos(par.texto), huecos(p.texto), `${id} y ${p.par}: mismos huecos`);
+  }
+  // Ninguna frase con dirección («más», «menos», «por arriba», «por abajo») queda sin par.
+  for (const [id, p] of Object.entries(P)) {
+    const direccional = /\b(más|menos)\b|por (arriba|abajo)/.test(p.texto.replace(/o más\b|menos de \d/g, ''));
+    if (direccional) assert.ok(p.sentido && p.par, `${id} tiene dirección y no tiene par`);
+  }
+  assert.equal(plantillas.version, '0.2.0');
+});
+
+test('R15: el panel usa la frase del sentido que corresponde', () => {
+  // LPR por abajo de la línea base en dos sesiones seguidas: CMP-07 y CMP-09.
+  const h = historial(datos({ fase3: [{ rt: 500 }, { rt: 500 }] }));
+  const html = sesionHTML(plantillas, h, 6, { config, fichas });
+  const ids = revisarHTML(html);
+  assert.ok(ids.includes('CMP-07') && ids.includes('CMP-09'), ids.join(' '));
+  assert.ok(!ids.includes('CMP-03'), 'nada de «más lento»');
+  assert.match(html, /ACT-02 · LPR, latencia robusta: por abajo de su variación habitual en esta sesión y en la anterior\./);
+  // ACT-07 al revés: menos errores y menos tiempo al cambiar de regla.
+  const reglas = new Map();
+  const rows = [];
+  for (let i = 0; i < 40; i++) {
+    const codigo = `S7-${i}`;
+    const regla = Math.floor(i / 2) % 2 ? 'forma' : 'color';
+    reglas.set(codigo, regla);
+    const cambio = i > 0 && regla !== reglas.get(`S7-${i - 1}`);
+    rows.push(fila(i + 1, { actividad: 'ACT-07', item: codigo, acierto: !(!cambio && i % 4 === 1), tr_bruto_ms: cambio ? 900 : 1200 }));
+  }
+  const ls = lecturasACT07(rows, reglas);
+  assert.deepEqual(ls.map((l) => l.id), ['LEC-13', 'LEC-14']);
+  assert.equal(ls[1].valores.ms, 300);
+  // IFC y PES con el intervalo debajo de cero: LEC-11 y LEC-12.
+  const src = leer('src/panel/panel.js');
+  assert.match(src, /x\.indicador === 'A6' && x\.ic_superior < 0\) partes\.push\(frase\(plantillas, 'LEC-11'\)\)/);
+  assert.match(src, /x\.indicador === 'A7' && x\.ic_superior < 0\) partes\.push\(frase\(plantillas, 'LEC-12'\)\)/);
 });
 
 // ---------- H5.5: marcas ----------

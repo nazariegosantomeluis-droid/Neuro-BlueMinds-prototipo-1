@@ -94,7 +94,7 @@ export function crearMenu(contexto) {
 
 // Orden lista para el registro: hora del reloj (ISO, solo para identificarla), ms desde el inicio
 // de la sesión y el estado de la sesión en ese momento.
-export const ordenRegistro = (orden, { hora, ms, bloque, ensayo, modo, banda, adaptacion }) => ({
+export const ordenRegistro = (orden, { hora, ms, bloque, ensayo, modo, banda, adaptacion, propuestas_previas = null, ensayos_validos = null, actividad = null }) => ({
   hora,
   ms,
   accion: orden.accion,
@@ -105,6 +105,11 @@ export const ordenRegistro = (orden, { hora, ms, bloque, ensayo, modo, banda, ad
   modo: modo ?? null,
   banda: banda ?? null,
   adaptacion: Boolean(adaptacion),
+  // Para reproducir la sesión (Arquitectura 10.2): decisiones de la regla que había, ensayos
+  // válidos de la actividad en la sesión y la actividad del bloque.
+  propuestas_previas,
+  ensayos_validos,
+  actividad,
 });
 
 const chip = (name, value, label, checked = false) =>

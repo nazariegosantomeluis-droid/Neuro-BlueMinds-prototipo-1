@@ -1,27 +1,49 @@
-// Señales de alerta temprana (H4.4; RF-11; Modelo 10.1 y 13.7; INV-9). SOLO OBSERVACIÓN.
+// Señales de alerta temprana (H4.4; RF-11; Modelo 10.1 y 13.7; INV-9; decisión R13). SOLO OBSERVACIÓN.
 //
 // Se calculan al cerrar la sesión y se guardan en sesiones.csv (alerta_temprana) para evaluarlas
 // después contra los episodios que registra el terapeuta sin conocerlas (Modelo 10.1). Nunca se
 // muestran (ni al terapeuta ni al niño) y ninguna acción depende de ellas: ningún módulo de la
 // aplicación importa este archivo salvo app.js, que solo escribe el resultado en el registro.
 //
-// x: residuo del tiempo de respuesta = ln(TR) − media de ln(TR) de la actividad en la sesión, con
-// los ensayos válidos para latencia. En cada ventana móvil W_t de W residuos consecutivos:
-// ρ1(t) = corr(x_k, x_{k−1}) y V(t) = var(x_k). La señal es τ_K(ρ1, t) > c_ρ y τ_K(V, t) > c_V,
-// con τ de Kendall contra el tiempo. c_ρ y c_V son el cuantil 1 − α de τ en series simuladas sin
-// transición (ruido normal independiente del mismo largo), con semilla fija.
+// Decisión R13 (23 nov 2026; Dakos et al., 2012):
+// - x: residuo del tiempo de respuesta = ln(TR) menos la media y la tendencia lineal (mínimos
+//   cuadrados contra el orden del ensayo) de la actividad en la sesión, con los ensayos válidos
+//   para latencia.
+// - Ventana móvil de la mitad de esos ensayos (mínimo 10). En cada ventana: ρ1(t) = corr(x_k,
+//   x_{k−1}) y V(t) = var(x_k); τ de Kendall de cada serie contra el tiempo.
+// - Umbrales c_ρ y c_V calibrados con series sin transición: permutaciones al azar de los propios
+//   residuos (semilla fija). Se usa el mismo cuantil q para las dos τ, el menor q de la rejilla con
+//   el que la proporción de permutaciones con las dos τ por encima de su umbral es de 5 % o menos
+//   (falsas alertas por sesión). La señal es τ_ρ > c_ρ y τ_V > c_V.
+// - Sensibilidad a la ventana: lo mismo con ventanas de 1/4 y 3/4 de los ensayos (mínimo 10).
+// - Al lado, la regla simple: 3 errores seguidos (respuestas incorrectas entre los ensayos
+//   utilizables; las omisiones cortan la racha), para compararlas (Modelo 10.1).
 import { PARAMETROS, VERSIONES } from './indicadores/parametros.js';
-import { validoLatencia, rtDe } from './indicadores/nucleo.js';
+import { validoLatencia, rtDe, utilizable } from './indicadores/nucleo.js';
 import { rng, seedOf } from './engine/selector.js';
 
 const AT = PARAMETROS.alertaTemprana;
 
-export function residuos(rows) {
-  const ln = rows.filter(validoLatencia).map((r) => Math.log(rtDe(r)));
-  if (!ln.length) return [];
-  const media = ln.reduce((a, b) => a + b, 0) / ln.length;
-  return ln.map((x) => x - media);
+// Residuos de ln TR sin la media ni la tendencia lineal (contra el orden 0, 1, 2…).
+export function quitarTendencia(ys) {
+  const n = ys.length;
+  if (n < 2) return ys.map(() => 0);
+  const mx = (n - 1) / 2;
+  const my = ys.reduce((a, b) => a + b, 0) / n;
+  let sxy = 0;
+  let sxx = 0;
+  ys.forEach((y, i) => {
+    sxy += (i - mx) * (y - my);
+    sxx += (i - mx) ** 2;
+  });
+  const b = sxy / sxx;
+  return ys.map((y, i) => y - my - b * (i - mx));
 }
+
+export const residuos = (rows) => quitarTendencia(rows.filter(validoLatencia).map((r) => Math.log(rtDe(r))));
+
+// Ventana de la decisión R13: la mitad de los residuos (o la fracción dada), mínimo 10.
+export const ventanaDe = (n, fraccion = AT.fraccionVentana) => Math.max(AT.ventanaMinima, Math.floor(n * fraccion));
 
 const varianza = (xs) => {
   const m = xs.reduce((a, b) => a + b, 0) / xs.length;
@@ -43,7 +65,7 @@ function correlacion(a, b) {
 }
 
 // Series ρ1(t) y V(t) en ventanas móviles de W residuos (una por cada residuo desde el W-ésimo).
-export function seriesEnVentana(x, W = AT.ventana) {
+export function seriesEnVentana(x, W) {
   const rho = [];
   const v = [];
   for (let t = W; t <= x.length; t++) {
@@ -73,12 +95,6 @@ export function kendallContraTiempo(serie) {
   return den > 0 ? (c - d) / den : null;
 }
 
-// Normal estándar por Box-Muller con el generador sembrado.
-function normal(u) {
-  const a = Math.max(u(), Number.MIN_VALUE);
-  return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * u());
-}
-
 const percentil7 = (xs, p) => {
   const s = [...xs].sort((a, b) => a - b);
   const h = (s.length - 1) * p;
@@ -86,42 +102,77 @@ const percentil7 = (xs, p) => {
   return lo + 1 < s.length ? s[lo] + (h - lo) * (s[lo + 1] - s[lo]) : s[lo];
 };
 
-// Umbrales c_ρ y c_V para n residuos: cuantil 1 − α de τ en series simuladas sin transición.
-const cache = new Map();
-export function calibrar(n, { W = AT.ventana, alfa = AT.alfa, simulaciones = AT.simulaciones } = {}) {
-  const clave = `${n}:${W}:${alfa}:${simulaciones}`;
-  if (cache.has(clave)) return cache.get(clave);
-  const u = rng(seedOf(`alerta:${n - W + 1}`));
-  const tr = [];
-  const tv = [];
-  for (let s = 0; s < simulaciones; s++) {
-    const x = Array.from({ length: n }, () => normal(u));
-    const { rho, v } = seriesEnVentana(x, W);
-    const a = kendallContraTiempo(rho);
-    const b = kendallContraTiempo(v);
-    if (a !== null) tr.push(a);
-    if (b !== null) tv.push(b);
+const taus = (x, W) => {
+  const { rho, v } = seriesEnVentana(x, W);
+  return [kendallContraTiempo(rho), kendallContraTiempo(v)];
+};
+
+// Permutación de Fisher-Yates con el generador dado.
+function permutar(xs, u) {
+  const a = [...xs];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(u() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  const out = { c_rho: tr.length ? percentil7(tr, 1 - alfa) : null, c_v: tv.length ? percentil7(tv, 1 - alfa) : null };
-  cache.set(clave, out);
-  return out;
+  return a;
+}
+
+// Rejilla de cuantiles para el umbral común: 0.50, 0.51, …, 0.99, 0.995, 0.999.
+const REJILLA = [...Array.from({ length: 50 }, (_, i) => 0.5 + i / 100), 0.995, 0.999];
+
+// Umbrales calibrados con permutaciones de los residuos x (series sin transición), semilla fija.
+export function calibrarPermutando(x, W, { permutaciones = AT.permutaciones, falsas = AT.falsasAlertas, semilla = AT.semilla } = {}) {
+  const u = rng(seedOf(`${semilla}:${x.length}:${W}`));
+  const pares = [];
+  for (let p = 0; p < permutaciones; p++) {
+    const [a, b] = taus(permutar(x, u), W);
+    if (a !== null && b !== null) pares.push([a, b]);
+  }
+  if (!pares.length) return { c_rho: null, c_v: null, cuantil: null, falsas: null };
+  for (const q of REJILLA) {
+    const c_rho = percentil7(pares.map((p) => p[0]), q);
+    const c_v = percentil7(pares.map((p) => p[1]), q);
+    const tasa = pares.filter(([a, b]) => a > c_rho && b > c_v).length / pares.length;
+    if (tasa <= falsas) return { c_rho, c_v, cuantil: q, falsas: tasa };
+  }
+  return { c_rho: null, c_v: null, cuantil: null, falsas: null };
 }
 
 // Mínimo de ventanas para calcular τ: 3 (con menos, τ no tiene sentido).
 const MINIMO_VENTANAS = 3;
 
+function senalCon(x, W) {
+  const ventanas = Math.max(0, x.length - W + 1);
+  if (ventanas < MINIMO_VENTANAS) return { ventana: W, ventanas, tau_rho: null, tau_v: null, c_rho: null, c_v: null, cuantil: null, senal: null };
+  const [tauRho, tauV] = taus(x, W);
+  const c = calibrarPermutando(x, W);
+  const senal = tauRho !== null && tauV !== null && c.c_rho !== null ? tauRho > c.c_rho && tauV > c.c_v : null;
+  return { ventana: W, ventanas, tau_rho: tauRho, tau_v: tauV, c_rho: c.c_rho, c_v: c.c_v, cuantil: c.cuantil, senal };
+}
+
+// Regla simple (Modelo 10.1): 3 errores seguidos entre los ensayos utilizables.
+export function erroresSeguidos(rows, n = AT.erroresSeguidos) {
+  let racha = 0;
+  for (const r of rows.filter(utilizable)) {
+    racha = !r.omision && !r.acierto ? racha + 1 : 0;
+    if (racha >= n) return { senal: true, ensayo: r.ensayo, bloque: r.bloque };
+  }
+  return { senal: false, ensayo: null, bloque: null };
+}
+
 // Señal de una actividad en una sesión. rows: sus ensayos, en orden.
-export function alertaDeActividad(rows, { W = AT.ventana } = {}) {
+export function alertaDeActividad(rows) {
   const x = residuos(rows);
-  const nVentanas = Math.max(0, x.length - W + 1);
-  const base = { actividad: rows[0]?.actividad ?? null, ventana: W, residuos: x.length, ventanas: nVentanas, version: VERSIONES.alerta, solo_observacion: true };
-  if (nVentanas < MINIMO_VENTANAS) return { ...base, tau_rho: null, tau_v: null, c_rho: null, c_v: null, senal: null };
-  const { rho, v } = seriesEnVentana(x, W);
-  const tauRho = kendallContraTiempo(rho);
-  const tauV = kendallContraTiempo(v);
-  const { c_rho, c_v } = calibrar(x.length, { W });
-  const senal = tauRho !== null && tauV !== null && c_rho !== null && c_v !== null ? tauRho > c_rho && tauV > c_v : null;
-  return { ...base, tau_rho: tauRho, tau_v: tauV, c_rho, c_v, senal };
+  const principal = senalCon(x, ventanaDe(x.length));
+  return {
+    actividad: rows[0]?.actividad ?? null,
+    residuos: x.length,
+    ...principal,
+    sensibilidad: AT.fraccionesSensibilidad.map((f) => ({ fraccion: f, ...senalCon(x, ventanaDe(x.length, f)) })),
+    tres_errores_seguidos: erroresSeguidos(rows),
+    version: VERSIONES.alerta,
+    solo_observacion: true,
+  };
 }
 
 // Todas las actividades de una sesión. rows: el registro por ensayo de la sesión.

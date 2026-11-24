@@ -10,8 +10,8 @@ import { historialDelNino, historialHTML, sesionHTML, texto, marcaRegistro } fro
 // Código del ensayo de ACT-07 → regla (para las lecturas de la ficha).
 const reglasDe = (items) => new Map(items.filter((i) => i.actividad === 'ACT-07' && i.ensayos).flatMap((i) => i.ensayos.map((e) => [e.codigo, e.regla])));
 
-// ctx: { state, log, sesiones, ninos, editSesion, params }.
-export function renderPanel(app, { state, log, sesiones, ninos, editSesion, params }) {
+// ctx: { state, log, sesiones, ninos, editSesion, params, auditar }.
+export function renderPanel(app, { state, log, sesiones, ninos, editSesion, params, auditar = () => {} }) {
   const plantillas = state.plantillas;
   const nino = ninos.rows().find((n) => n.codigo === params.get('nino'));
   const cabecera = `${navHTML('sesiones')}<h1 data-plantilla="ETQ-01">${esc(plantillas ? texto(plantillas, 'ETQ-01') : 'Panel del terapeuta')}</h1>`;
@@ -34,6 +34,13 @@ export function renderPanel(app, { state, log, sesiones, ninos, editSesion, para
       <div class="panel" id="contenido">${cuerpo}</div>
       <p class="mensaje" role="status" data-panel-mensaje></p>
     </div>`;
+  // Auditoría (Arquitectura 10.1): qué se mostró en el panel y cuándo (las plantillas usadas).
+  auditar('panel', {
+    codigo_nino: nino.codigo,
+    sesion_id: enSesion ? historial[k].sesion.sesion_id : null,
+    plantillas: [...new Set([...app.querySelectorAll('[data-plantilla]')].map((e) => e.dataset.plantilla))],
+    version_plantillas: plantillas.version,
+  });
   if (!enSesion) return;
   // Marca «coincide / no coincide con mi observación» (H5.5): un dato más de la sesión.
   const sesionId = historial[k].sesion.sesion_id;

@@ -17,7 +17,7 @@
   "C8": "0.2.0",
   "regulacion": "0.2.0",
   "C9": "0.1.0",
-  "alerta": "0.1.0",
+  "alerta": "0.2.0",
   "panel": "0.1.0",
   "IG": "0.1.0",
   "IRet": "0.1.0"
@@ -166,17 +166,23 @@
    "seccion": "Arquitectura 7.4 (INV-1, INV-3, INV-4, INV-8)"
   },
   "alertaTemprana": {
-   "ventana": 10,
-   "alfa": 0.05,
-   "simulaciones": 2000,
-   "semilla": "FNV-1a de «alerta:n_ventanas»",
-   "seccion": "Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)"
+   "fraccionVentana": 0.5,
+   "ventanaMinima": 10,
+   "fraccionesSensibilidad": [
+    0.25,
+    0.75
+   ],
+   "falsasAlertas": 0.05,
+   "permutaciones": 500,
+   "semilla": "alerta-temprana",
+   "erroresSeguidos": 3,
+   "seccion": "Decisión R13, 23 nov 2026; Modelo 10.1 y 13.7; Dakos et al. (2012)"
   },
   "bandaVariacion": {
-   "mads": 2,
+   "mads": 3,
    "sesionesConsecutivas": 2,
    "fiabilidadParaRCI": 0.75,
-   "seccion": "Modelo 6.3 y 6.4; Arquitectura 6.4"
+   "seccion": "Decisión R12, 23 nov 2026; Modelo 6.3, 6.4 y 13; Arquitectura 6.4; Jensen et al. (2006)"
   }
  },
  "generador": {

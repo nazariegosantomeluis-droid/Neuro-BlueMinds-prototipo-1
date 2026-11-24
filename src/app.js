@@ -1,6 +1,6 @@
 // Aplicación: pantallas del adulto, sesión del niño y descarga del registro.
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
-import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
+import { createLog, toCSV, toJSON, comoSeExporta, download, VERSION_APP, SESION_COLUMNS, SESION_KEY, REGISTRO_KEY } from './engine/logger.js';
 import { pickItems, pickComposed, rng, seedOf, shuffle, disponibleEnSesion } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, eventTime } from './engine/clock.js';
@@ -13,7 +13,7 @@ import { juegoDeSesion } from './activities/categorias.js';
 import { elegirPorEmocion } from './activities/emociones.js';
 import { esc, navHTML, marcaHTML, tituloHTML, chipHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderInicio as dibujarInicio, maxEnsayos, avisoDeAjuste } from './inicio.js';
-import { renderSesiones } from './sesiones.js';
+import { muestraIndicadores, renderSesiones } from './sesiones.js';
 import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
@@ -26,6 +26,9 @@ import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { renderPanel } from './panel/panel-pantalla.js';
+import { crearAlmacen, abrirIDB, memoriaIDB } from './almacen.js';
+import { crearAuditoria, AUDITORIA_KEY, AUDITORIA_COLUMNS } from './auditoria.js';
+import { renderBloqueo, crearInactividad, RUTAS_SIN_DATOS } from './bloqueo.js';
 import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
@@ -33,8 +36,10 @@ import { conSondas, conReapariciones, reaparicionesDeHoy, sesionesEnOrden, conce
 import { unidadesDominadas, criterioDe } from './indicadores/dominio.js';
 import { VERSION_INDICADORES } from './indicadores/parametros.js';
 import { calcularIndicadores, indicadoresCSV } from './indicadores/exportar.js';
-import { lineaBaseRegulacion, contextoDeRegla, proponerVentana, propuestasFinales, ventanas, ordenDeMalestar } from './adaptacion.js';
-import { crearEnvolvente, huellaDeParametros, motivoDeBloqueo } from './envolvente.js';
+import { lineaBaseRegulacion } from './adaptacion.js';
+import { crearAdaptacionDeBloque } from './adaptacion-en-linea.js';
+import { crearEnvolvente, huellaDeParametros } from './envolvente.js';
+import { huellaDe } from './huella.js';
 import { alertaDeSesion } from './alerta.js';
 import { utilizable } from './indicadores/nucleo.js';
 import { cargarVersion, textoVersion } from './version.js';
@@ -59,9 +64,21 @@ const ICONO_ADULTO =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg>';
 
 const app = document.getElementById('app');
-const log = createLog();
+// Almacén cifrado (H6.2): los registros con datos de niños viven en IndexedDB, cifrados con la
+// llave derivada del PIN del terapeuta. Sin IndexedDB (navegación privada estricta), en memoria.
+const almacen = crearAlmacen({
+  db: (() => {
+    try {
+      return globalThis.indexedDB ? abrirIDB() : memoriaIDB();
+    } catch {
+      return memoriaIDB();
+    }
+  })(),
+  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY, AUDITORIA_KEY],
+});
+const log = createLog(almacen.storage);
 // Una fila por sesión: inicio, fin, pausas, terminación anticipada y nivel de apoyo por bloque.
-const sesiones = createLog(undefined, { key: SESION_KEY, columns: SESION_COLUMNS });
+const sesiones = createLog(almacen.storage, { key: SESION_KEY, columns: SESION_COLUMNS });
 // Si el adulto borró el registro durante la sesión, la fila ya no existe y no se cambia nada.
 const editSesion = (id, fn) =>
   sesiones.edit((rows) => {
@@ -69,7 +86,12 @@ const editSesion = (id, fn) =>
     if (r) fn(r);
   });
 // Padrón local de niños: solo código seudónimo, ícono, color, edad en meses y consentimiento.
-const ninos = createLog(undefined, { key: NINO_KEY, columns: NINO_COLUMNS });
+const ninos = createLog(almacen.storage, { key: NINO_KEY, columns: NINO_COLUMNS });
+// Registro de auditoría encadenado (H6.3; Arquitectura 10.1).
+const registroAuditoria = createLog(almacen.storage, { key: AUDITORIA_KEY, columns: AUDITORIA_COLUMNS });
+const auditoria = crearAuditoria(registroAuditoria);
+const auditar = (tipo, datos) => (almacen.desbloqueado ? auditoria.agregar(tipo, datos) : null);
+const recargarRegistros = () => [log, sesiones, ninos, registroAuditoria].forEach((x) => x.recargar());
 const audio = createAudio();
 const state = {
   catalogo: [], // las 17 actividades del Catálogo, con su estado
@@ -139,6 +161,9 @@ const volumen = () => Number(prefs.get('nbm.volumen', '80'));
 const sinTiempos = () => Object.values(state.fichas).filter((f) => f.unidadDelBloque === 'secuencia').map((f) => f.id);
 
 async function init() {
+  // Aplicación instalable que funciona sin conexión (H6.1): el trabajador de servicio guarda los
+  // archivos de la aplicación (nunca datos de niños).
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
   applyCm();
   audio.setVolume(volumen() / 100);
   // Versión y commit publicados: en el pie de las pantallas del adulto y en los CSV del F3 y de
@@ -199,6 +224,68 @@ async function init() {
   route();
 }
 
+// PIN del terapeuta (H6.2): crearlo la primera vez (con los registros sin cifrar de versiones
+// anteriores, que pasan al almacén cifrado) o escribirlo para desbloquear.
+async function pedirPin(mensaje = '') {
+  const configurado = await almacen.configurado();
+  renderBloqueo(app, {
+    configurado,
+    mensaje,
+    alCrear: async (pin) => {
+      try {
+        let previo = null;
+        try {
+          previo = globalThis.localStorage ?? null;
+        } catch {
+          previo = null;
+        }
+        await almacen.crearPin(pin, { previo });
+      } catch (e) {
+        return e.message;
+      }
+      recargarRegistros();
+      inactividad.tocar();
+      route();
+      return null;
+    },
+    alDesbloquear: async (pin) => {
+      if (!(await almacen.desbloquear(pin))) return 'PIN incorrecto.';
+      recargarRegistros();
+      const cadena = auditoria.verificar();
+      inactividad.tocar();
+      route();
+      if (!cadena.ok) avisoAuditoria(cadena);
+      return null;
+    },
+  });
+}
+
+// Si la cadena de auditoría no cuadra al desbloquear, se avisa (Arquitectura 10.1).
+function avisoAuditoria(cadena) {
+  const p = document.createElement('p');
+  p.className = 'aviso';
+  p.setAttribute('role', 'alert');
+  p.textContent = `El registro de auditoría de este dispositivo no cuadra desde la entrada ${cadena.rota_en}: ${cadena.motivo}. Avisa al investigador responsable.`;
+  app.prepend(p);
+}
+
+// Bloqueo tras 5 minutos sin uso del adulto; nunca con la pantalla del niño a la vista.
+const inactividad = crearInactividad({
+  puedeBloquear: () => almacen.desbloqueado && !state.running && !app.querySelector('.nino'),
+  alBloquear: async () => {
+    await almacen.bloquear();
+    recargarRegistros();
+    pedirPin('Se bloqueó tras 5 minutos sin uso.');
+  },
+});
+for (const tipo of ['pointerdown', 'keydown']) addEventListener(tipo, () => inactividad.tocar(), { capture: true, passive: true });
+// Revisa cada 15 s (con setTimeout: RNF-05 no permite temporizadores repetidos en la interfaz).
+const vigilarInactividad = () => {
+  inactividad.revisar();
+  setTimeout(vigilarInactividad, 15000);
+};
+setTimeout(vigilarInactividad, 15000);
+
 // Al cambiar de pantalla, el foco pasa al título (para lectores de pantalla) sin mover la vista.
 function enfocarTitulo() {
   const h1 = app.querySelector('h1');
@@ -214,6 +301,8 @@ let rutaAnterior = null;
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
+  // Las pantallas con registros de niños piden el PIN (H6.2).
+  if (!almacen.desbloqueado && !RUTAS_SIN_DATOS.has(ruta)) return pedirPin();
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
@@ -222,7 +311,7 @@ function route() {
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
-  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, params: new URLSearchParams(query) });
+  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, auditar, params: new URLSearchParams(query) });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -296,7 +385,9 @@ function registroHTML({ enlaceSesiones = true } = {}) {
         <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
         <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
         <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
+        <button type="button" data-descargar="sesiones-json" ${off}>Descargar sesiones (JSON)</button>
         <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores (CSV)</button>
+        <button type="button" data-descargar="auditoria" ${registroAuditoria.rows().length ? '' : 'disabled'}>Descargar auditoría (JSON)</button>
       </div>
       <p class="meta estado" role="status"></p>
       ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
@@ -317,8 +408,16 @@ function bindRegistro(root, rerender) {
       else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
       else if (tipo === 'indicadores') {
         // Se calculan al descargar, desde el registro (con fuera_de_tarea provisional en una sesión abierta).
-        const filas = calcularIndicadores(paraExportar(log.rows(), { sinTiempos: sinTiempos() }), sesiones.rows(), { fichas: state.fichas, items: state.items });
+        const entrada = paraExportar(log.rows(), { sinTiempos: sinTiempos() });
+        const filas = calcularIndicadores(entrada, sesiones.rows(), { fichas: state.fichas, items: state.items });
+        auditar('indicadores', { sesion_id: null, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos: entrada, sesiones: sesiones.rows().map((x) => x.sesion_id) }), filas: filas.length, huella_resultado: huellaDe(filas) });
         download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(filas), 'text/csv;charset=utf-8');
+      } else if (tipo === 'sesiones-json') {
+        // Para tools/reproducir.mjs (Arquitectura 10.2): las sesiones con sus tipos, sin pasar por CSV.
+        download((nombre = `sesiones-neuro-blueminds-${fecha}.json`), toJSON(sesiones.rows()), 'application/json');
+      } else if (tipo === 'auditoria') {
+        // La cadena entera, con su verificación: cualquiera puede volver a comprobarla (H6.3).
+        download((nombre = `auditoria-neuro-blueminds-${fecha}.json`), JSON.stringify({ verificacion: auditoria.verificar(), entradas: auditoria.entradas() }, null, 2), 'application/json');
       } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
@@ -327,6 +426,8 @@ function bindRegistro(root, rerender) {
   if (borrar) {
     borrar.onclick = () => {
       if (confirm('¿Borrar todo el registro guardado en este dispositivo? Descárgalo antes si lo necesitas.')) {
+        // El registro de auditoría no se borra: queda la entrada del borrado (Arquitectura 10.1).
+        auditar('borrado', { ensayos: log.rows().length, sesiones: sesiones.rows().length });
         log.clear();
         sesiones.clear();
         rerender();
@@ -536,6 +637,18 @@ async function empezarSesion(form) {
           : { actividad: paso.actividad, banda: paso.banda, modalidad: paso.modalidad, ensayos: paso.ensayos, ...(paso.mitad ? { mitad: paso.mitad } : {}), ...(paso.mitades ? { mitades: paso.mitades } : {}) },
       ),
   });
+  // Auditoría (Arquitectura 10.1): inicio de sesión con todas las versiones en uso y el modo de fase.
+  auditar('inicio_sesion', {
+    sesion_id: s.id,
+    codigo_nino: s.codigo,
+    modo_fase: modo,
+    version_app: VERSION_APP,
+    version_indicadores: VERSION_INDICADORES,
+    huella_parametros: s.envolvente.huellaInicial,
+    fichas: Object.fromEntries([...new Set(plan.map((x) => x.actividad).filter(Boolean))].map((a) => [a, state.fichas[a]?.version ?? null])),
+    sesion_config: cfg.version ?? null,
+    plantillas_panel: state.plantillas?.version ?? null,
+  });
   const resultados = [];
   let terminar = false;
   let k = 0;
@@ -654,7 +767,10 @@ async function empezarSesion(form) {
   }
   editSesion(s.id, (r) => Object.assign(r, { bloques_omitidos: omitidos, duracion_uso_ms: performance.now() - s.inicioMs, limite_15_min: Boolean(s.limiteAlcanzado) }));
   // Señales de alerta temprana (H4.4): solo se calculan y se guardan; nunca se muestran ni se usan (INV-9).
-  editSesion(s.id, (r) => (r.alerta_temprana = alertaDeSesion(log.rows().filter((x) => x.sesion_id === s.id))));
+  // Con las filas tal como se exportan (tiempos a 0.1 ms y fuera de tarea marcado), para que se reproduzcan.
+  editSesion(s.id, (r) => (r.alerta_temprana = alertaDeSesion(paraExportar(comoSeExporta(log.rows().filter((x) => x.sesion_id === s.id)), { sinTiempos: sinTiempos() }))));
+  // Cálculo de los indicadores de la sesión, a la auditoría (Arquitectura 10.1 y 10.2).
+  auditarIndicadores(s);
   // Familiarización (decisión R6): la plataforma propone la banda inicial de la fase 1 (la última
   // aprobada, B1 si ninguna) y, al cerrar la sesión, avisa si en toda la sesión hubo menos de 10
   // ensayos con respuesta sin interrumpir (decisión R6b; Protocolo 4.2, criterio 4).
@@ -675,6 +791,17 @@ async function empezarSesion(form) {
       <button type="button" class="esquina" id="adulto" aria-label="Resumen para el adulto: tocar dos veces">${ICONO_ADULTO}</button>
     </div>`;
   twoTaps(app.querySelector('#adulto'), renderResumenSesion);
+}
+
+// Auditoría (Arquitectura 10.1): los indicadores de la sesión, con la huella de los datos de entrada
+// (el registro del niño hasta esta sesión), la versión de las definiciones y el resultado.
+function auditarIndicadores(s) {
+  const delNino = sesiones.rows().filter((x) => x.codigo_nino === s.codigo && String(x.sesion_id).startsWith('S-'));
+  const hasta = delNino.slice(0, delNino.findIndex((x) => x.sesion_id === s.id) + 1);
+  const ids = new Set(hasta.map((x) => x.sesion_id));
+  const ensayos = paraExportar(comoSeExporta(log.rows()), { sinTiempos: sinTiempos() }).filter((r) => ids.has(r.sesion_id));
+  const resultado = calcularIndicadores(ensayos, hasta, { fichas: state.fichas, items: state.items }).filter((x) => x.sesion_id === s.id);
+  auditar('indicadores', { sesion_id: s.id, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos, sesiones: [...ids] }), resultado, huella_resultado: huellaDe(resultado) });
 }
 
 // Pantalla del niño con una rutina o una transición, el tiempo fijado. Sin texto.
@@ -909,32 +1036,27 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   // cerrar cada ventana de 10 ensayos válidos la regla propone y la envolvente decide. Si ejecuta un
   // cambio de banda, el bloque termina ahí y lo que falta sigue en la banda nueva.
   const adaptativo = Boolean(state.sesion?.modos?.[s.modo]?.adaptacion && s.envolvente);
-  let regla = null;
-  let ventanasVistas = 0;
   let cortado = false;
+  const ordenesDelBloque = () => (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
+  let adaptacion = null;
   if (adaptativo) {
     const historial = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
     s.estadoAdaptacion ??= { sinSubir: false };
-    regla = contextoDeRegla({ bandas: ficha.bandas.map((b) => b.id), estado: s.estadoAdaptacion, base: lineaBaseRegulacion(historial) });
+    adaptacion = crearAdaptacionDeBloque({
+      envolvente: s.envolvente,
+      actividad: ficha.id,
+      bandas: ficha.bandas.map((b) => b.id),
+      estado: s.estadoAdaptacion,
+      base: lineaBaseRegulacion(historial),
+      ordenesDelBloque,
+      ensayosValidos: () => log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length,
+      usoMs: () => performance.now() - s.inicioMs,
+      registrar: (registro, res) => {
+        editSesion(s.id, (r) => Object.assign(r, { adaptacion_propuestas: [...(r.adaptacion_propuestas ?? []), registro], envolvente_bloqueos: s.envolvente.estado.bloqueos.length, aviso_bloqueos: res.aviso }));
+        auditar('adaptacion', { sesion_id: s.id, bloque: s.bloque, actividad: ficha.id, ventana: registro.ventana, accion: registro.accion, banda_actual: registro.banda_actual, banda_propuesta: registro.banda_propuesta, ejecutada: registro.ejecutada, invariante: registro.invariante });
+      },
+    });
   }
-  const ordenesDelBloque = () => (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
-  const decidir = (p) => {
-    const ensayosValidos = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length;
-    const accion = { tipo: p.accion, actividad: ficha.id, hasta: p.banda_propuesta, ensayosValidos, usoMs: performance.now() - s.inicioMs, senal: Boolean(p.senal), evidencia: { precision: p.precision, omisiones: p.omisiones, prematuras: p.prematuras } };
-    const res = s.envolvente.evaluar(accion);
-    const registro = {
-      ...p,
-      ejecutada: res.ejecutada,
-      invariante: res.invariante,
-      motivo_no_ejecutada: res.ejecutada ? null : (motivoDeBloqueo(res.invariante) ?? p.motivo),
-      pausa_ofrecida: res.pausa,
-      banda_resultante: res.banda,
-      ensayos_validos: ensayosValidos,
-      adaptacion_activa: s.envolvente.estado.adaptacion,
-    };
-    editSesion(s.id, (r) => Object.assign(r, { adaptacion_propuestas: [...(r.adaptacion_propuestas ?? []), registro], envolvente_bloqueos: s.envolvente.estado.bloqueos.length, aviso_bloqueos: res.aviso }));
-    return { ...res, cambio: res.ejecutada && res.banda !== res.desde };
-  };
   const block = startBlock({
     // Algunas pantallas ajustan los tiempos del bloque según la banda (ACT-09: la pausa en blanco).
     ficha: pantalla.fichaDeBloque?.(ficha, bandaDeFicha) ?? ficha,
@@ -949,12 +1071,9 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
     rand: rng(seedOf(`${s.id}:${s.bloque}:posiciones`)),
     onPause: () => atenderPausa(),
     alTerminarEnsayo: async (hechos) => {
-      if (!adaptativo) return false;
-      const vs = ventanas(hechos);
-      if (vs.length === ventanasVistas) return false;
-      ventanasVistas = vs.length;
-      regla.malestar = ordenesDelBloque().filter(ordenDeMalestar);
-      const res = decidir(proponerVentana(vs.at(-1), vs.length - 1, regla));
+      if (!adaptacion) return false;
+      const res = adaptacion.alTerminarEnsayo(hechos);
+      if (!res) return false;
       // La pausa se ofrece aunque el cambio de banda se bloquee (ningún invariante bloquea una pausa).
       if (res.pausa && (await atenderPausa(PAUSA_OFRECIDA_MSG)) === 'terminar') return true;
       if (res.cambio) cortado = true;
@@ -1002,10 +1121,7 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   editSesion(s.id, (r) => Object.assign(r, { fin: new Date().toISOString(), ensayos: deLaSesion.length, ...frecuenciaSesion(deLaSesion) }));
   // Una orden de malestar después de la última ventana (por ejemplo, al terminar el bloque) también es
   // señal: la envolvente decide la bajada, que vale para el bloque siguiente.
-  if (adaptativo) {
-    regla.malestar = ordenesDelBloque().filter(ordenDeMalestar);
-    for (const p of propuestasFinales(rows, regla)) decidir(p);
-  }
+  adaptacion?.alTerminarBloque(rows);
   const byCode = new Map(trials.map((t) => [t.codigo, t]));
   for (const r of rows) if (byCode.get(r.item).clave) usados.add(byCode.get(r.item).clave);
   // Para el resumen de ACT-07: ensayos en que la regla cambió respecto al anterior.
@@ -1050,6 +1166,8 @@ function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = fal
     const menu = crearMenu({ modo: s.modo ?? null, config: cfg, actividad: ficha?.id, banda: bandaActual, adaptacion: env ? env.estado.adaptacion : (s.adaptacion ?? Boolean(cfg?.modos?.[s.modo]?.adaptacion)), cambios: env ? env.estado.cambios : (s.cambiosBanda ?? []) });
     const usoMs = s.inicioMs !== undefined ? performance.now() - s.inicioMs : null;
     // Cada orden queda en ordenes_terapeuta con su hora y el estado de la sesión en ese momento.
+    // Ensayos válidos de la actividad en la sesión en el momento de la orden (para INV-4 y la reproducción).
+    const validosAhora = () => (ficha ? log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length : 0);
     const registrar = (orden) =>
       editSesion(s.id, (r) => {
         r.ordenes_terapeuta = [
@@ -1062,8 +1180,14 @@ function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = fal
             modo: s.modo ?? null,
             banda: menu.estado.banda,
             adaptacion: menu.estado.adaptacion,
+            // Para reproducir la sesión (Arquitectura 10.2): cuántas decisiones de la regla había.
+            propuestas_previas: (r.adaptacion_propuestas ?? []).length,
+            ensayos_validos: validosAhora(),
+            actividad: ficha?.id ?? null,
           }),
         ];
+        const o = r.ordenes_terapeuta.at(-1);
+        auditar('orden', { sesion_id: s.id, accion: o.accion, detalle: o.detalle, bloqueada: o.bloqueada, bloque: o.bloque, ensayo: o.ensayo, propuestas_previas: o.propuestas_previas });
       });
     registrar({ accion: 'pausar' });
     const minutos = (ms) => `${Math.floor(ms / 60000)} min ${String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')} s`;
@@ -1109,10 +1233,7 @@ function abrirMenu(wrap, { s, ficha = null, enReferencia = false, enRutina = fal
       if (res.orden) registrar(res.orden);
       // La envolvente recibe las órdenes que el menú no bloqueó (INV-5: fijar la banda o desactivar la
       // adaptación detiene los cambios automáticos; el episodio de desregulación cuenta para INV-2).
-      if (env && res.orden && !res.orden.bloqueada) {
-        const ensayosValidos = ficha ? log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length : 0;
-        env.terapeuta({ ...res.orden, ensayosValidos });
-      }
+      if (env && res.orden && !res.orden.bloqueada) env.terapeuta({ ...res.orden, ensayosValidos: validosAhora() });
       // Lo que el menú cambió queda en la sesión: banda fijada, pila de cambios y adaptación.
       s.adaptacion = menu.estado.adaptacion;
       s.cambiosBanda = menu.estado.cambios;
@@ -1254,6 +1375,8 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
       bloque: r.bloque, ficha: state.fichas[r.actividad] ?? { id: r.actividad, nombre: '' }, banda: r.banda, modalidad: r.modalidad, lineas: [],
     }));
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  // Decisión R16 (Protocolo 3.1): fuera de la fase 3 el terapeuta no ve aciertos, omisiones ni tiempos.
+  const conIndicadores = muestraIndicadores(modo, state.sesion);
   app.innerHTML = `
     <div class="adulto">
       ${marcaHTML()}
@@ -1263,7 +1386,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
           (b) => `
         <section class="panel">
           <h2>Bloque ${b.bloque}: ${esc(b.ficha.id)} ${esc(b.ficha.nombre)} · banda ${esc(b.banda)} · ${esc(b.modalidad === 'mixta' ? 'V y AV' : b.modalidad)}</h2>
-          ${b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+          ${conIndicadores && b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
           <fieldset class="chips">
             <legend>Nivel de apoyo en este bloque</legend>
             ${NIVELES_APOYO.map((n) => chipHTML(`apoyo-${b.bloque}`, n, mayuscula(n), fila()?.nivel_apoyo.find((x) => x.bloque === b.bloque)?.nivel === n)).join('')}
@@ -1271,7 +1394,8 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         </section>`,
         )
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
-      ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      ${resultados && conIndicadores ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      ${resultados && !conIndicadores ? `<p class="ayuda" data-sin-indicadores>En este modo de fase no se muestran aciertos, omisiones ni tiempos de respuesta (Protocolo 3.1: el terapeuta ve los indicadores solo en la fase 3). Quedan en el registro.</p>` : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
       ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial, avisoInclusion: Boolean(f.aviso_inclusion) })}
     </div>`;
@@ -1323,6 +1447,8 @@ function renderResumen() {
   const s = state.session;
   const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  // Decisión R16 (Protocolo 3.1): fuera de la fase 3 el terapeuta no ve aciertos, omisiones ni tiempos.
+  const conIndicadores = muestraIndicadores(modo, state.sesion);
   app.innerHTML = `
     <div class="adulto">
       ${marcaHTML()}
