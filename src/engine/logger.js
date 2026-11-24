@@ -58,9 +58,9 @@ export const SESION_COLUMNS = [
   // terapeuta con su motivo y aviso del criterio de inclusión de ACT-01 (Protocolo 4).
   'escalera_familiarizacion', 'banda_inicial_propuesta', 'banda_inicial_cambios', 'ensayos_inclusion', 'aviso_inclusion',
   // Tanda 6: huella SHA-256 de los parámetros de la regla al iniciar (INV-6), acciones bloqueadas por
-  // la envolvente y aviso a los 3 bloqueos (Arquitectura 7.4) y señales de alerta temprana (solo
-  // observación, INV-9).
-  'huella_parametros', 'envolvente_bloqueos', 'aviso_bloqueos', 'alerta_temprana',
+  // la envolvente y aviso a los 3 bloqueos (Arquitectura 7.4), señales de alerta temprana (solo
+  // observación, INV-9) y marcas «coincide / no coincide con mi observación» del panel (Arquitectura 8.5).
+  'huella_parametros', 'envolvente_bloqueos', 'aviso_bloqueos', 'alerta_temprana', 'marcas_observacion',
 ];
 
 const KEY = 'neuro-blueminds.registro';

@@ -18,6 +18,7 @@
   "regulacion": "0.2.0",
   "C9": "0.1.0",
   "alerta": "0.1.0",
+  "panel": "0.1.0",
   "IG": "0.1.0",
   "IRet": "0.1.0"
  },
@@ -170,6 +171,12 @@
    "simulaciones": 2000,
    "semilla": "FNV-1a de «alerta:n_ventanas»",
    "seccion": "Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)"
+  },
+  "bandaVariacion": {
+   "mads": 2,
+   "sesionesConsecutivas": 2,
+   "fiabilidadParaRCI": 0.75,
+   "seccion": "Modelo 6.3 y 6.4; Arquitectura 6.4"
   }
  },
  "generador": {

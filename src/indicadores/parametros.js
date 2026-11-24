@@ -95,13 +95,18 @@ export const PARAMETROS = Object.freeze({
   // como el cuantil 1 − α; W = 10 y α = 0.05 son valores de planeación (el Modelo no los fija). Solo
   // en modo de observación: se calculan y se guardan, nunca se muestran ni se usan (INV-9).
   alertaTemprana: { ventana: 10, alfa: 0.05, simulaciones: 2000, semilla: 'FNV-1a de «alerta:n_ventanas»', seccion: 'Modelo 10.1 y 13.7; RF-11; INV-9 (W y α de planeación)' },
+  // Panel (H5.2; Modelo 6.3 y 6.4; Arquitectura 6.4): banda de variación de la línea base = mediana
+  // ± 2 MAD (escalada) de los valores de las sesiones de línea base; un cambio se señala solo si el
+  // valor sale de la banda en 2 sesiones consecutivas. Sin índice de cambio fiable (RCI) hasta que
+  // la fiabilidad test-retest del indicador sea de 0.75 o más (ninguna lo es todavía).
+  bandaVariacion: { mads: 2, sesionesConsecutivas: 2, fiabilidadParaRCI: 0.75, seccion: 'Modelo 6.3 y 6.4; Arquitectura 6.4' },
 });
 
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
   A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.2.0', A12: '0.2.0',
-  C8: '0.2.0', regulacion: '0.2.0', C9: '0.1.0', alerta: '0.1.0',
+  C8: '0.2.0', regulacion: '0.2.0', C9: '0.1.0', alerta: '0.1.0', panel: '0.1.0',
   IG: '0.1.0', IRet: '0.1.0',
 });
 
@@ -122,6 +127,7 @@ export const NOMBRES = Object.freeze({
   regulacion: 'Señal de regulación',
   C9: 'Envolvente de seguridad',
   alerta: 'Señales de alerta temprana (solo observación)',
+  panel: 'Línea base y banda de variación del panel',
   IG: 'IG, generalización',
   IRet: 'IRet, retención',
 });

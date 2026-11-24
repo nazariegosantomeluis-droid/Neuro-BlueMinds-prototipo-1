@@ -111,9 +111,9 @@ En iPad, el sonido se activa con el toque en «Empezar»; antes de eso, Safari n
 **Menú del terapeuta (H2.4; Arquitectura 8.1).** Se abre manteniendo pulsado 0.8 s el botón de la esquina, en los bloques, en la referencia motora y en las rutinas (`src/menu-terapeuta.js`). Abrirlo pausa la sesión. Cada acción toma uno o dos toques:
 - **Reanudar** (1 toque).
 - **Terminar el bloque** o **terminar la sesión** (2 toques): primero el motivo, de la lista, y después el botón. Sin motivo no se termina. Con «Terminar la sesión», la sesión con un niño salta a la rutina de cierre; en un bloque suelto, el resumen ya no ofrece otro bloque. Fuera de un bloque solo está «Terminar la sesión».
-- **Fijar la banda** (1 toque): se usa desde el bloque siguiente de esa actividad; en la sesión con un niño, el bloque se arma de nuevo en esa banda.
-- **Desactivar o reactivar la adaptación** (1 toque). La adaptación todavía no existe (H4): por ahora la orden solo queda registrada.
-- **Anular el último cambio de banda** (1 toque).
+- **Fijar la banda** (1 toque): se usa desde el bloque siguiente de esa actividad; en la sesión con un niño, el bloque se arma de nuevo en esa banda. En la fase 3, desde ese momento la adaptación ya no cambia la banda de esa actividad (INV-5).
+- **Desactivar o reactivar la adaptación** (1 toque). Desactivada, la envolvente bloquea todo cambio automático de banda (INV-5); las pausas se siguen ofreciendo.
+- **Anular el último cambio de banda** (1 toque): revierte el último cambio, sea de la regla de adaptación o del terapeuta. Si la banda baja, cuenta como bajada para INV-4; la adaptación sigue como estaba.
 - **Marcar un episodio de desregulación** (1 toque): registra la hora (Protocolo 8.4). Al cerrar la sesión, el terapeuta los confirma (H2.6).
 - En la familiarización, la fase 3 y los bloques sueltos se puede fijar la banda. En las fases 1 y 2 y en el cierre la dificultad es fija: la orden de cambiar la banda o la adaptación no se ejecuta y queda registrada como bloqueada por INV-7 (Arquitectura 7.4).
 - El menú también tiene el volumen de la voz, una nota opcional y, solo en modo experto fuera del piloto, la pausa guiada.
@@ -305,6 +305,9 @@ npm test
 - la referencia motora con tiempo simulado: plan de 6 a 8 apariciones, esperas, mediana, toques anticipatorios, mínimo de 5 toques válidos, permanencia, toques fuera, pausa y terminar;
 - el padrón de niños: código de 128 bits, ícono y color sin repetirse, edad, consentimiento, quién puede participar y que el padrón no tiene ni puede recibir un dato que identifique al niño;
 - la exportación de la revisión clínica, la regla para unir revisiones y su aplicación al banco (con el CSV de ejemplo `test/revision-consolidada-ejemplo.csv`): estados, casos sin resolver, rondas, fichas anotadas y que ningún ítem retirado entre en una sesión.
+- la envolvente de seguridad: cada invariante, la huella SHA-256 (vectores de FIPS 180-4) y la prueba por propiedades con 1 millón de sesiones simuladas (tarda unos 30 segundos);
+- las señales de alerta temprana y que ninguna salida depende de ellas;
+- el panel del terapeuta: cada frase contra su plantilla, lecturas no permitidas, qué se ve en cada fase, banda de variación (a mano y por simulación) y marcas.
 
 Antes de publicar, corre también `npm run check-items`.
 
@@ -344,6 +347,10 @@ src/registros-terapeuta.js    Registros del terapeuta al cerrar: participación,
 src/temas.js                  Tema de imágenes por intereses: elegirlo y aplicarlo sin cambiar el ítem
 src/sondas.js                 Sondas de generalización y presentación distribuida; IG e IRet
 src/adaptacion.js             Regla de adaptación (propone) y señal de regulación
+src/envolvente.js             Envolvente de seguridad: INV-1 a INV-9, órdenes del terapeuta y huella de los parámetros
+src/huella.js                 SHA-256 y JSON canónico (huella de los parámetros, INV-6)
+src/alerta.js                 Señales de alerta temprana: solo observación, nunca se muestran ni se usan
+src/panel/                    Panel del terapeuta: plantillas fijas, historial, línea base, pantallas y marcas
 src/version.js                Versión y commit publicados (pie del adulto y CSV de expertos)
 src/indicadores/              Indicadores del núcleo: parámetros, estadística, A1 a A10 y dominio
 src/ninos-pantalla.js         Pantalla #ninos y confirmación «¿Es este niño?»
@@ -583,16 +590,21 @@ Una fila por sesión, en este orden:
 | `tema_imagenes` | Tema de imágenes elegido para la sesión con un niño (el mismo de cada ensayo). |
 | `banda_inicial_fase1` | Solo en la familiarización: objeto JSON `{actividad: banda}` con la banda inicial de la fase 1 que el terapeuta confirmó o eligió al cerrar (por ejemplo, `{"ACT-02":"B2","ACT-07":"B1"}`). La misma banda queda en el padrón del niño. |
 | `version_indicadores` | Versión de los indicadores con que se calcula la sesión (`VERSION_INDICADORES`, Arquitectura 6.2). |
-| `adaptacion_propuestas` | Solo en los modos adaptativos (fase 3): lista JSON de propuestas de la regla de adaptación, una por ventana de 10 ensayos válidos: `bloque`, `actividad`, `ventana`, `ensayos` (primero y último), `precision`, `omisiones`, `prematuras`, `senal` (`omisiones`, `prematuras`, `terapeuta` o vacío), `criterio_senal`, `accion` (`subir`, `mantener`, `bajar` o `pausa_y_bajar`), `motivo`, `regla`, `banda_actual`, `banda_propuesta`, `ejecutada` (siempre `false` hasta H4.3), `motivo_no_ejecutada`, `adaptacion_activa` y `version_regla`. |
+| `adaptacion_propuestas` | Solo en los modos adaptativos (fase 3): lista JSON de propuestas de la regla de adaptación, una por ventana de 10 ensayos válidos (y una sin ventana por una orden de malestar al final del bloque): `bloque`, `actividad`, `ventana`, `ensayos` (primero y último), `precision`, `omisiones`, `prematuras`, `senal` (`omisiones`, `prematuras`, `terapeuta` o vacío), `criterio_senal`, `accion` (`subir`, `mantener`, `bajar` o `pausa_y_bajar`), `motivo`, `regla`, `banda_actual`, `banda_propuesta`, `ejecutada` (`true` si la envolvente la ejecutó; `false` si la bloqueó o no había banda a la cual moverse), `invariante` (el que la bloqueó, o vacío), `motivo_no_ejecutada`, `pausa_ofrecida`, `banda_resultante`, `ensayos_validos` (de la actividad en la sesión), `adaptacion_activa` y `version_regla`. |
 | `escalera_familiarizacion` | Solo en la familiarización: lista JSON de las bandas de la escalera, en orden: `actividad`, `banda`, `ensayos`, `aciertos` y `aprobada` (decisión R6). |
 | `banda_inicial_propuesta` | La banda inicial de la fase 1 que propuso la plataforma por actividad: la última aprobada, o B1. |
 | `banda_inicial_cambios` | Lista JSON de los cambios del terapeuta a la propuesta: `actividad`, `propuesta`, `elegida` y `motivo`. Vacía si confirmó todas. |
 | `ensayos_inclusion` | Solo en la familiarización: ensayos con respuesta, acertados o no y sin los interrumpidos, de toda la sesión (ACT-01, ACT-02 y ACT-07 juntas; decisión R6b). |
 | `aviso_inclusion` | `true` si `ensayos_inclusion` es menor de 10 (criterio de inclusión, Protocolo 4.2, criterio 4; se decide al cerrar la sesión). |
+| `huella_parametros` | Huella SHA-256 (hexadecimal) de los parámetros de la regla de adaptación y de la envolvente cargados al iniciar la sesión con un niño (INV-6; H4.5). |
+| `envolvente_bloqueos` | Acciones automáticas que la envolvente bloqueó en la sesión. |
+| `aviso_bloqueos` | `true` desde el tercer bloqueo: el panel avisa al terapeuta (Arquitectura 7.4). |
+| `alerta_temprana` | Solo observación (H4.4; INV-9): lista JSON por actividad con `ventana`, `residuos`, `ventanas`, `tau_rho`, `tau_v`, `c_rho`, `c_v`, `senal`, `version` y `solo_observacion`. Nunca se muestra ni se usa. |
+| `marcas_observacion` | Marcas del panel (H5.5): lista JSON de `actividad`, `indicador`, `coincide` (`true` o `false`), `comentario` y `hora`. Solo datos: no cambian parámetros ni indicadores. |
 
 ## Indicadores del núcleo (H3)
 
-Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad, A9 acumulando las sesiones previas del niño, y A11 y A12 sobre sus actividades y sesiones. Todavía no se muestran a nadie: el panel es H5. «Descargar indicadores (CSV)», en el panel del registro, los calcula desde el registro por ensayo y `sesiones.csv`.
+Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo que pide Arquitectura 6.1: A1 a A8 y A10 por actividad, A9 acumulando las sesiones previas del niño, y A11 y A12 sobre sus actividades y sesiones. El terapeuta los ve en el panel solo en la fase 3 (ver «Panel del terapeuta»). «Descargar indicadores (CSV)», en el panel del registro, los calcula desde el registro por ensayo y `sesiones.csv`.
 
 - **Parámetros** (`src/indicadores/parametros.js`). Todos los umbrales, mínimos de datos y constantes, cada uno con la sección del Modelo matemático o la decisión de la que sale. El código de los indicadores no tiene números propios; una prueba lo revisa. Cada indicador tiene su versión de definición (`VERSIONES`, Arquitectura 6.2).
 - **Resultado.** Cada indicador da `{ id, nombre, valor, ic, n, disponible, motivo, version }`. Si no cumple su mínimo de datos (Modelo 4.1) o la calidad media de la sesión es menor de 0.80 (Modelo 3.4 y 7.2), queda `disponible: false`, sin valor ni intervalo, y `motivo` dice por qué (por ejemplo, «19 ensayos; el mínimo es 20»).
@@ -643,14 +655,39 @@ Las sesiones de demostración y del modo experto no tienen historia de un niño:
 - Theil-Sen: C = z·√Var(S), Var(S) = [n(n − 1)(2n + 5) − Σ g(g − 1)(2g + 5)]/18, con g el tamaño de cada grupo de valores de y empatados; límites en las posiciones (N − C)/2 y (N + C)/2 + 1 de las N pendientes ordenadas, interpolando y acotando a [1, N].
 - Bootstrap: 2,000 remuestras, percentiles con cuantil tipo 1 (el ⌈p·B⌉-ésimo valor ordenado; en R, `quantile(x, p, type = 1)`). Generador: mulberry32 (`src/engine/selector.js`, `rng`) sembrado con FNV-1a de 32 bits del texto `sesion_id:actividad:indicador` (`seedOf`). Cada remuestra toma, para cada grupo y cada posición, el índice ⌊u · n⌋. En A7, los grupos son primero los aciertos tras error y después los aciertos tras acierto.
 
-## Regla de adaptación y señal de regulación (H4.1 y H4.2)
+## Regla de adaptación, envolvente de seguridad y señales de alerta temprana (H4)
 
-`src/adaptacion.js`, con los parámetros en `src/indicadores/parametros.js` (Modelo 9.1 y 9.2; Arquitectura 7.2 y 7.3). Solo corre en los modos con `adaptacion: true` en `fichas/sesion.json` (la fase 3), al terminar cada bloque.
+`src/adaptacion.js` (regla y señal de regulación) y `src/envolvente.js` (envolvente), con los parámetros en `src/indicadores/parametros.js` (Modelo 9.1, 9.2, 10.1 y 13.7; Arquitectura 7.1 a 7.4). La adaptación solo corre en los modos con `adaptacion: true` en `fichas/sesion.json` (la fase 3).
 
 - **Ventanas:** de 10 ensayos válidos (sin interrupción técnica), seguidas; la última incompleta no cuenta.
-- **Regla (C8):** precisión mayor de 0.85 en dos ventanas consecutivas → subir una banda; entre 0.70 y 0.85 → mantener; menor de 0.70 en una ventana → bajar una banda. Después de proponer un cambio, la cuenta de ventanas empieza de nuevo. En la banda más alta o más baja se propone mantener, con el motivo.
+- **Regla (C8):** precisión mayor de 0.85 en dos ventanas consecutivas → subir una banda; entre 0.70 y 0.85 → mantener; menor de 0.70 en una ventana → bajar una banda. Después de un cambio, la cuenta de ventanas empieza de nuevo. En la banda más alta o más baja se propone mantener, con el motivo.
 - **Señal de regulación:** con línea base, la proporción de omisiones o de respuestas prematuras de la ventana supera el percentil 90 (tipo 7) de esa proporción en las ventanas de la línea base del niño. La línea base son las primeras 5 sesiones de la fase 1 con calidad de 0.80 o más en la actividad (decisión D3). Sin línea base: 3 o más omisiones, o 3 o más prematuras, en la ventana. En cualquier caso, también es señal un episodio de desregulación marcado o terminar el bloque o la sesión por «Desregulación o malestar del niño». Con señal, la regla propone ofrecer pausa y bajar una banda, y no subir en el resto de la sesión.
-- **La regla solo propone.** Según Arquitectura 7.1, una propuesta se ejecuta solo si la envolvente de seguridad (C9, H4.3) la permite. Mientras la envolvente no exista, ninguna cambia la banda. Cada propuesta queda en `adaptacion_propuestas` de `sesiones.csv` con la ventana, los valores que la activaron, la regla, las bandas actual y propuesta, `ejecutada: false` y el motivo. Los parámetros no cambian durante la sesión (Modelo 9.3).
+- **En línea (Arquitectura 7.1).** Al cerrar cada ventana de 10 ensayos válidos, la regla propone y la envolvente decide. Si la envolvente ejecuta un cambio de banda, el bloque termina después de ese ensayo y los ensayos que faltan siguen en la banda nueva, en otro bloque (`continuacion` en `pasos_sesion`). Una pausa ofrecida abre el menú del terapeuta con el aviso; el niño no ve nada distinto. El motor solo recibió un aviso después de cada ensayo (`alTerminarEnsayo`); lo que registra no cambió (`test/trial.test.js`).
+- **Envolvente (C9, H4.3).** Una propuesta se ejecuta solo si ningún invariante la bloquea:
+  - INV-1: un nivel por vez y al menos 10 ensayos válidos entre dos cambios automáticos de una actividad;
+  - INV-2: después de una señal de regulación (de la regla o un episodio marcado), no sube en el resto de la sesión;
+  - INV-3: no más de 4 subidas por sesión;
+  - INV-4: después de una bajada, no sube antes de 30 ensayos válidos de la actividad;
+  - INV-5: con la banda fijada por el terapeuta (en esa actividad) o la adaptación desactivada, ningún cambio automático;
+  - INV-6: la huella de los parámetros de la regla debe ser la del inicio de la sesión (H4.5);
+  - INV-7: en los modos con dificultad fija o escalera, ningún cambio de banda, solo pausa;
+  - INV-8: a los 15 minutos de uso no sube, y no empieza otro bloque;
+  - INV-9: ninguna acción cuya evidencia incluya señales de alerta temprana.
+
+  Ningún invariante bloquea una pausa, y solo INV-5 e INV-7 bloquean una bajada (Arquitectura 7.4). Las únicas excepciones son propuestas que la regla no puede producir (saltar dos niveles, una banda que no existe, una evidencia con alerta temprana), que se bloquean siempre. Cada acción bloqueada queda en `adaptacion_propuestas` con su invariante; desde el tercer bloqueo de la sesión, el panel avisa al terapeuta. Prueba por propiedades (`test/envolvente.test.js`): generador propio con semilla (xorshift32), 1 millón de sesiones simuladas con acciones al azar, ruido y patrones extremos (siempre subir, alternar, saltos de varios niveles, parámetros alterados, más de 15 minutos, órdenes del terapeuta), y 20 000 sesiones con la regla real: ninguna violación ni ciclo de bajada y subida en menos de 30 ensayos.
+- **Huella de los parámetros (H4.5; INV-6).** Al iniciar la sesión con un niño se calcula la huella SHA-256 (`src/huella.js`, sin dependencias) del JSON canónico de los parámetros de la regla, de la señal de regulación, de la línea base y de la envolvente, con sus versiones (`huella_parametros`). Antes de cada subida se vuelve a calcular; si no coincide, la subida se bloquea por INV-6.
+- **Señales de alerta temprana (H4.4; solo observación).** `src/alerta.js` calcula, al cerrar la sesión y por actividad, la autocorrelación de orden 1 y la varianza del residuo del tiempo de respuesta (ln TR menos su media en la actividad) en ventanas móviles de 10 ensayos, y el τ de Kendall de cada serie contra el tiempo (Modelo 10.1 y 13.7). La señal es τ(ρ1) > c_ρ y τ(V) > c_V, con los umbrales calibrados como el cuantil 95 % de τ en 2,000 series simuladas sin transición (ruido normal del mismo largo, semilla fija). W = 10 y α = 0.05 son valores de planeación. Se guardan en `alerta_temprana` y nunca se muestran ni se usan: solo `app.js` importa el módulo, para escribir el resultado, y la envolvente rechaza cualquier acción que dependa de ellas.
+
+## Panel del terapeuta (H5)
+
+`#panel?nino=CÓDIGO`, desde el botón «Panel» de cada niño en «Niños inscritos» (`src/panel/`). Funciona sin conexión: todo sale del registro del dispositivo.
+
+- **Historial (H5.1):** las sesiones del niño en el dispositivo, con su número, modo, ensayos válidos, calidad y duración; cada una se abre con «Ver la sesión». No muestra ensayos ni identidad: el niño aparece por su ícono y su código.
+- **Qué se ve en cada fase (H5.4; Arquitectura 8.2 y 14; Protocolo 3.1).** En la familiarización, las fases 1 y 2 y el cierre, solo el resumen de la sesión: actividades, ensayos válidos, calidad y duración. En la fase 3, el panel completo: resumen (con bandas recorridas y pausas), indicadores del núcleo con su intervalo y la comparación con la línea base, cambios que persisten, ítems dominados (lista y ritmo), resumen de la fase (A11 y A12), modalidad con mejor desempeño y resultados del nivel B (se calculan en el entorno de análisis; por ahora el panel lo dice) y las adaptaciones de la sesión (cada cambio con su regla, cada bloqueo con su invariante, y el aviso desde el tercer bloqueo). Con calidad de la sesión menor de 0.80 no se muestra ningún indicador.
+- **Línea base y cambio (H5.2; Modelo 6.3 y 6.4; Arquitectura 6.4).** La línea base son las 5 primeras sesiones de la fase 1 con calidad de 0.80 o más (decisión D3). Hasta tenerla, los valores se muestran sin comparar. La banda de variación de cada indicador es la mediana ± 2 MAD (escalada por 1.4826) de sus valores en esas sesiones (con 3 valores o más). Fuera de la banda, el panel dice «fuera de su variación habitual» sin calificar; con LPR y con IVI hacia arriba usa las frases del Modelo 4.4. Un cambio se señala solo si el valor sale de la banda, hacia el mismo lado, en esta sesión y en la anterior del niño. No hay índice de cambio fiable: ningún indicador tiene todavía fiabilidad test-retest de 0.75. Los valores están en `bandaVariacion` de `parametros.js`.
+- **Plantillas fijas (H5.3; Arquitectura 8.3).** Todo texto del panel sale de `src/panel/plantillas.json`, por identificador; el código solo llena los huecos con números, códigos y nombres de las fichas. Las frases que interpretan datos son las de la tabla de interpretación permitida (Modelo 4.4) y las lecturas permitidas de las fichas (ACT-02: conceptos identificados, conceptos con dominio; ACT-07: más errores al cambiar de regla, diferencia de tiempo; las de IFC y PES solo con el intervalo por encima de cero). La prueba revisa cada frase del HTML contra su plantilla, rechaza cualquier otro texto y comprueba que ninguna lectura no permitida (de las fichas, del Modelo 4.4 y del Anexo C del Protocolo) aparece.
+- **Describe, no califica:** sin verde ni rojo, sin flechas ni palabras de mejora o retroceso (`src/panel/panel.css` solo usa los colores neutros). Nunca muestra las señales de alerta temprana ni compara con otros niños.
+- **«Coincide / no coincide con mi observación» (H5.5; Arquitectura 8.5):** en cada indicador de la fase 3, con un comentario opcional. Se guarda en `marcas_observacion` de la sesión y nunca cambia parámetros ni indicadores.
 
 ## Banco de ítems
 
@@ -855,6 +892,7 @@ Notas:
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.
 - **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.
 - **Uso sin conexión:** no está implementado (era opcional en este hito).
+- **Regla de cambio del panel (H5.2):** con la línea base de 5 sesiones, mediana ± 2 MAD y dos sesiones seguidas, la simulación sin cambio real da cerca de 8.5 % de falsas señales por indicador, más que el 5 % que pide la hoja de ruta. Con 3 sesiones seguidas o con 3 MAD queda debajo de 5 %. Pendiente de decisión; el valor está en `bandaVariacion` de `src/indicadores/parametros.js`.
 
 ## Autoría y licencia
 

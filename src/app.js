@@ -25,6 +25,7 @@ import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-tera
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
+import { renderPanel } from './panel/panel-pantalla.js';
 import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
@@ -162,6 +163,12 @@ async function init() {
   } catch {
     state.problemas.sesion = ['No se pudo cargar la estructura de la sesión (fichas/sesion.json).'];
   }
+  // Plantillas del panel del terapeuta (H5.3): sin ellas, el panel no muestra nada.
+  try {
+    state.plantillas = await (await fetch('src/panel/plantillas.json')).json();
+  } catch {
+    state.plantillas = null;
+  }
   // Temas de imágenes (Arquitectura 4.8): sin el archivo, todas las sesiones usan «general».
   try {
     state.temas = await (await fetch('fichas/temas.json')).json();
@@ -201,7 +208,7 @@ function enfocarTitulo() {
 }
 
 // Rutas: #inicio, #galeria (con filtros: #galeria?actividad=ACT-02&banda=B3), #sesiones, #revision, #formulario (F3),
-// #ninos (padrón), #creditos, #calibracion y #pausa (la pausa guiada).
+// #ninos (padrón), #panel?nino=CÓDIGO&sesion=k (panel del terapeuta), #creditos, #calibracion y #pausa (la pausa guiada).
 // Cambiar un filtro de la galería no es cambiar de pantalla: ahí el foco se queda en el filtro.
 let rutaAnterior = null;
 function route() {
@@ -215,6 +222,7 @@ function route() {
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
   else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
+  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, params: new URLSearchParams(query) });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
