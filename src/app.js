@@ -1,6 +1,6 @@
 // Aplicación: pantallas del adulto, sesión del niño y descarga del registro.
 // El motor (src/engine) ejecuta la ficha; aquí solo se arma la sesión y se dibuja.
-import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY } from './engine/logger.js';
+import { createLog, toCSV, toJSON, download, VERSION_APP, SESION_COLUMNS, SESION_KEY, REGISTRO_KEY } from './engine/logger.js';
 import { pickItems, pickComposed, rng, seedOf, shuffle, disponibleEnSesion } from './engine/selector.js';
 import { startBlock, NO_AUDIO_MSG } from './engine/trial.js';
 import { browserEnv, eventTime } from './engine/clock.js';
@@ -26,6 +26,8 @@ import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
 import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { renderPanel } from './panel/panel-pantalla.js';
+import { crearAlmacen, abrirIDB, memoriaIDB } from './almacen.js';
+import { renderBloqueo, crearInactividad, RUTAS_SIN_DATOS } from './bloqueo.js';
 import { modoDe, fijarBanda } from './ninos.js';
 import { rutinaInicioHTML, transicionHTML, cierreHTML } from './rutinas.js';
 import { aplicarTema, temaPorId, TEMA_GENERAL } from './temas.js';
@@ -59,9 +61,21 @@ const ICONO_ADULTO =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg>';
 
 const app = document.getElementById('app');
-const log = createLog();
+// Almacén cifrado (H6.2): los registros con datos de niños viven en IndexedDB, cifrados con la
+// llave derivada del PIN del terapeuta. Sin IndexedDB (navegación privada estricta), en memoria.
+const almacen = crearAlmacen({
+  db: (() => {
+    try {
+      return globalThis.indexedDB ? abrirIDB() : memoriaIDB();
+    } catch {
+      return memoriaIDB();
+    }
+  })(),
+  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY],
+});
+const log = createLog(almacen.storage);
 // Una fila por sesión: inicio, fin, pausas, terminación anticipada y nivel de apoyo por bloque.
-const sesiones = createLog(undefined, { key: SESION_KEY, columns: SESION_COLUMNS });
+const sesiones = createLog(almacen.storage, { key: SESION_KEY, columns: SESION_COLUMNS });
 // Si el adulto borró el registro durante la sesión, la fila ya no existe y no se cambia nada.
 const editSesion = (id, fn) =>
   sesiones.edit((rows) => {
@@ -69,7 +83,8 @@ const editSesion = (id, fn) =>
     if (r) fn(r);
   });
 // Padrón local de niños: solo código seudónimo, ícono, color, edad en meses y consentimiento.
-const ninos = createLog(undefined, { key: NINO_KEY, columns: NINO_COLUMNS });
+const ninos = createLog(almacen.storage, { key: NINO_KEY, columns: NINO_COLUMNS });
+const recargarRegistros = () => [log, sesiones, ninos].forEach((x) => x.recargar());
 const audio = createAudio();
 const state = {
   catalogo: [], // las 17 actividades del Catálogo, con su estado
@@ -202,6 +217,57 @@ async function init() {
   route();
 }
 
+// PIN del terapeuta (H6.2): crearlo la primera vez (con los registros sin cifrar de versiones
+// anteriores, que pasan al almacén cifrado) o escribirlo para desbloquear.
+async function pedirPin(mensaje = '') {
+  const configurado = await almacen.configurado();
+  renderBloqueo(app, {
+    configurado,
+    mensaje,
+    alCrear: async (pin) => {
+      try {
+        let previo = null;
+        try {
+          previo = globalThis.localStorage ?? null;
+        } catch {
+          previo = null;
+        }
+        await almacen.crearPin(pin, { previo });
+      } catch (e) {
+        return e.message;
+      }
+      recargarRegistros();
+      inactividad.tocar();
+      route();
+      return null;
+    },
+    alDesbloquear: async (pin) => {
+      if (!(await almacen.desbloquear(pin))) return 'PIN incorrecto.';
+      recargarRegistros();
+      inactividad.tocar();
+      route();
+      return null;
+    },
+  });
+}
+
+// Bloqueo tras 5 minutos sin uso del adulto; nunca con la pantalla del niño a la vista.
+const inactividad = crearInactividad({
+  puedeBloquear: () => almacen.desbloqueado && !state.running && !app.querySelector('.nino'),
+  alBloquear: async () => {
+    await almacen.bloquear();
+    recargarRegistros();
+    pedirPin('Se bloqueó tras 5 minutos sin uso.');
+  },
+});
+for (const tipo of ['pointerdown', 'keydown']) addEventListener(tipo, () => inactividad.tocar(), { capture: true, passive: true });
+// Revisa cada 15 s (con setTimeout: RNF-05 no permite temporizadores repetidos en la interfaz).
+const vigilarInactividad = () => {
+  inactividad.revisar();
+  setTimeout(vigilarInactividad, 15000);
+};
+setTimeout(vigilarInactividad, 15000);
+
 // Al cambiar de pantalla, el foco pasa al título (para lectores de pantalla) sin mover la vista.
 function enfocarTitulo() {
   const h1 = app.querySelector('h1');
@@ -217,6 +283,8 @@ let rutaAnterior = null;
 function route() {
   if (state.running) return; // durante un bloque solo se sale con la pausa
   const [ruta, query = ''] = location.hash.slice(1).split('?');
+  // Las pantallas con registros de niños piden el PIN (H6.2).
+  if (!almacen.desbloqueado && !RUTAS_SIN_DATOS.has(ruta)) return pedirPin();
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
@@ -912,15 +980,15 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   // cerrar cada ventana de 10 ensayos válidos la regla propone y la envolvente decide. Si ejecuta un
   // cambio de banda, el bloque termina ahí y lo que falta sigue en la banda nueva.
   const adaptativo = Boolean(state.sesion?.modos?.[s.modo]?.adaptacion && s.envolvente);
+  let cortado = false;
+  const ordenesDelBloque = () => (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
   let regla = null;
   let ventanasVistas = 0;
-  let cortado = false;
   if (adaptativo) {
     const historial = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
     s.estadoAdaptacion ??= { sinSubir: false };
     regla = contextoDeRegla({ bandas: ficha.bandas.map((b) => b.id), estado: s.estadoAdaptacion, base: lineaBaseRegulacion(historial) });
   }
-  const ordenesDelBloque = () => (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
   const decidir = (p) => {
     const ensayosValidos = log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length;
     const accion = { tipo: p.accion, actividad: ficha.id, hasta: p.banda_propuesta, ensayosValidos, usoMs: performance.now() - s.inicioMs, senal: Boolean(p.senal), evidencia: { precision: p.precision, omisiones: p.omisiones, prematuras: p.prematuras } };

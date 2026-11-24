@@ -1,5 +1,6 @@
-// Registro por ensayo y por sesión. Vive en memoria y en localStorage del
-// dispositivo; se exporta a CSV y JSON. Nada se envía a ningún servidor.
+// Registro por ensayo y por sesión. Vive en memoria y en el almacenamiento que se le pase: en la
+// aplicación, el almacén cifrado de la tableta (src/almacen.js, H6.2); sin él, localStorage. Se
+// exporta a CSV y JSON. Nada se envía a ningún servidor.
 // Los tiempos se exportan redondeados a 0.1 ms; en memoria se guarda el valor completo.
 
 export const VERSION_APP = '0.1.0';
@@ -63,7 +64,8 @@ export const SESION_COLUMNS = [
   'huella_parametros', 'envolvente_bloqueos', 'aviso_bloqueos', 'alerta_temprana', 'marcas_observacion',
 ];
 
-const KEY = 'neuro-blueminds.registro';
+export const REGISTRO_KEY = 'neuro-blueminds.registro';
+const KEY = REGISTRO_KEY;
 export const SESION_KEY = 'neuro-blueminds.sesiones';
 
 function defaultStorage() {
@@ -110,6 +112,10 @@ export function createLog(storage = defaultStorage(), { key = KEY, columns = COL
       save();
     },
     rows: () => rows.slice(),
+    // Vuelve a leer del almacenamiento (al desbloquear o bloquear el almacén cifrado, H6.2).
+    recargar() {
+      rows = load();
+    },
     clear() {
       rows = [];
       save();
@@ -136,6 +142,7 @@ export function toCSV(rows, columns = COLUMNS) {
 }
 
 export const toJSON = (rows) => JSON.stringify(rows, redondear, 2);
+
 
 export function download(filename, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));
