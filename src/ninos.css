@@ -54,3 +54,27 @@
 .ninos .panel:has(> .nino-tabla) {
   overflow-x: auto;
 }
+
+/* El selector de modo de fase no se corta en una tableta vertical (800 px): mide lo que su opción
+   más larga, y la tabla se desplaza de lado si hace falta. */
+.nino-fase [data-modo] {
+  min-width: max-content;
+}
+
+/* En una tableta vertical, celdas y botones más compactos para que la tabla quepa sin desplazarse. */
+@media (max-width: 900px) {
+  .nino-tabla th,
+  .nino-tabla td {
+    padding-inline: 0.25rem;
+  }
+
+  .nino-tabla .acciones {
+    flex-direction: column;
+    gap: var(--esp-2);
+  }
+
+  .nino-tabla .acciones > button,
+  .nino-tabla .acciones > a.boton {
+    padding-inline: 0.6rem;
+  }
+}
