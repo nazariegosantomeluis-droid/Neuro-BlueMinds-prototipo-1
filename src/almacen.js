@@ -18,6 +18,14 @@ export const PBKDF2_ITERACIONES = 600000;
 export const PIN_MINIMO = 6;
 export const VERSION_ALMACEN = '0.1.0';
 const META = '__meta__';
+const INTENTOS = '__intentos__';
+// Freno de intentos (H8.5; MASVS-AUTH): después de 5 PIN equivocados seguidos, cada intento más
+// espera 30 s, el doble cada vez, hasta 15 min. La cuenta se guarda en IndexedDB (recargar la página
+// no la reinicia) y vuelve a cero con el PIN correcto.
+export const INTENTOS_LIBRES = 5;
+export const ESPERA_INICIAL_MS = 30000;
+export const ESPERA_MAXIMA_MS = 15 * 60000;
+export const esperaTrasFallos = (fallos) => (fallos < INTENTOS_LIBRES ? 0 : Math.min(ESPERA_MAXIMA_MS, ESPERA_INICIAL_MS * 2 ** (fallos - INTENTOS_LIBRES)));
 const VERIFICADOR = 'neuro-blueminds: PIN correcto';
 
 const texto = new TextEncoder();
@@ -77,7 +85,7 @@ export function memoriaIDB() {
 }
 
 // db: abrirIDB() o memoriaIDB(). claves: las que guarda el almacén (los registros).
-export function crearAlmacen({ db, claves, cripto = globalThis.crypto }) {
+export function crearAlmacen({ db, claves, cripto = globalThis.crypto, ahora = () => Date.now() }) {
   let llave = null;
   const memoria = new Map();
   let cola = Promise.resolve();
@@ -128,17 +136,34 @@ export function crearAlmacen({ db, claves, cripto = globalThis.crypto }) {
       for (const k of claves) previo?.removeItem(k);
       return true;
     },
-    // Devuelve true si el PIN es el correcto (y descifra los registros a memoria).
+    // Milisegundos que faltan para poder intentar otra vez (0 si se puede).
+    async espera() {
+      const i = (await db.get(INTENTOS)) ?? { fallos: 0, hasta: 0 };
+      return Math.max(0, i.hasta - ahora());
+    },
+    // Devuelve true si el PIN es el correcto (y descifra los registros a memoria). Mientras dure la
+    // espera por intentos fallidos, no prueba el PIN y devuelve false.
     async desbloquear(pin) {
       const meta = await db.get(META);
       if (!meta) return false;
+      const intentos = (await db.get(INTENTOS)) ?? { fallos: 0, hasta: 0 };
+      if (intentos.hasta > ahora()) return false;
+      let correcto = false;
       try {
         const l = await derivarLlave(String(pin ?? ''), deBase64(meta.sal), meta.iteraciones, cripto);
-        if ((await descifrar(l, META, meta.verificador, cripto)) !== VERIFICADOR) return false;
-        llave = l;
+        if ((await descifrar(l, META, meta.verificador, cripto)) === VERIFICADOR) {
+          llave = l;
+          correcto = true;
+        }
       } catch {
+        correcto = false;
+      }
+      if (!correcto) {
+        const fallos = intentos.fallos + 1;
+        await db.put(INTENTOS, { fallos, hasta: ahora() + esperaTrasFallos(fallos) });
         return false;
       }
+      await db.put(INTENTOS, { fallos: 0, hasta: 0 });
       await cargar();
       return true;
     },

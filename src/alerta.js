@@ -129,9 +129,12 @@ export function calibrarPermutando(x, W, { permutaciones = AT.permutaciones, fal
     if (a !== null && b !== null) pares.push([a, b]);
   }
   if (!pares.length) return { c_rho: null, c_v: null, cuantil: null, falsas: null };
+  // Ordenadas una vez (percentil7 ordena una copia; con los valores ya en orden da lo mismo).
+  const rhos = pares.map((p) => p[0]).sort((a, b) => a - b);
+  const vs = pares.map((p) => p[1]).sort((a, b) => a - b);
   for (const q of REJILLA) {
-    const c_rho = percentil7(pares.map((p) => p[0]), q);
-    const c_v = percentil7(pares.map((p) => p[1]), q);
+    const c_rho = percentil7(rhos, q);
+    const c_v = percentil7(vs, q);
     const tasa = pares.filter(([a, b]) => a > c_rho && b > c_v).length / pares.length;
     if (tasa <= falsas) return { c_rho, c_v, cuantil: q, falsas: tasa };
   }

@@ -4,11 +4,12 @@ import assert from 'node:assert/strict';
 import { simularSesiones } from '../tools/simular-sesiones.mjs';
 import { reproducir, reproducirSesion } from '../tools/reproducir.mjs';
 
-const historia = await simularSesiones({ ninos: 2, fase1: 5, fase3: 5, semilla: 1 });
+// 2 niños: familiarización (con su escalera), 4 sesiones de la fase 1 y 5 de la fase 3 cada uno.
+const historia = await simularSesiones({ ninos: 2, semilla: 1, secuencia: [['familiarizacion', 1], ['fase1', 4], ['fase3', 5]] });
 const datos = { registro: historia.ensayos, sesiones: historia.sesiones, auditoria: historia.auditoria };
 const copia = () => JSON.parse(JSON.stringify(datos));
 
-test('las sesiones simuladas tienen de todo: fase 1 y fase 3, cambios de banda, bloqueos y órdenes del terapeuta', () => {
+test('las sesiones simuladas tienen de todo: familiarización, fases 1 y 3, cambios de banda, bloqueos y órdenes del terapeuta', () => {
   assert.equal(historia.sesiones.length, 20);
   const props = historia.sesiones.flatMap((s) => s.adaptacion_propuestas ?? []);
   assert.ok(props.some((p) => p.ejecutada && p.banda_actual !== p.banda_propuesta), 'cambios de banda ejecutados');
