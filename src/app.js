@@ -13,7 +13,7 @@ import { juegoDeSesion } from './activities/categorias.js';
 import { elegirPorEmocion } from './activities/emociones.js';
 import { esc, navHTML, marcaHTML, tituloHTML, chipHTML, renderGaleria, renderCreditos, renderCalibracion } from './paginas.js';
 import { renderInicio as dibujarInicio, maxEnsayos, avisoDeAjuste } from './inicio.js';
-import { renderSesiones } from './sesiones.js';
+import { muestraIndicadores, renderSesiones } from './sesiones.js';
 import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
@@ -1254,6 +1254,8 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
       bloque: r.bloque, ficha: state.fichas[r.actividad] ?? { id: r.actividad, nombre: '' }, banda: r.banda, modalidad: r.modalidad, lineas: [],
     }));
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  // Decisión R16 (Protocolo 3.1): fuera de la fase 3 el terapeuta no ve aciertos, omisiones ni tiempos.
+  const conIndicadores = muestraIndicadores(modo, state.sesion);
   app.innerHTML = `
     <div class="adulto">
       ${marcaHTML()}
@@ -1263,7 +1265,7 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
           (b) => `
         <section class="panel">
           <h2>Bloque ${b.bloque}: ${esc(b.ficha.id)} ${esc(b.ficha.nombre)} · banda ${esc(b.banda)} · ${esc(b.modalidad === 'mixta' ? 'V y AV' : b.modalidad)}</h2>
-          ${b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+          ${conIndicadores && b.lineas.length ? `<ul class="resumen">${b.lineas.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
           <fieldset class="chips">
             <legend>Nivel de apoyo en este bloque</legend>
             ${NIVELES_APOYO.map((n) => chipHTML(`apoyo-${b.bloque}`, n, mayuscula(n), fila()?.nivel_apoyo.find((x) => x.bloque === b.bloque)?.nivel === n)).join('')}
@@ -1271,7 +1273,8 @@ function renderRegistros(id, { resultados = null, modo = null, volver = 'inicio'
         </section>`,
         )
         .join('') || '<div class="panel"><p>La sesión terminó antes del primer bloque.</p></div>'}
-      ${resultados ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      ${resultados && conIndicadores ? '<p class="ayuda">El resumen describe lo registrado. No es un puntaje ni una interpretación clínica.</p>' : ''}
+      ${resultados && !conIndicadores ? `<p class="ayuda" data-sin-indicadores>En este modo de fase no se muestran aciertos, omisiones ni tiempos de respuesta (Protocolo 3.1: el terapeuta ve los indicadores solo en la fase 3). Quedan en el registro.</p>` : ''}
       <h2 class="registros-titulo">Registros del terapeuta</h2>
       ${registrosHTML({ marcados, fase3, actividades, bandas, previo: f.registros_hora ? f : {}, bandaInicial, avisoInclusion: Boolean(f.aviso_inclusion) })}
     </div>`;
@@ -1323,6 +1326,8 @@ function renderResumen() {
   const s = state.session;
   const nivel = sesiones.rows().find((r) => r.sesion_id === s.id)?.nivel_apoyo.find((n) => n.bloque === s.bloque)?.nivel;
   const mayuscula = (t) => t[0].toUpperCase() + t.slice(1);
+  // Decisión R16 (Protocolo 3.1): fuera de la fase 3 el terapeuta no ve aciertos, omisiones ni tiempos.
+  const conIndicadores = muestraIndicadores(modo, state.sesion);
   app.innerHTML = `
     <div class="adulto">
       ${marcaHTML()}

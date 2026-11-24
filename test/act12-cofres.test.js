@@ -110,7 +110,7 @@ test('el resumen cuenta las elecciones de la banda en la sesión, con los bloque
   const otraBanda = filasDe(deBanda('B1')[0], 3);
   assert.match(lineasDeBloque(otraBanda, ficha, indice, { previas: [...b1, ...b2] }).at(-2), /banda B1 en la sesión: 40\./);
   const sesiones = leer('src/sesiones.js');
-  assert.match(sesiones, /bloqueHTML\(b, sesion, fichas, indice, bloques\.slice\(0, k\)\.flatMap\(\(x\) => x\.filas\)\)/);
+  assert.match(sesiones, /bloqueHTML\(b, sesion, fichas, indice, bloques\.slice\(0, k\)\.flatMap\(\(x\) => x\.filas\), config\)/);
   assert.equal(bloquesDeSesion([...b2, ...b1])[0].bloque, 1);
   const app = leer('src/app.js');
   assert.match(app, /const previas = log\.rows\(\)\.filter\(\(r\) => r\.sesion_id === s\.id && r\.actividad === ficha\.id && r\.banda === banda\.id\);/);

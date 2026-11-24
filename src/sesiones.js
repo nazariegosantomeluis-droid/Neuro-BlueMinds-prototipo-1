@@ -94,13 +94,19 @@ export function lineasDeBloque(filas, ficha, indice, { previas = [] } = {}) {
   return [...lineasDelBloque(filas, ficha, null, indice, { cambio }), ...extra];
 }
 
-function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = []) {
+// Decisión R16 (Protocolo 3.1): en los modos de fase en que el terapeuta no ve los indicadores
+// (familiarización, fases 1 y 2, cierre: «panel»: "resumen" en fichas/sesion.json), el resumen de
+// cada bloque solo cuenta los ensayos; aciertos, omisiones y tiempos de respuesta no se muestran.
+// Las sesiones sin modo de fase (demostración y modo experto) muestran el resumen completo.
+export const muestraIndicadores = (modo, config) => !modo || config?.modos?.[modo]?.panel === 'completo';
+
+function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = [], config = null) {
   const [r] = filas;
   const ficha = fichas[r.actividad];
   const nivel = sesion.nivel_apoyo?.find((n) => n.bloque === bloque)?.nivel;
   // Sin la ficha (por ejemplo, un registro de otra versión) solo se cuentan los ensayos.
   let lineas = [plural(filas.length, 'ensayo registrado', 'ensayos registrados')];
-  if (ficha) lineas = lineasDeBloque(filas, ficha, indice, { previas });
+  if (ficha && muestraIndicadores(sesion.modo_fase, config)) lineas = lineasDeBloque(filas, ficha, indice, { previas });
   return `
     <li class="sesion-bloque">
       <p class="sesion-bloque-titulo"><strong>Bloque ${bloque}</strong> · ${esc(r.actividad)} ${esc(ficha?.nombre ?? '')} · banda ${esc(r.banda)} · modalidad ${esc(r.modalidad)}${nivel ? ` · apoyo ${esc(nivel)}` : ''}</p>
@@ -108,7 +114,7 @@ function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = []) {
     </li>`;
 }
 
-function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
+function sesionHTML(sesion, rows, fichas, indice, abierta, padron, config = null) {
   const bloques = bloquesDeSesion(rows);
   const tipo = ETIQUETA_TIPO[tipoDeSesion(sesion.sesion_id)];
   const pausas = sesion.pausas ?? [];
@@ -139,7 +145,7 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron) {
         bloques.length
           ? `<details class="sesion-detalle">
                <summary>Ver el resumen de ${bloques.length === 1 ? 'su bloque' : `sus ${bloques.length} bloques`}</summary>
-               <ol class="sesion-bloques">${bloques.map((b, k) => bloqueHTML(b, sesion, fichas, indice, bloques.slice(0, k).flatMap((x) => x.filas))).join('')}</ol>
+               <ol class="sesion-bloques">${bloques.map((b, k) => bloqueHTML(b, sesion, fichas, indice, bloques.slice(0, k).flatMap((x) => x.filas), config)).join('')}</ol>
                <p class="ayuda">Describe lo registrado. No es un puntaje ni una interpretación clínica.</p>
              </details>`
           : '<p class="meta">Esta sesión no tiene ensayos guardados.</p>'
@@ -172,7 +178,7 @@ export function renderSesiones(app, ctx) {
           ${ocultas ? `<p class="meta">Hay ${ocultas} ensayos de actividades fuera del piloto. Se ven con el modo experto encendido.</p>` : ''}
           ${
             conBloques.length
-              ? conBloques.map((s) => sesionHTML(s, visibles(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron)).join('')
+              ? conBloques.map((s) => sesionHTML(s, visibles(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron, state.sesion)).join('')
               : `<div class="panel vacio">
                    <p><strong>Todavía no hay sesiones guardadas.</strong></p>
                    <p>Aquí aparecerá cada sesión con el resumen de sus bloques, en cuanto termines el primero.</p>
