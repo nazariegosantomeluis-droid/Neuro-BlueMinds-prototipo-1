@@ -1,6 +1,6 @@
 {
   "id": "ACT-02",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "nombre": "Pictograma e imagen",
   "objetivo": "Describir la identificación de conceptos de vocabulario temprano y su adquisición a lo largo de las sesiones.",
   "paradigma": "Modalidad V: emparejamiento no idéntico con la muestra (del pictograma a un ejemplar real). Modalidad AV: identificación receptiva (palabra hablada más pictograma, a un ejemplar).",
@@ -62,6 +62,7 @@
     "cadaEnsayos": 10,
     "ejemplar": 3,
     "retroalimentacion": "sin_marco",
+    "origen": "Decisiones R4 y R5, 23 nov 2026: las sondas no entran en A1 a A10; ninguna opción marcada y la misma duración que un ensayo normal, porque las pruebas de generalización se hacen sin corrección ni ayuda (Guttman y Kalish, 1956; Fuller y Fienup, 2018).",
     "nota": "Catálogo 5.2 (fila «Sondas de generalización») y 7.3: desde la fase 3, 1 de cada 10 ensayos presenta el tercer ejemplar, no usado antes, de un concepto ya dominado, con retroalimentación neutra sin corrección. La sonda reemplaza un ensayo del tramo; el bloque sigue con 30 ensayos."
   },
   "limiteRespuestaMs": 10000,
@@ -86,10 +87,6 @@
   "contraindicaciones": [
     "Discapacidad visual o auditiva no corregida.",
     "Con hipersensibilidad auditiva, la modalidad AV se usa a volumen bajo; si el niño no la tolera, se usa solo V y el niño no entra en el análisis de H4."
-  ],
-  "pendientesClinicos": [
-    "Retroalimentación «neutra sin corrección» de las sondas (Catálogo 7.3): el prototipo no marca ninguna opción y la pantalla queda igual el mismo tiempo que la retroalimentación habitual. Confirmar que así se ve.",
-    "Si las sondas cuentan en los indicadores de la sesión (A1 a A10): el prototipo las deja fuera para que la sesión sea comparable con las que no tienen sondas (parámetro sondasEnIndicadoresDeSesion)."
   ],
   "revisionClinica": { "revisor": "", "fecha": "" }
 }
