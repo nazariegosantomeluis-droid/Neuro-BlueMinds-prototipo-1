@@ -15,6 +15,9 @@ export const INDICADORES_COLUMNS = [
   'sesion_id', 'codigo_nino', 'modo_fase', 'actividad', 'indicador', 'nombre',
   'valor', 'ic_inferior', 'ic_superior', 'n', 'disponible', 'motivo',
   'calidad_sesion', 'version_definicion', 'version_indicadores', 'detalle',
+  // «sesion» para A1 a A10; «fase» para A11 y A12, que son un resumen de la fase y no entran en la
+  // detección de cambios por sesión (decisión R8, 23 nov 2026).
+  'ambito',
 ];
 
 // Orden de las filas: A5 (omisiones) va siempre junto a A1 (decisión R3, 23 nov 2026).
@@ -22,7 +25,7 @@ export const ORDEN = ['A1', 'A5', 'A2', 'A3', 'A4', 'A6', 'A7', 'A8', 'A9', 'A10
 
 const BASE = new Set(['id', 'nombre', 'valor', 'ic', 'n', 'disponible', 'motivo', 'version']);
 
-function fila(sesion, actividad, calidad, x) {
+function fila(sesion, actividad, calidad, x, ambito = 'sesion') {
   const detalle = Object.fromEntries(Object.entries(x).filter(([k]) => !BASE.has(k)));
   return {
     sesion_id: sesion.sesion_id,
@@ -41,12 +44,22 @@ function fila(sesion, actividad, calidad, x) {
     version_definicion: x.version,
     version_indicadores: VERSION_INDICADORES,
     detalle: Object.keys(detalle).length ? detalle : null,
+    ambito,
   };
 }
 
 // Las sesiones con niño son las de código S- (las de demostración y del modo experto no tienen
 // historia de un niño: su A9 y su A10 solo miran la propia sesión, y no tienen A11 ni A12).
 const conNino = (s) => String(s.sesion_id).startsWith('S-');
+
+// Sesiones del niño en su fase actual: desde la última vez que cambió de fase (decisión R8). Si
+// vuelve a una fase anterior, la cuenta empieza de nuevo. hasta: sesiones.csv hasta la de hoy, en orden.
+export function sesionesDeLaFase(hasta, s) {
+  const delNino = hasta.filter((x) => x.codigo_nino === s.codigo_nino && conNino(x));
+  let k = delNino.length - 1;
+  while (k > 0 && delNino[k - 1].modo_fase === s.modo_fase) k--;
+  return delNino.slice(k);
+}
 
 // ensayos: el registro por ensayo (ya con fuera_de_tarea marcado); sesiones: sesiones.csv, en orden;
 // fichas: id → ficha; items: el banco (para el concepto de cada ítem).
@@ -65,9 +78,10 @@ export function calcularIndicadores(ensayos, sesiones, { fichas = {}, items = []
       for (const x of res.sort((a, b) => ORDEN.indexOf(a.id) - ORDEN.indexOf(b.id))) out.push(fila(s, actividad, calidad, x));
     }
     if (conNino(s)) {
-      const delNino = sesiones.slice(0, k + 1).filter((x) => x.codigo_nino === s.codigo_nino && conNino(x));
-      out.push(fila(s, null, calidad, a11(delNino, ensayos, { calidad })));
-      out.push(fila(s, null, calidad, a12(delNino, { calidad })));
+      const fase = sesionesDeLaFase(sesiones.slice(0, k + 1), s);
+      const extra = { fase: s.modo_fase ?? null, sesiones_fase: fase.length };
+      out.push(fila(s, null, calidad, { ...a11(fase, ensayos, { calidad }), ...extra }, 'fase'));
+      out.push(fila(s, null, calidad, { ...a12(fase, { calidad }), ...extra }, 'fase'));
     }
   });
   return out;

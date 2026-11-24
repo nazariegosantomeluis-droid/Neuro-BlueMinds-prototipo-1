@@ -60,11 +60,12 @@ export const PARAMETROS = Object.freeze({
   // Los ensayos de sonda (Catálogo 7.3) no entran en A1 a A10 ni en el dominio: son otro tipo de
   // ensayo (ejemplar no entrenado, sin corrección) (decisión R4, 23 nov 2026).
   sondasEnIndicadoresDeSesion: { valor: false, seccion: 'Decisión R4, 23 nov 2026 (Catálogo 7.3)' },
-  // A11 y A12 se calculan al cerrar la sesión sobre las últimas actividades y sesiones del niño
-  // (Arquitectura 6.1), sin decir cuántas: el prototipo usa todas las de este dispositivo (pendiente).
+  // A11 y A12 (decisión R8, 23 nov 2026): por niño, acumulados dentro de la fase y reiniciados al
+  // cambiar de fase; disponibles desde 5 actividades o 5 sesiones; se reportan como resumen de fase,
+  // no como indicador por sesión para detectar cambios (las fases tienen estructura distinta).
   // Una actividad (bloque) se completa si no se terminó desde el menú; una sesión termina antes de lo
   // previsto si se terminó desde el menú (el límite de 15 minutos no cuenta: lo impone la plataforma).
-  ventanaPersistencia: { valor: 'todas las del niño en el dispositivo', seccion: 'Arquitectura 6.1 no lo precisa (pendiente)' },
+  ventanaPersistencia: { valor: 'la fase actual del niño, desde su primera sesión en ella', seccion: 'Decisión R8, 23 nov 2026 (Modelo 4.1; Arquitectura 6.1)' },
   // Regla de adaptación (C8; Modelo 9.1; Arquitectura 7.2): ventanas de 10 ensayos válidos; subir si
   // la precisión es mayor de 0.85 en dos ventanas consecutivas; bajar si es menor de 0.70 en una;
   // mantener entre 0.70 y 0.85; con señal de regulación, ofrecer pausa y bajar, y no subir en el
@@ -86,7 +87,7 @@ export const PARAMETROS = Object.freeze({
 // Versión de definición de cada indicador (Arquitectura 6.2). Remite a la versión del Modelo con
 // la que se programó; un cambio de fórmula, umbral o mínimo crea una versión nueva.
 export const VERSIONES = Object.freeze({
-  A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.1.0', A12: '0.1.0',
+  A1: '0.3.0', A2: '0.2.0', A3: '0.2.0', A4: '0.2.0', A5: '0.2.0', A6: '0.2.0', A7: '0.2.0', A8: '0.2.0', A9: '0.3.0', A10: '0.2.0', A11: '0.2.0', A12: '0.2.0',
   C8: '0.2.0', regulacion: '0.2.0',
   IG: '0.1.0', IRet: '0.1.0',
 });

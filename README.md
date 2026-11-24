@@ -605,8 +605,8 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 | A8 IRPE | Aciertos en el ensayo siguiente a un error / errores | Wilson | 10 errores |
 | A9 DOM | Unidades que alcanzan el criterio en la sesión por cada 100 presentaciones | — | El criterio |
 | A10 TEP | Repetir la misma opción incorrecta que en la presentación anterior del mismo ítem (aunque sea de otra sesión) tras un error con retroalimentación correctiva / esas presentaciones | Wilson | 10 oportunidades |
-| A11 IPF | Actividades (bloques) completadas / iniciadas, en todas las sesiones del niño hasta la de hoy. Un bloque se completa si no se terminó desde el menú | Wilson | 5 actividades |
-| A12 IA | Sesiones terminadas desde el menú («Terminar la sesión») / sesiones del niño. El límite de 15 minutos no cuenta | Wilson | 5 sesiones |
+| A11 IPF | Actividades (bloques) completadas / iniciadas, en las sesiones del niño dentro de su fase actual (decisión R8). Un bloque se completa si no se terminó desde el menú | Wilson | 5 actividades |
+| A12 IA | Sesiones terminadas desde el menú («Terminar la sesión») / sesiones del niño dentro de su fase actual (decisión R8). El límite de 15 minutos no cuenta | Wilson | 5 sesiones |
 
 **Dominio (A9; Modelo 4.3; decisión D5).** Con a aciertos y e errores de una unidad, θ ~ Beta(1 + a, 1 + e); la unidad está dominada si P(θ > θ*) > 0.95. θ* = 0.70 por defecto; la ficha puede cambiarlo en `dominio.thetaEstrella`, y 0.80 queda solo como análisis de sensibilidad. La unidad es el ítem, o el concepto si la ficha dice `dominio.unidad: "concepto"`. El estado se acumula sesión tras sesión y guarda la presentación en que la unidad alcanzó el criterio; un error posterior no la borra del ritmo. Reproduce la tabla del Modelo: 8 aciertos seguidos con θ* = 0.70 y 13 con 0.80; con 0.80, 28 de 30 da 0.96 y 27 de 30 da 0.89. Las omisiones no cuentan ni como aciertos ni como errores (decisión R3).
 
@@ -621,11 +621,14 @@ Funciones puras en `src/indicadores/`, sin DOM, para calcular en la tableta lo q
 | `disponible`, `motivo` | Si cumple el mínimo de datos y la calidad de 0.80; si no, por qué. |
 | `calidad_sesion` | Media de `peso_calidad` de la sesión, sin los ensayos pausados. |
 | `version_definicion`, `version_indicadores` | Versión de la definición del indicador y del conjunto (Arquitectura 6.2). |
+| `ambito` | `sesion` para A1 a A10; `fase` para A11 y A12, que son un resumen de la fase y no entran en la detección de cambios por sesión (decisión R8). |
 | `detalle` | JSON con datos de apoyo: aciertos y azar (A1), minutos (A6), aciertos tras error y tras acierto (A7), unidades dominadas en la sesión y en total, θ* y confianza (A9), etc. |
 
 Las sesiones de demostración y del modo experto no tienen historia de un niño: su A9 y su A10 solo miran la propia sesión y no tienen A11 ni A12. Los indicadores del nivel B (μ, σ, τ, EZ, α, λ, IG, IRet, ICS, ICM) no van en este archivo: Arquitectura 6.1 los deja al entorno de análisis, que los calcula con las columnas del registro por ensayo (`sonda` y `reaparicion` para IG e IRet; `modalidad` y `mitad_fase2` para ICM; el ítem de ACT-07 para ICS).
 
 **Vectores de prueba (H3.6).** `test/vectores/indicadores.json` trae seis casos (una sesión típica de ACT-02 y ACT-07, una sesión larga con A3, A6, A7 y A8 disponibles, pocos ensayos, calidad baja, seis sesiones de un niño para A9 a A12 y una demostración), cada uno con sus entradas (las columnas del registro y de `sesiones.csv` que usan los indicadores) y sus salidas (las filas de `indicadores.csv`), además de los parámetros, las versiones y el generador con una comprobación (semilla y primeros cinco números). Lo genera `node tools/vectores-indicadores.mjs`; la prueba falla si el archivo no coincide con lo que dan las funciones, y reimplementa el generador con enteros grandes para comprobar que su descripción basta. Criterio de comparación con R (Arquitectura 6.3): 1 ms en latencias y exacto en proporciones.
+
+**A11 y A12 por fase (decisión R8, 23 nov 2026).** Se acumulan por niño dentro de su fase actual y la cuenta se reinicia al cambiar de fase (también al volver a una fase anterior), porque las fases tienen estructura distinta y mezclarlas confundiría estructura con persistencia. Están disponibles desde 5 actividades o 5 sesiones y se exportan como resumen de fase (`ambito = fase`, con la fase y su número de sesiones en `detalle`).
 
 **Omisiones (decisión R3, 23 nov 2026).** A1 y A9 se calculan sobre los ensayos con respuesta: la corrección por azar supone que el niño eligió una opción, y puntuar una omisión como error sesga la estimación de la habilidad cuando la omisión no se debe a no saber (Pohl, Gräfe y Rose, 2014). Las omisiones solo entran en A5, que va siempre junto a A1: en `indicadores.csv` la fila de A5 sigue a la de A1, y el detalle de A1 trae cuántas omisiones hubo. Si un niño omite sobre todo los ítems difíciles, A1 sale alta; por eso se leen juntas. Versión de definición de A1 y A9: 0.2.0.
 

@@ -12,8 +12,8 @@
   "A8": "0.2.0",
   "A9": "0.3.0",
   "A10": "0.2.0",
-  "A11": "0.1.0",
-  "A12": "0.1.0",
+  "A11": "0.2.0",
+  "A12": "0.2.0",
   "C8": "0.2.0",
   "regulacion": "0.2.0",
   "IG": "0.1.0",
@@ -128,8 +128,8 @@
    "seccion": "Decisión R4, 23 nov 2026 (Catálogo 7.3)"
   },
   "ventanaPersistencia": {
-   "valor": "todas las del niño en el dispositivo",
-   "seccion": "Arquitectura 6.1 no lo precisa (pendiente)"
+   "valor": "la fase actual del niño, desde su primera sesión en ella",
+   "seccion": "Decisión R8, 23 nov 2026 (Modelo 4.1; Arquitectura 6.1)"
   },
   "adaptacion": {
    "ventana": 10,
@@ -216,7 +216,8 @@
   "calidad_sesion",
   "version_definicion",
   "version_indicadores",
-  "detalle"
+  "detalle",
+  "ambito"
  ],
  "casos": [
   {
@@ -1935,7 +1936,8 @@
       "aciertos": 26,
       "azar": 0.3333333333333333,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -1955,7 +1957,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -1973,7 +1976,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -1991,7 +1995,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2011,7 +2016,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2032,7 +2038,8 @@
      "detalle": {
       "minutos": 5.790233333333333,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2053,7 +2060,8 @@
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 21
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2073,7 +2081,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2096,7 +2105,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2116,7 +2126,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2138,7 +2149,8 @@
       "aciertos": 17,
       "azar": 0.5,
       "omisiones": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2158,7 +2170,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2176,7 +2189,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2194,7 +2208,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2214,7 +2229,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2235,7 +2251,8 @@
      "detalle": {
       "minutos": 5.610116666666666,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2256,7 +2273,8 @@
      "detalle": {
       "tras_error": 6,
       "tras_acierto": 7
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2276,7 +2294,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 6
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2299,7 +2318,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2319,7 +2339,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v1",
@@ -2335,11 +2356,14 @@
      "disponible": false,
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 2
-     }
+      "completadas": 2,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v1",
@@ -2355,11 +2379,14 @@
      "disponible": false,
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     }
    ]
   },
@@ -4639,7 +4666,8 @@
       "aciertos": 53,
       "azar": 0.5,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4659,7 +4687,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4677,7 +4706,8 @@
      "calidad_sesion": 0.9875,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4695,7 +4725,8 @@
      "calidad_sesion": 0.9875,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4715,7 +4746,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4736,7 +4768,8 @@
      "detalle": {
       "minutos": 17.809966666666668,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4757,7 +4790,8 @@
      "detalle": {
       "tras_error": 15,
       "tras_acierto": 37
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4777,7 +4811,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 15
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4800,7 +4835,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4820,7 +4856,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v6",
@@ -4836,11 +4873,14 @@
      "disponible": false,
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 2
-     }
+      "completadas": 2,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v6",
@@ -4856,11 +4896,14 @@
      "disponible": false,
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9875,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     }
    ]
   },
@@ -5236,7 +5279,8 @@
       "aciertos": 8,
       "azar": 0.33333333333333337,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5256,7 +5300,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5274,7 +5319,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5292,7 +5338,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5312,7 +5359,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5333,7 +5381,8 @@
      "detalle": {
       "minutos": 1.9805833333333334,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5354,7 +5403,8 @@
      "detalle": {
       "tras_error": 1,
       "tras_acierto": 5
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5374,7 +5424,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5397,7 +5448,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5417,7 +5469,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v2",
@@ -5433,11 +5486,14 @@
      "disponible": false,
      "motivo": "1 actividades; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 1
-     }
+      "completadas": 1,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v2",
@@ -5453,11 +5509,14 @@
      "disponible": false,
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     }
    ]
   },
@@ -6337,7 +6396,8 @@
       "aciertos": 19,
       "azar": 0.3333333333333332,
       "omisiones": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6357,7 +6417,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6375,7 +6436,8 @@
      "calidad_sesion": 0.7307692307692307,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6393,7 +6455,8 @@
      "calidad_sesion": 0.7307692307692307,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6413,7 +6476,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 7
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6434,7 +6498,8 @@
      "detalle": {
       "minutos": 5.60535,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6455,7 +6520,8 @@
      "detalle": {
       "tras_error": 1,
       "tras_acierto": 6
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6475,7 +6541,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6498,7 +6565,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6518,7 +6586,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v3",
@@ -6534,11 +6603,14 @@
      "disponible": false,
      "motivo": "calidad de la sesión 0.73, menor de 0.80; 1 actividades; el mínimo es 5",
      "calidad_sesion": 0.7307692307692307,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 1
-     }
+      "completadas": 1,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v3",
@@ -6554,11 +6626,14 @@
      "disponible": false,
      "motivo": "calidad de la sesión 0.73, menor de 0.80; 1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.7307692307692307,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     }
    ]
   },
@@ -11680,7 +11755,8 @@
       "aciertos": 14,
       "azar": 0.3333333333333333,
       "omisiones": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11700,7 +11776,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11718,7 +11795,8 @@
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11736,7 +11814,8 @@
      "calidad_sesion": 0.9655172413793104,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11756,7 +11835,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11777,7 +11857,8 @@
      "detalle": {
       "minutos": 5.779933333333333,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11798,7 +11879,8 @@
      "detalle": {
       "tras_error": 5,
       "tras_acierto": 7
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11818,7 +11900,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 7
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11841,7 +11924,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11861,7 +11945,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11877,11 +11962,14 @@
      "disponible": false,
      "motivo": "1 actividades; el mínimo es 5",
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 1
-     }
+      "completadas": 1,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-1",
@@ -11897,11 +11985,14 @@
      "disponible": false,
      "motivo": "1 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9655172413793104,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 1
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-2",
@@ -11923,7 +12014,8 @@
       "aciertos": 21,
       "azar": 0.3333333333333333,
       "omisiones": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -11943,7 +12035,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -11961,7 +12054,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -11979,7 +12073,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -11999,7 +12094,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12020,7 +12116,8 @@
      "detalle": {
       "minutos": 5.785816666666666,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12041,7 +12138,8 @@
      "detalle": {
       "tras_error": 6,
       "tras_acierto": 13
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12061,7 +12159,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 6
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12084,7 +12183,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12104,7 +12204,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12120,11 +12221,14 @@
      "disponible": false,
      "motivo": "2 actividades; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 2
-     }
+      "completadas": 2,
+      "fase": "fase1",
+      "sesiones_fase": 2
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-2",
@@ -12140,11 +12244,14 @@
      "disponible": false,
      "motivo": "2 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 2
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12166,7 +12273,8 @@
       "aciertos": 19,
       "azar": 0.3333333333333333,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12186,7 +12294,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12204,7 +12313,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12222,7 +12332,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12242,7 +12353,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12263,7 +12375,8 @@
      "detalle": {
       "minutos": 5.574116666666667,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12284,7 +12397,8 @@
      "detalle": {
       "tras_error": 4,
       "tras_acierto": 12
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12304,7 +12418,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 5
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12329,7 +12444,8 @@
       "dominados": 1,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12349,7 +12465,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12365,11 +12482,14 @@
      "disponible": false,
      "motivo": "3 actividades; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 2
-     }
+      "completadas": 2,
+      "fase": "fase1",
+      "sesiones_fase": 3
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-3",
@@ -12385,11 +12505,14 @@
      "disponible": false,
      "motivo": "3 sesiones; el mínimo es 5",
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 3
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12411,7 +12534,8 @@
       "aciertos": 20,
       "azar": 0.33333333333333326,
       "omisiones": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12431,7 +12555,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12449,7 +12574,8 @@
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12467,7 +12593,8 @@
      "calidad_sesion": 0.9642857142857143,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12487,7 +12614,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12508,7 +12636,8 @@
      "detalle": {
       "minutos": 5.61315,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12529,7 +12658,8 @@
      "detalle": {
       "tras_error": 4,
       "tras_acierto": 12
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12549,7 +12679,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 4
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12572,7 +12703,8 @@
       "dominados": 1,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12592,7 +12724,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12608,11 +12741,14 @@
      "disponible": false,
      "motivo": "4 actividades; el mínimo es 5",
      "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 3
-     }
+      "completadas": 3,
+      "fase": "fase1",
+      "sesiones_fase": 4
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-4",
@@ -12628,11 +12764,14 @@
      "disponible": false,
      "motivo": "4 sesiones; el mínimo es 5",
      "calidad_sesion": 0.9642857142857143,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 0
-     }
+      "terminadas_antes": 0,
+      "fase": "fase1",
+      "sesiones_fase": 4
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12654,7 +12793,8 @@
       "aciertos": 26,
       "azar": 0.3333333333333333,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12674,7 +12814,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12692,7 +12833,8 @@
      "calidad_sesion": 0.9666666666666667,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12710,7 +12852,8 @@
      "calidad_sesion": 0.9666666666666667,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12730,7 +12873,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12751,7 +12895,8 @@
      "detalle": {
       "minutos": 5.8126,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12772,7 +12917,8 @@
      "detalle": {
       "tras_error": 3,
       "tras_acierto": 19
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12792,7 +12938,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12815,7 +12962,8 @@
       "dominados": 1,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12835,7 +12983,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12851,11 +13000,14 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9666666666666667,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 3
-     }
+      "completadas": 3,
+      "fase": "fase1",
+      "sesiones_fase": 5
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-5",
@@ -12871,11 +13023,14 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 0.9666666666666667,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 1
-     }
+      "terminadas_antes": 1,
+      "fase": "fase1",
+      "sesiones_fase": 5
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12897,7 +13052,8 @@
       "aciertos": 24,
       "azar": 0.33333333333333326,
       "omisiones": 4
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12917,7 +13073,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 4
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12935,7 +13092,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12953,7 +13111,8 @@
      "calidad_sesion": 1,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12973,7 +13132,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -12994,7 +13154,8 @@
      "detalle": {
       "minutos": 5.800233333333333,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13015,7 +13176,8 @@
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 17
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13035,7 +13197,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13058,7 +13221,8 @@
       "dominados": 1,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13078,7 +13242,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13094,11 +13259,14 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "completadas": 4
-     }
+      "completadas": 4,
+      "fase": "fase1",
+      "sesiones_fase": 6
+     },
+     "ambito": "fase"
     },
     {
      "sesion_id": "S-v4-6",
@@ -13114,11 +13282,14 @@
      "disponible": true,
      "motivo": null,
      "calidad_sesion": 1,
-     "version_definicion": "0.1.0",
+     "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
      "detalle": {
-      "terminadas_antes": 1
-     }
+      "terminadas_antes": 1,
+      "fase": "fase1",
+      "sesiones_fase": 6
+     },
+     "ambito": "fase"
     }
    ]
   },
@@ -13718,7 +13889,8 @@
       "aciertos": 15,
       "azar": 0.25,
       "omisiones": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13738,7 +13910,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 1
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13756,7 +13929,8 @@
      "calidad_sesion": 0.9,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13774,7 +13948,8 @@
      "calidad_sesion": 0.9,
      "version_definicion": "0.2.0",
      "version_indicadores": "0.3.0",
-     "detalle": null
+     "detalle": null,
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13794,7 +13969,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "casos": 2
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13815,7 +13991,8 @@
      "detalle": {
       "minutos": 3.7938,
       "unidad": "ln(ms) por minuto"
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13836,7 +14013,8 @@
      "detalle": {
       "tras_error": 2,
       "tras_acierto": 10
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13856,7 +14034,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "aciertos": 3
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13879,7 +14058,8 @@
       "dominados": 0,
       "thetaEstrella": 0.7,
       "confianza": 0.95
-     }
+     },
+     "ambito": "sesion"
     },
     {
      "sesion_id": "DEMO-v5",
@@ -13899,7 +14079,8 @@
      "version_indicadores": "0.3.0",
      "detalle": {
       "perseverativos": 0
-     }
+     },
+     "ambito": "sesion"
     }
    ]
   }
