@@ -78,7 +78,8 @@ test('INV-7: en los modos con dificultad fija la banda y la adaptación no cambi
 
 test('cada orden del registro lleva la hora y el estado de la sesión', () => {
   const o = ordenRegistro({ accion: 'episodio_desregulacion' }, { hora: '2026-11-15T20:00:00.000Z', ms: 61234.5, bloque: 2, ensayo: 7, modo: 'fase1', banda: 'B2', adaptacion: false });
-  assert.deepEqual(o, { hora: '2026-11-15T20:00:00.000Z', ms: 61234.5, accion: 'episodio_desregulacion', detalle: null, bloqueada: null, bloque: 2, ensayo: 7, modo: 'fase1', banda: 'B2', adaptacion: false });
+  assert.deepEqual(o, { hora: '2026-11-15T20:00:00.000Z', ms: 61234.5, accion: 'episodio_desregulacion', detalle: null, bloqueada: null, bloque: 2, ensayo: 7, modo: 'fase1', banda: 'B2', adaptacion: false, propuestas_previas: null, ensayos_validos: null, actividad: null });
+  assert.deepEqual(ordenRegistro({ accion: 'desactivar_adaptacion' }, { propuestas_previas: 3 }).propuestas_previas, 3, 'para reproducir la sesión (Arquitectura 10.2)');
   assert.ok(SESION_COLUMNS.includes('ordenes_terapeuta'));
   const app = leer('src/app.js');
   assert.match(app, /registrar\(\{ accion: 'pausar' \}\);/, 'abrir el menú es una orden de pausar');

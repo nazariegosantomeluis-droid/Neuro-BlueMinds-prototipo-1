@@ -109,8 +109,11 @@ test('la regla solo propone (ejecutada: false); la ejecución la decide la envol
   assert.ok(ps.every((p) => p.ejecutada === false && p.version_regla === '0.2.0'));
   const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
   // Cada propuesta pasa por s.envolvente.evaluar y queda en el registro con ejecutada e invariante.
-  assert.match(app, /const res = s\.envolvente\.evaluar\(accion\);/);
-  assert.match(app, /ejecutada: res\.ejecutada,\n\s+invariante: res\.invariante,/);
+  // (La decisión en línea vive en src/adaptacion-en-linea.js, que comparten app.js, el simulador y la reproducción.)
+  const enLinea = readFileSync(new URL('../src/adaptacion-en-linea.js', import.meta.url), 'utf8');
+  assert.match(enLinea, /const res = envolvente\.evaluar\(accion\);/);
+  assert.match(enLinea, /ejecutada: res\.ejecutada,\n\s+invariante: res\.invariante,/);
+  assert.match(app, /adaptacion = crearAdaptacionDeBloque\(\{\n\s+envolvente: s\.envolvente,/);
   assert.match(app, /adaptacion_propuestas: \[\.\.\.\(r\.adaptacion_propuestas \?\? \[\]\), registro\]/);
   // La regla no cambia la banda: solo la envolvente (estado.bandas) la cambia.
   const regla = readFileSync(new URL('../src/adaptacion.js', import.meta.url), 'utf8');

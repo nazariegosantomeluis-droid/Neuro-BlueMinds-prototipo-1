@@ -304,8 +304,9 @@ test('app.js: cada propuesta pasa por la envolvente; el menú la desactiva, fija
   const app = leer('src/app.js');
   assert.match(app, /s\.envolvente = crearEnvolvente\(\{/);
   assert.match(app, /huella_parametros: s\.envolvente\.huellaInicial,/);
-  assert.match(app, /const res = s\.envolvente\.evaluar\(accion\);/);
-  assert.match(app, /env\.terapeuta\(\{ \.\.\.res\.orden, ensayosValidos \}\);/);
+  assert.match(readFileSync(new URL('../src/adaptacion-en-linea.js', import.meta.url), 'utf8'), /const res = envolvente\.evaluar\(accion\);/);
+  assert.match(app, /const res = adaptacion\.alTerminarEnsayo\(hechos\);/);
+  assert.match(app, /env\.terapeuta\(\{ \.\.\.res\.orden, ensayosValidos: validosAhora\(\) \}\);/);
   assert.match(app, /if \(env && res\.orden && !res\.orden\.bloqueada\)/);
   assert.match(app, /cambios: env \? env\.estado\.cambios : \(s\.cambiosBanda \?\? \[\]\)/);
   // El bloque siguiente (o el resto del bloque partido) usa la banda de la envolvente.

@@ -143,6 +143,10 @@ export function toCSV(rows, columns = COLUMNS) {
 
 export const toJSON = (rows) => JSON.stringify(rows, redondear, 2);
 
+// Las filas tal como quedan al exportarlas (tiempos a 0.1 ms). Lo que se audita al cerrar la sesión
+// (indicadores y señales de alerta temprana) se calcula con ellas, para que la reproducción desde
+// los archivos descargados dé exactamente lo mismo (Arquitectura 10.2).
+export const comoSeExporta = (rows) => JSON.parse(JSON.stringify(rows, redondear));
 
 export function download(filename, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));

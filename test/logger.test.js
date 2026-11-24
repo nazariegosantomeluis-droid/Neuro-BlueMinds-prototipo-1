@@ -130,3 +130,24 @@ test('peso_calidad = foco × cuadros a tiempo × plausibilidad', () => {
   assert.equal(omision.tr_bruto_ms, null);
   assert.equal(omision.anticipatoria, false);
 });
+
+// Tanda 7 (H6.2 y H6.4): recargar() y comoSeExporta() no cambian lo que se registra.
+test('recargar vuelve a leer del almacenamiento sin cambiar las filas; comoSeExporta da lo mismo que el JSON exportado', async () => {
+  const { createLog: crear, comoSeExporta: exportadas, toJSON: aJSON, REGISTRO_KEY } = await import('../src/engine/logger.js');
+  const m = new Map();
+  const storage = { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v) };
+  const a = crear(storage);
+  const fila = a.add({ sesion_id: 'S-1', ensayo: 1, tr_bruto_ms: 812.34567, acierto: true });
+  assert.deepEqual(Object.keys(fila), COLUMNS);
+  const b = crear(storage);
+  m.set(REGISTRO_KEY, '[]');
+  b.recargar();
+  assert.deepEqual(b.rows(), []);
+  m.set(REGISTRO_KEY, JSON.stringify([fila]));
+  b.recargar();
+  assert.deepEqual(b.rows(), [fila]);
+  assert.equal(REGISTRO_KEY, 'neuro-blueminds.registro', 'la clave de siempre');
+  assert.deepEqual(exportadas([fila]), JSON.parse(aJSON([fila])));
+  assert.equal(exportadas([fila])[0].tr_bruto_ms, 812.3);
+  assert.equal(fila.tr_bruto_ms, 812.34567, 'en memoria, el valor completo');
+});

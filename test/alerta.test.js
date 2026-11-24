@@ -89,7 +89,7 @@ test('ninguna salida depende de ellas: solo app.js las escribe en el registro, y
   assert.doesNotMatch(sinComentarios('src/engine/logger.js').replace(/'alerta_temprana'/, ''), /alerta/);
   const app = sinComentarios('src/app.js');
   assert.equal(app.match(/alertaDeSesion/g).length, 2, 'el import y una sola llamada');
-  assert.match(app, /editSesion\(s\.id, \(r\) => \(r\.alerta_temprana = alertaDeSesion\(log\.rows\(\)\.filter\(\(x\) => x\.sesion_id === s\.id\)\)\)\);/);
+  assert.match(app, /editSesion\(s\.id, \(r\) => \(r\.alerta_temprana = alertaDeSesion\(paraExportar\(comoSeExporta\(log\.rows\(\)\.filter\(\(x\) => x\.sesion_id === s\.id\)\), \{ sinTiempos: sinTiempos\(\) \}\)\)\)\);/);
   // La envolvente rechaza cualquier acción cuya evidencia traiga una señal de alerta (INV-9).
   assert.match(leer('src/envolvente.js'), /if \(dependeDeAlerta\(a\.evidencia\)\) return 'INV-9';/);
 });

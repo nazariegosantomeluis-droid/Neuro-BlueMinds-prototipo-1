@@ -345,6 +345,7 @@
   "src/activities/seleccion.js",
   "src/activities/senal.js",
   "src/activities/sonido.js",
+  "src/adaptacion-en-linea.js",
   "src/adaptacion.js",
   "src/ajuste-pantalla.js",
   "src/alerta.js",
