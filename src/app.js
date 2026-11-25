@@ -42,11 +42,14 @@ import { crearEnvolvente, huellaDeParametros } from './envolvente.js';
 import { huellaDe } from './huella.js';
 import { alertaDeSesion } from './alerta.js';
 import { utilizable } from './indicadores/nucleo.js';
-import { cargarVersion, textoVersion } from './version.js';
+import { cargarVersion, textoVersion, versionActual } from './version.js';
 import { registrosHTML, eventoHTML, episodiosMarcados, leerRegistros, faltantes, filaRegistros, datosDelFormulario } from './registros-terapeuta.js';
 import { planDeSesion, primeraModalidadFase2, historialFase2, bloqueFase2, itemsDeMitad, limiteAlcanzado, decidirPaso, bandaAprobada, bandaPropuesta, siguePorEscalera, ensayosParaInclusion, avisoDeInclusion } from './fases.js';
 import { planReferencia, iniciarReferencia } from './engine/referencia.js';
 import * as referencia from './activities/referencia.js';
+import { crearSalida, esDeNino, filtrarDescarga, SALIDA_KEY, HISTORIAL_KEY } from './transporte/salida.js';
+import { crearTransporte, TRANSPORTE_DEL_PILOTO } from './transporte/index.js';
+import { COLUMNAS_HISTORIAL } from './transporte/formato.js';
 
 // Las actividades y el módulo que dibuja cada pantalla están en catalogo.js. Cada pantalla aporta
 // toTrials (de ítems a ensayos) y createView (cómo se dibuja).
@@ -74,7 +77,7 @@ const almacen = crearAlmacen({
       return memoriaIDB();
     }
   })(),
-  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY, AUDITORIA_KEY],
+  claves: [REGISTRO_KEY, SESION_KEY, NINO_KEY, AUDITORIA_KEY, HISTORIAL_KEY, SALIDA_KEY],
 });
 const log = createLog(almacen.storage);
 // Una fila por sesión: inicio, fin, pausas, terminación anticipada y nivel de apoyo por bloque.
@@ -91,7 +94,22 @@ const ninos = createLog(almacen.storage, { key: NINO_KEY, columns: NINO_COLUMNS 
 const registroAuditoria = createLog(almacen.storage, { key: AUDITORIA_KEY, columns: AUDITORIA_COLUMNS });
 const auditoria = crearAuditoria(registroAuditoria);
 const auditar = (tipo, datos) => (almacen.desbloqueado ? auditoria.agregar(tipo, datos) : null);
-const recargarRegistros = () => [log, sesiones, ninos, registroAuditoria].forEach((x) => x.recargar());
+// Historial de los ensayos que ya salieron en un lote con recibo (decisión D6; Arquitectura 6.1 y
+// 9.3): solo las columnas que usan el panel, la regla, las sondas y el dominio.
+const historial = createLog(almacen.storage, { key: HISTORIAL_KEY, columns: COLUMNAS_HISTORIAL });
+const recargarRegistros = () => [log, sesiones, ninos, registroAuditoria, historial].forEach((x) => x.recargar());
+// Ensayos en la forma exportada (tiempos a 0.1 ms y fuera de tarea marcado) y, con ellos, el
+// historial: lo que usan el panel, la regla de adaptación, las sondas y la auditoría.
+const exportados = () => paraExportar(comoSeExporta(log.rows()), { sinTiempos: sinTiempos() });
+const ensayosHistoricos = () => [...historial.rows(), ...exportados()];
+// Salida de datos (decisión D6): lotes cifrados con la llave pública del investigador, recibos y
+// configuración firmados. El transporte del piloto es «archivo» (src/transporte/index.js).
+const transporte = crearTransporte(TRANSPORTE_DEL_PILOTO.tipo, { ...TRANSPORTE_DEL_PILOTO, descargar: download });
+let salida = null; // se crea al cargar las llaves públicas (config/investigador.json)
+const enEstudio = () => Boolean(salida?.estudio);
+// En modo de estudio, lo que se descarga sin cifrar es solo lo ficticio (demostración y modo
+// experto): los datos de los niños solo salen en lotes cifrados (Arquitectura 9.2).
+const descargables = (rows) => filtrarDescarga(rows, enEstudio());
 const audio = createAudio();
 const state = {
   catalogo: [], // las 17 actividades del Catálogo, con su estado
@@ -199,6 +217,27 @@ async function init() {
     state.plantillas = await (await fetch('src/panel/plantillas.json')).json();
   } catch {
     state.plantillas = null;
+  }
+  // Llaves públicas del investigador responsable (decisión D6): cifrar lotes y comprobar recibos y
+  // configuración. Sin ellas no se puede exportar.
+  try {
+    state.llaves = await (await fetch('config/investigador.json')).json();
+    salida = crearSalida({
+      storage: almacen.storage,
+      log,
+      historial,
+      sesiones,
+      auditoria,
+      ninos,
+      llaves: { cifrado: state.llaves.cifrado, firma: state.llaves.firma },
+      transporte,
+      exportables: exportados,
+      enCurso: () => state.session?.id ?? null,
+      version: () => versionActual(),
+    });
+  } catch {
+    state.llaves = null;
+    state.problemas.llaves = ['No se pudieron cargar las llaves públicas del investigador (config/investigador.json): no se puede exportar.'];
   }
   // Temas de imágenes (Arquitectura 4.8): sin el archivo, todas las sesiones usan «general».
   try {
@@ -317,12 +356,12 @@ function route() {
   if (ruta === 'galeria' && !state.problemas.items) {
     renderGaleria(app, state, new URLSearchParams(query));
     agregarEnlaceF3(app);
-  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro, completarRegistros: (id) => renderRegistros(id, { volver: 'sesiones' }) });
+  } else if (ruta === 'sesiones') renderSesiones(app, { state, log, sesiones, padron: ninos.rows(), registroHTML, bindRegistro, completarRegistros: (id) => renderRegistros(id, { volver: 'sesiones' }), ensayos: ensayosHistoricos, puedeDescargar: (id) => !enEstudio() || !esDeNino(id) });
   else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
-  else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas });
-  else if (ruta === 'panel') renderPanel(app, { state, log, sesiones, ninos, editSesion, auditar, params: new URLSearchParams(query) });
+  else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas, estudio: enEstudio() ? salida.estado().configuracion : null });
+  else if (ruta === 'panel') renderPanel(app, { state, ensayos: ensayosHistoricos, sesiones, ninos, editSesion, auditar, params: new URLSearchParams(query), resultados: (codigo) => salida?.estado().configuracion?.resultados?.[codigo] ?? null });
   else if (ruta === 'creditos') renderCreditos(app, state);
   else if (ruta === 'calibracion') {
     renderCalibracion(app, {
@@ -383,28 +422,59 @@ function bindVolumen(root) {
 
 // Borrar va aparte de las descargas; cada descarga confirma con el nombre del archivo.
 // enlaceSesiones: en la página «Sesiones» el enlace a ella misma no se muestra.
+// Modo de estudio (decisión D6; Arquitectura 9.2): las descargas sin cifrar solo llevan lo ficticio
+// (demostración y modo experto); los datos de los niños salen solo en lotes cifrados.
 function registroHTML({ enlaceSesiones = true } = {}) {
   const n = log.rows().length;
-  const off = n ? '' : 'disabled';
+  const estudio = enEstudio();
+  const ficticias = descargables(log.rows()).length;
+  const off = (estudio ? ficticias : n) ? '' : 'disabled';
+  const de = estudio ? ' de demostración' : '';
   const cuenta = n ? `${n === 1 ? '1 ensayo guardado' : `${n} ensayos guardados`} en este dispositivo.` : 'Todavía no hay ensayos guardados en este dispositivo.';
   return `
     <section class="panel registro" aria-labelledby="registro-titulo">
       <h2 id="registro-titulo">Registro</h2>
-      <p class="meta${n ? '' : ' vacio-registro'}">${cuenta} Nada se envía a ningún servidor.</p>
-      ${log.stored ? '' : '<p class="mensaje">No se pudo guardar en el dispositivo. Descarga el registro antes de cerrar esta página.</p>'}
+      <p class="meta${n ? '' : ' vacio-registro'}">${cuenta} ${estudio ? 'Los datos de los niños solo salen cifrados, en un lote para el investigador responsable.' : 'Nada se envía a ningún servidor.'}</p>
+      ${log.stored && !almacen.error ? '' : '<p class="mensaje" role="alert">No se pudo guardar en el dispositivo. Exporta o descarga el registro antes de cerrar esta página.</p>'}
       <div class="acciones">
-        <button type="button" data-descargar="csv" ${off}>Descargar registro (CSV)</button>
-        <button type="button" data-descargar="json" ${off}>Descargar registro (JSON)</button>
-        <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones (CSV)</button>
-        <button type="button" data-descargar="sesiones-json" ${off}>Descargar sesiones (JSON)</button>
-        <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores (CSV)</button>
-        <button type="button" data-descargar="auditoria" ${registroAuditoria.rows().length ? '' : 'disabled'}>Descargar auditoría (JSON)</button>
+        <button type="button" data-descargar="csv" ${off}>Descargar registro${de} (CSV)</button>
+        <button type="button" data-descargar="json" ${off}>Descargar registro${de} (JSON)</button>
+        <button type="button" data-descargar="sesiones" ${off}>Descargar sesiones${de} (CSV)</button>
+        <button type="button" data-descargar="sesiones-json" ${off}>Descargar sesiones${de} (JSON)</button>
+        <button type="button" data-descargar="indicadores" ${off}>Descargar indicadores${de} (CSV)</button>
+        ${estudio ? '' : `<button type="button" data-descargar="auditoria" ${registroAuditoria.rows().length ? '' : 'disabled'}>Descargar auditoría (JSON)</button>`}
       </div>
       <p class="meta estado" role="status"></p>
       ${n && enlaceSesiones ? '<p class="meta"><a href="#sesiones">Ver sesión por sesión</a></p>' : ''}
       <div class="acciones acciones-aparte">
-        <button type="button" class="peligro" data-borrar ${off}>Borrar registro</button>
+        <button type="button" class="peligro" data-borrar ${off}>${estudio ? 'Borrar los datos de demostración' : 'Borrar registro'}</button>
       </div>
+    </section>
+    ${salidaHTML()}`;
+}
+
+const fechaCorta = (iso) => (iso ? new Date(iso).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : 'nunca');
+
+// Salida de datos (decisión D6): exportar un lote cifrado y cargar recibos o la configuración.
+function salidaHTML() {
+  if (!salida) return state.problemas.llaves ? `<section class="panel salida"><h2>Salida de datos</h2><p class="mensaje">${esc(state.problemas.llaves[0])}</p></section>` : '';
+  const e = salida.estado();
+  const p = salida.porExportar();
+  const aviso = salida.aviso();
+  const c = e.configuracion;
+  return `
+    <section class="panel salida" aria-labelledby="salida-titulo">
+      <h2 id="salida-titulo">Salida de datos</h2>
+      <p class="meta" data-modo-tableta>${c ? `<strong>Modo de estudio</strong>: configuración ${esc(c.numero)} del investigador responsable.` : '<strong>Prototipo</strong>: sin configuración del investigador responsable.'}</p>
+      ${state.llaves?.prueba ? '<p class="aviso" data-llaves-prueba>Llaves de prueba del investigador: no exportes datos reales con esta versión.</p>' : ''}
+      ${aviso ? `<p class="aviso" role="alert" data-aviso-exportar>Pasaron ${aviso.dias} días sin exportar y hay datos de niños sin recibo del investigador. Exporta un lote y entrégalo; si el navegador borrara los datos del sitio, se perderían.</p>` : ''}
+      <p class="meta">Por exportar: ${p.ensayos} ensayos de ${p.sesiones} sesiones de niños. Lotes sin recibo: ${e.pendientes.length}. Última exportación: ${esc(fechaCorta(e.ultima_exportacion))}.</p>
+      <div class="acciones">
+        <button type="button" class="primario" data-exportar ${p.ensayos || p.sesiones ? '' : 'disabled'}>Exportar lote cifrado</button>
+        <label class="boton archivo">Cargar recibo o configuración<input type="file" accept=".json,application/json" data-cargar hidden></label>
+      </div>
+      <p class="ayuda">El lote va cifrado para el investigador responsable: esta tableta no lo puede abrir. Los ensayos se borran de la tableta solo al cargar el recibo firmado de ese lote.</p>
+      <p class="meta" role="status" data-salida-estado></p>
     </section>`;
 }
 
@@ -414,34 +484,92 @@ function bindRegistro(root, rerender) {
     b.onclick = () => {
       const tipo = b.dataset.descargar;
       const fecha = new Date().toISOString().slice(0, 10); // solo para el nombre del archivo
+      const pre = enEstudio() ? 'demostracion' : 'registro';
+      const filas = descargables(log.rows());
+      const deSesiones = descargables(sesiones.rows());
       let nombre;
-      if (tipo === 'json') download((nombre = `registro-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'application/json');
-      else if (tipo === 'csv') download((nombre = `registro-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(log.rows(), { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
+      if (tipo === 'json') download((nombre = `${pre}-neuro-blueminds-${fecha}.json`), toJSON(paraExportar(filas, { sinTiempos: sinTiempos() })), 'application/json');
+      else if (tipo === 'csv') download((nombre = `${pre}-neuro-blueminds-${fecha}.csv`), toCSV(paraExportar(filas, { sinTiempos: sinTiempos() })), 'text/csv;charset=utf-8');
       else if (tipo === 'indicadores') {
         // Se calculan al descargar, desde el registro (con fuera_de_tarea provisional en una sesión abierta).
-        const entrada = paraExportar(log.rows(), { sinTiempos: sinTiempos() });
-        const filas = calcularIndicadores(entrada, sesiones.rows(), { fichas: state.fichas, items: state.items });
-        auditar('indicadores', { sesion_id: null, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos: entrada, sesiones: sesiones.rows().map((x) => x.sesion_id) }), filas: filas.length, huella_resultado: huellaDe(filas) });
-        download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(filas), 'text/csv;charset=utf-8');
+        const entrada = paraExportar(filas, { sinTiempos: sinTiempos() });
+        const indicadores = calcularIndicadores(entrada, deSesiones, { fichas: state.fichas, items: state.items });
+        auditar('indicadores', { sesion_id: null, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos: entrada, sesiones: deSesiones.map((x) => x.sesion_id) }), filas: indicadores.length, huella_resultado: huellaDe(indicadores) });
+        download((nombre = `indicadores-neuro-blueminds-${fecha}.csv`), indicadoresCSV(indicadores), 'text/csv;charset=utf-8');
       } else if (tipo === 'sesiones-json') {
         // Para tools/reproducir.mjs (Arquitectura 10.2): las sesiones con sus tipos, sin pasar por CSV.
-        download((nombre = `sesiones-neuro-blueminds-${fecha}.json`), toJSON(sesiones.rows()), 'application/json');
+        download((nombre = `sesiones-neuro-blueminds-${fecha}.json`), toJSON(deSesiones), 'application/json');
       } else if (tipo === 'auditoria') {
+        if (enEstudio()) return;
         // La cadena entera, con su verificación: cualquiera puede volver a comprobarla (H6.3).
         download((nombre = `auditoria-neuro-blueminds-${fecha}.json`), JSON.stringify({ verificacion: auditoria.verificar(), entradas: auditoria.entradas() }, null, 2), 'application/json');
-      } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(sesiones.rows(), SESION_COLUMNS), 'text/csv;charset=utf-8');
+      } else download((nombre = `sesiones-neuro-blueminds-${fecha}.csv`), toCSV(deSesiones, SESION_COLUMNS), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
   }
   const borrar = root.querySelector('[data-borrar]');
   if (borrar) {
     borrar.onclick = () => {
+      if (enEstudio()) {
+        // En modo de estudio solo se borra lo ficticio: los datos de los niños salen en lotes y se
+        // borran solo con su recibo.
+        if (!confirm('¿Borrar los datos de la demostración y del modo experto de este dispositivo?')) return;
+        const quedan = (rows) => rows.filter((r) => esDeNino(r.sesion_id) || r.sesion_id === state.session?.id);
+        auditar('borrado', { ensayos: log.rows().length - quedan(log.rows()).length, sesiones: sesiones.rows().length - quedan(sesiones.rows()).length, solo_ficticios: true });
+        log.edit((all) => all.splice(0, all.length, ...quedan(all)));
+        sesiones.edit((all) => all.splice(0, all.length, ...quedan(all)));
+        rerender();
+        return;
+      }
       if (confirm('¿Borrar todo el registro guardado en este dispositivo? Descárgalo antes si lo necesitas.')) {
         // El registro de auditoría no se borra: queda la entrada del borrado (Arquitectura 10.1).
         auditar('borrado', { ensayos: log.rows().length, sesiones: sesiones.rows().length });
         log.clear();
         sesiones.clear();
         rerender();
+      }
+    };
+  }
+  bindSalida(root, rerender);
+}
+
+function bindSalida(root, rerender) {
+  const estado = root.querySelector('[data-salida-estado]');
+  const decir = (t) => {
+    if (estado) estado.textContent = t;
+  };
+  const exportar = root.querySelector('[data-exportar]');
+  if (exportar) {
+    exportar.onclick = async () => {
+      exportar.disabled = true;
+      try {
+        const r = await salida.exportar();
+        await almacen.listo();
+        rerender();
+        root.querySelector('[data-salida-estado]').textContent = `Lote ${r.lote_id.slice(-8)} exportado (${r.ensayos} ensayos de ${r.sesiones} sesiones). Entrégalo al investigador responsable; sus ensayos se borran de la tableta cuando cargues su recibo.`;
+      } catch (err) {
+        decir(err.message);
+        exportar.disabled = false;
+      }
+    };
+  }
+  const cargar = root.querySelector('[data-cargar]');
+  if (cargar) {
+    cargar.onchange = async () => {
+      const archivo = cargar.files?.[0];
+      if (!archivo) return;
+      try {
+        transporte.depositar(await archivo.text());
+        const rs = await salida.recibir();
+        await almacen.listo(); // lo escrito queda cifrado en el dispositivo antes de avisar
+        recargarRegistros();
+        rerender();
+        const t = rs.map((r) => (r.tipo === 'recibo' ? (r.repetido ? 'Ese recibo ya se había cargado.' : `Recibo cargado: se borraron ${r.borrados} ensayos que el investigador ya tiene.`) : `Configuración ${r.numero} cargada: ${r.ninos} niños. La tableta está en modo de estudio.`)).join(' ');
+        root.querySelector('[data-salida-estado]').textContent = t;
+      } catch (err) {
+        decir(err.message);
+      } finally {
+        cargar.value = '';
       }
     };
   }
@@ -810,7 +938,7 @@ function auditarIndicadores(s) {
   const delNino = sesiones.rows().filter((x) => x.codigo_nino === s.codigo && String(x.sesion_id).startsWith('S-'));
   const hasta = delNino.slice(0, delNino.findIndex((x) => x.sesion_id === s.id) + 1);
   const ids = new Set(hasta.map((x) => x.sesion_id));
-  const ensayos = paraExportar(comoSeExporta(log.rows()), { sinTiempos: sinTiempos() }).filter((r) => ids.has(r.sesion_id));
+  const ensayos = ensayosHistoricos().filter((r) => ids.has(r.sesion_id));
   const resultado = calcularIndicadores(ensayos, hasta, { fichas: state.fichas, items: state.items }).filter((x) => x.sesion_id === s.id);
   auditar('indicadores', { sesion_id: s.id, version_indicadores: VERSION_INDICADORES, huella_entrada: huellaDe({ ensayos, sesiones: [...ids] }), resultado, huella_resultado: huellaDe(resultado) });
 }
@@ -909,7 +1037,7 @@ function conMecanismos(trials, { ficha, s, rand, deConcepto }) {
   const porCodigo = new Map(state.items.map((i) => [i.codigo, i]));
   const conceptoFila = conceptoDeFila(porCodigo);
   const conceptoEnsayo = (t) => porCodigo.get(codigoBase(t.codigo))?.concepto ?? null;
-  const historia = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+  const historia = ensayosHistoricos().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
   const alcanzados = unidadesDominadas(historia, { unidad: (r) => conceptoFila(r) ?? r.item, criterio: criterioDe(ficha) });
   let out = trials;
   if (distribuida) {
@@ -1051,14 +1179,14 @@ async function ejecutarBloque({ ficha, banda: bandaDeFicha, modalidad, trials, s
   const ordenesDelBloque = () => (sesiones.rows().find((r) => r.sesion_id === s.id)?.ordenes_terapeuta ?? []).filter((o) => o.bloque === s.bloque);
   let adaptacion = null;
   if (adaptativo) {
-    const historial = log.rows().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
+    const historialPrevio = ensayosHistoricos().filter((r) => r.codigo_nino === s.codigo && r.actividad === ficha.id && r.sesion_id !== s.id);
     s.estadoAdaptacion ??= { sinSubir: false };
     adaptacion = crearAdaptacionDeBloque({
       envolvente: s.envolvente,
       actividad: ficha.id,
       bandas: ficha.bandas.map((b) => b.id),
       estado: s.estadoAdaptacion,
-      base: lineaBaseRegulacion(historial),
+      base: lineaBaseRegulacion(historialPrevio),
       ordenesDelBloque,
       ensayosValidos: () => log.rows().filter((r) => r.sesion_id === s.id && r.actividad === ficha.id && utilizable(r)).length,
       usoMs: () => performance.now() - s.inicioMs,

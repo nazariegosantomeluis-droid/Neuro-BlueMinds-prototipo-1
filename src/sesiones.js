@@ -114,7 +114,7 @@ function bloqueHTML({ bloque, filas }, sesion, fichas, indice, previas = [], con
     </li>`;
 }
 
-function sesionHTML(sesion, rows, fichas, indice, abierta, padron, config = null) {
+function sesionHTML(sesion, rows, fichas, indice, abierta, padron, config = null, descargable = rows.length > 0) {
   const bloques = bloquesDeSesion(rows);
   const tipo = ETIQUETA_TIPO[tipoDeSesion(sesion.sesion_id)];
   const pausas = sesion.pausas ?? [];
@@ -152,17 +152,22 @@ function sesionHTML(sesion, rows, fichas, indice, abierta, padron, config = null
       }
       <div class="acciones">
         ${!abierta && registrosPendientes(sesion) ? `<button type="button" class="primario" data-completar="${esc(sesion.sesion_id)}">Completar los registros</button>` : ''}
-        <button type="button" data-descargar-sesion="${esc(sesion.sesion_id)}" ${rows.length ? '' : 'disabled'}>Descargar esta sesión (CSV)</button>
+        <button type="button" data-descargar-sesion="${esc(sesion.sesion_id)}" ${descargable ? '' : 'disabled'}>Descargar esta sesión (CSV)</button>
       </div>
     </article>`;
 }
 
-// ctx: { state, log, sesiones, padron, registroHTML, bindRegistro, completarRegistros }
+// ctx: { state, log, sesiones, padron, registroHTML, bindRegistro, completarRegistros, ensayos,
+// puedeDescargar }. puedeDescargar(id): en modo de estudio, solo las sesiones ficticias (D6).
 export function renderSesiones(app, ctx) {
   const { state, log, sesiones, padron = [], registroHTML, bindRegistro } = ctx;
   const todas = [...sesiones.rows()].reverse(); // la más reciente primero
-  const ensayos = log.rows();
+  // Lo que se muestra incluye el historial de los ensayos que ya salieron en un lote con recibo
+  // (decisión D6); la descarga de una sesión, solo lo que sigue completo en el registro.
+  const ensayos = ctx.ensayos ? ctx.ensayos() : log.rows();
   const deSesion = (id) => ensayos.filter((r) => r.sesion_id === id);
+  const enRegistro = (id) => log.rows().filter((r) => r.sesion_id === id);
+  const descargable = (id) => enRegistro(id).length > 0 && (ctx.puedeDescargar?.(id) ?? true);
   // Sin modo experto, solo los bloques de las actividades del piloto. La descarga de cada
   // sesión sigue completa: nada se pierde del registro.
   const visibles = (id) => filasVisibles(deSesion(id));
@@ -178,7 +183,7 @@ export function renderSesiones(app, ctx) {
           ${ocultas ? `<p class="meta">Hay ${ocultas} ensayos de actividades fuera del piloto. Se ven con el modo experto encendido.</p>` : ''}
           ${
             conBloques.length
-              ? conBloques.map((s) => sesionHTML(s, visibles(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron, state.sesion)).join('')
+              ? conBloques.map((s) => sesionHTML(s, visibles(s.sesion_id), state.fichas, indice, state.session?.id === s.sesion_id, padron, state.sesion, descargable(s.sesion_id))).join('')
               : `<div class="panel vacio">
                    <p><strong>Todavía no hay sesiones guardadas.</strong></p>
                    <p>Aquí aparecerá cada sesión con el resumen de sus bloques, en cuanto termines el primero.</p>
@@ -193,8 +198,9 @@ export function renderSesiones(app, ctx) {
   for (const b of app.querySelectorAll('[data-descargar-sesion]')) {
     b.onclick = () => {
       const id = b.dataset.descargarSesion;
+      if (!descargable(id)) return;
       const nombre = `sesion-${id}.csv`;
-      download(nombre, toCSV(paraExportar(deSesion(id))), 'text/csv;charset=utf-8');
+      download(nombre, toCSV(paraExportar(enRegistro(id))), 'text/csv;charset=utf-8');
       if (estado) estado.textContent = `Se descargó ${nombre}.`;
     };
   }

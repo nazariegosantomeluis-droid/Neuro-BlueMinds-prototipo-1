@@ -61,9 +61,9 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
 
 ## Privacidad
 
-- Sin cuentas, sin servidor y sin analítica.
+- Sin cuentas, sin servidor y sin analítica (decisión D6: el piloto va sin servidor).
 - **La correspondencia entre el código del niño y su identidad nunca está en la tableta.** No se pide ni se guarda nombre, fecha de nacimiento, correo ni ningún dato que lo identifique. El niño es un código seudónimo aleatorio de 128 bits, con un ícono y un color para confirmar que es el correcto, su edad en meses y su estado de consentimiento. La lista que vincula códigos e identidades la guarda cifrada el investigador responsable, fuera de la aplicación (Arquitectura 9.1; Protocolo 9.5).
-- Los registros (ensayos, sesiones, padrón de niños y auditoría) se guardan solo en el dispositivo, cifrados con el PIN del terapeuta (ver «Datos y seguridad en la tableta»), y se descargan como CSV o JSON. Nada se envía a ningún servidor.
+- Los registros (ensayos, sesiones, padrón de niños y auditoría) se guardan solo en el dispositivo, cifrados con el PIN del terapeuta (ver «Datos y seguridad en la tableta»). Salen solo en lotes cifrados para el investigador responsable, que la tableta no puede abrir (ver «Salida de datos»). Nada se envía a ningún servidor.
 
 ## Datos y seguridad en la tableta (H6)
 
@@ -73,8 +73,22 @@ Cada actividad se describe en una ficha técnica en [`fichas/`](fichas/). El mot
   - **La web no puede bloquear capturas de pantalla** (Arquitectura 9.3: «no permite hacer capturas de pantalla del panel»). Lo cubren el bloqueo de la tableta con código, el bloqueo por inactividad y la capacitación de los terapeutas.
   - **La llave se deriva del PIN** (Arquitectura 9.3: «la llave se guarda en el almacén seguro de llaves del sistema operativo»). El navegador no tiene acceso a ese almacén; la seguridad depende de que el PIN no sea trivial y del bloqueo de la tableta.
   - **Una página estática no puede declarar la cabecera `frame-ancestors`.** La aplicación no arranca si se abre dentro de un marco de otra página (H8.5). Si se aloja en un servidor propio (H7), se agrega la cabecera.
-- **Registro de auditoría encadenado (H6.3; Arquitectura 10.1).** `src/auditoria.js`: solo admite agregar entradas; cada una lleva la huella SHA-256 de la anterior y la suya (del JSON canónico de la entrada). Registra el inicio de cada sesión con las versiones en uso y el modo de fase, cada decisión de la regla de adaptación (ejecutada o bloqueada y el invariante), cada orden del terapeuta, cada cálculo de indicadores (huella de los datos de entrada, versión y resultado), qué plantillas mostró el panel y cuándo, y cada borrado del registro (que no borra la auditoría). La cadena se verifica al desbloquear y se descarga con su verificación («Descargar auditoría (JSON)»). Guardar cada día la huella de la última entrada en el servidor depende de H7 (decisión D6).
+- **Registro de auditoría encadenado (H6.3; Arquitectura 10.1).** `src/auditoria.js`: solo admite agregar entradas; cada una lleva la huella SHA-256 de la anterior y la suya (del JSON canónico de la entrada). Registra el inicio de cada sesión con las versiones en uso y el modo de fase, cada decisión de la regla de adaptación (ejecutada o bloqueada y el invariante), cada orden del terapeuta, cada cálculo de indicadores (huella de los datos de entrada, versión y resultado), qué plantillas mostró el panel y cuándo, y cada borrado del registro (que no borra la auditoría) y, con la decisión D6, cada exportación, cada recibo y cada configuración cargados o rechazados. La cadena se verifica al desbloquear y, fuera del modo de estudio, se descarga con su verificación («Descargar auditoría (JSON)»). Cada lote lleva la cadena entera con la huella de su último eslabón, y la importación comprueba que continúa la ya importada: es la copia de la huella que pide Arquitectura 10.1, hecha en cada exportación en lugar de cada día.
 - **Reproducción (H6.4; Arquitectura 10.2; RNF-08).** `node tools/reproducir.mjs registro.json sesiones.json auditoria.json [n] [semilla]` (los tres archivos se descargan en el panel del registro) elige n sesiones al azar (20 por defecto), vuelve a calcular desde los ensayos crudos las decisiones de la regla y de la envolvente, las señales de alerta temprana y los indicadores, y los compara con lo registrado. Toma del registro solo lo que no sale de los ensayos: las órdenes del terapeuta en el punto en que se dieron (`propuestas_previas` y `ensayos_validos`) y el tiempo de uso de cada decisión (`uso_ms`, para INV-8). Una sesión con la huella de parámetros de otra versión se reporta para reproducirla con el commit de esa versión. La decisión en línea vive en `src/adaptacion-en-linea.js`, la misma para la aplicación, el simulador y la reproducción. `test/reproducir.test.js` simula 20 sesiones de 2 niños (familiarización, 4 de fase 1 y 5 de fase 3 cada uno, con cambios de banda, bloqueos y órdenes del terapeuta al azar; `tools/simular-sesiones.mjs`, con el motor real en tiempo simulado) y reproduce exactamente 20 de 20; también comprueba que un acierto, una decisión o un indicador cambiados se detectan.
+
+## Salida de datos (decisión D6)
+
+El piloto va sin servidor (decisión D6, 24 nov 2026). Todo lo que sale o entra a la tableta pasa por un transporte intercambiable (`src/transporte/`): «archivo» en el piloto y «servidor» después, con el mismo formato. El resto de la aplicación no sabe cuál se usa (`TRANSPORTE_DEL_PILOTO` en `src/transporte/index.js`).
+
+- **Formato (`src/transporte/formato.js`).** Cada registro (ensayo, sesión o entrada de auditoría) lleva identificador único (`E:<sesion_id>:<n>`, `S:<sesion_id>`, `A:<n>:<huella>`), versión del formato y suma SHA-256 de su contenido. Un lote reúne los registros de los niños (nunca los de la demostración ni del modo experto, ni la sesión en curso) y la cadena de auditoría entera, con la huella de su último eslabón (Arquitectura 10.1), un número que crece en cada tableta y la suma del lote.
+- **Exportar (Inicio y Sesiones, «Salida de datos»).** «Exportar lote cifrado» cifra el lote con la llave pública del investigador responsable (`config/investigador.json`): ECDH P-256 efímero, HKDF-SHA-256 y AES-GCM de 256 bits (`src/transporte/cripto.js`). La tableta no puede abrir lo que exporta. El terapeuta entrega el archivo `lote-autipal-….json` al investigador.
+- **Importar (`tools/importar.mjs`, en la computadora del investigador).** `node tools/importar.mjs --llaves investigador-privadas.json --base <carpeta> lote*.json`: descifra, comprueba las sumas y la cadena de auditoría (que continúe la ya importada de esa tableta), descarta duplicados y guarda en `<carpeta>/base.json` (con `ensayos.csv` y `sesiones.csv`). Un lote alterado, cortado o de otra llave se rechaza entero. Importar otra vez el mismo lote no cambia nada y deja el mismo recibo. Escribe un recibo firmado (ECDSA P-256) en `<carpeta>/recibos/`.
+- **Recibo.** El terapeuta lo carga en «Cargar recibo o configuración». Si la firma es válida y el recibo es de un lote pendiente de esa tableta con los mismos ensayos, la tableta borra esos ensayos del registro (Arquitectura 9.3). De cada uno queda en el historial de la tableta (`neuro-blueminds.historial`, cifrado) solo lo que usan el panel, la regla de adaptación, las sondas y el dominio (`COLUMNAS_HISTORIAL`), sin tiempos de la consigna ni del audio, posiciones, toques ni la tableta; con eso el panel y la regla dan lo mismo (`test/transporte.test.js`). Una sesión que cambia después de exportarse (registros completados, marcas del panel) sale otra vez como versión nueva, sin duplicarse.
+- **Aviso.** Si hay datos de niños sin recibo y pasaron 7 días o más sin exportar, el inicio lo avisa (Arquitectura 9.4).
+- **Configuración firmada (`tools/configuracion.mjs`).** `node tools/configuracion.mjs --llaves investigador-privadas.json entrada.json configuracion.json` firma el padrón (código, ícono, color, edad en meses, consentimiento, video, modo de fase y banda fija; nada más) y los resultados del entorno de análisis (modalidad con mejor desempeño y nivel B, con fecha). Al cargarla, la tableta queda en **modo de estudio**: el padrón, el consentimiento y el modo de fase son los de la configuración y el terapeuta no los cambia ni inscribe niños; el panel muestra esos resultados (plantillas MOD-01, MOD-02 y NVB-01). Una firma inválida, una configuración igual o más vieja o una para otra tableta se rechazan y quedan en la auditoría.
+- **Modo de estudio y descargas.** En modo de estudio, las descargas sin cifrar (registro, sesiones, indicadores y cada sesión) solo llevan datos ficticios (demostración y modo experto), la auditoría no se descarga y «Borrar» solo borra lo ficticio (Arquitectura 9.2). Sin configuración (prototipo para la revisión de expertos), las descargas siguen como antes.
+- **Llaves.** El investigador genera las suyas con `node tools/llaves.mjs <carpeta privada>` y copia la pública a `config/investigador.json` antes de etiquetar la versión del estudio. Las del repositorio son de prueba (su privada está en `test/fixtures/llaves-prueba.json`); con ellas, «Salida de datos» avisa que no se exporten datos reales.
+- **Servidor (después del piloto).** `docs/servidor/contrato.yaml` (OpenAPI 3) define los mismos lotes, recibos y configuración como recursos; `docs/servidor/plan.md` dice qué cambia (solo el transporte), qué requisitos de Arquitectura 9.1 a 9.6 tendrá que cumplir el servidor y la lista de verificación de despliegue. `test/servidor-prueba.mjs` implementa el contrato en Node, sin dependencias, solo para las pruebas: `test/sincronizacion.test.js` comprueba cero pérdidas y cero duplicados con cortes de red al azar. No hay nada desplegado.
 
 ## Verificación (H8)
 
@@ -395,6 +409,8 @@ src/activities/referencia.js  Pantalla del objetivo de la referencia motora
 src/activities/demora.js      Pantalla de ACT-09: muestra, pausa en blanco y opciones
 fichas/                       Ficha técnica de cada actividad (JSON), estructura de la sesión (sesion.json) y temas de imágenes (temas.json)
 config/enlaces.json           Enlaces externos opcionales (formulario F3)
+config/investigador.json      Llaves públicas del investigador (cifrar lotes; comprobar recibos y configuración). Hoy, de prueba
+src/transporte/               Salida y entrada de datos (D6): formato, cifrado y firmas, transportes «archivo» y «servidor», importación
 items/                        Conceptos, banco de ítems generado y licencias de cada archivo
 tools/build-items.mjs         Genera items/items.json y los marcadores provisionales
 tools/check-items.mjs         Verifica archivos y licencias del banco
@@ -406,8 +422,11 @@ tools/medir-escenas.mjs       Mide a tamaño real si las escenas de ACT-04 se di
 tools/sonidos.mjs             Mide y corrige la sonoridad y el inicio de los sonidos de ACT-05
 tools/unir-revisiones.mjs     Une las revisiones clínicas en revision-consolidada.csv
 tools/aplicar-revision.mjs    Aplica la revisión consolidada al banco y a las fichas
+tools/llaves.mjs              Genera las llaves del investigador responsable
+tools/importar.mjs            Importa lotes cifrados y escribe los recibos firmados (computadora del investigador)
+tools/configuracion.mjs       Prepara y firma la configuración de las tabletas
 assets/                       Imágenes, pictogramas, audios, marca (assets/marca) y tipografías (assets/fonts)
-docs/                         Registro de ejemplo y medidas de escenas (ACT-04) y sonidos (ACT-05)
+docs/                         Registro de ejemplo, medidas de escenas (ACT-04) y sonidos (ACT-05), verificación (docs/verificacion) y servidor posterior (docs/servidor)
 test/                         Pruebas (node --test)
 .github/workflows/            Verificación automática en GitHub Actions
 ```
@@ -907,7 +926,8 @@ Notas:
   - los conceptos `short` y `camión`.
 - **Pictogramas por confirmar:** `tortilla` (ARASAAC la etiqueta «torta de maíz») y `camión` (por ahora, autobús urbano).
 - **Pruebas en tabletas reales:** Safari en iPad y Chrome en Android. Hasta ahora se probó en Chromium de escritorio con tamaños de tableta.
-- **Verificación pendiente (H8.6):** sincronización o exportación cifrada (H7, D6), latencia y arranque en cada tableta (H8.2), usabilidad con 5 terapeutas (H8.4) e implementación en R (H3.7); ver el informe de verificación.
+- **Verificación pendiente (H8.6):** latencia y arranque en cada tableta (H8.2), usabilidad con 5 terapeutas (H8.4) e implementación en R (H3.7); ver el informe de verificación.
+- **Llaves reales del investigador:** reemplazar las de prueba de `config/investigador.json` antes de etiquetar la versión del estudio (`tools/llaves.mjs`).
 - **Latencia de cada tableta:** `latencia_dispositivo_ms` (y con ella `tr_corregido_ms`) quedan vacías hasta medirla. La referencia motora no se probó en tabletas reales.
 - **Referencia motora:** la permanencia del objetivo (5 s) y la exclusión de los toques anticipatorios son valores de planeación por confirmar con los clínicos y con la Dra. González Ureña.
 - **Frecuencia de pantalla:** con el ahorro de energía activo (por ejemplo, con poca batería), Chrome y Edge dibujan a 30 Hz en lugar de 60 Hz. Entonces `t_opciones − t_opciones_insercion` mide unos 33 a 66 ms (1 o 2 cuadros de 33 ms). La aplicación lo avisa antes de cada bloque; para las sesiones, conecta el dispositivo a la corriente o desactiva el ahorro de energía.

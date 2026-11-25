@@ -2,7 +2,7 @@
 
 Borrador del 24 de noviembre de 2026. Arquitectura y software 9.5 y 13.1 piden evaluar la aplicación con el estándar de verificación de seguridad de aplicaciones móviles de OWASP (MASVS) antes del estudio, con el nivel básico. En la versión 2 de MASVS los niveles se volvieron perfiles de prueba; aquí se usa el perfil básico (MAS-L1) y se deja fuera el de resiliencia (MAS-R), que no pide el nivel básico.
 
-AutiPal es una aplicación web instalable (decisión D1), no una aplicación nativa. Cada control se adaptó a lo que la web permite y, cuando no se puede cumplir igual, se dice como desviación. Lo que depende del servidor o de la salida de los datos queda pendiente de la decisión D6 (H7).
+AutiPal es una aplicación web instalable (decisión D1), no una aplicación nativa. Cada control se adaptó a lo que la web permite y, cuando no se puede cumplir igual, se dice como desviación. La decisión D6 (24 nov 2026) llevó el piloto sin servidor: los datos salen en lotes cifrados con la llave pública del investigador y entran recibos y configuración firmados (`src/transporte/`). Lo que depende de un servidor queda para cuando exista (`docs/servidor/plan.md`).
 
 Estados:
 - **Cumple**: hay una prueba automática o una revisión que lo muestra.
@@ -17,20 +17,20 @@ Las comprobaciones automáticas están en `test/seguridad.test.js`, `test/almace
 | Control | En AutiPal | Estado | Evidencia |
 | --- | --- | --- | --- |
 | STORAGE-1: guarda los datos sensibles de forma segura | Ensayos, sesiones, padrón de niños y auditoría en IndexedDB, cifrados con AES-GCM de 256 bits; la llave sale del PIN del terapeuta (PBKDF2-SHA-256, 600,000 iteraciones). En `localStorage` solo quedan preferencias sin datos de niños (calibración, volumen, número de sesiones, modo experto) y, en el dispositivo del experto, sus respuestas del F3 y de la revisión clínica | Cumple | `test/almacen.test.js` (nada en claro en IndexedDB; sin el PIN no se lee); `test/seguridad.test.js` (qué guarda cada módulo) |
-| STORAGE-2: evita que los datos sensibles se filtren | Sin registros en la consola; el trabajador de servicio solo guarda archivos de la aplicación; la política de seguridad del contenido no permite conexiones a otros sitios. Las descargas (CSV y JSON) salen sin cifrar, con el código seudónimo | Cumple, con un hallazgo documentado (H-06) | `test/seguridad.test.js`; `test/instalable.test.js` |
+| STORAGE-2: evita que los datos sensibles se filtren | Sin registros en la consola; el trabajador de servicio solo guarda archivos de la aplicación; la política de seguridad del contenido no permite conexiones a otros sitios. En modo de estudio, los datos de los niños solo salen en lotes cifrados; las descargas sin cifrar solo llevan datos ficticios (H-06, corregido con D6) | Cumple | `test/seguridad.test.js`; `test/instalable.test.js`; `test/transporte.test.js` |
 
 ## MASVS-CRYPTO
 
 | Control | En AutiPal | Estado | Evidencia |
 | --- | --- | --- | --- |
-| CRYPTO-1: usa criptografía fuerte y actual | AES-GCM de 256 bits con vector inicial aleatorio de 12 bytes por escritura y la clave del registro como dato autenticado; PBKDF2-SHA-256 de 600,000 iteraciones con sal aleatoria de 16 bytes; SHA-256 (FIPS 180-4) para la huella de parámetros y la auditoría. Todo con WebCrypto, salvo la SHA-256 de las huellas (implementación propia, comprobada con los vectores de FIPS 180-4) | Cumple | `test/almacen.test.js`; `test/huella.test.js` |
+| CRYPTO-1: usa criptografía fuerte y actual | AES-GCM de 256 bits con vector inicial aleatorio de 12 bytes por escritura y la clave del registro como dato autenticado; PBKDF2-SHA-256 de 600,000 iteraciones con sal aleatoria de 16 bytes; SHA-256 (FIPS 180-4) para la huella de parámetros y la auditoría. Lotes: ECDH P-256 efímero por lote, HKDF-SHA-256 y AES-GCM de 256 bits, con la cabecera como dato autenticado; recibos y configuración: ECDSA P-256 con SHA-256. Todo con WebCrypto, salvo la SHA-256 de las huellas (implementación propia, comprobada con los vectores de FIPS 180-4) | Cumple | `test/almacen.test.js`; `test/huella.test.js`; `test/transporte.test.js` |
 | CRYPTO-2: maneja las llaves según buenas prácticas | La llave no se puede exportar, solo vive en memoria mientras la aplicación está desbloqueada y se olvida al bloquear. El PIN no se guarda. Arquitectura 9.3 pide guardar la llave en el almacén seguro del sistema operativo; la web no tiene acceso a él | Cumple con desviación (D1) | `test/almacen.test.js`; README, «Desviaciones de Arquitectura por la decisión D1» |
 
 ## MASVS-AUTH
 
 | Control | En AutiPal | Estado | Evidencia |
 | --- | --- | --- | --- |
-| AUTH-1: protocolos seguros de autenticación y autorización con un servidor | No hay servidor ni cuentas en el piloto mientras D6 no se decida. Roles, dos factores y registro de accesos (Arquitectura 9.2) son de H7 | Pendiente (H7, D6) | — |
+| AUTH-1: protocolos seguros de autenticación y autorización con un servidor | El piloto no tiene servidor ni cuentas (D6). Lo que entra a la tableta (recibos y configuración) se autentica con la firma ECDSA del investigador: una firma inválida se rechaza y queda en la auditoría. Roles, dos factores y registro de accesos (Arquitectura 9.2), con el servidor (`docs/servidor/plan.md`) | Cumple en el piloto; servidor, cuando exista | `test/transporte.test.js` |
 | AUTH-2: autenticación local segura | PIN de 6 dígitos o más; derivar la llave tarda (600,000 iteraciones); después de 5 PIN equivocados seguidos, espera de 30 s que se duplica hasta 15 min, guardada en IndexedDB (recargar la página no la reinicia); bloqueo tras 5 minutos sin uso del adulto | Cumple | `test/almacen.test.js` |
 | AUTH-3: autenticación adicional para operaciones sensibles | Borrar el registro pide confirmación y queda en la auditoría. No hay otra operación sensible sin el PIN | Cumple | `test/auditoria.test.js` |
 
@@ -38,7 +38,7 @@ Las comprobaciones automáticas están en `test/seguridad.test.js`, `test/almace
 
 | Control | En AutiPal | Estado | Evidencia |
 | --- | --- | --- | --- |
-| NETWORK-1: protege todo el tráfico de red | La aplicación solo pide sus propios archivos (GitHub Pages, siempre con HTTPS). Ningún dato sale del dispositivo: sin `fetch` a otros sitios, sin `XMLHttpRequest`, `sendBeacon` ni conexiones abiertas. La sincronización o la exportación cifrada son de H7 | Cumple para lo que hay; la salida de los datos, pendiente (H7, D6) | `test/seguridad.test.js` |
+| NETWORK-1: protege todo el tráfico de red | La aplicación solo pide sus propios archivos (GitHub Pages, siempre con HTTPS). Sin `fetch` a otros sitios, sin `XMLHttpRequest`, `sendBeacon` ni conexiones abiertas. Los datos salen en lotes cifrados de extremo a extremo para el investigador (sirven igual por archivo o por un servidor futuro) | Cumple | `test/seguridad.test.js`; `test/transporte.test.js` |
 | NETWORK-2: fija la identidad de los servidores remotos (pinning) | El navegador no permite fijar certificados desde una página | No aplica (web) | — |
 
 ## MASVS-PLATFORM
@@ -69,7 +69,7 @@ Fuera del perfil básico (es del perfil MAS-R). No se evaluó.
 | PRIVACY-1: minimiza el acceso a datos sensibles | El niño es un código seudónimo de 128 bits con ícono, color, edad en meses y consentimiento; nada más | Cumple | `test/almacen.test.js` (columnas del padrón) |
 | PRIVACY-2: evita que se identifique al usuario | La correspondencia entre el código y la identidad nunca está en la tableta (Arquitectura 9.1; RNF-07) | Cumple | `test/almacen.test.js`; README, «Privacidad» |
 | PRIVACY-3: es transparente sobre la recolección y el uso | Lo dicen el aviso de privacidad y el consentimiento del Protocolo 9.2 y 9.5, fuera de la aplicación; en la aplicación, «Privacidad» del README y los textos de las pantallas | Cumple (en el Protocolo) | Protocolo 9.2 y 9.5 |
-| PRIVACY-4: da control al usuario sobre sus datos | El consentimiento (vigente, suspendido, retirado) bloquea las sesiones; borrar o conservar los datos de un niño que retira el consentimiento se aplica en el servidor o en la exportación | Cumple en la tableta; el resto, pendiente (H7, D6) | `test/ninos.test.js` |
+| PRIVACY-4: da control al usuario sobre sus datos | El consentimiento (vigente, suspendido, retirado) bloquea las sesiones; en el estudio lo fija la configuración firmada. Borrar o conservar los datos de un niño que retira el consentimiento se aplica en la base del investigador | Cumple | `test/ninos.test.js`; `test/transporte.test.js` |
 
 ## Hallazgos
 
@@ -80,7 +80,7 @@ Fuera del perfil básico (es del perfil MAS-R). No se evaluó.
 | H-03 | La página se podía abrir dentro de un marco de otro sitio («clickjacking»); una página estática no puede declarar `frame-ancestors` | Media | Corregido en la aplicación: no arranca dentro de un marco. Si se aloja en un servidor propio (H7), agregar la cabecera `frame-ancestors 'none'` |
 | H-04 | La web no puede impedir capturas de pantalla del panel | Media | Documentado como desviación por D1. Lo reducen el bloqueo de la tableta, el bloqueo por inactividad y la capacitación |
 | H-05 | La llave sale del PIN, no del almacén seguro del sistema operativo | Media | Documentado como desviación por D1 |
-| H-06 | Las descargas del registro (CSV y JSON) salen sin cifrar, con el código seudónimo, y cualquiera con el PIN puede descargarlas; Arquitectura 9.2 dice que el terapeuta no exporta datos | Media | Documentado; se resuelve con D6 (exportación cifrada con la llave pública del investigador o servidor propio) |
-| H-07 | Si el navegador borra los datos del sitio, se pierden los registros que no se descargaron | Media | Documentado; se resuelve con D6 (exportación o sincronización periódica y aviso a los 7 días) |
-| H-08 | La copia diaria de la huella de la última entrada de la auditoría en un registro independiente (Arquitectura 10.1) todavía no existe; sin ella, quitar las últimas entradas no se detecta | Baja | Pendiente (H7, D6) |
+| H-06 | Las descargas del registro (CSV y JSON) salen sin cifrar, con el código seudónimo, y cualquiera con el PIN puede descargarlas; Arquitectura 9.2 dice que el terapeuta no exporta datos | Media | Corregido con D6: en modo de estudio, los datos de los niños solo salen en lotes cifrados con la llave pública del investigador; las descargas sin cifrar solo llevan lo ficticio |
+| H-07 | Si el navegador borra los datos del sitio, se pierden los registros que no se descargaron | Media | Reducido con D6: lotes con recibo (la tableta borra solo lo que el investigador ya tiene) y aviso a los 7 días sin exportar |
+| H-08 | La copia diaria de la huella de la última entrada de la auditoría en un registro independiente (Arquitectura 10.1) todavía no existe; sin ella, quitar las últimas entradas no se detecta | Baja | Corregido con D6: cada lote lleva la huella del último eslabón y la importación comprueba que la cadena continúa la ya importada (en cada exportación, no cada día) |
 | H-09 | En el dispositivo del experto, el F3 guarda su nombre en `localStorage` mientras lo llena | Baja | Documentado: es el dispositivo del propio experto, no hay datos de niños y él decide cuándo enviarlo |

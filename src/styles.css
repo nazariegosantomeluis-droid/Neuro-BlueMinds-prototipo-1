@@ -1922,7 +1922,8 @@ html {
 }
 
 /* Enlace con aspecto de botón secundario. */
-.adulto a.boton {
+.adulto a.boton,
+.adulto label.boton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1937,8 +1938,20 @@ html {
   transition: background-color 200ms ease-out, border-color 200ms ease-out;
 }
 
-.adulto a.boton:hover {
+.adulto a.boton:hover,
+.adulto label.boton:hover {
   background: var(--acento-suave);
+}
+
+/* Cargar un archivo (recibo o configuración, decisión D6): la etiqueta hace de botón. */
+.adulto label.boton {
+  cursor: pointer;
+  margin: 0;
+}
+
+.adulto label.boton:focus-within {
+  outline: 3px solid var(--foco, var(--acento));
+  outline-offset: 2px;
 }
 
 .adulto a.boton.primario {

@@ -64,7 +64,7 @@ function revisarHTML(html) {
 
 test('cada plantilla tiene identificador, texto y fuente; el panel no escribe nada más', () => {
   for (const [id, p] of Object.entries(plantillas.plantillas)) {
-    assert.match(id, /^(ETQ|PNL|RES|IND|CMP|LEC|DOM|FAS|ADP)-\d{2}$/);
+    assert.match(id, /^(ETQ|PNL|RES|IND|CMP|LEC|DOM|FAS|ADP|MOD|NVB)-\d{2}$/);
     assert.ok(p.texto && p.fuente, id);
   }
   assert.equal(texto(plantillas, 'CMP-03', { valor: 1050, minimo: 850, maximo: 980 }), 'Hoy respondió más lento que en su línea base (mediana de 1050 ms; línea base de 850 a 980 ms).');
@@ -244,7 +244,7 @@ test('R15: toda frase con sentido tiene su par simétrico y neutral, con los mis
     const direccional = /\b(más|menos)\b|por (arriba|abajo)/.test(p.texto.replace(/o más\b|menos de \d/g, ''));
     if (direccional) assert.ok(p.sentido && p.par, `${id} tiene dirección y no tiene par`);
   }
-  assert.equal(plantillas.version, '0.2.0');
+  assert.equal(plantillas.version, '0.3.0');
 });
 
 test('R15: el panel usa la frase del sentido que corresponde', () => {
@@ -302,4 +302,23 @@ test('el panel se abre desde «Niños inscritos» y funciona con los datos del d
   assert.match(app, /else if \(ruta === 'panel'\) renderPanel\(/);
   assert.match(app, /state\.plantillas = await \(await fetch\('src\/panel\/plantillas\.json'\)\)\.json\(\);/);
   assert.doesNotMatch(leer('src/panel/panel-pantalla.js'), /fetch\(/, 'sin conexión: no pide nada a un servidor');
+});
+
+// ---------- Decisión D6: resultados del entorno de análisis por la configuración firmada ----------
+
+test('modalidad con mejor desempeño y nivel B: con la configuración firmada, con su fecha y en plantillas', () => {
+  const h = historial(datos());
+  const sin = revisarHTML(sesionHTML(plantillas, h, 6, { config, fichas }));
+  assert.equal(sin.filter((id) => id === 'PNL-04').length, 2, 'sin resultados: «todavía no hay un resultado»');
+  const resultados = {
+    mejor_modalidad: [{ actividad: 'ACT-02', modalidad: 'AV', fecha: '2026-12-01' }, { actividad: 'ACT-07', modalidad: 'sin_diferencia', fecha: '2026-12-01' }],
+    nivel_b: [{ parametro: 'Deriva (v)', valor: 0.512, ic_inferior: 0.31, ic_superior: 0.7, fecha: '2026-12-01' }],
+  };
+  const html = sesionHTML(plantillas, h, 6, { config, fichas, resultados });
+  const ids = revisarHTML(html);
+  assert.ok(ids.includes('MOD-01') && ids.includes('MOD-02') && ids.includes('NVB-01') && !ids.includes('PNL-04'));
+  assert.match(html, /ACT-02 [^:]+: la modalidad con mejor desempeño fue AV \(calculado el 2026-12-01\)\./);
+  assert.match(html, /Deriva \(v\): 0\.51 \(intervalo de 95 %: de 0\.31 a 0\.70; calculado el 2026-12-01\)\./);
+  // Fuera de la fase 3 no se ven (Arquitectura 14).
+  assert.ok(!revisarHTML(sesionHTML(plantillas, h, 0, { config, fichas, resultados })).includes('MOD-01'));
 });

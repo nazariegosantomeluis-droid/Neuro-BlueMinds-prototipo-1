@@ -28,7 +28,7 @@ test('el cierre de la sesión y «Sesiones» no muestran aciertos, omisiones ni 
   assert.match(app, /data-sin-indicadores/);
   const sesiones = leer('src/sesiones.js');
   assert.match(sesiones, /if \(ficha && muestraIndicadores\(sesion\.modo_fase, config\)\) lineas = lineasDeBloque/);
-  assert.match(sesiones, /sesionHTML\(s, visibles\(s\.sesion_id\), state\.fichas, indice, state\.session\?\.id === s\.sesion_id, padron, state\.sesion\)/);
+  assert.match(sesiones, /sesionHTML\(s, visibles\(s\.sesion_id\), state\.fichas, indice, state\.session\?\.id === s\.sesion_id, padron, state\.sesion, descargable\(s\.sesion_id\)\)/);
 });
 
 test('el panel: indicadores solo en la fase 3; en las demás, solo el resumen de la sesión', () => {

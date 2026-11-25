@@ -2,7 +2,6 @@
 // los datos del dispositivo y guarda las marcas «coincide / no coincide» (H5.5). Funciona sin
 // conexión: todo sale del registro local. El niño aparece por su ícono y su código abreviado.
 import { esc, navHTML } from '../paginas.js';
-import { paraExportar } from '../engine/quality.js';
 import { iconoSVG } from '../ninos-pantalla.js';
 import { nombreNino, abreviar } from '../ninos.js';
 import { historialDelNino, historialHTML, sesionHTML, texto, marcaRegistro } from './panel.js';
@@ -10,8 +9,10 @@ import { historialDelNino, historialHTML, sesionHTML, texto, marcaRegistro } fro
 // Código del ensayo de ACT-07 → regla (para las lecturas de la ficha).
 const reglasDe = (items) => new Map(items.filter((i) => i.actividad === 'ACT-07' && i.ensayos).flatMap((i) => i.ensayos.map((e) => [e.codigo, e.regla])));
 
-// ctx: { state, log, sesiones, ninos, editSesion, params, auditar }.
-export function renderPanel(app, { state, log, sesiones, ninos, editSesion, params, auditar = () => {} }) {
+// ctx: { state, ensayos, sesiones, ninos, editSesion, params, auditar, resultados }. ensayos(): los
+// del registro más el historial de los que ya salieron en un lote con recibo (decisión D6).
+// resultados(codigo): los del entorno de análisis que trajo la configuración firmada.
+export function renderPanel(app, { state, ensayos, sesiones, ninos, editSesion, params, auditar = () => {}, resultados = () => null }) {
   const plantillas = state.plantillas;
   const nino = ninos.rows().find((n) => n.codigo === params.get('nino'));
   const cabecera = `${navHTML('sesiones')}<h1 data-plantilla="ETQ-01">${esc(plantillas ? texto(plantillas, 'ETQ-01') : 'Panel del terapeuta')}</h1>`;
@@ -19,12 +20,12 @@ export function renderPanel(app, { state, log, sesiones, ninos, editSesion, para
     app.innerHTML = `<div class="adulto ancho panel-terapeuta">${cabecera}<p class="mensaje">${!plantillas ? 'No se pudieron cargar las plantillas del panel (src/panel/plantillas.json).' : 'Elige un niño desde «Niños inscritos».'}</p><div class="acciones"><a class="boton" href="#ninos">Niños inscritos</a></div></div>`;
     return;
   }
-  const historial = historialDelNino({ codigo: nino.codigo, sesiones: sesiones.rows(), ensayos: paraExportar(log.rows()), fichas: state.fichas, items: state.items });
+  const historial = historialDelNino({ codigo: nino.codigo, sesiones: sesiones.rows(), ensayos: ensayos(), fichas: state.fichas, items: state.items });
   const k = Number(params.get('sesion'));
   const enSesion = params.has('sesion') && Number.isInteger(k) && k >= 0 && k < historial.length;
   const base = `#panel?nino=${encodeURIComponent(nino.codigo)}`;
   const cuerpo = enSesion
-    ? `${sesionHTML(plantillas, historial, k, { config: state.sesion, fichas: state.fichas, reglas: reglasDe(state.items) })}
+    ? `${sesionHTML(plantillas, historial, k, { config: state.sesion, fichas: state.fichas, reglas: reglasDe(state.items), resultados: resultados(nino.codigo) })}
        <div class="acciones"><a class="boton" href="${esc(base)}" data-plantilla="ETQ-17">${esc(texto(plantillas, 'ETQ-17'))}</a></div>`
     : historialHTML(plantillas, historial, { config: state.sesion, fichas: state.fichas, enlace: (i) => `${base}&sesion=${i}` });
   app.innerHTML = `
