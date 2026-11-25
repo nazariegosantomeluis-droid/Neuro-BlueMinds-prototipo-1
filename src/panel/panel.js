@@ -21,6 +21,7 @@ import { mediana, mad } from '../indicadores/estadistica.js';
 import { utilizable, validoLatencia, rtDe, calidadDeSesion, calidadBaja } from '../indicadores/nucleo.js';
 import { calcularIndicadores } from '../indicadores/exportar.js';
 import { motivoDeBloqueo } from '../envolvente.js';
+import { conHistoria } from '../ninos.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -54,7 +55,7 @@ const valorDe = (id, x) => numero(x, decimales(id));
 
 // Sesiones del niño, en orden, con sus ensayos e indicadores.
 export function historialDelNino({ codigo, sesiones, ensayos, fichas = {}, items = [] }) {
-  const propias = sesiones.filter((s) => s.codigo_nino === codigo && String(s.sesion_id).startsWith('S-'));
+  const propias = sesiones.filter((s) => s.codigo_nino === codigo && conHistoria(s.sesion_id));
   const ids = new Set(propias.map((s) => s.sesion_id));
   const deNino = ensayos.filter((r) => ids.has(r.sesion_id));
   const indicadores = calcularIndicadores(deNino, propias, { fichas, items });

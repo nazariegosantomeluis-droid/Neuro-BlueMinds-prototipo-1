@@ -328,6 +328,7 @@ export function renderInicio(app, ctx, msg = '') {
       }
       </div>
       <div class="herramientas">
+        ${ctx.expertosHTML?.() ?? ''}
         ${ctx.registroHTML()}
         ${
           state.pausa && modoExpertoActivo()
@@ -445,4 +446,5 @@ export function renderInicio(app, ctx, msg = '') {
   };
   ctx.bindVolumen(app);
   ctx.bindRegistro(app, () => renderInicio(app, ctx));
+  ctx.bindExpertos?.(app, () => renderInicio(app, ctx));
 }

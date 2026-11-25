@@ -5,6 +5,7 @@
 //
 // Indicadores del nivel B (μ, σ, τ, EZ, α, λ, IG, IRet, ICS, ICM…) no van aquí: Arquitectura 6.1
 // los deja al entorno de análisis, que los calcula con las columnas del registro por ensayo.
+import { conHistoria } from '../ninos.js';
 import { toCSV } from '../engine/logger.js';
 import { VERSION_INDICADORES } from './parametros.js';
 import { indicadoresDeSesion, calidadDeSesion } from './nucleo.js';
@@ -48,9 +49,10 @@ function fila(sesion, actividad, calidad, x, ambito = 'sesion') {
   };
 }
 
-// Las sesiones con niño son las de código S- (las de demostración y del modo experto no tienen
-// historia de un niño: su A9 y su A10 solo miran la propia sesión, y no tienen A11 ni A12).
-const conNino = (s) => String(s.sesion_id).startsWith('S-');
+// Las sesiones con niño son las de código S- y las del niño de demostración, DN- (las de la
+// demostración sin niño y del modo experto no tienen historia de un niño: su A9 y su A10 solo miran
+// la propia sesión, y no tienen A11 ni A12).
+const conNino = (s) => conHistoria(s.sesion_id);
 
 // Sesiones del niño en su fase actual: desde la última vez que cambió de fase (decisión R8). Si
 // vuelve a una fase anterior, la cuenta empieza de nuevo. hasta: sesiones.csv hasta la de hoy, en orden.

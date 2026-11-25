@@ -19,12 +19,13 @@ import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
 import { renderOpinion } from './opinion.js';
+import { crearDemo, borrarDemo, hayDemo } from './demo.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { CLAVE_MODO_EXPERTO, fijarModoExperto, leerModoExperto, modoExpertoActivo } from './modo-experto.js';
 import { crearMenu, ordenRegistro, menuHTML, mantenerPulsado } from './menu-terapeuta.js';
 import { AVISO_SIN_REVISION, revisadaClinicamente } from './revision-estado.js';
-import { NINO_KEY, NINO_COLUMNS, DEMO, participante } from './ninos.js';
+import { NINO_KEY, NINO_COLUMNS, DEMO, NINO_DEMO, conHistoria, participante } from './ninos.js';
 import { renderNinos, confirmarNino } from './ninos-pantalla.js';
 import { renderPanel } from './panel/panel-pantalla.js';
 import { crearAlmacen, abrirIDB, memoriaIDB } from './almacen.js';
@@ -399,6 +400,8 @@ const renderInicio = (msg = '') =>
       avisoSinRevision,
       registroHTML,
       bindRegistro,
+      expertosHTML,
+      bindExpertos,
       bindVolumen,
       cerrarSesion,
       empezar: start,
@@ -456,6 +459,55 @@ function registroHTML({ enlaceSesiones = true } = {}) {
 }
 
 const fechaCorta = (iso) => (iso ? new Date(iso).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : 'nunca');
+
+// Revisión de expertos (tanda 10): el formulario de opinión y el niño de demostración, con su
+// historia sembrada (config/demo-historia.json), para ver el panel sin hacer 15 sesiones.
+function expertosHTML() {
+  const demo = hayDemo(ninos);
+  return `
+    <section class="panel expertos" aria-labelledby="expertos-titulo">
+      <h2 id="expertos-titulo">Revisión de expertos</h2>
+      <p class="meta">Recorra la plataforma y diga si funciona como esperaría en su práctica.</p>
+      <div class="acciones"><a class="boton primario" href="#opinion">Formulario de opinión</a></div>
+      <h3>Niño de demostración</h3>
+      <p class="ayuda">Un niño ficticio con 12 sesiones ya hechas (familiarización, fases 1, 2 y 3), para ver el panel con indicadores. Nunca se exporta con los datos reales.</p>
+      <div class="acciones">
+        ${demo ? `<a class="boton" href="#panel?nino=${encodeURIComponent(NINO_DEMO)}" data-panel-demo>Ver su panel</a><button type="button" class="peligro" data-borrar-demo>Borrar el niño de demostración</button>` : '<button type="button" data-crear-demo>Crear niño de demostración</button>'}
+      </div>
+      <p class="meta" role="status" data-demo-estado></p>
+    </section>`;
+}
+
+function bindExpertos(root, rerender) {
+  const estado = () => root.querySelector('[data-demo-estado]');
+  const crear = root.querySelector('[data-crear-demo]');
+  if (crear) {
+    crear.onclick = async () => {
+      crear.disabled = true;
+      try {
+        const historia = await (await fetch('config/demo-historia.json')).json();
+        const r = crearDemo({ ninos, log, sesiones }, historia);
+        await almacen.listo();
+        rerender();
+        estado().textContent = `Niño de demostración creado: ${r.sesiones} sesiones con ${r.ensayos} ensayos.`;
+      } catch {
+        estado().textContent = 'No se pudo cargar la historia de demostración (config/demo-historia.json).';
+        crear.disabled = false;
+      }
+    };
+  }
+  const borrar = root.querySelector('[data-borrar-demo]');
+  if (borrar) {
+    borrar.onclick = async () => {
+      if (!confirm('¿Borrar el niño de demostración, sus sesiones y sus ensayos?')) return;
+      const r = borrarDemo({ ninos, log, sesiones, historial });
+      auditar('borrado', { ensayos: r.ensayos, sesiones: r.sesiones, nino_demostracion: true });
+      await almacen.listo();
+      rerender();
+      estado().textContent = 'Se borró el niño de demostración.';
+    };
+  }
+}
 
 // Salida de datos (decisión D6): exportar un lote cifrado y cargar recibos o la configuración.
 function salidaHTML() {
@@ -937,7 +989,7 @@ async function empezarSesion(form) {
 // Auditoría (Arquitectura 10.1): los indicadores de la sesión, con la huella de los datos de entrada
 // (el registro del niño hasta esta sesión), la versión de las definiciones y el resultado.
 function auditarIndicadores(s) {
-  const delNino = sesiones.rows().filter((x) => x.codigo_nino === s.codigo && String(x.sesion_id).startsWith('S-'));
+  const delNino = sesiones.rows().filter((x) => x.codigo_nino === s.codigo && conHistoria(x.sesion_id));
   const hasta = delNino.slice(0, delNino.findIndex((x) => x.sesion_id === s.id) + 1);
   const ids = new Set(hasta.map((x) => x.sesion_id));
   const ensayos = ensayosHistoricos().filter((r) => ids.has(r.sesion_id));
