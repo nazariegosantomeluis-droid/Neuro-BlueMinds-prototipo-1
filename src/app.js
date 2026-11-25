@@ -18,6 +18,7 @@ import { pausaGuiada } from './pausa-guiada.js';
 import { renderRevision } from './revision.js';
 import { agregarEnlaceF3 } from './enlaces.js';
 import { renderF3 } from './f3.js';
+import { renderOpinion } from './opinion.js';
 import { AVISO_VOZ_GRABADA } from './voz-grabada.js';
 import { PAUSA_SOLO_EXPERTO, pausaGuiadaPermitida } from './pausa-permiso.js';
 import { CLAVE_MODO_EXPERTO, fijarModoExperto, leerModoExperto, modoExpertoActivo } from './modo-experto.js';
@@ -360,6 +361,7 @@ function route() {
   else if (ruta === 'pausa' && state.pausa && modoExpertoActivo()) renderPausa();
   else if (ruta === 'revision' && !state.problemas.items) renderRevision(app, state);
   else if (ruta === 'formulario' && !state.problemas.items) renderF3(app, state);
+  else if (ruta === 'opinion') renderOpinion(app);
   else if (ruta === 'ninos') renderNinos(app, { ninos, fichas: state.fichas, estudio: enEstudio() ? salida.estado().configuracion : null });
   else if (ruta === 'panel') renderPanel(app, { state, ensayos: ensayosHistoricos, sesiones, ninos, editSesion, auditar, params: new URLSearchParams(query), resultados: (codigo) => salida?.estado().configuracion?.resultados?.[codigo] ?? null });
   else if (ruta === 'creditos') renderCreditos(app, state);

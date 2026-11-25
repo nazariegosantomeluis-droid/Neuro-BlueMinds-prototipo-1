@@ -8,7 +8,7 @@ import { PIN_MINIMO, pinValido } from './almacen.js';
 
 export const INACTIVIDAD_MS = 5 * 60 * 1000;
 // Pantallas sin datos de niños: se abren sin PIN. Todas las demás lo piden.
-export const RUTAS_SIN_DATOS = new Set(['galeria', 'revision', 'formulario', 'creditos', 'calibracion', 'pausa']);
+export const RUTAS_SIN_DATOS = new Set(['galeria', 'revision', 'formulario', 'opinion', 'creditos', 'calibracion', 'pausa']);
 
 // Temporizador de inactividad. puedeBloquear(): false mientras se ve la pantalla del niño.
 export function crearInactividad({ limiteMs = INACTIVIDAD_MS, ahora = () => Date.now(), puedeBloquear = () => true, alBloquear }) {
@@ -41,7 +41,7 @@ export function renderBloqueo(app, { configurado, alCrear, alDesbloquear, mensaj
         ${configurado ? '' : `<label>Repite el PIN <input name="pin2" type="password" inputmode="numeric" pattern="[0-9]*" minlength="${PIN_MINIMO}" required autocomplete="off"></label>`}
         <p class="aviso" role="alert" id="pin-mensaje" ${mensaje ? '' : 'hidden'}>${esc(mensaje)}</p>
         <div class="acciones"><button type="submit" class="primario">${configurado ? 'Desbloquear' : 'Crear el PIN'}</button></div>
-        <p class="ayuda">Sin PIN puedes abrir la galería, la revisión clínica, el formulario F3, los créditos y la calibración.</p>
+        <p class="ayuda">Sin PIN puedes abrir la galería, la revisión clínica, el formulario F3, la opinión de expertos, los créditos y la calibración.</p>
       </form>
     </div>`;
   const form = app.querySelector('#form-pin');

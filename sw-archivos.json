@@ -384,6 +384,8 @@
   "src/ninos-pantalla.js",
   "src/ninos.css",
   "src/ninos.js",
+  "src/opinion-datos.js",
+  "src/opinion.js",
   "src/paginas.js",
   "src/panel/panel-pantalla.js",
   "src/panel/panel.css",

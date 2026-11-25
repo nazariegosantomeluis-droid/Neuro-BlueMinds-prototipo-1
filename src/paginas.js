@@ -47,7 +47,7 @@ export const navHTML = (actual) => `
   <a class="saltar" href="#contenido">Saltar al contenido</a>
   ${marcaHTML()}
   <nav class="nav" aria-label="Secciones">
-    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['sesiones', 'Sesiones'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
+    ${[['inicio', 'Inicio'], ['galeria', 'Galería'], ['sesiones', 'Sesiones'], ['revision', 'Revisión'], ['formulario', 'Formulario F3'], ['opinion', 'Opinión'], ['calibracion', 'Calibración'], ['creditos', 'Créditos']]
       .map(([id, label]) => `<a href="#${id}" ${id === actual ? 'aria-current="page"' : ''}>${label}</a>`)
       .join('')}
   </nav>`;

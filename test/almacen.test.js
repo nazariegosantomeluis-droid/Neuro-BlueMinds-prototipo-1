@@ -114,7 +114,7 @@ test('la aplicación usa el almacén cifrado para todos los registros y pide el 
   for (const k of ['const log = createLog(almacen.storage)', 'const sesiones = createLog(almacen.storage', 'const ninos = createLog(almacen.storage']) assert.ok(app.includes(k), k);
   assert.doesNotMatch(app, /createLog\(\)|createLog\(undefined/);
   assert.match(app, /if \(!almacen\.desbloqueado && !RUTAS_SIN_DATOS\.has\(ruta\)\) return pedirPin\(\);/);
-  assert.deepEqual([...RUTAS_SIN_DATOS].sort(), ['calibracion', 'creditos', 'formulario', 'galeria', 'pausa', 'revision']);
+  assert.deepEqual([...RUTAS_SIN_DATOS].sort(), ['calibracion', 'creditos', 'formulario', 'galeria', 'opinion', 'pausa', 'revision']);
   assert.match(app, /puedeBloquear: \(\) => almacen\.desbloqueado && !state\.running && !app\.querySelector\('\.nino'\)/);
 });
 
