@@ -5,6 +5,10 @@
 // muestran (ni al terapeuta ni al niño) y ninguna acción depende de ellas: ningún módulo de la
 // aplicación importa este archivo salvo app.js, que solo escribe el resultado en el registro.
 //
+// Decisión R18 (24 nov 2026): se acepta su poca potencia en sesiones de 60 ensayos; el componente
+// solo se evalúa en observación, y medir su sensibilidad y sus falsas alertas es lo que pide el
+// Modelo 10.1 (y 13.7; INV-9).
+//
 // Decisión R13 (23 nov 2026; Dakos et al., 2012):
 // - x: residuo del tiempo de respuesta = ln(TR) menos la media y la tendencia lineal (mínimos
 //   cuadrados contra el orden del ensayo) de la actividad en la sesión, con los ensayos válidos

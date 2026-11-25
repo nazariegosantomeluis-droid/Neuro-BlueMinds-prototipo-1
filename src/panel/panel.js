@@ -15,6 +15,9 @@
 //   (marcas_observacion) y nunca cambia parámetros ni indicadores.
 //
 // El panel describe, no califica: no usa colores de «bien» o «mal», ni flechas de mejora.
+// Decisión R17 (24 nov 2026): la banda de 3 MAD es poco sensible (11 a 13 % para un cambio de 1 DE)
+// y se acepta en la etapa 1, así que el panel nunca dice ni sugiere «sin cambio»: un valor dentro de
+// la banda se describe como «dentro de su variación habitual» (CMP-01; test/panel.test.js).
 // Nunca muestra las señales de alerta temprana (INV-9) ni compara con otros niños.
 import { PARAMETROS as P, NOMBRES } from '../indicadores/parametros.js';
 import { mediana, mad } from '../indicadores/estadistica.js';
