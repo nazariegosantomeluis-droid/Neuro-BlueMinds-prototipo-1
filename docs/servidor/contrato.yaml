@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: AutiPal — API de sincronización (servidor posterior al piloto)
+  version: 1.0.0
+  description: |
+    Contrato del servidor de AutiPal (decisión D6, 24 nov 2026). El piloto va sin servidor: los mismos
+    lotes, recibos y configuración firmada viajan como archivos (transporte «archivo»). Con servidor solo
+    cambia el transporte (src/transporte/servidor.js); el formato es el de src/transporte/formato.js y no
+    cambia. Implementación de prueba en test/servidor-prueba.mjs (sin desplegar). Requisitos que el
+    servidor tendrá que cumplir: docs/servidor/plan.md.
+
+    - Las tabletas envían lotes cifrados con la llave pública del investigador (ECDH P-256 + HKDF-SHA-256
+      + AES-GCM-256). El servidor los descifra con la llave privada guardada en su almacén de secretos,
+      verifica las sumas y la cadena de auditoría, descarta duplicados y devuelve un recibo firmado
+      (ECDSA P-256). Enviar dos veces el mismo lote no duplica nada (PUT idempotente).
+    - La configuración (padrón seudonimizado, consentimiento, modo de fase y resultados del entorno de
+      análisis) la firma el investigador; el servidor solo la guarda y la entrega.
+    - Nada de este contrato lleva la identidad de un niño: el almacén de identidad es aparte
+      (Arquitectura 9.1) y no tiene API para las tabletas.
+servers:
+  - url: https://autipal.example/api/v1
+    description: Por definir (no hay servidor desplegado).
+security:
+  - tableta: []
+paths:
+  /lotes/{lote_id}:
+    put:
+      summary: Entregar un lote cifrado (idempotente)
+      description: |
+        El servidor importa el lote (como tools/importar.mjs). Si ya lo tenía, devuelve el mismo recibo
+        sin cambiar nada. Un lote alterado, incompleto, de otra llave, con un registro cuya suma no
+        coincide o con una cadena de auditoría que no continúa la ya recibida se rechaza entero.
+      parameters:
+        - name: lote_id
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[0-9a-f]{32}-[0-9]+$' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SobreCifrado' }
+      responses:
+        '201': { description: Lote importado, content: { application/json: { schema: { $ref: '#/components/schemas/RespuestaLote' } } } }
+        '200': { description: El lote ya estaba; mismo recibo, content: { application/json: { schema: { $ref: '#/components/schemas/RespuestaLote' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+  /dispositivos/{dispositivo}/recibos:
+    get:
+      summary: Recibos de los lotes de una tableta
+      description: Para cuando la respuesta a un PUT se perdió. La tableta los aplica en cualquier orden.
+      parameters:
+        - $ref: '#/components/parameters/Dispositivo'
+      responses:
+        '200':
+          description: Recibos firmados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [recibos]
+                properties:
+                  recibos: { type: array, items: { $ref: '#/components/schemas/Recibo' } }
+        '401': { $ref: '#/components/responses/Error' }
+  /dispositivos/{dispositivo}/configuracion:
+    get:
+      summary: Configuración firmada vigente para una tableta
+      parameters:
+        - $ref: '#/components/parameters/Dispositivo'
+      responses:
+        '200': { description: Configuración firmada, content: { application/json: { schema: { $ref: '#/components/schemas/Configuracion' } } } }
+        '204': { description: No hay configuración para esta tableta }
+        '401': { $ref: '#/components/responses/Error' }
+  /configuracion:
+    put:
+      summary: Publicar una configuración firmada (investigador responsable)
+      description: |
+        El servidor comprueba la firma con la llave pública del investigador y que el número sea mayor
+        que el de la vigente. No puede cambiarla: cualquier cambio invalida la firma.
+      security:
+        - investigador: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Configuracion' }
+      responses:
+        '200': { description: Publicada }
+        '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+components:
+  securitySchemes:
+    tableta:
+      type: http
+      scheme: bearer
+      description: Token por tableta, emitido al darla de alta y revocable (borrado remoto si se pierde; Arquitectura 9.3).
+    investigador:
+      type: openIdConnect
+      openIdConnectUrl: https://identidad.example/.well-known/openid-configuration
+      description: Cuenta personal con dos factores (Arquitectura 9.2). Por definir.
+  parameters:
+    Dispositivo:
+      name: dispositivo
+      in: path
+      required: true
+      schema: { type: string, pattern: '^[0-9a-f]{32}$' }
+  responses:
+    Error:
+      description: Error con su motivo
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              motivo: { type: string }
+  schemas:
+    Firma:
+      type: object
+      required: [alg, llave, valor]
+      properties:
+        alg: { type: string, enum: [ECDSA-P256-SHA256] }
+        llave: { type: string, description: Primeros 16 caracteres del SHA-256 de la llave pública }
+        valor: { type: string, format: byte, description: Firma del JSON canónico del objeto sin su campo «firma» }
+    Registro:
+      type: object
+      description: Un ensayo, una sesión o una entrada de auditoría.
+      required: [id, tipo, version, suma, datos]
+      properties:
+        id: { type: string, description: 'E:<sesion_id>:<n>, S:<sesion_id> o A:<n>:<huella>' }
+        tipo: { type: string, enum: [ensayo, sesion, auditoria] }
+        version: { type: string, example: 1.0.0 }
+        suma: { type: string, pattern: '^[0-9a-f]{64}$', description: SHA-256 del JSON canónico de datos }
+        datos: { type: object, description: Columnas del registro (README, «Registro» y «Sesiones») }
+    Lote:
+      type: object
+      description: Lo que va dentro del sobre cifrado.
+      required: [formato, version, lote_id, dispositivo, numero, creado, huella_auditoria, registros, suma]
+      properties:
+        formato: { type: string, enum: [nbm-lote] }
+        version: { type: string, example: 1.0.0 }
+        lote_id: { type: string }
+        dispositivo: { type: string }
+        numero: { type: integer, minimum: 1 }
+        creado: { type: string, format: date-time }
+        version_app: { type: string, nullable: true }
+        commit: { type: string, nullable: true }
+        huella_auditoria: { type: string, description: Huella del último eslabón de la cadena de auditoría (Arquitectura 10.1) }
+        registros: { type: array, items: { $ref: '#/components/schemas/Registro' } }
+        suma: { type: string, description: SHA-256 del JSON canónico del lote sin «suma» }
+    SobreCifrado:
+      type: object
+      required: [formato, version, alg, llave, lote_id, dispositivo, numero, creado, efimera, sal, iv, datos]
+      properties:
+        formato: { type: string, enum: [nbm-lote-cifrado] }
+        version: { type: string }
+        alg: { type: string, enum: [ECDH-P256+HKDF-SHA256+A256GCM] }
+        llave: { type: string, description: Id de la llave pública del investigador }
+        lote_id: { type: string }
+        dispositivo: { type: string }
+        numero: { type: integer }
+        creado: { type: string, format: date-time }
+        efimera: { type: object, description: Llave pública ECDH efímera (JWK) }
+        sal: { type: string, format: byte }
+        iv: { type: string, format: byte }
+        datos: { type: string, format: byte, description: Lote cifrado con AES-GCM; la cabecera va como dato autenticado }
+    Recibo:
+      type: object
+      required: [formato, version, lote_id, dispositivo, numero, recibido, registros, nuevos, duplicados, ensayos, suma_ensayos, huella_auditoria, firma]
+      properties:
+        formato: { type: string, enum: [nbm-recibo] }
+        version: { type: string }
+        lote_id: { type: string }
+        dispositivo: { type: string }
+        numero: { type: integer }
+        recibido: { type: string, format: date-time }
+        registros: { type: integer }
+        nuevos: { type: integer }
+        duplicados: { type: integer }
+        ensayos: { type: integer }
+        suma_ensayos: { type: string, description: SHA-256 de la lista ordenada de los id de los ensayos del lote }
+        huella_auditoria: { type: string }
+        firma: { $ref: '#/components/schemas/Firma' }
+    RespuestaLote:
+      type: object
+      required: [recibo]
+      properties:
+        recibo: { $ref: '#/components/schemas/Recibo' }
+    Nino:
+      type: object
+      description: Solo estos campos; ninguno identifica al niño (RNF-07).
+      additionalProperties: false
+      required: [codigo, icono, color, edad_meses, consentimiento, video, modo_fase]
+      properties:
+        codigo: { type: string, pattern: '^[0-9a-f]{32}$' }
+        icono: { type: string }
+        color: { type: string }
+        edad_meses: { type: integer }
+        consentimiento: { type: string, enum: [vigente, suspendido, retirado] }
+        video: { type: boolean }
+        modo_fase: { type: string, enum: [familiarizacion, fase1, fase2, fase3, cierre] }
+        bandas: { type: object, additionalProperties: { type: string } }
+    Configuracion:
+      type: object
+      required: [formato, version, numero, emitida, ninos, firma]
+      properties:
+        formato: { type: string, enum: [nbm-configuracion] }
+        version: { type: string }
+        numero: { type: integer, minimum: 1 }
+        emitida: { type: string, format: date-time }
+        dispositivos: { type: array, items: { type: string } }
+        ninos: { type: array, items: { $ref: '#/components/schemas/Nino' } }
+        resultados:
+          type: object
+          description: Resultados del entorno de análisis por código de niño (Arquitectura 8.2 y 11).
+          additionalProperties:
+            type: object
+            properties:
+              mejor_modalidad:
+                type: array
+                items:
+                  type: object
+                  required: [actividad, modalidad, fecha]
+                  properties:
+                    actividad: { type: string }
+                    modalidad: { type: string, enum: [V, AV, sin_diferencia] }
+                    fecha: { type: string }
+              nivel_b:
+                type: array
+                items:
+                  type: object
+                  required: [parametro, valor, fecha]
+                  properties:
+                    parametro: { type: string }
+                    valor: { type: number }
+                    ic_inferior: { type: number }
+                    ic_superior: { type: number }
+                    fecha: { type: string }
+        firma: { $ref: '#/components/schemas/Firma' }
