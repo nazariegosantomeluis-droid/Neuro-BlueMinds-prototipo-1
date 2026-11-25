@@ -1,0 +1,26 @@
+{
+  "descripcion": "Llaves PRIVADAS DE PRUEBA (públicas en config/investigador.json). Solo para pruebas: nunca con datos reales.",
+  "prueba": true,
+  "cifrado": {
+    "key_ops": [
+      "deriveBits"
+    ],
+    "ext": true,
+    "kty": "EC",
+    "x": "sArIiwN2z7i8w-8sNyJrSerbgQlmZzrChy6u7UhtEpc",
+    "y": "m0P7DWnyxt4KBjq6XF-FL3d9gSyLML6q1Fz5ExIe4DE",
+    "crv": "P-256",
+    "d": "MgBUSXJ0MFYlThItEIxCvZHNXZxl9z3_guzJ6H55WF0"
+  },
+  "firma": {
+    "key_ops": [
+      "sign"
+    ],
+    "ext": true,
+    "kty": "EC",
+    "x": "iuQH_X5pGHf35QMwGyU2pZ_1LcmcCOtqq4DV9wvfFOo",
+    "y": "Kj1VNYd9QlmomhIwcB_-OR6T87aHx6pt2yx-l8HYTOE",
+    "crv": "P-256",
+    "d": "bPU16MwaDuUAgoaHxt4_MsjlumTKpbrXgNwnWsUaQ9c"
+  }
+}

@@ -256,8 +256,8 @@ function adaptacionesHTML(plantillas, sesion) {
 }
 
 // Panel de una sesión del historial. k: su índice. config: fichas/sesion.json. reglas: código del
-// ensayo de ACT-07 → regla.
-export function sesionHTML(plantillas, historial, k, { config, fichas = {}, reglas = new Map() }) {
+// ensayo de ACT-07 → regla. resultados: los del niño en la configuración firmada (nivel B y modalidad).
+export function sesionHTML(plantillas, historial, k, { config, fichas = {}, reglas = new Map(), resultados = null }) {
   const h = historial[k];
   const modo = h.sesion.modo_fase;
   const completo = conIndicadores(modo, config);
@@ -312,8 +312,14 @@ export function sesionHTML(plantillas, historial, k, { config, fichas = {}, regl
     );
     partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-10">${esc(texto(plantillas, 'ETQ-10'))}</h3>${fase.join('')}</section>`);
   }
-  partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-07">${esc(texto(plantillas, 'ETQ-07'))}</h3>${frase(plantillas, 'PNL-04')}</section>`);
-  partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-08">${esc(texto(plantillas, 'ETQ-08'))}</h3>${frase(plantillas, 'PNL-04')}</section>`);
+  // Resultados del entorno de análisis (Arquitectura 8.2 y 11): llegan con la configuración firmada
+  // (decisión D6), con su fecha de cálculo. Sin ellos, «todavía no hay un resultado».
+  const modalidades = (resultados?.mejor_modalidad ?? []).map((m) =>
+    m.modalidad === 'sin_diferencia' ? frase(plantillas, 'MOD-02', { actividad: fichas[m.actividad]?.nombre ? `${m.actividad} ${fichas[m.actividad].nombre}` : m.actividad, fecha: m.fecha }) : frase(plantillas, 'MOD-01', { actividad: fichas[m.actividad]?.nombre ? `${m.actividad} ${fichas[m.actividad].nombre}` : m.actividad, modalidad: m.modalidad, fecha: m.fecha }),
+  );
+  const nivelB = (resultados?.nivel_b ?? []).map((b) => frase(plantillas, 'NVB-01', { parametro: b.parametro, valor: numero(b.valor), inferior: numero(b.ic_inferior), superior: numero(b.ic_superior), fecha: b.fecha }));
+  partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-07">${esc(texto(plantillas, 'ETQ-07'))}</h3>${modalidades.join('') || frase(plantillas, 'PNL-04')}</section>`);
+  partes.push(`<section class="panel-seccion"><h3 data-plantilla="ETQ-08">${esc(texto(plantillas, 'ETQ-08'))}</h3>${nivelB.join('') || frase(plantillas, 'PNL-04')}</section>`);
   partes.push(adaptacionesHTML(plantillas, h.sesion));
   return partes.join('');
 }

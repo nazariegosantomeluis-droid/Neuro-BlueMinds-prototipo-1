@@ -6,8 +6,9 @@
 // el investigador fuera de la aplicación. Por eso el padrón no tiene ningún campo de texto libre y
 // rechaza cualquier dato que no sea uno de los permitidos.
 //
-// Este padrón es del prototipo: en el estudio lo entrega el servidor y el terapeuta no cambia el
-// consentimiento (Arquitectura 9.6, hoja de ruta H7.4).
+// Este padrón es del prototipo: en el estudio lo fija la configuración firmada por el investigador
+// (decisión D6; src/transporte/salida.js) y el terapeuta no cambia el consentimiento ni el modo de
+// fase (Arquitectura 9.6 y 14).
 
 export const NINO_KEY = 'neuro-blueminds.ninos';
 // modo_fase y bandas (tanda 3, H2.3): el modo de fase del niño y la banda fija de cada actividad,
@@ -115,7 +116,7 @@ export function fijarBanda(bandas, ficha, banda) {
   return { ...(bandas ?? {}), [ficha.id]: banda };
 }
 
-// Un consentimiento retirado no se revierte en la tableta: solo el servidor (H7.4). Suspendido
+// Un consentimiento retirado no se revierte en la tableta: solo una configuración firmada nueva (D6). Suspendido
 // puede volver a vigente.
 export function cambiarConsentimiento(actual, nuevo) {
   if (!CONSENTIMIENTOS.includes(nuevo)) throw new Error(`Estado de consentimiento desconocido: ${nuevo}.`);

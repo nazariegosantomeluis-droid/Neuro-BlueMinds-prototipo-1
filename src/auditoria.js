@@ -8,9 +8,11 @@
 // - cada propuesta de la regla de adaptación, si se ejecutó o se bloqueó y el invariante ('adaptacion');
 // - cada orden del terapeuta ('orden');
 // - cada cálculo de indicadores, con la huella de los datos de entrada, la versión y el resultado ('indicadores');
-// - qué se mostró en el panel y cuándo ('panel').
-// La copia diaria de la huella de la última entrada en un registro independiente del servidor
-// depende de H7 (decisión D6).
+// - qué se mostró en el panel y cuándo ('panel');
+// - con la decisión D6: cada exportación ('exportacion'), recibo ('recibo', 'recibo_rechazado') y
+//   configuración ('configuracion', 'configuracion_rechazada') (src/transporte/salida.js).
+// La copia de la huella de la última entrada (Arquitectura 10.1) va en cada lote exportado, y la
+// importación comprueba que la cadena continúa la ya importada.
 import { huellaDe, canonico } from './huella.js';
 
 export const VERSION_AUDITORIA = '0.1.0';

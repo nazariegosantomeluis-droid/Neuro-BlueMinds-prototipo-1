@@ -1,0 +1,19 @@
+{
+  "descripcion": "Llaves PÚBLICAS DE PRUEBA del investigador. Su privada está en test/fixtures/llaves-prueba.json: no usar con datos reales.",
+  "prueba": true,
+  "creadas": "2026-11-25",
+  "cifrado": {
+    "crv": "P-256",
+    "kty": "EC",
+    "x": "sArIiwN2z7i8w-8sNyJrSerbgQlmZzrChy6u7UhtEpc",
+    "y": "m0P7DWnyxt4KBjq6XF-FL3d9gSyLML6q1Fz5ExIe4DE",
+    "id": "aa1e8eb725cde3d9"
+  },
+  "firma": {
+    "crv": "P-256",
+    "kty": "EC",
+    "x": "iuQH_X5pGHf35QMwGyU2pZ_1LcmcCOtqq4DV9wvfFOo",
+    "y": "Kj1VNYd9QlmomhIwcB_-OR6T87aHx6pt2yx-l8HYTOE",
+    "id": "9936c7e06ca458ed"
+  }
+}

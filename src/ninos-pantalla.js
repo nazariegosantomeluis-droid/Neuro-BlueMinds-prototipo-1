@@ -12,7 +12,7 @@ export const CON_BANDA = ['ACT-02', 'ACT-07'];
 export const LINEA_SIN_IDENTIDAD =
   'Esta tableta no guarda quién es cada niño: el investigador lleva la relación entre el código y el niño fuera de la aplicación (Arquitectura 9.1).';
 const AVISO_PADRON =
-  'Padrón local del prototipo. En el estudio lo entrega el servidor y el terapeuta no cambia el consentimiento (Arquitectura 9.6). Inscribe solo a niños cuya familia ya firmó el consentimiento.';
+  'Padrón local del prototipo. En el estudio lo entrega la configuración firmada por el investigador responsable y el terapeuta no cambia el consentimiento ni el modo de fase (Arquitectura 9.6; decisión D6). Inscribe solo a niños cuya familia ya firmó el consentimiento.';
 
 const FORMAS = {
   circulo: '<circle cx="12" cy="12" r="9"/>',
@@ -47,7 +47,7 @@ export function inscripcionHTML() {
 const ETIQUETA_CONSENTIMIENTO = { vigente: 'Vigente', suspendido: 'Suspendido', retirado: 'Retirado' };
 
 // Modo de fase y banda fija de cada actividad: los fija el investigador responsable.
-function faseHTML(n, fichas) {
+function faseHTML(n, fichas, estudio = null) {
   const modo = modoDe(n);
   const bandas = CON_BANDA.filter((id) => fichas[id])
     .map((id) => {
@@ -58,13 +58,14 @@ function faseHTML(n, fichas) {
     .join('');
   return `
     <label>Modo de fase
-      <select data-modo data-codigo="${esc(n.codigo)}">${MODOS_FASE.map((m) => `<option value="${m}" ${m === modo ? 'selected' : ''}>${esc(NOMBRE_MODO[m])}</option>`).join('')}</select></label>
+      <select data-modo data-codigo="${esc(n.codigo)}" ${estudio ? 'disabled' : ''}>${MODOS_FASE.map((m) => `<option value="${m}" ${m === modo ? 'selected' : ''}>${esc(NOMBRE_MODO[m])}</option>`).join('')}</select></label>
     <details class="nino-bandas"><summary>Banda fija</summary><div class="nino-bandas-campos">${bandas}</div></details>`;
 }
 
-function filaHTML(n, fichas) {
-  const acciones =
-    n.consentimiento === 'vigente'
+function filaHTML(n, fichas, estudio = null) {
+  const acciones = estudio
+    ? ''
+    : n.consentimiento === 'vigente'
       ? `<button type="button" data-cambiar="suspendido" data-codigo="${esc(n.codigo)}">Suspender</button>
          <button type="button" data-cambiar="retirado" data-codigo="${esc(n.codigo)}">Retirar</button>`
       : n.consentimiento === 'suspendido'
@@ -79,15 +80,20 @@ function filaHTML(n, fichas) {
       <td>${esc(n.edad_meses)} meses</td>
       <td>${n.video ? 'Sí' : 'No'}</td>
       <td>${esc(ETIQUETA_CONSENTIMIENTO[n.consentimiento] ?? n.consentimiento)}</td>
-      <td class="nino-fase">${faseHTML(n, fichas)}</td>
+      <td class="nino-fase">${faseHTML(n, fichas, estudio)}</td>
       <td><div class="acciones"><a class="boton" href="#panel?nino=${encodeURIComponent(n.codigo)}">Panel</a>${acciones}</div></td>
     </tr>`;
 }
 
 export const AVISO_FASE =
-  'El modo de fase y la banda fija de cada niño los fija el investigador responsable (Arquitectura 14). En el estudio vienen del servidor; en este prototipo se fijan aquí. La banda fija se usa en las fases 1, 2, 3 y en el cierre. En la familiarización, una escalera de 10 ensayos por banda propone la banda inicial de la fase 1; el terapeuta la confirma o la cambia al cerrar y queda aquí.';
+  'El modo de fase y la banda fija de cada niño los fija el investigador responsable (Arquitectura 14). En el estudio vienen de la configuración firmada; en este prototipo se fijan aquí. La banda fija se usa en las fases 1, 2, 3 y en el cierre. En la familiarización, una escalera de 10 ensayos por banda propone la banda inicial de la fase 1; el terapeuta la confirma o la cambia al cerrar y queda aquí.';
 
-export function renderNinos(app, { ninos, fichas = {} }) {
+// Modo de estudio (decisión D6): el padrón, el consentimiento y el modo de fase vienen de la
+// configuración firmada por el investigador; el terapeuta no los cambia ni inscribe niños.
+export const AVISO_ESTUDIO = (numero) =>
+  `Modo de estudio: el padrón, el consentimiento y el modo de fase vienen de la configuración ${numero}, firmada por el investigador responsable (Arquitectura 9.6 y 14). No se cambian en la tableta; para cambiarlos, el investigador emite una configuración nueva.`;
+
+export function renderNinos(app, { ninos, fichas = {}, estudio = null }) {
   let msg = '';
   let exito = false; // el aviso de éxito no usa el estilo rojo de los errores
   const dibujar = () => {
@@ -97,23 +103,24 @@ export function renderNinos(app, { ninos, fichas = {} }) {
         ${navHTML('inicio')}
         <h1>Niños inscritos</h1>
         <p class="aviso" id="sin-identidad">${esc(LINEA_SIN_IDENTIDAD)}</p>
-        <p class="meta">${esc(AVISO_PADRON)}</p>
+        <p class="meta" data-aviso-padron>${esc(estudio ? AVISO_ESTUDIO(estudio.numero) : AVISO_PADRON)}</p>
         ${ninos.stored ? '' : '<p class="mensaje">No se pudo guardar en el dispositivo. Los cambios se pierden al cerrar esta página.</p>'}
         ${
           filas.length
             ? `<div class="panel"><table class="nino-tabla">
                 <thead><tr><th>Ícono</th><th>Código</th><th>Edad</th><th>Video</th><th>Consentimiento</th><th>Fase</th><th></th></tr></thead>
-                <tbody>${filas.map((n) => filaHTML(n, fichas)).join('')}</tbody></table>
-                <p class="ayuda">${esc(AVISO_FASE)}</p></div>`
+                <tbody>${filas.map((n) => filaHTML(n, fichas, estudio)).join('')}</tbody></table>
+                ${estudio ? '' : `<p class="ayuda">${esc(AVISO_FASE)}</p>`}</div>`
             : '<p class="meta">Todavía no hay niños inscritos. Sin ellos solo se puede usar la demostración.</p>'
         }
-        <section><h2>Inscribir un niño</h2>${inscripcionHTML()}</section>
+        ${estudio ? '<p class="mensaje meta" role="status" id="ninos-msg"></p>' : `<section><h2>Inscribir un niño</h2>${inscripcionHTML()}</section>`}
       </div>`;
     const mensaje = app.querySelector('#ninos-msg');
     mensaje.textContent = msg;
     if (exito) mensaje.className = 'meta';
 
-    app.querySelector('#inscribir').onsubmit = (e) => {
+    const form = app.querySelector('#inscribir');
+    if (form) form.onsubmit = (e) => {
       e.preventDefault();
       const f = e.target;
       try {
@@ -133,6 +140,7 @@ export function renderNinos(app, { ninos, fichas = {} }) {
         if (r) fn(r);
       });
     for (const s of app.querySelectorAll('[data-modo]')) {
+      if (estudio) continue;
       s.onchange = () => {
         editar(s.dataset.codigo, (r) => (r.modo_fase = cambiarModo(s.value)));
         msg = `Modo de fase: ${NOMBRE_MODO[s.value]}.`;
