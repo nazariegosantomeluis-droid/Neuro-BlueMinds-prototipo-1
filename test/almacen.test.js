@@ -145,3 +145,17 @@ test('H8.5: después de 5 PIN equivocados, espera creciente guardada en IndexedD
   assert.equal(await c.desbloquear('482915'), true);
   assert.equal(await c.espera(), 0, 'el PIN correcto reinicia la cuenta');
 });
+
+test('guarda y vuelve a leer un registro grande (varios MB): el cifrado no falla con valores grandes', async () => {
+  const db = memoriaIDB();
+  const a = crearAlmacen({ db, claves: CLAVES });
+  await a.crearPin('482915', RAPIDO);
+  const grande = JSON.stringify(Array.from({ length: 4000 }, (_, i) => ({ i, texto: 'x'.repeat(800) })));
+  assert.ok(grande.length > 3e6);
+  a.storage.setItem('neuro-blueminds.registro', grande);
+  await a.listo();
+  assert.equal(a.error, null, 'la escritura no falló');
+  await a.bloquear();
+  assert.equal(await a.desbloquear('482915'), true);
+  assert.equal(a.storage.getItem('neuro-blueminds.registro'), grande);
+});

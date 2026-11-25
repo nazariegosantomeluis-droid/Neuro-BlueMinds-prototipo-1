@@ -30,7 +30,14 @@ const VERIFICADOR = 'neuro-blueminds: PIN correcto';
 
 const texto = new TextEncoder();
 const deTexto = new TextDecoder();
-const aBase64 = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes)));
+// Por trozos: String.fromCharCode(...bytes) con cientos de miles de bytes excede el número de
+// argumentos que admite el navegador, y el registro de una tableta pasa de 100 KB en pocas sesiones.
+const aBase64 = (bytes) => {
+  const b = new Uint8Array(bytes);
+  let s = '';
+  for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000));
+  return btoa(s);
+};
 const deBase64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 
 // Llave AES-GCM de 256 bits derivada del PIN (no exportable).
