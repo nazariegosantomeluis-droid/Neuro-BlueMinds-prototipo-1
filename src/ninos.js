@@ -22,6 +22,15 @@ export const CONSENTIMIENTOS = ['vigente', 'suspendido', 'retirado'];
 export const EDAD_MIN = 48;
 export const EDAD_MAX = 131;
 export const DEMO = 'DEMO';
+// Niño ficticio de demostración para los expertos (tanda 10): con historia sembrada de la
+// familiarización a la fase 3, para ver el panel sin hacer 15 sesiones. Sus sesiones son DN-…: tienen
+// historia de niño (panel, A9 a A12) pero no son de un niño real, así que nunca se exportan
+// (src/transporte/salida.js) y se descargan como datos ficticios.
+export const NINO_DEMO = 'demo-nino';
+export const PREFIJO_DEMO_NINO = 'DN';
+export const esNinoDemo = (n) => n?.codigo === NINO_DEMO;
+// Sesiones con historia de un niño: las de los niños inscritos (S-) y las del niño de demostración (DN-).
+export const conHistoria = (sesion_id) => /^(S|DN)-/.test(String(sesion_id));
 
 // Formas simples y distintas por su silueta, para que no dependan del color.
 export const ICONOS = [
@@ -134,12 +143,13 @@ export function puedeIniciar(nino) {
 
 // Quién participa en la sesión: un niño inscrito con consentimiento vigente, la demostración sin
 // niño o el modo experto (solo en demostración). Devuelve { error } si no se puede empezar.
-// prefijo: separa las sesiones en el registro (S- niño, DEMO- demostración, EXP- experto).
+// prefijo: separa las sesiones en el registro (S- niño, DN- niño de demostración, DEMO- demostración,
+// EXP- experto).
 export function participante(valor, experto, ninos) {
   if (valor === DEMO) return experto ? { tipo: 'experto', prefijo: 'EXP', codigo: DEMO } : { tipo: 'demo', prefijo: 'DEMO', codigo: DEMO };
   if (experto) return { error: 'El modo experto es solo para la demostración, sin niño.' };
   if (!valor) return { error: 'Elige al niño o la demostración.' };
   const nino = ninos.find((n) => n.codigo === valor);
   const { ok, motivo } = puedeIniciar(nino);
-  return ok ? { tipo: 'nino', prefijo: 'S', codigo: nino.codigo, nino } : { error: motivo };
+  return ok ? { tipo: 'nino', prefijo: esNinoDemo(nino) ? PREFIJO_DEMO_NINO : 'S', codigo: nino.codigo, nino } : { error: motivo };
 }

@@ -22,14 +22,15 @@ const duracion = (ms) => {
   return s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${s % 60} s`;
 };
 
-// Tipo de sesión según el prefijo de su identificador: S- (niño inscrito), DEMO- (demostración)
-// o EXP- (modo experto).
-export const tipoDeSesion = (id) => (String(id).startsWith('EXP-') ? 'experto' : String(id).startsWith('DEMO-') ? 'demo' : 'nino');
-const ETIQUETA_TIPO = { experto: 'Modo experto', demo: 'Demostración' };
+// Tipo de sesión según el prefijo de su identificador: S- (niño inscrito), DN- (niño de
+// demostración), DEMO- (demostración) o EXP- (modo experto).
+export const tipoDeSesion = (id) => (String(id).startsWith('EXP-') ? 'experto' : String(id).startsWith('DEMO-') ? 'demo' : String(id).startsWith('DN-') ? 'demo-nino' : 'nino');
+const ETIQUETA_TIPO = { experto: 'Modo experto', demo: 'Demostración', 'demo-nino': 'Niño de demostración' };
 
 // De quién es la sesión, sin nada que identifique al niño: su ícono y su color (si sigue en el
 // padrón de este dispositivo) y el código abreviado. El registro guarda el código completo.
 export function participanteDeSesion(sesion, padron = []) {
+  if (tipoDeSesion(sesion.sesion_id) === 'demo-nino') return 'niño de demostración (ficticio)';
   if (tipoDeSesion(sesion.sesion_id) !== 'nino') return 'sin niño';
   const codigo = String(sesion.codigo_nino ?? '');
   const nino = padron.find((n) => n.codigo === codigo);

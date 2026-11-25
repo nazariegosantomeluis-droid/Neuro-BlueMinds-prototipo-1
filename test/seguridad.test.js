@@ -31,7 +31,7 @@ test('MASVS-STORAGE: los datos de niños solo van al almacén cifrado; localStor
   const claves = [...app.matchAll(/prefs\.(?:set|get)\('([^']+)'/g)].map((m) => m[1]);
   assert.deepEqual([...new Set(claves)].sort(), ['nbm.cm', 'nbm.sesiones', 'nbm.volumen']);
   for (const [f, src] of codigo) {
-    if (['src/almacen.js', 'src/engine/logger.js', 'src/app.js', 'src/f3.js', 'src/revision.js', 'src/modo-experto.js'].includes(f)) continue;
+    if (['src/almacen.js', 'src/engine/logger.js', 'src/app.js', 'src/f3.js', 'src/opinion.js', 'src/revision.js', 'src/modo-experto.js'].includes(f)) continue;
     assert.doesNotMatch(src, /localStorage|sessionStorage|indexedDB/, `${f} no guarda nada por su cuenta`);
   }
   // Sin registros en la consola (no dejan datos en los registros del navegador).

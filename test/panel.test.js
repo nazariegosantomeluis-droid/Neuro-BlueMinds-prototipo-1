@@ -322,3 +322,23 @@ test('modalidad con mejor desempeño y nivel B: con la configuración firmada, c
   // Fuera de la fase 3 no se ven (Arquitectura 14).
   assert.ok(!revisarHTML(sesionHTML(plantillas, h, 0, { config, fichas, resultados })).includes('MOD-01'));
 });
+
+// ---------- Decisión R17: el panel nunca dice ni sugiere «sin cambio» ----------
+
+test('R17: ninguna plantilla dice ni sugiere «sin cambio»; dentro de la banda, «dentro de su variación habitual»', () => {
+  const SIN_CAMBIO = /sin cambio|no (ha |hubo )?cambi[oó] (en )?(su|el) (desempeño|indicador|valor)|no cambi[oó]\b|sigue igual|se mantuvo|se mantiene|estable|igual que (en )?su línea base|sin diferencia con su línea base|no mejor|no empeor/i;
+  for (const [id, p] of Object.entries(plantillas.plantillas)) assert.doesNotMatch(p.texto, SIN_CAMBIO, id);
+  assert.match(plantillas.plantillas['CMP-01'].texto, /^Dentro de su variación habitual/);
+  // Con un valor dentro de la banda, el panel usa CMP-01 y ninguna otra frase de comparación.
+  const d = datos({ fase3: [{ rt: 950 }, { rt: 950 }] });
+  const ids = revisarHTML(sesionHTML(plantillas, historial(d), 6, { config, fichas }));
+  assert.ok(ids.includes('CMP-01'));
+  assert.ok(!ids.some((id) => /^CMP-0[2-9]$/.test(id)), ids.join());
+  const src = leer('src/panel/panel.js');
+  assert.match(src, /if \(!lado\) partes\.push\(frase\(plantillas, 'CMP-01', rango\)\);/);
+  assert.match(src, /Decisión R17/);
+});
+
+test('R18: la poca potencia de la alerta temprana se acepta y se cita', () => {
+  assert.match(leer('src/alerta.js'), /Decisión R18 \(24 nov 2026\)/);
+});

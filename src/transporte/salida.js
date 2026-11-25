@@ -16,6 +16,7 @@
 //   auditoría.
 import { registrosDe, armarLote, conIds, sumaDeIds, verificarConfiguracion, aHistorial, sumaDe, FORMATO_RECIBO, FORMATO_CONFIGURACION } from './formato.js';
 import { cifrarLote, verificarFirma } from './cripto.js';
+import { esNinoDemo } from '../ninos.js';
 
 export const SALIDA_KEY = 'neuro-blueminds.salida';
 export const HISTORIAL_KEY = 'neuro-blueminds.historial';
@@ -125,7 +126,8 @@ export function crearSalida({ storage, log, historial, sesiones, auditoria, nino
     // El padrón pasa a ser el de la configuración; la banda que el terapeuta fijó en la
     // familiarización se conserva si la configuración no trae otra.
     const antes = new Map(ninos.rows().map((n) => [n.codigo, n]));
-    const padron = c.ninos.map((n) => ({ ...n, video: Boolean(n.video), bandas: n.bandas ?? antes.get(n.codigo)?.bandas ?? {} }));
+    // El niño de demostración (ficticio) se queda.
+    const padron = [...c.ninos.map((n) => ({ ...n, video: Boolean(n.video), bandas: n.bandas ?? antes.get(n.codigo)?.bandas ?? {} })), ...ninos.rows().filter(esNinoDemo)];
     ninos.edit((all) => {
       all.length = 0;
       all.push(...padron);

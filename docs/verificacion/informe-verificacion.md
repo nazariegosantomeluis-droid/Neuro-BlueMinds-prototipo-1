@@ -63,7 +63,7 @@ Estados:
 | Condición | Estado |
 | --- | --- |
 | 13.2 Latencia de cada tableta | Pendiente (H8.2) |
-| 13.3 Usabilidad con 5 terapeutas | Pendiente (H8.4) |
+| 13.3 Usabilidad con 5 terapeutas | Pendiente (H8.4). Para la revisión de expertos previa: formulario de opinión (`#opinion`) y niño de demostración con historia sembrada; `tools/unir-opinion.mjs` ordena los problemas por gravedad y número de expertos |
 | 13.4 Revisión de estímulos | En curso: la revisión clínica de la muestra se aplica con `tools/aplicar-revision.mjs` (H1.3); faltan los 200 ítems fuera de la muestra, las fotografías y la voz grabada (H1.2) |
 
 ## Hallazgos de H8.5 que esperaban la decisión D6
@@ -75,7 +75,7 @@ Los 6 hallazgos que quedaron abiertos en H8.5 (H-04 a H-09), con la decisión D6
 | H-04 La web no puede impedir capturas de pantalla del panel | Sin cambio: desviación por D1 (bloqueo de la tableta, bloqueo por inactividad y capacitación) |
 | H-05 La llave del almacén sale del PIN | Sin cambio: desviación por D1 |
 | H-06 Descargas del registro sin cifrar | Corregido: en modo de estudio las descargas sin cifrar solo llevan datos ficticios (demostración y modo experto); los datos de los niños solo salen en lotes cifrados con la llave pública del investigador |
-| H-07 Pérdida si el navegador borra los datos | Reducido: lotes con recibo (la tableta borra solo lo que el investigador ya tiene) y aviso a los 7 días sin exportar |
+| H-07 Pérdida si el navegador borra los datos | Reducido: lotes con recibo (la tableta borra solo lo que el investigador ya tiene), aviso a los 7 días sin exportar y almacenamiento persistente pedido al navegador (tanda 10) |
 | H-08 Copia de la huella de la auditoría | Corregido para el piloto: cada lote lleva la huella del último eslabón y la importación comprueba que la cadena continúa la ya importada. Desviación: la copia se hace en cada exportación, no cada día |
 | H-09 El nombre del experto en el F3, en su propio dispositivo | Sin cambio: bajo riesgo, sin datos de niños |
 

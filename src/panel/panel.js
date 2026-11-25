@@ -15,12 +15,16 @@
 //   (marcas_observacion) y nunca cambia parámetros ni indicadores.
 //
 // El panel describe, no califica: no usa colores de «bien» o «mal», ni flechas de mejora.
+// Decisión R17 (24 nov 2026): la banda de 3 MAD es poco sensible (11 a 13 % para un cambio de 1 DE)
+// y se acepta en la etapa 1, así que el panel nunca dice ni sugiere «sin cambio»: un valor dentro de
+// la banda se describe como «dentro de su variación habitual» (CMP-01; test/panel.test.js).
 // Nunca muestra las señales de alerta temprana (INV-9) ni compara con otros niños.
 import { PARAMETROS as P, NOMBRES } from '../indicadores/parametros.js';
 import { mediana, mad } from '../indicadores/estadistica.js';
 import { utilizable, validoLatencia, rtDe, calidadDeSesion, calidadBaja } from '../indicadores/nucleo.js';
 import { calcularIndicadores } from '../indicadores/exportar.js';
 import { motivoDeBloqueo } from '../envolvente.js';
+import { conHistoria } from '../ninos.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -54,7 +58,7 @@ const valorDe = (id, x) => numero(x, decimales(id));
 
 // Sesiones del niño, en orden, con sus ensayos e indicadores.
 export function historialDelNino({ codigo, sesiones, ensayos, fichas = {}, items = [] }) {
-  const propias = sesiones.filter((s) => s.codigo_nino === codigo && String(s.sesion_id).startsWith('S-'));
+  const propias = sesiones.filter((s) => s.codigo_nino === codigo && conHistoria(s.sesion_id));
   const ids = new Set(propias.map((s) => s.sesion_id));
   const deNino = ensayos.filter((r) => ids.has(r.sesion_id));
   const indicadores = calcularIndicadores(deNino, propias, { fichas, items });
