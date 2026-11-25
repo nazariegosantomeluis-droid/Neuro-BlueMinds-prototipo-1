@@ -291,6 +291,7 @@ async function pedirPin(mensaje = '') {
         return e.message;
       }
       recargarRegistros();
+      pedirPersistencia();
       inactividad.tocar();
       route();
       return null;
@@ -303,6 +304,7 @@ async function pedirPin(mensaje = '') {
         return despues > 0 ? `PIN incorrecto. Demasiados intentos: espera ${Math.ceil(despues / 1000)} s.` : 'PIN incorrecto.';
       }
       recargarRegistros();
+      pedirPersistencia();
       const cadena = auditoria.verificar();
       inactividad.tocar();
       route();
@@ -311,6 +313,31 @@ async function pedirPin(mensaje = '') {
     },
   });
 }
+
+// Almacenamiento persistente (tanda 10; hallazgo H-07): se pide al navegador que no borre los datos
+// del sitio cuando le falte espacio. Se pide al crear o escribir el PIN (con un gesto del adulto) y el
+// resultado se muestra en «Salida de datos». null: el navegador no lo permite.
+async function pedirPersistencia() {
+  try {
+    const s = navigator.storage;
+    if (!s?.persist) {
+      state.persistente = null;
+      return;
+    }
+    state.persistente = (await s.persisted()) || (await s.persist());
+  } catch {
+    state.persistente = null;
+  }
+  const p = app.querySelector('[data-persistencia]');
+  if (p) p.textContent = textoPersistencia();
+}
+
+const textoPersistencia = () =>
+  state.persistente === true
+    ? 'Almacenamiento persistente: concedido. El navegador no borrará estos datos aunque le falte espacio.'
+    : state.persistente === false
+      ? 'Almacenamiento persistente: no concedido. Si al navegador le falta espacio podría borrar estos datos: exporta seguido. Instalar la aplicación en la tableta suele permitirlo.'
+      : 'Almacenamiento persistente: este navegador no lo permite o todavía no se pidió. Exporta seguido.';
 
 // Si la cadena de auditoría no cuadra al desbloquear, se avisa (Arquitectura 10.1).
 function avisoAuditoria(cadena) {
@@ -522,6 +549,7 @@ function salidaHTML() {
       <p class="meta" data-modo-tableta>${c ? `<strong>Modo de estudio</strong>: configuración ${esc(c.numero)} del investigador responsable.` : '<strong>Prototipo</strong>: sin configuración del investigador responsable.'}</p>
       ${state.llaves?.prueba ? '<p class="aviso" data-llaves-prueba>Llaves de prueba del investigador: no exportes datos reales con esta versión.</p>' : ''}
       ${aviso ? `<p class="aviso" role="alert" data-aviso-exportar>Pasaron ${aviso.dias} días sin exportar y hay datos de niños sin recibo del investigador. Exporta un lote y entrégalo; si el navegador borrara los datos del sitio, se perderían.</p>` : ''}
+      <p class="meta" data-persistencia>${esc(textoPersistencia())}</p>
       <p class="meta">Por exportar: ${p.ensayos} ensayos de ${p.sesiones} sesiones de niños. Lotes sin recibo: ${e.pendientes.length}. Última exportación: ${esc(fechaCorta(e.ultima_exportacion))}.</p>
       <div class="acciones">
         <button type="button" class="primario" data-exportar ${p.ensayos || p.sesiones ? '' : 'disabled'}>Exportar lote cifrado</button>
