@@ -4,15 +4,15 @@ Actualizado: 27 de noviembre de 2026.
 
 ## Fase A. Revisión (solo lectura)
 
-- [ ] Revisión clínica y de actividades
-- [ ] Revisión del Modelo matemático
-- [ ] Revisión del Protocolo y ética
-- [ ] Revisión de seguridad y privacidad
-- [ ] Revisión de tiempos y motor
-- [ ] Revisión de usabilidad y accesibilidad
-- [ ] Revisión de código y pruebas
-- [ ] Revisión de trazabilidad y documentos
-- [ ] Revisión de innovación y competencia
+- [x] Revisión clínica y de actividades
+- [x] Revisión del Modelo matemático
+- [x] Revisión del Protocolo y ética
+- [x] Revisión de seguridad y privacidad
+- [x] Revisión de tiempos y motor
+- [x] Revisión de usabilidad y accesibilidad
+- [x] Revisión de código y pruebas
+- [x] Revisión de trazabilidad y documentos
+- [x] Revisión de innovación y competencia
 - [ ] Comprobación independiente de hallazgos críticos e importantes
 - [ ] Informe consolidado: `docs/revision/2026-11-revision-integral.md`
 
